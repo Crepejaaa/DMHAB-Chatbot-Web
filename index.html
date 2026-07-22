@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMHAB | ดูแลสุขภาพจิตประจำวัน</title>
+  <meta name="description" content="DMHAB ดูแลสุขภาพจิตประจำวัน บันทึกอารมณ์ ดูแลใจ สุ่มดวงสุขภาพจิต และพูดคุยกับผู้ช่วย AI ที่เข้าใจคุณ" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .emoji-img { width:24px;height:24px;object-fit:contain;display:inline-block;vertical-align:middle; }
+    .emoji-xs { width:16px;height:16px; }
+    .emoji-sm { width:20px;height:20px; }
+    .emoji-lg { width:32px;height:32px; }
+    .emoji-xl { width:48px;height:48px; }
+    .emoji-2xl { width:64px;height:64px; }
+    .emoji-inline { width:18px;height:18px;display:inline-block;vertical-align:middle;margin:0 1px; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-logo">
+        <div class="logo-icon">
+  <!-- ใส่ Tag ภาพที่นี่ (เปลี่ยน src ตามชื่อไฟล์ภาพจริงของคุณ) -->
+  <img src="D:\Project\assets\image.png" alt="Logo">
+</div>
+        <span>DMHAB</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero">หน้าหลัก</a></li>
+        <li><a href="#features">ฟีเจอร์</a></li>
+        <li><a href="#journey">วิธีการใช้งาน</a></li>
+        <li><a href="#mood-tracker">บันทึกอารมณ์</a></li>
+        <li><a href="#selfcare">ดูแลใจ</a></li>
+        <li><a href="#mental-card">ดวงสุขภาพจิต</a></li>
+        <li><a href="#faq">คำถามที่พบบ่อย</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="chatbot.html" class="btn btn-outline">เข้าสู่ระบบ</a>
+        <a href="chatbot.html" class="btn btn-primary">เริ่มใช้งาน</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="เมนู">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" id="hero">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          AI-Powered Mental Health Assistant
+        </div>
+        <h1 class="hero-title">
+          Daily Mental Health<br />
+          <span class="gradient-text">Assessment Bot</span>
+        </h1>
+        <p class="hero-subtitle">
+          "กำปั้นเผยแผลเพราะสถานการณ์มักเปลี่ยนแปลงขึ้นมาเอง<br/>
+          แต่สุขภาพจิตที่ดีเป็นสิ่งที่ต้องดูแล"
+        </p>
+        <p class="hero-desc">
+          ผู้ช่วย AI อัจฉริยะที่เข้าใจความรู้สึกของคุณ พร้อมช่วยบันทึกอารมณ์
+          ประเมินสุขภาพจิต และดูแลสุขภาพจิตของคุณทุกวัน
+        </p>
+        <div class="hero-buttons">
+          <a href="chatbot.html" class="btn btn-primary btn-lg">
+            &#129302; เริ่มคุยกับบอท
+          </a>
+          <a href="#features" class="btn btn-ghost btn-lg">
+            ดูวิธีการใช้งาน →
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <strong>10,000+</strong>
+            <span>ผู้ใช้งาน</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <strong>4.9/5</strong>
+            <span>คะแนนรีวิว</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <strong>24/7</strong>
+            <span>พร้อมให้บริการ</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-image-wrap">
+          <img src="assets/hero_illustration.jpg" alt="Mental Health Assessment Bot illustration" class="hero-img" />
+          <div class="hero-float-card card-1">
+            <span>&#128522;</span>
+            <div>
+              <small>อารมณ์วันนี้</small>
+              <p>มีความสุข</p>
+            </div>
+          </div>
+          <div class="hero-float-card card-2">
+            <span>&#9989;</span>
+            <div>
+              <small>ดูแลใจแล้ว</small>
+              <p>3/5 รายการ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f0faf8"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES SECTION ===== -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ฟีเจอร์เด่น</span>
+        <h2>ดูแลสุขภาพจิต ครบทุกด้าน</h2>
+        <p>เครื่องมือที่ช่วยให้คุณเข้าใจและดูแลสุขภาพจิตของตัวเองอย่างง่ายดาย</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#e8fdf5,#b2f0da);">&#129504;</div>
+          <h3>ประเมินสุขภาพจิต</h3>
+          <p>บอทจะช่วยประเมินสภาพจิตใจเบื้องต้นผ่านการสนทนาอย่างเป็นธรรมชาติ</p>
+        </div>
+        <div class="feature-card feature-card--accent">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#d4f5ee,#7de4c6);">&#128172;</div>
+          <h3>พูดคุยกับ AI ที่เข้าใจ</h3>
+          <p>แชทบอทเรียนรู้อารมณ์ของคุณและตอบสนองด้วยความเห็นอกเห็นใจ</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#e3f9ff,#a8e6f7);">&#128202;</div>
+          <h3>ติดตามแนวโน้มอารมณ์</h3>
+          <p>กราฟและสถิติช่วยให้คุณมองเห็นแนวโน้มสุขภาพจิตของตัวเองในรอบสัปดาห์</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#fff8e3,#ffd98a);">&#9997;</div>
+          <h3>บันทึกความรู้สึก</h3>
+          <p>จดบันทึกไดอารี่ประจำวันเพื่อระบายและเยียวยาจิตใจของตัวเอง</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#f3e8ff,#c9a6f5);">&#127807;</div>
+          <h3>กิจกรรมดูแลตัวเอง</h3>
+          <p>รายการเช็คสั้นๆ ช่วยให้คุณมั่นใจว่าวันนี้ดูแลตัวเองครบถ้วนแล้ว</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: linear-gradient(135deg,#ffe8ec,#f5a6b4);">&#128157;</div>
+          <h3>พลังบวกประจำวัน</h3>
+          <p>ข้อความให้กำลังใจและคำแนะนำด้านสุขภาพจิตที่เปลี่ยนทุกวัน</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">วิธีการใช้งาน</span>
+        <h2>ใช้งานง่าย เพียง 3 ขั้นตอน</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-number">01</div>
+          <div class="step-icon">&#128522;</div>
+          <h3>บันทึกอารมณ์วันนี้</h3>
+          <p>เลือกอารมณ์ที่ตรงกับความรู้สึกของคุณในขณะนี้ ใช้เวลาไม่เกิน 10 วินาที</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-number">02</div>
+          <div class="step-icon">&#9997;</div>
+          <h3>จดบันทึกความรู้สึก</h3>
+          <p>เขียนระบายสิ่งที่อยู่ในใจสั้นๆ เพื่อช่วยให้จิตใจเบาลงและเข้าใจตัวเองมากขึ้น</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-number">03</div>
+          <div class="step-icon">&#129302;</div>
+          <h3>พูดคุยกับ AI</h3>
+          <p>บอทจะทักทายและชวนคุยตามอารมณ์ที่คุณเลือก พร้อมให้คำแนะนำที่เหมาะสม</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCROLLYTELLING JOURNEY SECTION ===== -->
+  <section class="scrollytelling-section" id="journey">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Mental Health Scrollytelling</span>
+        <h2>เส้นทางฟื้นฟูจิตใจประจำวัน </h2>
+        <p>เลื่อนหน้าจอลงเพื่อร่วมเรียนรู้ 4 ขั้นตอนการดูแลสุขภาวะทางใจให้เติบโตอย่างยั่งยืน</p>
+      </div>
+
+      <div class="scrolly-grid">
+        <!-- Sticky Display Container -->
+        <div class="scrolly-sticky-col">
+          <div class="scrolly-card-display" id="scrollyCardDisplay">
+            <div class="scrolly-card-bg-glow" id="scrollyGlow"></div>
+            <div class="scrolly-stage-badge" id="scrollyBadge">
+              <span id="scrollyBadgeIcon">&#129504;</span>
+              <span id="scrollyBadgeText">Stage 1 of 4</span>
+            </div>
+            <div class="scrolly-icon-wrap" id="scrollyIconWrap">
+              <span id="scrollyDisplayImg" style="font-size: 56px;">&#128269;</span>
+            </div>
+            <h3 class="scrolly-card-title" id="scrollyDisplayTitle">1. เท่าทันอารมณ์ (Identify)</h3>
+            <p class="scrolly-card-desc" id="scrollyDisplayDesc">
+              ก้าวแรกสำคัญของการดูแลใจ คือการหยุดสังเกตและยอมรับความรู้สึกที่เกิดขึ้นในปัจจุบันโดยไม่ตัดสิน
+            </p>
+            <div class="scrolly-progress-bar-wrap">
+              <div class="scrolly-progress-fill" id="scrollyProgressFill" style="width: 25%;"></div>
+            </div>
+            <span class="scrolly-progress-text" id="scrollyProgressText">ความคืบหน้าการสำรวจใจ 25%</span>
+          </div>
+        </div>
+
+        <!-- Scrolling Steps -->
+        <div class="scrolly-steps-col" id="scrollyStepsCol">
+          <!-- Step 1 -->
+          <div class="scrolly-step-item active" data-step="1">
+            <div class="scrolly-step-number">
+              &#128269; Step 01 / Identify
+            </div>
+            <h3 class="scrolly-step-title">สังเกตและรับรู้อารมณ์อย่างเท่าทัน</h3>
+            <p class="scrolly-step-desc">
+              ไม่ว่าวันนี้คุณจะรู้สึกสุข เศร้า กังวล หรือเหนื่อยล้า... การรับรู้สภาวะอารมณ์คือจุดเริ่มต้นที่ดีเยี่ยม บันทึกอารมณ์ประจำวันช่วยให้คุณมองเห็นแบบแผนสุขภาพจิตของตัวเองได้ชัดเจนขึ้น
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="scrolly-step-item" data-step="2">
+            <div class="scrolly-step-number">
+              Step 02 / Express
+            </div>
+            <h3 class="scrolly-step-title">เปิดพื้นที่ระบายและปลดปล่อย</h3>
+            <p class="scrolly-step-desc">
+              อย่าเก็บซ่อนความรู้สึกไว้คนเดียว การเขียนไดอารี่หรือเปิดใจพูดคุยกับ MindCare AI Chatbot ช่วยให้คุณได้ปลดปล่อยความตึงเครียดและเรียบเรียงความคิดในหัวให้เข้าที่เข้าทาง
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="scrolly-step-item" data-step="3">
+            <div class="scrolly-step-number">
+               Step 03 / Restore
+            </div>
+            <h3 class="scrolly-step-title">ฟื้นฟูพลังใจด้วย Self-Care</h3>
+            <p class="scrolly-step-desc">
+              เติมพลังให้ตัวเองด้วยกิจกรรมเล็กๆ เช่น ดื่มน้ำให้เพียงพอ พักสายตา นั่งสมาธิ หรือออกกำลังกายเบาๆ การดูแลกายและใจอย่างต่อเนื่องจะสร้างภูมิคุ้มกันทางอารมณ์ที่แข็งแกร่ง
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="scrolly-step-item" data-step="4">
+            <div class="scrolly-step-number">
+               Step 04 / Thrive
+            </div>
+            <h3 class="scrolly-step-title">เติบโตอย่างมั่นคงและมีความสุข</h3>
+            <p class="scrolly-step-desc">
+              เมื่อคุณใส่ใจสุขภาพจิตเป็นประจำทุกวัน คุณจะค้นพบความสงบภายใน มีความยืดหยุ่นทางอารมณ์สูงขึ้น และพร้อมรับมือกับทุกความท้าทายในชีวิตด้วยความมั่นใจ
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DAILY MOOD TRACKER ===== -->
+  <section class="mood-tracker" id="mood-tracker">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">บันทึกประจำวัน</span>
+        <h2>อารมณ์ของคุณวันนี้เป็นอย่างไรบ้าง?</h2>
+        <p>กดเลือกอารมณ์ที่ตรงกับความรู้สึกของคุณในตอนนี้</p>
+      </div>
+      <div class="tracker-card">
+        <div class="mood-grid" id="moodGrid">
+          <button class="mood-btn" data-mood="มีความสุขมาก" data-color="#2dd4a0" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128516;</span>
+            <span class="mood-label">มีความสุขมาก</span>
+          </button>
+          <button class="mood-btn" data-mood="สบายดี" data-color="#38bdf8" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128522;</span>
+            <span class="mood-label">สบายดี</span>
+          </button>
+          <button class="mood-btn" data-mood="เฉยๆ" data-color="#a3b4c6" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128528;</span>
+            <span class="mood-label">เฉยๆ</span>
+          </button>
+          <button class="mood-btn" data-mood="วิตกกังวล" data-color="#fb923c" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128559;</span>
+            <span class="mood-label">วิตกกังวล</span>
+          </button>
+          <button class="mood-btn" data-mood="เหนื่อยล้า" data-color="#c084fc" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128532;</span>
+            <span class="mood-label">เหนื่อยล้า</span>
+          </button>
+          <button class="mood-btn" data-mood="เศร้า" data-color="#60a5fa" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128546;</span>
+            <span class="mood-label">เศร้า</span>
+          </button>
+          <button class="mood-btn" data-mood="โกรธ" data-color="#f87171" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128544;</span>
+            <span class="mood-label">โกรธ/หงุดหงิด</span>
+          </button>
+          <button class="mood-btn" data-mood="กลัว" data-color="#facc15" onclick="selectMood(this)">
+            <span class="mood-emoji">&#128560;</span>
+            <span class="mood-label">กลัว/กังวล</span>
+          </button>
+        </div>
+        <div class="mood-result" id="moodResult" style="display:none;">
+          <div class="mood-result-inner">
+            <span id="moodResultEmoji" class="result-emoji"></span>
+            <div>
+              <p class="result-text">อารมณ์ของคุณวันนี้: <strong id="moodResultText"></strong></p>
+              <p class="result-tip" id="moodTip"></p>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="resetMood()">เปลี่ยนอารมณ์</button>
+        </div>
+        <!-- Weekly Mood History -->
+        <div class="mood-history">
+          <h4>อารมณ์ย้อนหลัง 7 วัน</h4>
+          <div class="mood-week" id="moodWeek"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SELF-CARE CHECK-IN ===== -->
+  <section class="selfcare" id="selfcare">
+    <div class="container">
+      <div class="selfcare-grid">
+
+        <!-- Self-Care Checklist -->
+        <div class="selfcare-card checklist-card">
+          <div class="card-header-row">
+            <div>
+              <span class="section-tag">Self-Care Check-in</span>
+              <h2 class="card-title">รายการดูแลใจด่วน &#9989;</h2>
+              <p class="card-desc">วันนี้คุณดูแลตัวเองครบแล้วหรือยัง?</p>
+            </div>
+            <div class="checklist-progress" id="checklistProgress">
+              <div class="progress-ring">
+                <svg viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="24" class="progress-bg"/>
+                  <circle cx="30" cy="30" r="24" class="progress-fill" id="progressCircle"/>
+                </svg>
+                <span id="progressText">0/7</span>
+              </div>
+            </div>
+          </div>
+          <div class="checklist-items" id="checklistItems">
+            <label class="checklist-item" id="check-0">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#128167;</span>
+              <span>ดื่มน้ำเพียงพอ (อย่างน้อย 8 แก้ว)</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-1">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#128564;</span>
+              <span>นอนหลับเต็มอิ่ม (อย่างน้อย 7 ชั่วโมง)</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-2">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#129346;</span>
+              <span>ได้ออกกำลังกายหรือเคลื่อนไหวร่างกาย</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-3">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#129488;</span>
+              <span>ได้ทำสมาธิหรือฝึกหายใจลึก</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-4">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#128372;</span>
+              <span>ทานอาหารที่มีประโยชน์</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-5">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#128245;</span>
+              <span>พักสายตาจากหน้าจอ (อย่างน้อย 30 นาที)</span>
+              <span class="checkmark">✓</span>
+            </label>
+            <label class="checklist-item" id="check-6">
+              <input type="checkbox" onchange="updateChecklist()" />
+              <span class="check-icon">&#129303;</span>
+              <span>ได้พูดคุยกับคนที่ไว้ใจหรือทำสิ่งที่ชอบ</span>
+              <span class="checkmark">✓</span>
+            </label>
+          </div>
+          <div class="checklist-message" id="checklistMessage">
+            <p>&#128170; เริ่มเช็คสิ่งที่ทำแล้วในวันนี้กันเลย!</p>
+          </div>
+        </div>
+
+        <!-- Daily Reflection Note -->
+        <div class="selfcare-card reflection-card">
+          <span class="section-tag">Daily Reflection Note</span>
+          <h2 class="card-title">บันทึกความรู้สึกสั้นๆ &#9997;</h2>
+          <p class="card-desc">เขียนระบายความรู้สึก ความคิด หรือสิ่งที่อยู่ในใจวันนี้</p>
+
+          <div class="reflection-prompts">
+            <p class="prompt-label">&#128161; ลองตอบคำถามเหล่านี้:</p>
+            <div class="prompt-chips">
+              <button class="prompt-chip" onclick="setPrompt('วันนี้ฉันรู้สึก...')">วันนี้ฉันรู้สึก...</button>
+              <button class="prompt-chip" onclick="setPrompt('สิ่งที่ทำให้ฉันขอบคุณวันนี้คือ...')">ขอบคุณสิ่งที่...</button>
+              <button class="prompt-chip" onclick="setPrompt('ความท้าทายที่ฉันเผชิญวันนี้คือ...')">ความท้าทาย...</button>
+              <button class="prompt-chip" onclick="setPrompt('พรุ่งนี้ฉันอยากจะ...')">พรุ่งนี้อยากจะ...</button>
+            </div>
+          </div>
+
+          <textarea
+            id="reflectionNote"
+            class="reflection-textarea"
+            placeholder="เริ่มเขียนที่นี่... ไม่มีถูก ไม่มีผิด แค่ระบายออกมา &#127807;"
+            rows="6"
+            maxlength="1000"
+            oninput="updateCharCount()"
+          ></textarea>
+          <div class="reflection-footer">
+            <span class="char-count" id="charCount">0 / 1000 ตัวอักษร</span>
+            <div class="reflection-actions">
+              <button class="btn btn-primary btn-sm" onclick="saveReflection()">&#128190; บันทึก</button>
+            </div>
+          </div>
+
+          <!-- Saved Notes History -->
+          <div class="saved-notes" id="savedNotes">
+            <p class="notes-label">&#128211; บันทึกล่าสุด</p>
+            <div id="notesList"></div>
+          </div>
+
+          <!-- Daily Affirmation -->
+          <div class="affirmation-card" id="affirmationCard">
+            <a href="#" class="affirmation-icon-link">&#10024;</a>
+            <p class="affirmation-text" id="affirmationText"></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MENTAL HEALTH FORTUNE CARD ===== -->
+  <section class="mental-card-section" id="mental-card">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ดวงสุขภาพจิตประจำวัน</span>
+        <h2>สุ่มดวงสุขภาพจิตของคุณวันนี้ &#10728;</h2>
+        <p>กดสุ่มเพื่อรับข้อความกำลังใจและคำแนะนำดูแลสุขภาพจิตส่วนตัวของคุณ</p>
+      </div>
+      <div class="fortune-card-wrap">
+        <!-- Card Front / Draw Button -->
+        <div class="fortune-draw-area" id="fortuneDrawArea">
+          <div class="fortune-deck" id="fortuneDeck" onclick="drawFortuneCard()">
+            <div class="deck-card deck-card-3"></div>
+            <div class="deck-card deck-card-2"></div>
+            <div class="deck-card deck-card-1">
+              <span style="font-size: 56px;">&#128174;</span>
+              <p>แตะเพื่อสุ่มดวง</p>
+              <small>กดเพื่อรับคำทำนายสุขภาพจิตวันนี้</small>
+            </div>
+          </div>
+          <div class="fortune-categories">
+            <button class="fortune-cat-btn active" data-cat="all" onclick="setFortuneCategory(this, 'all')">ทั้งหมด</button>
+            <button class="fortune-cat-btn" data-cat="positive" onclick="setFortuneCategory(this, 'positive')">&#127775; พลังบวก</button>
+            <button class="fortune-cat-btn" data-cat="calm" onclick="setFortuneCategory(this, 'calm')">&#129488; ความสงบ</button>
+            <button class="fortune-cat-btn" data-cat="growth" onclick="setFortuneCategory(this, 'growth')">&#127793; การเติบโต</button>
+            <button class="fortune-cat-btn" data-cat="love" onclick="setFortuneCategory(this, 'love')">&#128154; รักตัวเอง</button>
+          </div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="fortune-result" id="fortuneResult" style="display:none;">
+          <div class="fortune-result-card" id="fortuneResultCard">
+            <div class="fortune-result-header">
+              <div class="fortune-result-emoji" id="fortuneResultEmoji"></div>
+              <div class="fortune-result-badge" id="fortuneResultBadge"></div>
+            </div>
+            <h3 class="fortune-result-title" id="fortuneResultTitle"></h3>
+            <p class="fortune-result-message" id="fortuneResultMessage"></p>
+            <div class="fortune-result-tip">
+              <div class="fortune-tip-label">&#128161; คำแนะนำสำหรับวันนี้</div>
+              <p class="fortune-tip-text" id="fortuneResultTip"></p>
+            </div>
+            <div class="fortune-result-actions">
+              <button class="btn btn-primary" onclick="drawFortuneCard()">&#128259; สุ่มใหม่</button>
+              <button class="btn btn-outline" onclick="shareFortuneCard()">&#128228; แชร์</button>
+              <a href="chatbot.html" class="btn btn-ghost">&#128172; คุยกับ AI</a>
+            </div>
+          </div>
+          <!-- History bar -->
+          <div class="fortune-history" id="fortuneHistory">
+            <p class="fortune-history-label">&#128197; ดวงล่าสุดของคุณ</p>
+            <div class="fortune-history-list" id="fortuneHistoryList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">รีวิวจากผู้ใช้งาน</span>
+        <h2>ความประทับใจจากผู้ใช้</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p>"แชทบอทนี้ช่วยให้ฉันเข้าใจตัวเองมากขึ้น ทุกเช้าก่อนเริ่มงานจะมาบันทึกอารมณ์ก่อนเสมอ รู้สึกดีมากขึ้นอย่างเห็นได้ชัด"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">&#129489;&#8205;&#128188;</div>
+            <div>
+              <p class="author-name">คุณวนิดา</p>
+              <p class="author-role">พนักงานบริษัท อายุ 28 ปี</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card testimonial-card--accent">
+          <div class="stars"><a href="#" class="stars-link">&#11088;&#11088;&#11088;&#11088;&#11088;</a></div>
+          <p>"บันทึกความรู้สึกประจำวันช่วยให้ฉันระบายได้โดยไม่ต้องรู้สึกอายใคร แนะนำมากเลยค่ะ"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">&#128105;&#8205;&#127891;</div>
+            <div>
+              <p class="author-name">คุณกรองแก้ว</p>
+              <p class="author-role">นักศึกษาปริญญาโท</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p>"Self-care checklist ทำให้ผมหันมาดูแลตัวเองมากขึ้น ง่ายมากแค่กดเช็กทุกคืนก่อนนอน ชีวิตดีขึ้นจริงๆ ครับ"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">&#128104;&#8205;&#128187;</div>
+            <div>
+              <p class="author-name">คุณพุฒิภัทร</p>
+              <p class="author-role">Freelance Developer อายุ 32 ปี</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">คำถามที่พบบ่อย</span>
+        <h2>คำถามที่พบบ่อยเกี่ยวกับการดูแลสุขภาพจิต</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>แชทบอทนี้ใช้แทนนักจิตวิทยาได้หรือไม่?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>ไม่ได้ค่ะ แชทบอทนี้เป็นเครื่องมือช่วยเหลือเบื้องต้นเท่านั้น หากคุณมีอาการที่รุนแรงหรือต้องการความช่วยเหลืออย่างจริงจัง ควรพบนักจิตวิทยาหรือจิตแพทย์ผู้เชี่ยวชาญค่ะ</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>ข้อมูลของฉันปลอดภัยหรือไม่?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>ข้อมูลทั้งหมดที่คุณบันทึกจะถูกเก็บไว้ในอุปกรณ์ของคุณผ่าน localStorage เท่านั้น ไม่มีการส่งข้อมูลส่วนตัวไปยังเซิร์ฟเวอร์ใดๆ ค่ะ</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>ควรใช้บอทนี้บ่อยแค่ไหน?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>แนะนำให้ใช้ทุกวัน โดยเฉพาะการบันทึกอารมณ์ประจำวันและ Self-Care Check-in จะช่วยให้คุณมองเห็นแนวโน้มสุขภาพจิตของตัวเองได้ดีขึ้นค่ะ</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>สามารถใช้บอทนี้ได้ฟรีหรือไม่?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>ใช้ได้ฟรี โดยแค่สมัครสมาชิก พวกเราเชื่อว่าการดูแลสุขภาพจิตควรเข้าถึงได้ทุกคน</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>บอทสามารถตรวจสอบอาการซึมเศร้าได้หรือไม่?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>บอทสามารถช่วยประเมินเบื้องต้นได้ แต่ไม่สามารถวินิจฉัยทางการแพทย์ได้ หากคุณสงสัยว่าตัวเองอาจมีภาวะซึมเศร้า ควรพบแพทย์หรือนักจิตวิทยาเพื่อการประเมินที่ถูกต้องค่ะ</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEWS / BLOG ===== -->
+  <section class="news" id="news">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ความรู้และบทความ</span>
+        <h2>บทความดูแลสุขภาพจิต</h2>
+      </div>
+      <div class="news-grid">
+        <article class="news-card">
+  <div class="news-img news-img--1"></div>
+  <div class="news-body">
+    <span class="news-tag">สุขภาพจิต</span>
+    <h3>5 วิธีรับมือกับความเครียดในชีวิตประจำวัน</h3>
+    <p>เรียนรู้เทคนิคที่นักจิตวิทยาแนะนำสำหรับการจัดการความเครียดอย่างมีประสิทธิภาพ...</p>
+    <a href="#" class="news-read-more">อ่านเพิ่มเติม →</a>
+  </div>
+</article>
+
+<article class="news-card">
+  <div class="news-img news-img--2"></div>
+  <div class="news-body">
+    <span class="news-tag">การนอนหลับ</span>
+    <h3>ทำไมการนอนหลับจึงสำคัญต่อสุขภาพจิต</h3>
+    <p>การวิจัยพบว่าการนอนหลับไม่เพียงพอส่งผลต่ออารมณ์และสุขภาพจิตอย่างมีนัยสำคัญ...</p>
+    <a href="#" class="news-read-more">อ่านเพิ่มเติม →</a>
+  </div>
+</article>
+
+<article class="news-card">
+  <div class="news-img news-img--3">&#129488;</div>
+  <div class="news-body">
+    <span class="news-tag">การทำสมาธิ</span>
+    <h3>เริ่มต้นทำสมาธิสำหรับผู้เริ่มต้น 5 นาทีต่อวัน</h3>
+    <p>ไม่จำเป็นต้องทำนาน เพียง 5 นาทีต่อวันก็ช่วยให้จิตใจสงบและลดความวิตกกังวลได้...</p>
+    <a href="#" class="news-read-more">อ่านเพิ่มเติม →</a>
+  </div>
+</article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="cta-banner">
+    <div class="container">
+      <div class="cta-content">
+        <h2>พร้อมเริ่มดูแลสุขภาพจิตของคุณแล้วหรือยัง?</h2>
+        <p>เริ่มต้นได้เลย ฟรี! ไม่ต้องสมัครสมาชิก</p>
+        <a href="chatbot.html" class="btn btn-white btn-lg">&#129302; เริ่มคุยกับบอทเลย</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">&#129504;</div>
+          <span>DMHAB <strong>Bot</strong></span>
+        </div>
+        <p>ผู้ช่วย AI ที่เข้าใจความรู้สึกของคุณ พร้อมดูแลสุขภาพจิตทุกวัน</p>
+        <div class="social-links">
+          <a href="#" class="social-btn">&#128216;</a>
+          <a href="#" class="social-btn">&#128150;</a>
+          <a href="#" class="social-btn">&#128248;</a>
+          <a href="#" class="social-btn">&#9654;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>เมนู</h4>
+        <ul>
+          <li><a href="#hero">หน้าหลัก</a></li>
+          <li><a href="#features">ฟีเจอร์</a></li>
+          <li><a href="chatbot.html">แชทบอท</a></li>
+          <li><a href="#faq">คำถามที่พบบ่อย</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>ความช่วยเหลือ</h4>
+        <ul>
+          <li><a href="#">วิธีใช้งาน</a></li>
+          <li><a href="#">ติดต่อเรา</a></li>
+          <li><a href="#">นโยบายความเป็นส่วนตัว</a></li>
+          <li><a href="#">ข้อกำหนดการใช้งาน</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>ติดต่อด่วน</h4>
+        <p>&#128222; สายด่วนสุขภาพจิต: <strong>1323</strong></p>
+        <p>&#127973; กรมสุขภาพจิต: <a href="https://www.dmh.go.th" target="_blank">www.dmh.go.th</a></p>
+        <p>&#128231; support@DMHAB.th</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>©DMHAB · สร้างด้วยใจเพื่อสุขภาพจิตที่ดีของทุกคน</p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
