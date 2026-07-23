@@ -4,10 +4,100 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"    // -js เพื่อให้ใช้กับ Node.js / Express ได้ถูกต้อง
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+//ส่วนที่เพิ่ม 23/07/69 ด้านล่างทั้งหมด คือเกี่ยวกับ ตาราง DATA BASE 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Sender {
+  USER
+  BOT
+}
+
+// ตารางที่ 1: ข้อมูลผู้ใช้งานทั้งหมด
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  passwordHash String
+  fullName     String
+  email        String        @unique
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  chatSessions ChatSession[]
+  testResults  TestResult[]
+  articles     Article[]
+  systemLogs   SystemLog[]
+}
+
+// ตารางที่ 2: รอบการคุยแชทประจำวัน
+model ChatSession {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  summary     String?       @db.Text
+  overallMood String?
+  createdAt   DateTime      @default(now())
+
+  messages    ChatMessage[]
+}
+
+// ตารางที่ 3: ประโยคข้อความในแชท
+model ChatMessage {
+  id        Int         @id @default(autoincrement())
+  sessionId Int
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sender    Sender
+  message   String      @db.Text
+  createdAt DateTime    @default(now())
+}
+
+// ตารางที่ 4: คลังคำถามแบบทดสอบจิตวิทยา
+model TestQuestion {
+  id           Int      @id @default(autoincrement())
+  questionText String
+  scoreWeight  Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ตารางที่ 5: ประวัติผลการทำแบบทดสอบ
+model TestResult {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalScore     Int
+  interpretation String
+  createdAt      DateTime @default(now())
+}
+
+// ตารางที่ 6: บทความและคำแนะนำ
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  category    String
+  createdById Int
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ตารางที่ 7: ประวัติกิจกรรมในระบบสำหรับ Admin
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  details   String   @db.Text
+  createdAt DateTime @default(now())
 }
