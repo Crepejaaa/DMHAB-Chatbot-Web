@@ -1,32 +1,17 @@
 <template>
-  <div class="container">
-    <h1>DMIHAB เริ่มต้นโปรเจกต์สำเร็จ! 🎉</h1>
-    <p>เราจะใช้ Plain CSS สบายๆ แบบไม่ต้องปวดหัวกับการตั้งค่าครับ</p>
-  </div>
+  <!-- <router-view> จะทำหน้าที่ดึงคอมโพเนนต์ตาม URL (เช่น HomeView) มาแสดงผลตรงนี้ -->
+  <router-view />
 </template>
 
 <script setup>
-// โค้ดส่วนนี้จะว่างเปล่าไปก่อนครับ (เราเอา import โลโก้เก่าออกหมดแล้ว)
+// หน้ารวมหลักจะปล่อยว่างไว้ เพื่อให้ Vue Router เป็นตัวจัดการดึงแต่ละหน้ามาแสดงผล
 </script>
 
-<style scoped>
-/* ส่วนนี้คือ CSS ธรรมดาที่เราสามารถกำหนดความสวยงามได้ตามใจชอบ */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #FAFAF9; /* สีพื้นหลังครีมอ่อนๆ (Vibe Design) */
-  font-family: sans-serif;
-}
-
-h1 {
-  color: #0D9488; /* สีเขียว Teal สำหรับ Header */
-  margin-bottom: 10px;
-}
-
-p {
-  color: #52525B; /* สีเทาเข้มอ่านง่าย */
+<style>
+/* Style ส่วนกลาง (Global Style) สามารถใส่ font หรือการตั้งค่าพื้นฐานตรงนี้ได้ */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 </style>
