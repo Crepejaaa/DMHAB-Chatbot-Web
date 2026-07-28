@@ -29,10 +29,11 @@ enum Sender {
 // ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
 model User {
   id           Int           @id @default(autoincrement())
-  username     String        @unique
-  passwordHash String        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
-  fullName     String
-  email        String        @unique
+  username     String?        @unique
+  passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
+  email        String?        @unique
+  phone        BigInt?
+  avatarUrl    String
   role         Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
