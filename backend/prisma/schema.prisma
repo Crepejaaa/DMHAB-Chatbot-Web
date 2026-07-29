@@ -1,13 +1,110 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-}
-
+// 1. ตั้งค่าการเชื่อมต่อกับระบบฐานข้อมูล (ระบุเฉพาะ provider เพราะใช้ prisma.config.ts จัดการ URL แล้ว)
 datasource db {
   provider = "postgresql"
+}
+
+// 2. สั่งให้สร้าง Prisma Client สำหรับเขียนโค้ดภาษา JavaScript/TypeScript
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// 3. กำหนดข้อมูลประเภท ENUM (ตัวเลือกที่ตายตัว)
+// ==========================================
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Sender {
+  USER
+  BOT
+}
+
+// ==========================================
+// 4. โครงสร้างตารางฐานข้อมูล (Models)
+// ==========================================
+
+// ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String?        @unique
+  passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
+  email        String?        @unique
+  phone        BigInt?
+  avatarUrl    String
+  role         Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // ความสัมพันธ์ (Relationships)
+  chatSessions ChatSession[] // ผู้ใช้ 1 คน มีรอบการคุยได้หลายครั้ง
+  testResults  TestResult[]  // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
+  articles     Article[]     // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
+  systemLogs   SystemLog[]   // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
+}
+
+// ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง
+model ChatSession {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  summary     String?       @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
+  overallMood String?       // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
+  createdAt   DateTime      @default(now())
+
+  // ความสัมพันธ์
+  messages    ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
+}
+
+// ตารางที่ 3: เก็บข้อความในแชททีละประโยค
+model ChatMessage {
+  id        Int         @id @default(autoincrement())
+  sessionId Int
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sender    Sender      // ระบุว่าประโยคนี้เป็นของ USER หรือ BOT
+  message   String      @db.Text // เนื้อหาข้อความ
+  createdAt DateTime    @default(now())
+}
+
+// ตารางที่ 4: คลังข้อคำถามแบบทดสอบคัดกรองสุขภาพจิต
+model TestQuestion {
+  id           Int      @id @default(autoincrement())
+  questionText String   // ข้อความคำถาม เช่น "รู้สึกเบื่อ ไม่อยากทำอะไรเลย"
+  scoreWeight  Int      @default(1) // น้ำหนักคะแนนของข้อนี้
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ตารางที่ 5: ประวัติและผลลัพธ์การทำแบบทดสอบสุขภาพจิตของผู้ใช้งาน
+model TestResult {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalScore     Int      // คะแนนรวมที่ทำได้
+  interpretation String   // ผลการประเมิน เช่น "เสี่ยงซึมเศร้ารุนแรง ควรพบแพทย์"
+  createdAt      DateTime @default(now())
+}
+
+// ตารางที่ 6: คลังบทความ คำแนะนำกิจกรรม หรือช่องทางติดต่อหน่วยงานฉุกเฉิน
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text // เนื้อหาบทความยาวๆ
+  category    String   // หมวดหมู่ เช่น "STRESS", "DEPRESSION", "EMERGENCY"
+  createdById Int
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ตารางที่ 7: เก็บบันทึกประวัติกิจกรรมและการใช้งานระบบ
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     // เป็น Nullable ได้ ในกรณีที่เกิด Error หรือผู้ใช้ยังไม่ได้ Log-in
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // กิจกรรมที่เกิดขึ้น เช่น "LOGIN", "DELETE_USER"
+  details   String   @db.Text // รายละเอียดเชิงลึก
+  createdAt DateTime @default(now())
 }
