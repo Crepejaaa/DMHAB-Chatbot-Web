@@ -1,19 +1,29 @@
-// src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router';
-
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    // ดึงไฟล์ HomeView.vue ที่คุณเพิ่งสร้างมาแสดงผลเป็นหน้าแรก
-    component: () => import('../Page/HomeView.vue')
-  },
-  // ... routes อื่นๆ ของคุณ
-];
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
-});
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: () => import('../Page/HomeView.vue') 
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../Page/LoginView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../Page/forgot-password.vue')
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../Page/RegisterView.vue') 
+    }
+  ]
+})
 
-export default router;
+export default router

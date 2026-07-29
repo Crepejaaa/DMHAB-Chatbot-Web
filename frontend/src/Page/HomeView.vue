@@ -3,7 +3,6 @@
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
-    <!-- 1. Navbar -->
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
@@ -11,6 +10,7 @@
         </div>
         <span class="text-xl font-bold tracking-wide">DMHAB</span>
       </div>
+      
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
         <a href="#" class="hover:text-[#D1FAE5] transition">Home</a>
         <a href="#" class="hover:text-[#D1FAE5] transition">About</a>
@@ -33,8 +33,19 @@
           </button>
         </div>
 
-        <button class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">Login</button>
-        <button class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">Register</button>
+        <!-- ปุ่ม Login แก้เป็น router-link เรียบร้อยแล้ว -->
+        <button 
+  @click="$router.push('/login')" 
+  class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
+>
+  Login
+</button>
+        
+        <button
+        @click="$router.push('/register')"
+        class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
+          Register
+        </button>
       </div>
     </nav>
 
@@ -46,7 +57,7 @@
         </h1>
         <p class="text-[#64748B] mb-8 text-base">
           "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
-           "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
+          "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
         </p>
         <button class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-5 py-2.5 text-sm font-medium rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
           เริ่มต้นใช้งาน
@@ -54,7 +65,7 @@
       </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
         <div class="w-80 h-64 bg-white/60 border-2 border-dashed border-[#0D9488]/30 rounded-2xl flex items-center justify-center text-[#0D9488] font-medium">
-          [รูปภาพ ]
+          [รูปภาพ]
         </div>
       </div>
     </section>
@@ -205,7 +216,7 @@
     <footer class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-12 pb-6 mt-10 scroll-anim opacity-0 transition-opacity duration-1000 ease-out">
       <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-8 pb-8 border-b border-white/20 text-sm">
         <div>
-        <!-- โลโก้ Footer -->
+          <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
               <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />

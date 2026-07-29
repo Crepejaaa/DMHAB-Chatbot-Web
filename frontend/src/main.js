@@ -1,10 +1,11 @@
 // src/main.js
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
-import './style.css' //  เพิ่มบรรทัดนี้เพื่อดึง Tailwind CSS มาใช้งาน
+import router from './router' //  1. ต้องนำเข้า router ที่เราสร้างไว้
+import './style.css' // (นำเข้า Tailwind )
 
 const app = createApp(App)
 
-app.use(router)
+app.use(router) //  2. บรรทัดนี้สำคัญที่สุด! ถ้าไม่มีบรรทัดนี้ ปุ่มจะกดไม่ไป
+
 app.mount('#app')
