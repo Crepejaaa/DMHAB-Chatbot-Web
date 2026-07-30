@@ -32,8 +32,8 @@ model User {
   username     String?        @unique
   passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
   email        String?        @unique
-  phone        BigInt?
-  avatarUrl    String
+  phone        String?
+  avatarUrl    String?
   role         Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
