@@ -254,9 +254,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { inject, onMounted, onUnmounted } from 'vue'
 
-const isColorBlindMode = ref(false)
+const isColorBlindMode = inject('isColorBlindMode')
 
 let observer = null
 

@@ -12,7 +12,8 @@
 
       <!-- Top Navbar -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
-        <!-- ฝั่งซ้าย: ปุ่ม Back (ย้อนกลับ) -->
+        
+        <!-- ฝั่งซ้าย: ปุ่ม Back (ย้อนกลับไปหน้า Home) -->
         <div class="flex items-center gap-4">
           <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้าหลัก">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,13 +21,13 @@
             </svg>
           </router-link>
         </div>
-</div>
+
         <!-- ฝั่งขวา: โลโก้ และ DMHAB -->
         <div class="flex items-center gap-2.5 cursor-default">
-  <img src="/image_Logo.png" alt="DMHAB Logo" class="w-10 h-10 object-contain" />
-  <span class="text-xl font-bold tracking-wide text-white">DMHAB</span>
-</div>
-
+          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-7 h-7 object-contain" />
+          <span class="text-xl font-bold tracking-wide text-white">DMHAB</span>
+        </div>
+        </div>
       <!-- Hero Title -->
       <div class="container mx-auto px-10 pt-10 pb-28 relative z-10">
         <div class="border-l-4 border-white pl-4">
@@ -131,7 +132,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
+
+const isColorBlindMode = inject('isColorBlindMode')
 
 const email = ref('')
 

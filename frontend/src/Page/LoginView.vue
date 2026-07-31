@@ -9,7 +9,8 @@
           <path d="M0,50 Q25,80 50,50 T100,50" fill="none" stroke="white" stroke-width="0.5"/>
         </svg>
       </div>
-
+      <!-- ปุ่ม toggle -->
+  <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
       <!-- Top Navbar (ปรับให้ตรงกับ Register) -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
         
@@ -152,4 +153,7 @@ const handleLogin = () => {
   // โค้ดสำหรับตรวจสอบการ Login ไปที่ Backend
   alert(`เข้าสู่ระบบสำเร็จ! ด้วยอีเมล: ${form.value.email}`)
 }
+import { inject } from 'vue'
+
+const isColorBlindMode = inject('isColorBlindMode')
 </script>
