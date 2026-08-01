@@ -51,6 +51,8 @@ npx prisma migrate dev --name init
 # 5. รันเซิร์ฟเวอร์ (โหมด Development)
 npm run dev
 # (เซิร์ฟเวอร์จะรันที่พอร์ต http://localhost:3000)
+### 6 คำสั่งสำหรับรัน
+รันฝั่ง Backend (เซิร์ฟเวอร์): npx nodemon index.js
 
 การตั้งค่าฝั่งหน้าบ้าน (Frontend)
 เปิด Terminal หน้าต่างใหม่ แล้วทำตามขั้นตอนนี้:
