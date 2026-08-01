@@ -163,8 +163,34 @@ const form = ref({
   rememberMe: false
 })
 
+<<<<<<< HEAD
 const handleLogin = () => {
   // โค้ดสำหรับตรวจสอบการ Login ไปที่ Backend
   alert(`เข้าสู่ระบบสำเร็จ! ด้วยอีเมล: ${form.value.email}`)
+=======
+const handleLogin = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: form.value.email,
+        password: form.value.password
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'เข้าสู่ระบบไม่สำเร็จ')
+    }
+
+    alert(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
+>>>>>>> 8f8d215377fb690839b0d345178ff7ef5801175a
 }
 </script>

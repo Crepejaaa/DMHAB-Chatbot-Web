@@ -138,10 +138,28 @@ const isColorBlindMode = inject('isColorBlindMode')
 
 const email = ref('')
 
-const handleResetPassword = () => {
-  if (email.value) {
-    alert(`ระบบได้ส่งลิงก์รีเซ็ตรหัสผ่านไปที่: ${email.value} เรียบร้อยแล้ว`)
+const handleResetPassword = async () => {
+  if (!email.value) return
+
+  try {
+    const response = await fetch('http://localhost:3000/api/forgot-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email.value })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'เกิดข้อผิดพลาด')
+    }
+
+    alert(data.message)
     email.value = ''
+  } catch (error) {
+    alert(error.message)
   }
 }
 </script>

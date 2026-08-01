@@ -169,9 +169,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 
-// Refs สำหรับการอัปโหลดรูป
+const isColorBlindMode = inject('isColorBlindMode')
+
 const fileInput = ref(null)
 const imagePreview = ref(null)
 
@@ -182,40 +183,61 @@ const form = ref({
   password: '',
   confirmPassword: '',
   acceptTerms: false,
-  profileImage: null // เพิ่ม object เก็บไฟล์รูปภาพสำหรับส่งไป Backend
+  profileImage: null
 })
 
-// ฟังก์ชันจำลองการคลิกที่ input file เมื่อกดที่ไอคอนกล้อง
 const triggerFileInput = () => {
   if (fileInput.value) {
     fileInput.value.click()
   }
 }
 
-// ฟังก์ชันจัดการเมื่อเลือกไฟล์รูปภาพ
 const handleImageUpload = (event) => {
   const file = event.target.files[0]
   if (file) {
-    // เก็บไฟล์ลงในฟอร์มเพื่อเตรียมส่งไป API
     form.value.profileImage = file
-    // สร้าง URL ชั่วคราวสำหรับแสดงรูปพรีวิวบนหน้าจอ
     imagePreview.value = URL.createObjectURL(file)
   }
 }
 
-const handleRegister = () => {
+const handleRegister = async () => {
+  // 🟢 [เพิ่มใหม่] เช็กเบอร์โทรศัพท์ฝั่งหน้าเว็บ
+  const phoneRegex = /^0[689]\d{8}$/;
+  if (!phoneRegex.test(form.value.phone)) {
+    alert("กรุณากรอกเบอร์โทรศัพท์มือถือให้ถูกต้อง (10 หลัก เริ่มด้วย 06, 08 หรือ 09)");
+    return; // สั่ง return เพื่อหยุดการทำงาน ไม่ให้ส่งข้อมูลไป Backend
+  }
+
+  // เช็กรหัสผ่านเดิมของคุณ
   if (form.value.password !== form.value.confirmPassword) {
     alert("รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!")
     return
   }
 
-  // เช็คว่ามีการใส่รูปไหม (เอาไว้สำหรับแจ้งเตือนทดสอบเฉยๆ)
-  const hasImage = form.value.profileImage ? "พร้อมภาพโปรไฟล์" : "ไม่มีภาพโปรไฟล์"
+  try {
+    const response = await fetch('http://localhost:3000/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: form.value.name,
+        email: form.value.email,
+        phone: form.value.phone,
+        password: form.value.password,
+        confirmPassword: form.value.confirmPassword
+      })
+    })
 
-  // โค้ดส่งข้อมูลไป Backend จะอยู่ตรงนี้ (ใช้ FormData ในการส่งแนบรูป)
-  alert(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${form.value.name}\nสถานะรูป: ${hasImage}`)
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก')
+    }
+
+    alert(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
 }
-import { inject } from 'vue'
-
-const isColorBlindMode = inject('isColorBlindMode')
 </script>
