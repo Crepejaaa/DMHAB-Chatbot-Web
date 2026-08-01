@@ -9,18 +9,30 @@
           <path d="M0,50 Q25,80 50,50 T100,50" fill="none" stroke="white" stroke-width="0.5"/>
         </svg>
       </div>
-      <!-- ปุ่ม toggle -->
-  <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
+
+      <!-- ปุ่ม toggle Color Blindness -->
+      <label class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 cursor-pointer z-20 select-none">
+        <span class="text-sm font-medium text-white">Color Blindness</span>
+        <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
+        <div class="w-11 h-6 bg-white/30 rounded-full peer-checked:bg-[#0F5A4C] relative transition">
+          <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+        </div>
+      </label>
+
       <!-- Top Navbar (ปรับให้ตรงกับ Register) -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
         
         <!-- ฝั่งซ้าย: ปุ่ม Back (ย้อนกลับ) -->
         <div class="flex items-center gap-4">
-          <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้าหลัก">
+          <button 
+            @click="$router.back()" 
+            class="hover:bg-white/20 p-2 rounded-full transition text-white" 
+            title="ย้อนกลับ"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-          </router-link>
+          </button>
         </div>
 
         <!-- ฝั่งขวา: โลโก้ และ DMHAB -->
@@ -141,7 +153,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
+
+const isColorBlindMode = inject('isColorBlindMode')
 
 const form = ref({
   email: '',
@@ -153,7 +167,4 @@ const handleLogin = () => {
   // โค้ดสำหรับตรวจสอบการ Login ไปที่ Backend
   alert(`เข้าสู่ระบบสำเร็จ! ด้วยอีเมล: ${form.value.email}`)
 }
-import { inject } from 'vue'
-
-const isColorBlindMode = inject('isColorBlindMode')
 </script>

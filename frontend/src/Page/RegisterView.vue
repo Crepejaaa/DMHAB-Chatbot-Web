@@ -14,14 +14,18 @@
       <!-- Top Navbar -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
 
-        <!-- ฝั่งซ้าย: ปุ่ม Back (ย้อนกลับไปหน้า Home) -->
+        <!-- ฝั่งซ้าย: ปุ่ม Back (ย้อนกลับ) -->
         <div class="flex items-center gap-4">
-          <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้าหลัก">
+          <button 
+            @click="$router.back()" 
+            class="hover:bg-white/20 p-2 rounded-full transition text-white" 
+            title="ย้อนกลับ"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-          </router-link>
+          </button>
         </div>
 
         <!-- ฝั่งขวา: โลโก้ และ DMHAB -->
