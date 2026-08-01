@@ -9,7 +9,8 @@
           <path d="M0,50 Q25,80 50,50 T100,50" fill="none" stroke="white" stroke-width="0.5"/>
         </svg>
       </div>
-
+      <!-- ปุ่ม toggle -->
+  <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
       <!-- Top Navbar (ปรับให้ตรงกับ Register) -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
         
@@ -140,7 +141,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
+
+const isColorBlindMode = inject('isColorBlindMode')
 
 const form = ref({
   email: '',
@@ -148,8 +151,28 @@ const form = ref({
   rememberMe: false
 })
 
-const handleLogin = () => {
-  // โค้ดสำหรับตรวจสอบการ Login ไปที่ Backend
-  alert(`เข้าสู่ระบบสำเร็จ! ด้วยอีเมล: ${form.value.email}`)
+const handleLogin = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: form.value.email,
+        password: form.value.password
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'เข้าสู่ระบบไม่สำเร็จ')
+    }
+
+    alert(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
 }
 </script>
