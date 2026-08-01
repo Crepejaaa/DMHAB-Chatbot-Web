@@ -10,15 +10,6 @@
         </svg>
       </div>
 
-      <!-- ปุ่ม toggle Color Blindness -->
-      <label class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 cursor-pointer z-20 select-none">
-        <span class="text-sm font-medium text-white">Color Blindness</span>
-        <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
-        <div class="w-11 h-6 bg-white/30 rounded-full peer-checked:bg-[#0F5A4C] relative transition">
-          <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-5"></div>
-        </div>
-      </label>
-
       <!-- Top Navbar (ปรับให้ตรงกับ Register) -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
         
@@ -154,8 +145,10 @@
 
 <script setup>
 import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const router = useRouter()
+const isColorBlindMode = inject('isColorBlindMode', ref(false))
 
 const form = ref({
   email: '',
@@ -163,12 +156,12 @@ const form = ref({
   rememberMe: false
 })
 
-<<<<<<< HEAD
-const handleLogin = () => {
-  // โค้ดสำหรับตรวจสอบการ Login ไปที่ Backend
-  alert(`เข้าสู่ระบบสำเร็จ! ด้วยอีเมล: ${form.value.email}`)
-=======
 const handleLogin = async () => {
+  if (!form.value.email || !form.value.password) {
+    alert('กรุณากรอกอีเมลและรหัสผ่านก่อนเข้าสู่ระบบ')
+    return
+  }
+
   try {
     const response = await fetch('http://localhost:3000/api/login', {
       method: 'POST',
@@ -176,7 +169,7 @@ const handleLogin = async () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: form.value.email,
+        email: form.value.email.trim(),
         password: form.value.password
       })
     })
@@ -187,10 +180,14 @@ const handleLogin = async () => {
       throw new Error(data.message || 'เข้าสู่ระบบไม่สำเร็จ')
     }
 
-    alert(data.message)
+    if (data.token) {
+      localStorage.setItem('token', data.token)
+    }
+
+    alert(data.message || 'เข้าสู่ระบบสำเร็จ')
+    router.push('/')
   } catch (error) {
-    alert(error.message)
+    alert(error.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
   }
->>>>>>> 8f8d215377fb690839b0d345178ff7ef5801175a
 }
 </script>
