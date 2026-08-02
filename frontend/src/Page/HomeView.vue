@@ -14,8 +14,8 @@
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
         <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
         <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <a href="#" class="hover:text-[#D1FAE5] transition">Service</a>
-        <a href="#" class="hover:text-[#D1FAE5] transition">Blog</a>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition">Service</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">

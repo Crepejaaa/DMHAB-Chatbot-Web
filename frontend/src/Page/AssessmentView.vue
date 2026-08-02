@@ -156,7 +156,8 @@
         <div class="mt-10 text-right">
           <button 
             @click="submitAssessment"
-            class="px-8 py-3 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-medium shadow-md hover:shadow-lg transform active:scale-95 transition-all"
+            :disabled="!isFormValid"
+            class="px-8 py-3 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-medium shadow-md hover:shadow-lg transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100"
           >
             ส่งแบบประเมิน
           </button>
@@ -207,18 +208,18 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isColorBlindMode = inject('isColorBlindMode')
 
 // State คำตอบ
-const selectedMood = ref('เครียด/เศร้ามาก')
-const screeningAnswers = ref({
-  1: 0,
-  2: 1,
-  3: 2,
-  4: 3
+const selectedMood = ref(null)
+const screeningAnswers = ref({})
+
+// ตรวจสอบว่าผู้ใช้ตอบครบทั้งรูปแบบที่ 1 และ 2 แล้วหรือยัง
+const isFormValid = computed(() => {
+  return selectedMood.value !== null && Object.keys(screeningAnswers.value).length === screeningQuestions.length
 })
 
 // ตัวเลือกรูปแบบที่ 1 (Emoji)
