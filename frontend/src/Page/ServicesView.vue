@@ -93,9 +93,9 @@
           >
             <h3 class="text-xl md:text-2xl font-bold mb-4">{{ service.title }}</h3>
             <p class="text-gray-300 text-sm mb-8 text-center px-4">{{ service.description }}</p>
-            <button class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md">
+            <router-link :to="'/services/' + service.id" class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block">
               See detail
-            </button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
             <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><a href="#" class="hover:underline">Self-Care Resource Library</a></li>
+            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
         <div>
@@ -151,18 +151,22 @@ const isColorBlindMode = inject('isColorBlindMode')
 // ข้อมูลสำหรับวนลูปสร้างการ์ด (ช่วยให้โค้ดส่วน Template สะอาดขึ้น)
 const servicesList = [
   {
+    id: 'daily-checkin',
     title: 'เช็คอินสุขภาพจิตรายวัน',
     description: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน'
   },
   {
+    id: 'assessment',
     title: 'ประเมินสุขภาพจิตเบื้องต้น',
     description: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน'
   },
   {
+    id: 'listening-space',
     title: 'พื้นที่รับฟัง 24 ชั่วโมง',
     description: 'แชทพูดคุยระบายความรู้สึกแบบส่วนตัว'
   },
   {
+    id: 'relaxation',
     title: 'แนะนำกิจกรรมผ่อนคลาย',
     description: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ'
   }

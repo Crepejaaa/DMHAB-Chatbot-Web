@@ -184,7 +184,7 @@
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
             <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><a href="#" class="hover:underline">Self-Care Resource Library</a></li>
+            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
         <div>

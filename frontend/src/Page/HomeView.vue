@@ -156,59 +156,71 @@
             บทความที่น่ารู้เกี่ยวกับสภาวะจิตใจ
           </h2>
         </div>
-        <button class="hidden md:block text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition">
+        <router-link to="/blog" class="hidden md:block text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition">
           ดูบทความทั้งหมด &rarr;
-        </button>
+        </router-link>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full">
-            <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-              [รูปภาพบทความ 1]
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 1]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
+              </div>
             </div>
-            <div class="p-6">
-              <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
-              <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
-              <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
-              <button class="text-[#0D9488] font-medium text-sm hover:underline">อ่านต่อ</button>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/stress-management" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
             </div>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full">
-            <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-              [รูปภาพบทความ 2]
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 2]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
+              </div>
             </div>
-            <div class="p-6">
-              <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
-              <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
-              <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
-              <button class="text-[#0D9488] font-medium text-sm hover:underline">อ่านต่อ</button>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/sleep-and-mood" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
             </div>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full">
-            <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-              [รูปภาพบทความ 3]
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 3]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
+              </div>
             </div>
-            <div class="p-6">
-              <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
-              <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
-              <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
-              <button class="text-[#0D9488] font-medium text-sm hover:underline">อ่านต่อ</button>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
             </div>
           </div>
         </div>
       </div>
       
       <div class="mt-8 text-center md:hidden">
-        <button class="text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition border border-[#0D9488] px-6 py-2 rounded-full">
+        <router-link to="/blog" class="text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition border border-[#0D9488] px-6 py-2 rounded-full inline-block">
           ดูบทความทั้งหมด
-        </button>
+        </router-link>
       </div>
     </section>
 
@@ -230,11 +242,11 @@
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
             <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><a href="#" class="hover:underline">Self-Care Resource Library</a></li>
+            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <router-link to="/contact" class="font-bold mb-3 block hover:underline">Contact</router-link>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ DMHAB@Domain.com</li>

@@ -34,14 +34,29 @@ const router = createRouter({
       component: () => import('../Page/ServicesView.vue')
     },
     {
+      path: '/services/:id',
+      name: 'service-detail',
+      component: () => import('../Page/ServiceDetailView.vue')
+    },
+    {
       path: '/blog',
       name: 'blog',
       component: () => import('../Page/BlogView.vue')
     },
     {
+      path: '/blog/:id',
+      name: 'blog-detail',
+      component: () => import('../Page/BlogDetailView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       component: () => import('../Page/AboutView.vue')
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('../Page/ContactView.vue')
     }
   ]
 })
