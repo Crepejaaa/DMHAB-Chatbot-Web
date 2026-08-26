@@ -70,6 +70,24 @@
 
     <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-16 space-y-8">
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="article in articles" :key="article.id" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
+          <div>
+            <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
+              {{ article.image }}
+            </div>
+            <div class="p-6">
+              <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
+              <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
+              <p class="text-sm text-[#64748B] leading-relaxed mb-4">{{ article.description }}</p>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <router-link 
+              :to="'/blog/' + article.id" 
+              class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
+            >
+              อ่านเพิ่มเติม &rarr;
+            </router-link>
         <div v-for="article in articles" :key="article.title" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
             {{ article.image }}
@@ -99,6 +117,7 @@
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
             <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
             <li><router-link to="/services" class="hover:underline">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
@@ -128,18 +147,21 @@ const isColorBlindMode = inject('isColorBlindMode')
 
 const articles = [
   {
+    id: 'stress-management',
     image: '[รูปภาพบทความ 1]',
     date: '26 กรกฎาคม 2026',
     title: 'วิธีรับมือกับความเครียดจากการทำงาน',
     description: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงานเพื่อรักษาสุขภาพจิตที่ดีในระยะยาว'
   },
   {
+    id: 'sleep-and-mood',
     image: '[รูปภาพบทความ 2]',
     date: '24 กรกฎาคม 2026',
     title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
     description: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวลและความแปรปรวนทางอารมณ์'
   },
   {
+    id: 'warning-signs',
     image: '[รูปภาพบทความ 3]',
     date: '20 กรกฎาคม 2026',
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',

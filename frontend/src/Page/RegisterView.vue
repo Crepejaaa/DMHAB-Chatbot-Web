@@ -146,7 +146,7 @@
           <ul class="space-y-2 text-white/80 text-xs">
             <li><a href="#" class="hover:text-white">Daily Check-in</a></li>
             <li><a href="#" class="hover:text-white">Personalized Feedback</a></li>
-            <li><a href="#" class="hover:text-white">Self-Care Resource Library</a></li>
+            <li><router-link to="/blog" class="hover:text-white">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
         <div>
