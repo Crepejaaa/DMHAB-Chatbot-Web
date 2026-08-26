@@ -9,46 +9,60 @@ app.use(express.json());
 // ฐานข้อมูลจำลองในความจำ
 let mockUsers = [];
 
-// ------------------------------------------
+// ==========================================
 // 1. API สมัครสมาชิก (Register)
-// ------------------------------------------
+// ==========================================
 app.post('/api/register', (req, res) => {
     const { name, email, phone, password, confirmPassword } = req.body;
 
-    // 1. เช็กว่ากรอกข้อมูลครบไหม
-    if (!name || !email || !phone || !password || !confirmPassword) {
-        return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบทุกช่อง" });
+    // 1. เช็กว่ากรอกข้อมูลครบไหม + ดักจับกรณีเป็นช่องว่างล้วน
+    if (!name || name.trim() === '' || !email || !phone || !password || !confirmPassword) {
+        return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบทุกช่อง (ห้ามเว้นวรรคว่างเปล่า)" });
     }
 
+    // ⚡ [เพิ่มจุดนี้] ดักจับการเว้นวรรคไว้หน้าสุดหรือหลังสุดของชื่อ
+    if (name !== name.trim()) {
+        return res.status(400).json({ message: "ชื่อผู้ใช้ห้ามมีเว้นวรรคอยู่หน้าสุดหรือหลังสุด" });
+    }
+
+    // 2. ป้องกัน XSS / Script Injection และอักขระพิเศษ
+    const hasHtmlTag = /<[^>]*>/g.test(name);
+    const isValidNameFormat = /^[a-zA-Z0-9\u0E00-\u0E7F\s]+$/;
+
+    if (hasHtmlTag || !isValidNameFormat.test(name)) {
+        return res.status(400).json({ message: "ชื่อผู้ใช้ไม่อนุญาตให้ใช้แท็กสคริปต์หรืออักขระพิเศษ" });
+    }
+
+    // 3. เช็กรูปแบบเบอร์โทรศัพท์ (10 หลัก ขึ้นต้นด้วย 06, 08, 09)
     const phoneRegex = /^0[689]\d{8}$/;
     if (!phoneRegex.test(phone)) {
         return res.status(400).json({ message: "กรุณากรอกเบอร์โทรศัพท์มือถือให้ถูกต้อง (10 หลัก เช่น 0812345678)" });
     }
 
-    // 2. เช็กว่ารหัสผ่านตรงกันไหม
+    // 4. เช็กว่ารหัสผ่านตรงกันไหม
     if (password !== confirmPassword) {
         return res.status(400).json({ message: "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน!" });
     }
 
-    // 3. เช็กว่า "ชื่อ" ซ้ำไหม (แปลงตัวพิมพ์เล็ก-ใหญ่ให้เช็กง่ายขึ้น)
+    // 5. เช็กว่า "ชื่อ" ซ้ำไหม
     const isNameExist = mockUsers.find(user => user.name.toLowerCase() === name.toLowerCase());
     if (isNameExist) {
         return res.status(400).json({ message: "ชื่อผู้ใช้นี้มีในระบบแล้ว!" });
     }
 
-    // 4. เช็กว่า "อีเมล" ซ้ำไหม (แปลงเป็นตัวพิมพ์เล็กทั้งหมดก่อนเช็ก)
+    // 6. เช็กว่า "อีเมล" ซ้ำไหม
     const isEmailExist = mockUsers.find(user => user.email.toLowerCase() === email.toLowerCase());
     if (isEmailExist) {
         return res.status(400).json({ message: "อีเมลนี้มีในระบบแล้ว!" });
     }
 
-    // 5. เช็กว่า "เบอร์โทรศัพท์" ซ้ำไหม
+    // 7. เช็กว่า "เบอร์โทรศัพท์" ซ้ำไหม
     const isPhoneExist = mockUsers.find(user => user.phone === phone);
     if (isPhoneExist) {
         return res.status(400).json({ message: "เบอร์โทรศัพท์นี้มีในระบบแล้ว!" });
     }
 
-    // สร้างข้อมูลผู้ใช้ใหม่
+    // บันทึกข้อมูลผู้ใช้ใหม่
     const newUser = {
         id: mockUsers.length + 1,
         name,
@@ -70,9 +84,9 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-// ------------------------------------------
-// 2. API เข้าสู่ระบบ (Login) - ใช้ Email ตาม Figma
-// ------------------------------------------
+// ==========================================
+// 2. API เข้าสู่ระบบ (Login)
+// ==========================================
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -80,7 +94,6 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ message: "กรุณากรอก Email และ Password" });
     }
 
-    // ค้นหาผู้ใช้จาก Email และ Password
     const user = mockUsers.find(u => u.email === email && u.password === password);
 
     if (user) {
@@ -98,7 +111,9 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// API แถมสำหรับดูข้อมูลทั้งหมด (เพื่อใช้ตรวจเช็ค)
+// ==========================================
+// 3. API ดูข้อมูลทั้งหมด (สำหรับตรวจเช็ค)
+// ==========================================
 app.get('/api/users', (req, res) => {
     res.json(mockUsers);
 });

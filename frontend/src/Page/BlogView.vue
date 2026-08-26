@@ -88,6 +88,14 @@
             >
               อ่านเพิ่มเติม &rarr;
             </router-link>
+        <div v-for="article in articles" :key="article.title" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
+            {{ article.image }}
+          </div>
+          <div class="p-6">
+            <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
+            <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
+            <p class="text-sm text-[#64748B] leading-relaxed">{{ article.description }}</p>
           </div>
         </div>
       </div>
@@ -110,6 +118,7 @@
             <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
             <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
             <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><router-link to="/services" class="hover:underline">Self-Care Resource Library</router-link></li>
           </ul>
         </div>
         <div>

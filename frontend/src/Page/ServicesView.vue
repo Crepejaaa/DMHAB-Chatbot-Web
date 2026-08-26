@@ -96,6 +96,9 @@
             <router-link :to="'/services/' + service.id" class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block">
               See detail
             </router-link>
+            <button class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md">
+              See detail
+            </button>
           </div>
         </div>
       </div>
@@ -120,6 +123,7 @@
             <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
             <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
             <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">Self-Care Resource Library</a></li>
           </ul>
         </div>
         <div>
