@@ -84,6 +84,11 @@
             </router-link>
           </div>
 
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="text-center pt-2">
+            <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
+          </div>
+
           <!-- Submit Button -->
           <div class="pt-4">
             <button type="submit" class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer">
@@ -146,8 +151,10 @@
 <script setup>
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 
 const form = ref({
@@ -155,39 +162,21 @@ const form = ref({
   password: '',
   rememberMe: false
 })
+const errorMessage = ref('')
 
 const handleLogin = async () => {
+  errorMessage.value = ''
   if (!form.value.email || !form.value.password) {
-    alert('กรุณากรอกอีเมลและรหัสผ่านก่อนเข้าสู่ระบบ')
+    errorMessage.value = 'กรุณากรอกอีเมลและรหัสผ่านก่อนเข้าสู่ระบบ'
     return
   }
 
-  try {
-    const response = await fetch('http://localhost:3000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: form.value.email.trim(),
-        password: form.value.password
-      })
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      throw new Error(data.message || 'เข้าสู่ระบบไม่สำเร็จ')
-    }
-
-    if (data.token) {
-      localStorage.setItem('token', data.token)
-    }
-
-    alert(data.message || 'เข้าสู่ระบบสำเร็จ')
+  const result = await authStore.login(form.value.email.trim(), form.value.password)
+  
+  if (result.success) {
     router.push('/')
-  } catch (error) {
-    alert(error.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ')
+  } else {
+    errorMessage.value = result.message
   }
 }
 </script>

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,20 @@ const router = createRouter({
       component: () => import('../Page/AboutView.vue')
     }
   ]
+})
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  // หน้าที่สามารถเข้าถึงได้โดยไม่ต้องล็อกอิน
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/blog', '/about']
+  const authRequired = !publicPages.includes(to.path)
+  const authStore = useAuthStore()
+
+  if (authRequired && !authStore.isAuthenticated) {
+    return next('/login')
+  }
+
+  next()
 })
 
 export default router
