@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,10 +84,10 @@ router.beforeEach((to, from, next) => {
 
   const authRequired = !isPublic;
   
-  // จำลองตรวจสอบการเข้าสู่ระบบผ่าน localStorage (แก้ไขตามระบบ Store จริงในอนาคต)
-  const isAuthenticated = localStorage.getItem('token') !== null;
+  // เรียกใช้การตรวจสอบสิทธิ์ผ่าน Pinia Store
+  const authStore = useAuthStore();
 
-  if (authRequired && !isAuthenticated) {
+  if (authRequired && !authStore.isAuthenticated) {
     return next('/login');
   }
 
