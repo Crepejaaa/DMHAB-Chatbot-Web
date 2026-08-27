@@ -58,14 +58,13 @@
 
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
+import { useAssessmentStore } from '../stores/assessmentStore'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const assessmentStore = useAssessmentStore()
 
-// Mock result data 
-const assessmentResult = ref({
-  score: 85,
-  level: 'SEVERE' // NORMAL, MODERATE, SEVERE
-})
+// Use real data from store
+const assessmentResult = computed(() => assessmentStore.result)
 
 const showEmergencyModal = ref(false)
 
