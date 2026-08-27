@@ -209,9 +209,13 @@
 
 <script setup>
 import { ref, inject, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAssessmentStore } from '../stores/assessmentStore'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isColorBlindMode = inject('isColorBlindMode')
+const router = useRouter()
+const assessmentStore = useAssessmentStore()
 
 // State คำตอบ
 const selectedMood = ref(null)
@@ -240,6 +244,24 @@ const screeningQuestions = [
 ]
 
 const submitAssessment = () => {
-  alert('ส่งแบบประเมินเรียบร้อยแล้วค่ะ!')
+  // คำนวณคะแนนรวม
+  let totalScore = 0
+  for (const id in screeningAnswers.value) {
+    totalScore += screeningAnswers.value[id]
+  }
+
+  // ประเมินระดับ (ตัวอย่าง: >= 8 คือ SEVERE, >= 4 คือ MODERATE)
+  let level = 'NORMAL'
+  if (totalScore >= 8) {
+    level = 'SEVERE'
+  } else if (totalScore >= 4) {
+    level = 'MODERATE'
+  }
+
+  // เก็บผลลัพธ์ลง Store
+  assessmentStore.setAssessmentResult(totalScore, level)
+
+  // เปลี่ยนหน้าไปแสดงผล
+  router.push('/assessment-result')
 }
 </script>

@@ -68,30 +68,17 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
+const router = useRouter()
 const chatContainer = ref(null)
 const newMessage = ref('')
+const messages = ref([])
 
-// Mock Messages Data
-const messages = ref([
-  {
-    sender: 'BOT',
-    text: 'สวัสดีค่ะ ฉันน้องมุกห่วงใย วันนี้คุณรู้สึกอย่างไรบ้างคะ อยากเล่าเรื่องอะไรให้ฉันฟังไหม',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5)
-  },
-  {
-    sender: 'USER',
-    text: 'ช่วงนี้รู้สึกเครียดเรื่องงานนิดหน่อยครับ',
-    timestamp: new Date(Date.now() - 1000 * 60 * 4)
-  },
-  {
-    sender: 'BOT',
-    text: 'เข้าใจเลยค่ะ เรื่องงานอาจทำให้เกิดความกดดันได้ ลองเล่าให้ฟังเพิ่มได้ไหมคะว่ามีเรื่องไหนที่ทำให้หนักใจเป็นพิเศษ',
-    timestamp: new Date(Date.now() - 1000 * 60 * 3)
-  }
-])
-
-const formatTime = (date) => {
+const formatTime = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
   return new Intl.DateTimeFormat('th-TH', { hour: '2-digit', minute: '2-digit' }).format(date)
 }
 
@@ -102,31 +89,76 @@ const scrollToBottom = async () => {
   }
 }
 
-const sendMessage = () => {
+const fetchMessages = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return router.push('/login')
+
+    // สมมติว่า Backend ให้บริการที่พอร์ต 3000
+    const response = await axios.get('http://localhost:3000/api/chat/sessions', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    
+    if (response.data && response.data.messages) {
+      messages.value = response.data.messages
+    }
+    scrollToBottom()
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่')
+      localStorage.removeItem('token')
+      router.push('/login')
+    } else {
+      console.error('Failed to load chat sessions:', error)
+      alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เพื่อดึงประวัติการแชทได้')
+    }
+  }
+}
+
+const sendMessage = async () => {
   if (!newMessage.value.trim()) return
 
-  // User message
+  const userText = newMessage.value.trim()
+  
+  // แสดงผลฝั่ง User ทันที
   messages.value.push({
     sender: 'USER',
-    text: newMessage.value.trim(),
-    timestamp: new Date()
+    text: userText,
+    timestamp: new Date().toISOString()
   })
 
   newMessage.value = ''
   scrollToBottom()
 
-  // Mock Bot reply after delay
-  setTimeout(() => {
-    messages.value.push({
-      sender: 'BOT',
-      text: 'รับทราบค่ะ เราพร้อมรับฟังเสมอนะคะ หากมีเรื่องใดไม่สบายใจ สามารถพิมพ์คุยต่อได้เลยค่ะ',
-      timestamp: new Date()
-    })
+  try {
+    const token = localStorage.getItem('token')
+    
+    const response = await axios.post('http://localhost:3000/api/chat', 
+      { message: userText },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+
+    if (response.data && response.data.reply) {
+      messages.value.push({
+        sender: 'BOT',
+        text: response.data.reply,
+        timestamp: new Date().toISOString()
+      })
+    }
     scrollToBottom()
-  }, 1000)
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่')
+      localStorage.removeItem('token')
+      router.push('/login')
+    } else {
+      console.error('Failed to send message:', error)
+      alert('การส่งข้อความล้มเหลว กรุณาลองใหม่อีกครั้ง')
+    }
+  }
 }
 
 onMounted(() => {
-  scrollToBottom()
+  fetchMessages()
 })
 </script>
