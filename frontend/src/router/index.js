@@ -55,6 +55,11 @@ const router = createRouter({
       component: () => import('../Page/AboutView.vue')
     },
     {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('../Page/ContactView.vue')
+    },
+    {
       path: '/assessment-result',
       name: 'assessment-result',
       component: () => import('../Page/AssessmentResultView.vue')
@@ -63,25 +68,30 @@ const router = createRouter({
       path: '/chat',
       name: 'chat',
       component: () => import('../Page/ChatView.vue')
-      path: '/contact',
-      name: 'contact',
-      component: () => import('../Page/ContactView.vue')
     }
   ]
 })
 
 // Navigation Guard
 router.beforeEach((to, from, next) => {
-  // หน้าที่สามารถเข้าถึงได้โดยไม่ต้องล็อกอิน
-  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/blog', '/about']
-  const authRequired = !publicPages.includes(to.path)
-  const authStore = useAuthStore()
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment']
+  
+  // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
+  const isPublic = publicPages.some(page => {
+    const regex = new RegExp('^' + page.replace(/:[^\s/]+/g, '([\\w-]+)') + '$');
+    return regex.test(to.path);
+  });
+
+  const authRequired = !isPublic;
+  
+  // เรียกใช้การตรวจสอบสิทธิ์ผ่าน Pinia Store
+  const authStore = useAuthStore();
 
   if (authRequired && !authStore.isAuthenticated) {
-    return next('/login')
+    return next('/login');
   }
 
-  next()
+  next();
 })
 
 export default router
