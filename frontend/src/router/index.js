@@ -75,7 +75,7 @@ const router = createRouter({
 // Navigation Guard
 router.beforeEach((to, from, next) => {
   const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment']
-  
+
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
   const isPublic = publicPages.some(page => {
     const regex = new RegExp('^' + page.replace(/:[^\s/]+/g, '([\\w-]+)') + '$');
@@ -83,7 +83,7 @@ router.beforeEach((to, from, next) => {
   });
 
   const authRequired = !isPublic;
-  
+
   // เรียกใช้การตรวจสอบสิทธิ์ผ่าน Pinia Store
   const authStore = useAuthStore();
 
