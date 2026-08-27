@@ -115,6 +115,11 @@
             <label for="terms" class="ml-2 text-sm text-gray-700 font-medium">ยอมรับเงื่อนไข</label>
           </div>
 
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="text-center pt-2">
+            <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
+          </div>
+
           <!-- Submit Button -->
           <div class="pt-4">
             <button type="submit"
@@ -170,7 +175,11 @@
 
 <script setup>
 import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const isColorBlindMode = inject('isColorBlindMode')
 
 const fileInput = ref(null)
@@ -185,6 +194,7 @@ const form = ref({
   acceptTerms: false,
   profileImage: null
 })
+const errorMessage = ref('')
 
 const triggerFileInput = () => {
   if (fileInput.value) {
@@ -201,43 +211,36 @@ const handleImageUpload = (event) => {
 }
 
 const handleRegister = async () => {
+  errorMessage.value = ''
+  
   // 🟢 [เพิ่มใหม่] เช็กเบอร์โทรศัพท์ฝั่งหน้าเว็บ
   const phoneRegex = /^0[689]\d{8}$/;
   if (!phoneRegex.test(form.value.phone)) {
-    alert("กรุณากรอกเบอร์โทรศัพท์มือถือให้ถูกต้อง (10 หลัก เริ่มด้วย 06, 08 หรือ 09)");
-    return; // สั่ง return เพื่อหยุดการทำงาน ไม่ให้ส่งข้อมูลไป Backend
+    errorMessage.value = "กรุณากรอกเบอร์โทรศัพท์มือถือให้ถูกต้อง (10 หลัก เริ่มด้วย 06, 08 หรือ 09)";
+    return;
   }
 
   // เช็กรหัสผ่านเดิมของคุณ
   if (form.value.password !== form.value.confirmPassword) {
-    alert("รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!")
+    errorMessage.value = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!"
     return
   }
 
-  try {
-    const response = await fetch('http://localhost:3000/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: form.value.name,
-        email: form.value.email,
-        phone: form.value.phone,
-        password: form.value.password,
-        confirmPassword: form.value.confirmPassword
-      })
-    })
+  const userData = {
+    name: form.value.name,
+    email: form.value.email,
+    phone: form.value.phone,
+    password: form.value.password,
+    confirmPassword: form.value.confirmPassword
+  }
 
-    const data = await response.json()
+  const result = await authStore.register(userData)
 
-    if (!response.ok) {
-      throw new Error(data.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก')
-    }
-
-    alert(data.message)
-  } catch (error) {
-    alert(error.message)
+  if (result.success) {
+    alert(result.message) // Can optionally show alert or just redirect
+    router.push('/login')
+  } else {
+    errorMessage.value = result.message
   }
 }
 </script>
