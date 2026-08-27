@@ -57,8 +57,40 @@ const router = createRouter({
       path: '/contact',
       name: 'contact',
       component: () => import('../Page/ContactView.vue')
+    },
+    {
+      path: '/assessment-result',
+      name: 'assessment-result',
+      component: () => import('../Page/AssessmentResultView.vue')
+    },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: () => import('../Page/ChatView.vue')
     }
   ]
+})
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment']
+  
+  // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
+  const isPublic = publicPages.some(page => {
+    const regex = new RegExp('^' + page.replace(/:[^\s/]+/g, '([\\w-]+)') + '$');
+    return regex.test(to.path);
+  });
+
+  const authRequired = !isPublic;
+  
+  // จำลองตรวจสอบการเข้าสู่ระบบผ่าน localStorage (แก้ไขตามระบบ Store จริงในอนาคต)
+  const isAuthenticated = localStorage.getItem('token') !== null;
+
+  if (authRequired && !isAuthenticated) {
+    return next('/login');
+  }
+
+  next();
 })
 
 export default router
