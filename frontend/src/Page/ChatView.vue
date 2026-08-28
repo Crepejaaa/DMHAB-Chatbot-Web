@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-50">
+  <div class="flex flex-col h-screen bg-gray-50 relative">
     <!-- Header -->
     <header class="flex items-center px-4 py-3 bg-white shadow-sm shrink-0">
       <button @click="$router.push('/')" class="p-2 mr-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
@@ -43,18 +43,21 @@
 
     <!-- Input Area -->
     <footer class="bg-white border-t border-gray-200 p-3 sm:p-4 shrink-0">
+      <div v-if="isCompleted" class="text-center text-sm text-gray-500 mb-2">
+        การประเมินเสร็จสิ้นแล้ว ขอบคุณที่พูดคุยกับเรา
+      </div>
       <form @submit.prevent="sendMessage" class="flex items-center space-x-2 max-w-4xl mx-auto">
         <input 
           v-model="newMessage" 
           type="text" 
-          :placeholder="isAssessmentCompleted ? 'การประเมินเสร็จสิ้น ไม่สามารถพิมพ์ข้อความได้' : 'พิมพ์ข้อความของคุณที่นี่...'" 
-          :disabled="isAssessmentCompleted"
-          class="flex-1 px-4 py-2 bg-gray-100 border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none disabled:bg-gray-200 disabled:cursor-not-allowed"
+          :placeholder="isCompleted ? 'การสนทนาจบลงแล้ว' : 'พิมพ์ข้อความของคุณที่นี่...'" 
+          :disabled="isCompleted"
+          class="flex-1 px-4 py-2 bg-gray-100 border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none disabled:opacity-60 disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
         />
         <button 
           type="submit" 
-          :disabled="!newMessage.trim() || isAssessmentCompleted"
+          :disabled="!newMessage.trim() || isCompleted"
           class="p-2 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
         >
           <span class="hidden sm:inline mr-2">ส่ง</span>
@@ -65,27 +68,26 @@
       </form>
     </footer>
 
-    <!-- Emergency Modal -->
-    <div v-if="showEmergencyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-      <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
-        <div class="bg-rose-600 p-4 flex justify-center items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    <!-- Emergency Modal (Crisis Trigger) -->
+    <div v-if="isEmergency" class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-all border-t-4 border-rose-500">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 mb-4">
+          <svg class="h-8 w-8 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
         </div>
-        <div class="p-6 text-center">
-          <h2 class="text-xl font-bold text-gray-900 mb-2">คำเตือนความเสี่ยงระดับวิกฤต</h2>
-          <p class="text-gray-600 mb-6 text-sm">
-            ระบบตรวจพบความเสี่ยงด้านสุขภาพจิตในระดับที่ควรได้รับการดูแลทันที 
-            โปรดติดต่อผู้เชี่ยวชาญหรือสายด่วนสุขภาพจิตเพื่อขอรับคำปรึกษา
-          </p>
-          <a href="tel:1323" class="w-full inline-flex justify-center items-center px-4 py-3 bg-rose-600 text-white text-base font-medium rounded-xl hover:bg-rose-700 transition-colors shadow-md">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">คุณกำลังมีความเสี่ยงสูง</h3>
+        <p class="text-sm text-gray-600 mb-6">
+          เรารับรู้ถึงความรู้สึกของคุณและอยากให้คุณรู้ว่าคุณไม่ได้อยู่คนเดียว หากต้องการที่ปรึกษาอย่างเร่งด่วน โปรดติดต่อผู้เชี่ยวชาญทันที
+        </p>
+        <div class="flex flex-col space-y-3">
+          <a href="tel:1323" class="w-full flex items-center justify-center px-4 py-3 bg-rose-600 text-white text-base font-medium rounded-xl hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            โทร 1323 สายด่วนสุขภาพจิต
+            โทรสายด่วน 1323
           </a>
-          <button @click="showEmergencyModal = false" class="mt-4 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+          <button @click="isEmergency = false" class="w-full px-4 py-3 bg-white text-gray-700 text-sm font-medium rounded-xl border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
             ปิดหน้าต่างนี้
           </button>
         </div>
@@ -104,9 +106,9 @@ const chatContainer = ref(null)
 const newMessage = ref('')
 const messages = ref([])
 
-// State สำหรับควบคุม UI
-const showEmergencyModal = ref(false)
-const isAssessmentCompleted = ref(false)
+// State สำหรับจัดการ Crisis และสถานะการประเมิน
+const isEmergency = ref(false)
+const isCompleted = ref(false)
 
 const formatTime = (dateString) => {
   if (!dateString) return ''
@@ -132,6 +134,11 @@ const fetchMessages = async () => {
     
     if (response.data && response.data.messages) {
       messages.value = response.data.messages
+      
+      // ดึงสถานะปัจจุบันของแชทมาเช็ค (ถ้ามี)
+      if (response.data.assessment_status === 'COMPLETED') {
+        isCompleted.value = true
+      }
     }
     scrollToBottom()
   } catch (error) {
@@ -147,8 +154,7 @@ const fetchMessages = async () => {
 }
 
 const sendMessage = async () => {
-  // ป้องกันการส่งข้อความหากประเมินเสร็จสิ้นแล้ว
-  if (!newMessage.value.trim() || isAssessmentCompleted.value) return
+  if (!newMessage.value.trim() || isCompleted.value) return
 
   const userText = newMessage.value.trim()
   
@@ -169,29 +175,25 @@ const sendMessage = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
-    if (response.data && response.data.reply) {
-      messages.value.push({
-        sender: 'BOT',
-        text: response.data.reply,
-        timestamp: new Date().toISOString()
-      })
-    }
+    if (response.data) {
+      if (response.data.reply) {
+        messages.value.push({
+          sender: 'BOT',
+          text: response.data.reply,
+          timestamp: new Date().toISOString()
+        })
+      }
 
-    // ตรวจสอบระดับความเสี่ยงฉุกเฉิน
-    if (response.data && response.data.severity_level === 'SEVERE') {
-      showEmergencyModal.value = true
-    }
+      // ตรวจสอบความเสี่ยงรุนแรง
+      if (response.data.severity_level === 'SEVERE') {
+        isEmergency.value = true
+      }
 
-    // ตรวจสอบสถานะการประเมิน
-    if (response.data && response.data.assessment_status === 'COMPLETED') {
-      isAssessmentCompleted.value = true
-      messages.value.push({
-        sender: 'BOT',
-        text: 'การประเมินเสร็จสิ้นแล้ว ขอบคุณที่ให้ความร่วมมือค่ะ ระบบได้บันทึกข้อมูลของคุณเรียบร้อยแล้ว หากพบปัญหาสามารถติดต่อผู้ดูแลได้ทันที',
-        timestamp: new Date().toISOString()
-      })
+      // ตรวจสอบสถานะการประเมิน
+      if (response.data.assessment_status === 'COMPLETED') {
+        isCompleted.value = true
+      }
     }
-
     scrollToBottom()
   } catch (error) {
     if (error.response && error.response.status === 401) {
