@@ -4,10 +4,10 @@ import { verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-// ดึงข้อความแชทใน Session ปัจจุบัน
+// GET /sessions -> ใช้งาน verifyToken ก่อนเรียก getUserChatSessions
 router.get("/sessions", verifyToken, getUserChatSessions);
 
-// ส่งข้อความคุยกับบอท
+// POST / -> ใช้งาน verifyToken ก่อนเรียก sendMessage
 router.post("/", verifyToken, sendMessage);
 
 export default router;
