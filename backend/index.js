@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 
-// นำเข้า authRoutes (หากคอมไพล์จาก TS หรือใช้ ts-node)
-// กรณีใช้ CommonJS ร่วมกับ ES Module (export default)
+// นำเข้า authRoutes และ chatRoutes
 const authRoutes = require('./src/routes/authRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -15,8 +15,10 @@ app.use(express.json());
 // API Routes 
 // ==========================================
 // นำ route จาก authRoutes มาเชื่อมที่ path /api
-// หาก export default ใน TS เมื่อถูกแปลง จะอยู่ที่ .default
 app.use('/api', authRoutes.default || authRoutes);
+
+// นำ route จาก chatRoutes มาเชื่อมที่ path /api/chat
+app.use('/api/chat', chatRoutes.default || chatRoutes);
 
 // (ตัวอย่าง) API ดูข้อมูลทั้งหมด (ดึงจาก Prisma แทน Mock Data)
 const { PrismaClient } = require('@prisma/client');
