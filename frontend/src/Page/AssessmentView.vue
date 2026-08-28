@@ -195,7 +195,7 @@
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Hotline</h4>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
