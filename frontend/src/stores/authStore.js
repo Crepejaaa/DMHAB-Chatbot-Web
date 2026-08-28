@@ -15,16 +15,19 @@ export const useAuthStore = defineStore('auth', {
         const response = await axios.post('http://localhost:3000/api/login', { email, password });
         
         this.token = response.data.token;
-        this.user = response.data.user || { email }; 
+        // Backend แบบ Prisma ไม่ได้ส่ง object user กลับมา ส่งเพียงแค่ token
+        // เก็บอีเมลไว้แสดงชั่วคราวก่อน (หรือสามารถแก้ Backend ให้ส่ง Object user กลับมาด้วย)
+        this.user = { email }; 
         
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
         
         return { success: true, message: response.data.message || 'เข้าสู่ระบบสำเร็จ' };
       } catch (error) {
+        // ดักจับฟิลด์ 'error' ที่ส่งมาจาก authController (เช่น error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
         return { 
           success: false, 
-          message: error.response?.data?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' 
+          message: error.response?.data?.error || error.response?.data?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' 
         };
       }
     },
@@ -35,7 +38,7 @@ export const useAuthStore = defineStore('auth', {
       } catch (error) {
         return { 
           success: false, 
-          message: error.response?.data?.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก' 
+          message: error.response?.data?.error || error.response?.data?.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก' 
         };
       }
     },
