@@ -43,7 +43,7 @@ export const generateChatResponse = async (
     ];
 
     const response = await axios.post("http://localhost:11434/api/chat", {
-      model: "llama-3-typhoon",
+      model: "llama3",
       messages: messages,
       format: "json",
       stream: false
