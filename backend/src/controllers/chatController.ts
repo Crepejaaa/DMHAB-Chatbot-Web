@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../prismaClient";
 import { generateChatResponse } from "../services/ollamaService";
 
-const prisma = new PrismaClient();
+
 
 // ดึงประวัติการสนทนาของ Session ปัจจุบัน
 export const getUserChatSessions = async (req: Request, res: Response): Promise<void> => {
