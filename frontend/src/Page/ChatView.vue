@@ -47,13 +47,14 @@
         <input 
           v-model="newMessage" 
           type="text" 
-          placeholder="พิมพ์ข้อความของคุณที่นี่..." 
-          class="flex-1 px-4 py-2 bg-gray-100 border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+          :placeholder="isAssessmentCompleted ? 'การประเมินเสร็จสิ้น ไม่สามารถพิมพ์ข้อความได้' : 'พิมพ์ข้อความของคุณที่นี่...'" 
+          :disabled="isAssessmentCompleted"
+          class="flex-1 px-4 py-2 bg-gray-100 border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none disabled:bg-gray-200 disabled:cursor-not-allowed"
           required
         />
         <button 
           type="submit" 
-          :disabled="!newMessage.trim()"
+          :disabled="!newMessage.trim() || isAssessmentCompleted"
           class="p-2 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
         >
           <span class="hidden sm:inline mr-2">ส่ง</span>
@@ -63,6 +64,33 @@
         </button>
       </form>
     </footer>
+
+    <!-- Emergency Modal -->
+    <div v-if="showEmergencyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+      <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
+        <div class="bg-rose-600 p-4 flex justify-center items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div class="p-6 text-center">
+          <h2 class="text-xl font-bold text-gray-900 mb-2">คำเตือนความเสี่ยงระดับวิกฤต</h2>
+          <p class="text-gray-600 mb-6 text-sm">
+            ระบบตรวจพบความเสี่ยงด้านสุขภาพจิตในระดับที่ควรได้รับการดูแลทันที 
+            โปรดติดต่อผู้เชี่ยวชาญหรือสายด่วนสุขภาพจิตเพื่อขอรับคำปรึกษา
+          </p>
+          <a href="tel:1323" class="w-full inline-flex justify-center items-center px-4 py-3 bg-rose-600 text-white text-base font-medium rounded-xl hover:bg-rose-700 transition-colors shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            โทร 1323 สายด่วนสุขภาพจิต
+          </a>
+          <button @click="showEmergencyModal = false" class="mt-4 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+            ปิดหน้าต่างนี้
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -75,6 +103,10 @@ const router = useRouter()
 const chatContainer = ref(null)
 const newMessage = ref('')
 const messages = ref([])
+
+// State สำหรับควบคุม UI
+const showEmergencyModal = ref(false)
+const isAssessmentCompleted = ref(false)
 
 const formatTime = (dateString) => {
   if (!dateString) return ''
@@ -94,7 +126,6 @@ const fetchMessages = async () => {
     const token = localStorage.getItem('token')
     if (!token) return router.push('/login')
 
-    // สมมติว่า Backend ให้บริการที่พอร์ต 3000
     const response = await axios.get('http://localhost:3000/api/chat/sessions', {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -116,11 +147,11 @@ const fetchMessages = async () => {
 }
 
 const sendMessage = async () => {
-  if (!newMessage.value.trim()) return
+  // ป้องกันการส่งข้อความหากประเมินเสร็จสิ้นแล้ว
+  if (!newMessage.value.trim() || isAssessmentCompleted.value) return
 
   const userText = newMessage.value.trim()
   
-  // แสดงผลฝั่ง User ทันที
   messages.value.push({
     sender: 'USER',
     text: userText,
@@ -145,6 +176,22 @@ const sendMessage = async () => {
         timestamp: new Date().toISOString()
       })
     }
+
+    // ตรวจสอบระดับความเสี่ยงฉุกเฉิน
+    if (response.data && response.data.severity_level === 'SEVERE') {
+      showEmergencyModal.value = true
+    }
+
+    // ตรวจสอบสถานะการประเมิน
+    if (response.data && response.data.assessment_status === 'COMPLETED') {
+      isAssessmentCompleted.value = true
+      messages.value.push({
+        sender: 'BOT',
+        text: 'การประเมินเสร็จสิ้นแล้ว ขอบคุณที่ให้ความร่วมมือค่ะ ระบบได้บันทึกข้อมูลของคุณเรียบร้อยแล้ว หากพบปัญหาสามารถติดต่อผู้ดูแลได้ทันที',
+        timestamp: new Date().toISOString()
+      })
+    }
+
     scrollToBottom()
   } catch (error) {
     if (error.response && error.response.status === 401) {
