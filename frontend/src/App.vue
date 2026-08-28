@@ -1,12 +1,14 @@
 <!-- App.vue -->
 <template>
   <div :class="{ 'grayscale-mode': isColorBlindMode }">
+    <SkeletonLoader />
     <router-view />
   </div>
 </template>
 
 <script setup>
 import { ref, provide, watch } from 'vue'
+import SkeletonLoader from './components/SkeletonLoader.vue'
 
 // อ่านค่าที่เคยตั้งไว้จาก localStorage (ถ้ามี) เพื่อให้จำค่าไว้แม้ refresh หน้า
 const isColorBlindMode = ref(localStorage.getItem('colorBlindMode') === 'true')
@@ -18,6 +20,14 @@ watch(isColorBlindMode, (val) => {
 
 // ส่งค่านี้ไปให้ทุกหน้า/ทุกคอมโพเนนต์ลูกใช้งานผ่าน inject
 provide('isColorBlindMode', isColorBlindMode)
+</script>
+
+<script>
+export default {
+  components: {
+    SkeletonLoader
+  }
+}
 </script>
 
 <style>
