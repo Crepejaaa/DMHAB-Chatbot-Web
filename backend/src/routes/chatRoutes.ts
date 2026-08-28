@@ -1,10 +1,13 @@
 import { Router } from "express";
-import { getUserChatSessions } from "../controllers/chatController";
+import { getUserChatSessions, sendMessage } from "../controllers/chatController";
 import { verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router();
 
-// ใส่ verifyToken ดักไว้ ผู้ใช้ต้องมี Token ถึงจะเข้ามาดึงข้อมูลแชทได้
+// ดึงข้อความแชทใน Session ปัจจุบัน
 router.get("/sessions", verifyToken, getUserChatSessions);
+
+// ส่งข้อความคุยกับบอท
+router.post("/", verifyToken, sendMessage);
 
 export default router;
