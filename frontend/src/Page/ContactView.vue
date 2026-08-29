@@ -16,6 +16,8 @@
         <div class="w-12 h-12 flex items-center justify-center">
           <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
         </div>
+      </div>
+
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
         <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
         <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
@@ -38,19 +40,7 @@
           </button>
         </div>
 
-        <button 
-          @click="$router.push('/login')" 
-          class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
-        >
-          Login
-        </button>
-        
-        <button
-          @click="$router.push('/register')"
-          class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
-        >
-          Register
-        </button>
+        <ProfileMenu />
       </div>
     </nav>
 
@@ -245,6 +235,7 @@
 
 <script setup>
 import { inject, ref, onMounted, onUnmounted } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 const isColorBlindMode = inject('isColorBlindMode')
 

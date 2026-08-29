@@ -44,12 +44,7 @@
             </button>
           </div>
 
-          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
-            Login
-          </router-link>
-          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-            Register
-          </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 

@@ -4,10 +4,18 @@ import axios from 'axios';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    user: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('user')) || null;
+      } catch {
+        return null;
+      }
+    })(),
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
+    displayName: (state) => state.user?.name || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
+    userEmail: (state) => state.user?.email || 'example@gmail.com',
   },
   actions: {
     async login(email, password) {

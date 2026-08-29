@@ -33,19 +33,7 @@
           </button>
         </div>
 
-        <!-- ปุ่ม Login แก้เป็น router-link เรียบร้อยแล้ว -->
-        <button 
-  @click="$router.push('/login')" 
-  class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
->
-  Login
-</button>
-        
-        <button
-        @click="$router.push('/register')"
-        class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-          Register
-        </button>
+        <ProfileMenu />
       </div>
     </nav>
 
@@ -267,21 +255,22 @@
 
 <script setup>
 import { inject, onMounted, onUnmounted } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isColorBlindMode = inject('isColorBlindMode', false)
 
 let observer = null
 
 onMounted(() => {
   observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.remove(
-          'opacity-0', 
-          'translate-y-10', 
-          'translate-y-16', 
-          '-translate-x-16', 
-          'translate-x-16', 
+          'opacity-0',
+          'translate-y-10',
+          'translate-y-16',
+          '-translate-x-16',
+          'translate-x-16',
           'scale-95'
         )
         entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100')
@@ -289,7 +278,7 @@ onMounted(() => {
       }
     })
   }, {
-    threshold: 0.1 
+    threshold: 0.1,
   })
 
   const animElements = document.querySelectorAll('.scroll-anim')
