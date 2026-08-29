@@ -74,3 +74,8 @@ npm run dev
 รันฝั่ง Backend (เซิร์ฟเวอร์): npm run dev
 
 รันฝั่ง AI (Ollama): ollama run llama3
+ติดตั้งเพิ่ม 
+npm install -D tsx
+npm install -g tsx
+npm install @prisma/adapter-pg pg
+npm install -D @types/pg
