@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const prisma = new PrismaClient();
+// เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
+import prisma from "../prismaClient";
+
 const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -14,7 +15,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const existingUser = await prisma.user.findFirst({
       where: { OR: [{ email }, { username }] }
     });
-    
+
     if (existingUser) {
       res.status(400).json({ error: "อีเมลหรือชื่อผู้ใช้นี้มีในระบบแล้ว" });
       return;
@@ -50,8 +51,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // สร้าง Token ส่งกลับไปให้ Client ใช้ยืนยันตัวตนในครั้งถัดไป
     const token = jwt.sign(
-      { userId: user.id, role: user.role }, 
-      JWT_SECRET, 
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
       { expiresIn: "1d" }
     );
 
