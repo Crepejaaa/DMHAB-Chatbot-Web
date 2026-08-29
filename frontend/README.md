@@ -71,6 +71,6 @@ npm run dev
 
 รันฝั่ง Frontend (หน้าบ้าน): npm run dev
 
-รันฝั่ง Backend (เซิร์ฟเวอร์): npx nodemon index.js
+รันฝั่ง Backend (เซิร์ฟเวอร์): npm run dev
 
 รันฝั่ง AI (Ollama): ollama run llama3
