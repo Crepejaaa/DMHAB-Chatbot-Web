@@ -33,7 +33,7 @@
           <a href="#" class="hover:text-[#D1FAE5] transition">Blog</a>
         </div>
 
-        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Login + Register -->
+        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Profile Menu -->
         <div class="flex gap-3 items-center text-sm">
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
             <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
@@ -49,12 +49,7 @@
             </button>
           </div>
 
-          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
-            Login
-          </router-link>
-          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-            Register
-          </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 

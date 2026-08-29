@@ -32,10 +32,20 @@ export default {
 
 <style>
 /* Style ส่วนกลาง (Global Style) สามารถใส่ font หรือการตั้งค่าพื้นฐานตรงนี้ได้ */
+html, body, #app {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #e9ece5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 .grayscale-mode {

@@ -28,7 +28,7 @@
           <router-link to="/blog" class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
         </div>
 
-        <div class="flex gap-3 items-center text-sm">
+        <div class="hidden md:flex gap-3 items-center text-sm">
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
             <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
             <button
@@ -43,12 +43,7 @@
             </button>
           </div>
 
-          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
-            Login
-          </router-link>
-          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-            Register
-          </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 
@@ -68,8 +63,25 @@
       </div>
     </header>
 
-    <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-16 space-y-8">
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-10 md:py-16">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6 md:gap-10">
+        <div class="flex items-start gap-4">
+          <div class="w-1.5 h-20 md:h-28 bg-white/80 rounded-full"></div>
+          <div>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-none tracking-tight">
+              Blog
+            </h1>
+            <p class="mt-4 max-w-xl text-sm md:text-xl text-[#D1FAE5] leading-relaxed italic">
+              “อ่านและเรียนรู้เรื่องราวที่ช่วยให้คุณเข้าใจตัวเองมากขึ้น”
+              ค้นพบบทความแนวทางดูแลสุขภาพจิตและแรงบันดาลใจที่คุณอาจต้องการในแต่ละวัน
+            </p>
+          </div>
+        </div>
+
+        <div class="hidden md:block w-72 h-28 rounded-full border-[10px] border-white/20 border-r-transparent opacity-80"></div>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="article in articles" :key="article.id" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
           <div>
             <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
@@ -82,20 +94,12 @@
             </div>
           </div>
           <div class="px-6 pb-6">
-            <router-link 
-              :to="'/blog/' + article.id" 
+            <router-link
+              :to="'/blog/' + article.id"
               class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
             >
               อ่านเพิ่มเติม &rarr;
             </router-link>
-        <div v-for="article in articles" :key="article.title" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-            {{ article.image }}
-          </div>
-          <div class="p-6">
-            <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
-            <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
-            <p class="text-sm text-[#64748B] leading-relaxed">{{ article.description }}</p>
           </div>
         </div>
       </div>
@@ -141,9 +145,10 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isColorBlindMode = inject('isColorBlindMode', ref(false))
 
 const articles = [
   {
