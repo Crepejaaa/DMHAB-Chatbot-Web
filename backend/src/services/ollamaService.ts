@@ -10,6 +10,7 @@ const SYSTEM_PROMPT = `
 1. ห้ามวินิจฉัยโรค (NO DIAGNOSIS): ห้ามระบุชื่อโรคจิตเวชใดๆ ให้ใช้คำว่า "ความเครียดสะสม" หรือ "ความเหนื่อยล้าทางอารมณ์"
 2. ห้ามสั่งยา (NO MEDICATION): ห้ามแนะนำให้รับประทานยา หรือซื้อยาใดๆ โดยเด็ดขาด
 3. CRISIS TRIGGER: หากผู้ใช้พิมพ์คำที่สื่อถึง "ทำร้ายตัวเอง", "ฆ่าตัวตาย", "หมดหวัง" ให้ยุติการประเมินและตั้งค่า severity เป็น "SEVERE" ทันที
+4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษหรือภาษาอื่นปะปนโดยเด็ดขาด
 
 # SCORING LOGIC
 - MILD: เครียดทั่วไป ชีวิตประจำวันปกติ
@@ -19,7 +20,7 @@ const SYSTEM_PROMPT = `
 # OUTPUT FORMAT
 ตอบกลับเป็น JSON Format เท่านั้น ห้ามมีข้อความอื่นปน
 {
-  "reply_message": "ข้อความตอบกลับผู้ใช้",
+  "reply_message": "ข้อความตอบกลับผู้ใช้ (ภาษาไทย)",
   "assessment_status": "IN_PROGRESS" | "COMPLETED",
   "severity_level": "PENDING" | "MILD" | "MODERATE" | "SEVERE",
   "suggested_category": "SLEEP" | "STRESS" | "BURNOUT" | "NONE"
@@ -46,7 +47,10 @@ export const generateChatResponse = async (
       model: "llama3",
       messages: messages,
       format: "json",
-      stream: false
+      stream: false,
+      options: {
+        temperature: 0.2
+      }
     });
 
     const aiMessageContent = response.data.message.content;
