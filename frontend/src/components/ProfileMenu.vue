@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative" ref="menuContainerRef">
     <div v-if="authStore.isAuthenticated" class="relative profile-menu hidden sm:block">
       <button
         @click="showProfileMenu = !showProfileMenu"
@@ -200,6 +200,7 @@ const authStore = useAuthStore()
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const showProfileMenu = ref(false)
 const mobileMenuOpen = ref(false)
+const menuContainerRef = ref(null)
 
 const userInitial = computed(() => {
   const name = authStore.displayName || 'U'
@@ -240,13 +241,8 @@ const handleLogout = () => {
 }
 
 const handleClickOutside = (event) => {
-  const dropdown = document.querySelector('.profile-menu')
-  if (dropdown && !dropdown.contains(event.target)) {
+  if (menuContainerRef.value && !menuContainerRef.value.contains(event.target)) {
     showProfileMenu.value = false
-  }
-
-  const mobileMenu = document.querySelector('.sm\:hidden')
-  if (mobileMenu && !mobileMenu.contains(event.target)) {
     mobileMenuOpen.value = false
   }
 }
