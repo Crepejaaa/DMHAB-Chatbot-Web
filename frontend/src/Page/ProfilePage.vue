@@ -151,28 +151,27 @@ const authStore = useAuthStore()
 const profileImage = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
 
 const form = ref({
-  name: authStore.displayName || 'ผู้ใช้งาน',
-  email: authStore.userEmail || 'user@example.com',
-  phone: '0812345678'
+  name: authStore.user?.name || authStore.displayName || 'ผู้ใช้งาน',
+  email: authStore.user?.email || authStore.userEmail || 'user@example.com',
+  phone: authStore.user?.phone || '0812345678'
 })
 
 const saveProfile = () => {
-  authStore.user = {
-    ...authStore.user,
+  authStore.updateUserProfile({
     name: form.value.name,
     email: form.value.email,
     phone: form.value.phone
-  }
+  })
 
-  localStorage.setItem('user', JSON.stringify(authStore.user))
   alert('บันทึกโปรไฟล์เรียบร้อยแล้ว')
 }
 
 const cancelEdit = () => {
+  const currentUser = authStore.user || {}
   form.value = {
-    name: authStore.displayName || 'ผู้ใช้งาน',
-    email: authStore.userEmail || 'user@example.com',
-    phone: '0812345678'
+    name: currentUser.name || authStore.displayName || 'ผู้ใช้งาน',
+    email: currentUser.email || authStore.userEmail || 'user@example.com',
+    phone: currentUser.phone || '0812345678'
   }
 }
 

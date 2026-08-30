@@ -229,6 +229,7 @@
 
 <script setup>
 import { inject } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isColorBlindMode = inject('isColorBlindMode')

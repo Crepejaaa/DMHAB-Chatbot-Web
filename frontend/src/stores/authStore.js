@@ -25,7 +25,10 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.token;
         // Backend แบบ Prisma ไม่ได้ส่ง object user กลับมา ส่งเพียงแค่ token
         // เก็บอีเมลไว้แสดงชั่วคราวก่อน (หรือสามารถแก้ Backend ให้ส่ง Object user กลับมาด้วย)
-        this.user = { email }; 
+        this.user = {
+          email,
+          name: email.split('@')[0],
+        };
         
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
@@ -38,6 +41,15 @@ export const useAuthStore = defineStore('auth', {
           message: error.response?.data?.error || error.response?.data?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' 
         };
       }
+    },
+    updateUserProfile(profile = {}) {
+      this.user = {
+        ...(this.user || {}),
+        ...profile,
+      };
+
+      localStorage.setItem('user', JSON.stringify(this.user));
+      return this.user;
     },
     async register(userData) {
       try {

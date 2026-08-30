@@ -90,9 +90,6 @@
             <router-link :to="'/services/' + service.id" class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block">
               See detail
             </router-link>
-            <button class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md">
-              See detail
-            </button>
           </div>
         </div>
       </div>
@@ -142,6 +139,7 @@
 
 <script setup>
 import { inject } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isColorBlindMode = inject('isColorBlindMode')
