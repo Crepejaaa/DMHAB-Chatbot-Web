@@ -103,7 +103,7 @@ import axios from 'axios'
 
 const router = useRouter()
 const chatContainer = ref(null)
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 const newMessage = ref('')
 const messages = ref([])
 
