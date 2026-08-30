@@ -1,4 +1,7 @@
-import axios from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const SYSTEM_PROMPT = `
 # ROLE AND PERSONA
@@ -27,37 +30,48 @@ const SYSTEM_PROMPT = `
 }
 `;
 
-export interface OllamaResponse {
+export interface AIResponse {
   reply_message: string;
   assessment_status: "IN_PROGRESS" | "COMPLETED";
   severity_level: "PENDING" | "MILD" | "MODERATE" | "SEVERE";
   suggested_category: "SLEEP" | "STRESS" | "BURNOUT" | "NONE";
 }
 
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY is missing in environment variables.");
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
+
 export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
-): Promise<OllamaResponse> => {
+): Promise<AIResponse> => {
   try {
-    const messages = [
-      { role: "system", content: SYSTEM_PROMPT },
-      ...messagesArray
-    ];
-
-    const response = await axios.post("http://localhost:11434/api/chat", {
-      model: "llama3",
-      messages: messages,
-      format: "json",
-      stream: false,
-      options: {
-        temperature: 0.2
-      }
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.2,
+      },
     });
 
-    const aiMessageContent = response.data.message.content;
-    const parsedData: OllamaResponse = JSON.parse(aiMessageContent);
+    // แปลง Format ข้อความจากของเดิมไปเป็น Format ที่ Gemini ต้องการ
+    const formattedHistory = messagesArray.map((msg) => ({
+      role: msg.role === "assistant" || msg.role === "bot" ? "model" : "user",
+      parts: [{ text: msg.content }],
+    }));
+
+    const result = await model.generateContent({
+      contents: formattedHistory,
+    });
+
+    const aiMessageContent = result.response.text();
+    const parsedData: AIResponse = JSON.parse(aiMessageContent);
     return parsedData;
   } catch (error) {
-    console.error("Error communicating with Ollama:", error);
-    throw new Error("Ollama API Error");
+    console.error("Error communicating with Gemini API:", error);
+    throw new Error("Gemini API Error");
   }
 };
