@@ -47,6 +47,7 @@ npm install
 
 # 4. อัปเดตโครงสร้างฐานข้อมูล (Prisma)
 npx prisma migrate dev --name init
+npx prisma db push
 
 # 5. รันเซิร์ฟเวอร์ (โหมด Development)
 npm run dev

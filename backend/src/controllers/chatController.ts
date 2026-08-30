@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prismaClient";
-import { generateChatResponse } from "../services/ollamaService";
+import { generateChatResponse, AIResponse } from "../services/geminiService";
 
 
 
@@ -93,7 +93,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     }));
 
     // 4. ส่งไปให้ Ollama ประมวลผล
-    const aiResponse = await generateChatResponse(aiMessages);
+    const aiResponse: AIResponse = await generateChatResponse(aiMessages);
 
     // 5. บันทึกข้อความตอบกลับของบอท
     await prisma.chatMessage.create({
