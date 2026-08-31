@@ -37,10 +37,10 @@ export interface AIResponse {
   suggested_category: "SLEEP" | "STRESS" | "BURNOUT" | "NONE";
 }
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY is missing in environment variables.");
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error("Missing GEMINI_API_KEY environment variable");
 }
+const apiKey = process.env.GEMINI_API_KEY;
 
 const genAI = new GoogleGenerativeAI(apiKey);
 

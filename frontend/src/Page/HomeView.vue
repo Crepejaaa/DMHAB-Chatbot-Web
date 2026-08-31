@@ -33,6 +33,19 @@
           </button>
         </div>
 
+        <!-- ปุ่ม Login แก้เป็น router-link เรียบร้อยแล้ว -->
+        <button 
+  @click="$router.push('/login')" 
+  class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
+>
+  Login
+</button>
+        
+        <button
+        @click="$router.push('/register')"
+        class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
+          Register
+        </button>
         <div class="relative md:hidden">
           <button
             type="button"
@@ -199,6 +212,57 @@
         </router-link>
       </div>
 
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 1]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/stress-management" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 2]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/sleep-and-mood" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 3]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
       <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
         <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
           <div class="h-48 bg-[#E5E7EB]"></div>
@@ -276,6 +340,7 @@
           </ul>
         </div>
         <div>
+          <h4 class="font-bold mb-3">Hotline</h4>
           <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
@@ -289,12 +354,12 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted, ref, computed } from 'vue'
+import { inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import ProfileMenu from '../components/ProfileMenu.vue'
 
 const router = useRouter()
+const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const isColorBlindMode = inject('isColorBlindMode', false)
 const loading = ref(false)
 const mobileMenuOpen = ref(false)
@@ -352,18 +417,15 @@ const formatDate = (dateValue) => {
 }
 
 const goToLogin = () => {
-  mobileMenuOpen.value = false
   router.push('/login')
 }
 
 const goToRegister = () => {
-  mobileMenuOpen.value = false
   router.push('/register')
 }
 
 const fetchArticles = async () => {
   articles.value = fallbackArticles.map((article) => ({ ...article }))
-  loading.value = false
 
   try {
     const { data } = await axios.get('http://localhost:3000/api/articles')
@@ -375,25 +437,21 @@ const fetchArticles = async () => {
   } catch (error) {
     console.error('Failed to load articles:', error)
     articles.value = fallbackArticles.map((article) => ({ ...article }))
-  } finally {
-    loading.value = false
   }
 }
 
 let observer = null
 
 onMounted(() => {
-  fetchArticles()
-
   observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.remove(
-          'opacity-0',
-          'translate-y-10',
-          'translate-y-16',
-          '-translate-x-16',
-          'translate-x-16',
+          'opacity-0', 
+          'translate-y-10', 
+          'translate-y-16', 
+          '-translate-x-16', 
+          'translate-x-16', 
           'scale-95'
         )
         entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100')
@@ -401,7 +459,7 @@ onMounted(() => {
       }
     })
   }, {
-    threshold: 0.1,
+    threshold: 0.1 
   })
 
   const animElements = document.querySelectorAll('.scroll-anim')
