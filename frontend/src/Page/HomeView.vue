@@ -33,6 +33,56 @@
           </button>
         </div>
 
+        <div class="relative md:hidden">
+          <button
+            type="button"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/10 text-white shadow-sm transition hover:bg-white/15"
+            aria-label="Open menu"
+          >
+            <span class="flex flex-col gap-1.5">
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+            </span>
+          </button>
+
+          <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[60] w-[min(82vw,300px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a]/90 text-white shadow-2xl backdrop-blur-sm">
+            <div class="space-y-1 p-3">
+              <button type="button" @click="goToLogin" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Login</span>
+              </button>
+              <button type="button" @click="goToRegister" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Register</span>
+              </button>
+              <router-link to="/about" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>About</span>
+              </router-link>
+              <router-link to="/services" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Service</span>
+              </router-link>
+              <router-link to="/blog" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Blog</span>
+              </router-link>
+
+              <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
+                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Color Blindness</span>
+                <button
+                  type="button"
+                  @click="isColorBlindMode = !isColorBlindMode"
+                  :class="isColorBlindMode ? 'bg-[#16a085]' : 'bg-slate-200'"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
+                >
+                  <span
+                    :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
+                    class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <ProfileMenu />
       </div>
     </nav>
@@ -149,57 +199,42 @@
         </router-link>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
-            <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 1]
-              </div>
-              <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
-              </div>
-            </div>
-            <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/stress-management" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
-            </div>
+      <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
+        <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
+          <div class="h-48 bg-[#E5E7EB]"></div>
+          <div class="p-6 space-y-3">
+            <div class="h-4 w-20 rounded-full bg-[#E5E7EB]"></div>
+            <div class="h-5 w-4/5 rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-2/3 rounded bg-[#E5E7EB]"></div>
           </div>
         </div>
+      </div>
 
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out">
+      <div v-else class="grid md:grid-cols-3 gap-6">
+        <div v-for="article in visibleArticles" :key="article.id" class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 ease-out">
           <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
             <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 2]
-              </div>
+              <img
+                :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+                :alt="article.title"
+                class="h-48 w-full object-cover border-b border-gray-100 group-hover:scale-[1.02] transition-transform duration-300"
+              />
               <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
+                <div class="mb-2 flex items-center justify-between gap-3">
+                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                  <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">{{ article.title }}</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">{{ article.excerpt || article.content?.slice(0, 120) }}</p>
               </div>
             </div>
             <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/sleep-and-mood" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
-            </div>
-          </div>
-        </div>
-
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
-            <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 3]
+              <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
+                <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+                <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
               </div>
-              <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
-              </div>
-            </div>
-            <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+              <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
             </div>
           </div>
         </div>
@@ -254,14 +289,102 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted } from 'vue'
+import { inject, onMounted, onUnmounted, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
+const router = useRouter()
 const isColorBlindMode = inject('isColorBlindMode', false)
+const loading = ref(false)
+const mobileMenuOpen = ref(false)
+
+const fallbackArticles = [
+  {
+    id: 1,
+    slug: 'stress-management',
+    title: 'วิธีรับมือกับความเครียดจากการทำงาน',
+    excerpt: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อย การรับรู้ และปรับสมดุลชีวิตที่ดีจะช่วยลดความเหนื่อยล้าและรักษาสุขภาพจิตได้',
+    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต.',
+    category: 'สุขภาพจิต',
+    coverImageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'World Health Organization',
+    sourceUrl: 'https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response',
+    createdAt: '2026-07-26T00:00:00.000Z'
+  },
+  {
+    id: 2,
+    slug: 'sleep-and-mood',
+    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา',
+    excerpt: 'การนอนหลับที่ไม่เพียงพอ ส่งผลต่อความสามารถในการควบคุมอารมณ์และลดความสามารถในการตอบสนองต่อความเครียด',
+    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง.',
+    category: 'การนอนหลับ',
+    coverImageUrl: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'Sleep Foundation',
+    sourceUrl: 'https://www.sleepfoundation.org/sleep-hygiene',
+    createdAt: '2026-07-24T00:00:00.000Z'
+  },
+  {
+    id: 3,
+    slug: 'warning-signs',
+    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
+    excerpt: 'สัญญาณบางอย่าง เช่น ความเศร้าอย่างต่อเนื่อง วิตกกังวลมากเกินไป หรือเปลี่ยนแปลงการนอนและการกิน เป็นตัวบ่งชี้ว่าควรขอคำปรึกษาเร็วขึ้น',
+    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น.',
+    category: 'คำปรึกษา',
+    coverImageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'Mental Health Foundation',
+    sourceUrl: 'https://www.mentalhealth.org.uk/explore-mental-health/a-z-topics/mental-health-awareness',
+    createdAt: '2026-07-20T00:00:00.000Z'
+  }
+]
+
+const articles = ref(fallbackArticles.map((article) => ({ ...article })))
+const visibleArticles = computed(() => (articles.value && articles.value.length > 0 ? articles.value : fallbackArticles))
+
+const formatDate = (dateValue) => {
+  if (!dateValue) return 'ไม่ระบุวันที่'
+  const date = new Date(dateValue)
+  return new Intl.DateTimeFormat('th-TH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date)
+}
+
+const goToLogin = () => {
+  mobileMenuOpen.value = false
+  router.push('/login')
+}
+
+const goToRegister = () => {
+  mobileMenuOpen.value = false
+  router.push('/register')
+}
+
+const fetchArticles = async () => {
+  articles.value = fallbackArticles.map((article) => ({ ...article }))
+  loading.value = false
+
+  try {
+    const { data } = await axios.get('http://localhost:3000/api/articles')
+    if (Array.isArray(data) && data.length > 0) {
+      articles.value = data
+    } else {
+      articles.value = fallbackArticles.map((article) => ({ ...article }))
+    }
+  } catch (error) {
+    console.error('Failed to load articles:', error)
+    articles.value = fallbackArticles.map((article) => ({ ...article }))
+  } finally {
+    loading.value = false
+  }
+}
 
 let observer = null
 
 onMounted(() => {
+  fetchArticles()
+
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {

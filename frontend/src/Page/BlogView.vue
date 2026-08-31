@@ -64,44 +64,75 @@
     </header>
 
     <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-10 md:py-16">
-      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6 md:gap-10">
-        <div class="flex items-start gap-4">
-          <div class="w-1.5 h-20 md:h-28 bg-white/80 rounded-full"></div>
-          <div>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-none tracking-tight">
-              Blog
-            </h1>
-            <p class="mt-4 max-w-xl text-sm md:text-xl text-[#D1FAE5] leading-relaxed italic">
-              “อ่านและเรียนรู้เรื่องราวที่ช่วยให้คุณเข้าใจตัวเองมากขึ้น”
-              ค้นพบบทความแนวทางดูแลสุขภาพจิตและแรงบันดาลใจที่คุณอาจต้องการในแต่ละวัน
-            </p>
-          </div>
+      <div class="mt-8 flex justify-end">
+        <div class="inline-flex rounded-full border border-[#0D9488]/20 bg-white p-1 shadow-sm">
+          <button
+            type="button"
+            @click="layoutMode = 'grid'"
+            :class="layoutMode === 'grid' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
+            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+          >
+            Grid
+          </button>
+          <button
+            type="button"
+            @click="layoutMode = 'list'"
+            :class="layoutMode === 'list' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
+            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+          >
+            List
+          </button>
         </div>
-
-        <div class="hidden md:block w-72 h-28 rounded-full border-[10px] border-white/20 border-r-transparent opacity-80"></div>
       </div>
 
-      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="article in articles" :key="article.id" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div v-if="loading" :class="articleLayoutClass" class="mt-10">
+        <div v-for="n in 6" :key="n" class="animate-pulse overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div class="h-40 bg-[#E5E7EB]"></div>
+          <div class="p-6 space-y-3">
+            <div class="h-4 w-20 rounded-full bg-[#E5E7EB]"></div>
+            <div class="h-5 w-4/5 rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-2/3 rounded bg-[#E5E7EB]"></div>
+            <div class="h-10 w-28 rounded-full bg-[#D9EDE8]"></div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+
+      <div v-else :class="articleLayoutClass" class="mt-10">
+        <article
+          v-for="article in articles"
+          :key="article.id"
+          class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between"
+        >
           <div>
-            <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-              {{ article.image }}
-            </div>
+            <img
+              :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+              :alt="article.title"
+              class="h-40 w-full object-cover border-b border-gray-100"
+            />
             <div class="p-6">
-              <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
+              <div class="mb-2 flex items-center justify-between gap-3">
+                <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
+              </div>
               <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
-              <p class="text-sm text-[#64748B] leading-relaxed mb-4">{{ article.description }}</p>
+              <p class="text-sm text-[#64748B] leading-relaxed mb-4">{{ article.excerpt || article.content?.slice(0, 120) }}</p>
             </div>
           </div>
           <div class="px-6 pb-6">
+            <div class="mb-4 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
+              <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+              <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+            </div>
             <router-link
-              :to="'/blog/' + article.id"
+              :to="'/blog/' + (article.slug || article.id)"
               class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
             >
               อ่านเพิ่มเติม &rarr;
             </router-link>
           </div>
-        </div>
+        </article>
       </div>
     </main>
 
@@ -145,32 +176,87 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue'
+import { inject, ref, onMounted, computed } from 'vue'
+import axios from 'axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const articles = ref([])
+const loading = ref(true)
+const errorMessage = ref('')
+const layoutMode = ref('grid')
 
-const articles = [
+const articleLayoutClass = computed(() =>
+  layoutMode.value === 'list'
+    ? 'flex flex-col gap-6'
+    : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'
+)
+
+const formatDate = (dateValue) => {
+  if (!dateValue) return 'ไม่ระบุวันที่'
+  const date = new Date(dateValue)
+  return new Intl.DateTimeFormat('th-TH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date)
+}
+
+const fallbackArticles = [
   {
-    id: 'stress-management',
-    image: '[รูปภาพบทความ 1]',
-    date: '26 กรกฎาคม 2026',
+    id: 1,
+    slug: 'stress-management',
     title: 'วิธีรับมือกับความเครียดจากการทำงาน',
-    description: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงานเพื่อรักษาสุขภาพจิตที่ดีในระยะยาว'
+    excerpt: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อย การรับรู้ และปรับสมดุลชีวิตที่ดีจะช่วยลดความเหนื่อยล้าและรักษาสุขภาพจิตได้',
+    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต. การจัดลำดับความสำคัญของงานและจัดสรรเวลาพักสั้น ๆ จึงมีความสำคัญอย่างยิ่ง.\n\nการหายใจลึก ๆ เป็นวิธีที่ง่ายและมีประสิทธิภาพอย่างมากในการลดความเครียดทันที หากรู้สึกกดดัน ให้หยุดพัก 2-3 นาทีแล้วหายใจเข้า-ออกช้า ๆ.\n\nการกำหนดขอบเขตระหว่างเวลา work และ personal life เป็นอีกหนึ่งกลยุทธ์ที่ช่วยลดความเครียด และทำให้จิตใจกลับมาอยู่กับปัจจุบันมากขึ้น.\n\nหากมีอาการเหนื่อยล้าหรือหมดไฟมากเกินไป ควรขอความช่วยเหลือจากผู้เชี่ยวชาญเพื่อรับแนวทางดูแลที่เหมาะสมและปลอดภัย',
+    category: 'สุขภาพจิต',
+    coverImageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'World Health Organization',
+    sourceUrl: 'https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response',
+    createdAt: '2026-07-26T00:00:00.000Z'
   },
   {
-    id: 'sleep-and-mood',
-    image: '[รูปภาพบทความ 2]',
-    date: '24 กรกฎาคม 2026',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
-    description: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวลและความแปรปรวนทางอารมณ์'
+    id: 2,
+    slug: 'sleep-and-mood',
+    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา',
+    excerpt: 'การนอนหลับที่ไม่เพียงพอ ส่งผลต่อความสามารถในการควบคุมอารมณ์และลดความสามารถในการตอบสนองต่อความเครียด',
+    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์และควบคุมอารมณ์จะลดลง.\n\nคนที่นอนน้อยมักเกิดอาการหงุดหงิดง่าย วิตกกังวลมากขึ้น และรู้สึกหมดแรงได้ง่ายกว่าปกติ.\n\nปริมาณการนอนที่เหมาะสมสำหรับผู้ใหญ่คือประมาณ 7-9 ชั่วโมงต่อคืน และการนอนในเวลาที่สม่ำเสมอช่วยให้ร่างกายฟื้นฟูได้ดีขึ้น.\n\nการลดการใช้หน้าจอก่อนนอน ห้องนอนที่มืดและเงียบ และหลีกเลี่ยงสิ่งกระตุ้นก่อนนอนจะช่วยให้คุณนอนหลับได้ดีขึ้น.',
+    category: 'การนอนหลับ',
+    coverImageUrl: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'Sleep Foundation',
+    sourceUrl: 'https://www.sleepfoundation.org/sleep-hygiene',
+    createdAt: '2026-07-24T00:00:00.000Z'
   },
   {
-    id: 'warning-signs',
-    image: '[รูปภาพบทความ 3]',
-    date: '20 กรกฎาคม 2026',
+    id: 3,
+    slug: 'warning-signs',
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    description: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที'
+    excerpt: 'สัญญาณบางอย่าง เช่น ความเศร้าอย่างต่อเนื่อง วิตกกังวลมากเกินไป หรือเปลี่ยนแปลงการนอนและการกิน เป็นตัวบ่งชี้ว่าควรขอคำปรึกษาเร็วขึ้น',
+    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น.\n\nสัญญาณที่ควรระวัง เช่น รู้สึกเศร้า สิ้นหวัง หรือหมดแรงเกินไปเป็นเวลานาน ความวิตกกังวลที่รบกวนการทำงาน หรือการเปลี่ยนแปลงพฤติกรรม เช่น นอนไม่หลับ กินผิดปกติ หรือถอนตัวจากคนรอบข้าง.\n\nเมื่อมีความคิดทำร้ายตัวเองหรือมีอาการที่ส่งผลกระทบต่อการใช้ชีวิตประจำวัน ควรขอความช่วยเหลือทันที.',
+    category: 'คำปรึกษา',
+    coverImageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'Mental Health Foundation',
+    sourceUrl: 'https://www.mentalhealth.org.uk/explore-mental-health/a-z-topics/mental-health-awareness',
+    createdAt: '2026-07-20T00:00:00.000Z'
   }
 ]
+
+const fetchArticles = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+    const { data } = await axios.get('http://localhost:3000/api/articles')
+    articles.value = Array.isArray(data) && data.length > 0 ? data : fallbackArticles
+  } catch (error) {
+    console.error('Failed to load articles:', error)
+    errorMessage.value = ''
+    articles.value = fallbackArticles
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchArticles()
+})
 </script>
