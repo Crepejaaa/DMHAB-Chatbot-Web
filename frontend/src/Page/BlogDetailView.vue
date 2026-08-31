@@ -60,7 +60,6 @@
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              {{ currentArticle.title }}
               {{ article?.title || 'บทความ' }}
             </h1>
             <div class="flex items-center gap-4 text-xs md:text-sm text-[#D1FAE5]">
@@ -68,16 +67,12 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                {{ currentArticle.date }}
                 {{ article ? formatDate(article.createdAt) : '...' }}
               </span>
               <span class="flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {{ currentArticle.readTime }}
-              </span>
-              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ currentArticle.category }}</span>
                 {{ article ? getReadTime(article.content || '') : '...' }}
               </span>
               <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ article?.category || 'บทความ' }}</span>
@@ -86,88 +81,6 @@
         </div>
       </div>
     </header>
-
-    <!-- 2. Main Content -->
-    <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
-
-      <!-- Article Hero Image -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10">
-        <div class="h-64 md:h-80 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-          {{ currentArticle.image }}
-        </div>
-      </div>
-
-      <!-- Article Body -->
-      <article class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
-        <!-- Introduction -->
-        <div class="mb-10">
-          <p class="text-lg text-[#64748B] leading-relaxed font-medium italic border-l-4 border-[#0D9488] pl-6">
-            {{ currentArticle.intro }}
-          </p>
-        </div>
-
-        <!-- Content Sections -->
-        <div v-for="(section, index) in currentArticle.sections" :key="index" class="mb-10 last:mb-0">
-          <h2 class="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-4 flex items-center gap-3">
-            <span class="w-8 h-8 bg-gradient-to-br from-[#0D9488] to-[#059669] rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0">{{ index + 1 }}</span>
-            {{ section.heading }}
-          </h2>
-          <p class="text-[#64748B] leading-relaxed text-base whitespace-pre-line pl-11">{{ section.content }}</p>
-        </div>
-
-        <!-- Conclusion -->
-        <div class="mt-12 bg-gradient-to-r from-[#0D9488]/5 to-[#059669]/5 rounded-2xl p-8 border border-[#0D9488]/10">
-          <h3 class="text-lg font-bold text-[#1E293B] mb-3 flex items-center gap-2">
-            <span class="text-xl">สรุป</span>
-          </h3>
-          <p class="text-[#64748B] leading-relaxed">{{ currentArticle.conclusion }}</p>
-        </div>
-      </article>
-
-      <!-- Tags -->
-      <div class="flex flex-wrap gap-2 mb-10">
-        <span 
-          v-for="tag in currentArticle.tags" 
-          :key="tag" 
-          class="bg-[#0D9488]/10 text-[#0D9488] px-4 py-1.5 rounded-full text-xs font-semibold"
-        >
-          #{{ tag }}
-        </span>
-      </div>
-
-      <!-- Related Articles -->
-      <section class="mb-10">
-        <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
-        <div class="grid md:grid-cols-2 gap-6">
-          <router-link 
-            v-for="related in relatedArticles" 
-            :key="related.id" 
-            :to="'/blog/' + related.id"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group block"
-          >
-            <div class="h-36 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-              {{ related.image }}
-            </div>
-            <div class="p-5">
-              <span class="text-xs text-[#64748B] mb-1 block">{{ related.date }}</span>
-              <h3 class="font-bold text-[#1E293B] group-hover:text-[#0D9488] transition-colors">{{ related.title }}</h3>
-            </div>
-          </router-link>
-        </div>
-      </section>
-
-      <!-- Back to Blog CTA -->
-      <div class="text-center">
-        <router-link 
-          to="/blog" 
-          class="inline-flex items-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition shadow-md"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          กลับไปหน้าบทความทั้งหมด
-        </router-link>
-      </div>
 
     <main v-if="loading" class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
       <div class="space-y-8 animate-pulse">
@@ -382,12 +295,6 @@ const articlesData = {
     image: '[รูปภาพบทความ 3]',
     date: '20 กรกฎาคม 2026',
     readTime: 'อ่าน 6 นาที',
-  {
-    id: 3,
-    slug: 'warning-signs',
-    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'สัญญาณบางอย่าง เช่น ความเศร้าอย่างต่อเนื่อง วิตกกังวลมากเกินไป หรือเปลี่ยนแปลงการนอนและการกิน เป็นตัวบ่งชี้ว่าควรขอคำปรึกษาเร็วขึ้น',
-    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น.\n\nสัญญาณที่ควรระวัง เช่น รู้สึกเศร้า สิ้นหวัง หรือหมดแรงเกินไปเป็นเวลานาน ความวิตกกังวลที่รบกวนการทำงาน หรือการเปลี่ยนแปลงพฤติกรรม เช่น นอนไม่หลับ กินผิดปกติ หรือถอนตัวจากคนรอบข้าง.\n\nเมื่อมีความคิดทำร้ายตัวเองหรือมีอาการที่ส่งผลกระทบต่อการใช้ชีวิตประจำวัน ควรขอความช่วยเหลือทันที.',
     category: 'คำปรึกษา',
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
     description: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
@@ -422,24 +329,12 @@ const fetchArticle = async () => {
 
     const articleSlug = route.params.id
     const { data } = await axios.get(`/api/articles/${articleSlug}`)
-    if (data && Object.keys(data).length > 0) {
-      article.value = data
-    } else {
-      article.value = null
-    }
-
-    const allArticlesResponse = await axios.get('/api/articles')
-    if (Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0) {
-      apiRelatedArticles.value = allArticlesResponse.data.filter(item => String(item.id) !== String(articleSlug) && item.slug !== articleSlug).slice(0, 2)
-    }
-    const { data } = await axios.get(`http://localhost:3000/api/articles/${articleSlug}`)
     const loadedArticle = data && Object.keys(data).length > 0 ? data : fallbackArticles.find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
-
     article.value = loadedArticle || fallbackArticles[0]
 
-    const allArticlesResponse = await axios.get('http://localhost:3000/api/articles')
+    const allArticlesResponse = await axios.get('/api/articles')
     const allArticles = Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0 ? allArticlesResponse.data : fallbackArticles
-    relatedArticles.value = allArticles.filter((item) => item.id !== article.value.id).slice(0, 2)
+    relatedArticles.value = allArticles.filter((item) => String(item.id) !== String(article.value.id) && item.slug !== articleSlug).slice(0, 2)
   } catch (error) {
     console.error('Failed to load article detail:', error)
     article.value = null
