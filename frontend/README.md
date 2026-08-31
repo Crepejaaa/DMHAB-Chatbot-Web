@@ -68,3 +68,15 @@ npm install
 # 3. รันหน้าเว็บ
 npm run dev
 # (เว็บจะรันที่พอร์ต http://localhost:5173)
+
+
+รันฝั่ง Frontend (หน้าบ้าน): npm run dev
+
+รันฝั่ง Backend (เซิร์ฟเวอร์): npm run dev
+
+รันฝั่ง AI (Ollama): ollama run llama3
+ติดตั้งเพิ่ม 
+npm install -D tsx
+npm install -g tsx
+npm install @prisma/adapter-pg pg
+npm install -D @types/pg

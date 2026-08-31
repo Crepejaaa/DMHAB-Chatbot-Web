@@ -55,6 +55,11 @@ const router = createRouter({
       component: () => import('../Page/AboutView.vue')
     },
     {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../Page/AdminView.vue')
+    },
+    {
       path: '/contact',
       name: 'contact',
       component: () => import('../Page/ContactView.vue')
@@ -68,13 +73,23 @@ const router = createRouter({
       path: '/chat',
       name: 'chat',
       component: () => import('../Page/ChatView.vue')
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../Page/ProfilePage.vue')
+    },
+    {
+      path: '/account-settings',
+      name: 'account-settings',
+      component: () => import('../Page/AccountSettingsPage.vue')
     }
   ]
 })
 
 // Navigation Guard
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment']
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/admin', '/contact', '/assessment', '/profile', '/account-settings']
 
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
   const isPublic = publicPages.some(page => {

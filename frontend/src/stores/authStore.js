@@ -1,23 +1,36 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    user: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('user')) || null;
+      } catch {
+        return null;
+      }
+    })(),
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
+    displayName: (state) => state.user?.name || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
+    userEmail: (state) => state.user?.email || 'example@gmail.com',
   },
   actions: {
     async login(email, password) {
       try {
-        const response = await axios.post('http://localhost:3000/api/login', { email, password });
+        const response = await axios.post(`${baseURL}/api/login`, { email, password });
         
         this.token = response.data.token;
         // Backend แบบ Prisma ไม่ได้ส่ง object user กลับมา ส่งเพียงแค่ token
         // เก็บอีเมลไว้แสดงชั่วคราวก่อน (หรือสามารถแก้ Backend ให้ส่ง Object user กลับมาด้วย)
-        this.user = { email }; 
+        this.user = {
+          email,
+          name: email.split('@')[0],
+        };
         
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
@@ -31,9 +44,18 @@ export const useAuthStore = defineStore('auth', {
         };
       }
     },
+    updateUserProfile(profile = {}) {
+      this.user = {
+        ...(this.user || {}),
+        ...profile,
+      };
+
+      localStorage.setItem('user', JSON.stringify(this.user));
+      return this.user;
+    },
     async register(userData) {
       try {
-        const response = await axios.post('http://localhost:3000/api/register', userData);
+        const response = await axios.post(`${baseURL}/api/register`, userData);
         return { success: true, message: response.data.message || 'สมัครสมาชิกสำเร็จ' };
       } catch (error) {
         return { 

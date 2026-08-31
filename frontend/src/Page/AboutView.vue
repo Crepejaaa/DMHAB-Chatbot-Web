@@ -29,13 +29,12 @@
         <div class="hidden md:flex gap-8 items-center text-sm font-medium">
           <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
           <router-link to="/about" class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-          <a href="#" class="hover:text-[#D1FAE5] transition">Services</a>
-          <a href="#" class="hover:text-[#D1FAE5] transition">Blog</a>
+          <router-link to="/services" class="hover:text-[#D1FAE5] transition">Services</router-link>
+          <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
         </div>
 
-        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Login + Register -->
+        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Profile Menu -->
         <div class="flex gap-3 items-center text-sm">
-          <!-- Toggle Color Blindness -->
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
             <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
             <button
@@ -50,12 +49,7 @@
             </button>
           </div>
 
-          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
-            Login
-          </router-link>
-          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-            Register
-          </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 
@@ -221,7 +215,7 @@
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Hotline</h4>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
@@ -235,6 +229,7 @@
 
 <script setup>
 import { inject } from 'vue'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isColorBlindMode = inject('isColorBlindMode')
