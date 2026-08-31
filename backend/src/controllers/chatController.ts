@@ -83,12 +83,12 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     // 3. ดึงประวัติแชทของ Session เพื่อใช้เป็น Context ให้ AI
     const chatHistory = await prisma.chatMessage.findMany({
       where: { sessionId: session.id },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       take: 20, // จำกัดไม่ให้ยาวเกินไป
     });
 
-    const aiMessages: { role: string; content: string }[] = chatHistory.map((msg) => ({
-      role: (msg.sender as string) === "USER" ? "user" : "assistant",
+    const aiMessages = chatHistory.reverse().map((msg) => ({
+      role: String(msg.sender) === "USER" ? "user" : "assistant",
       content: msg.message,
     }));
 
