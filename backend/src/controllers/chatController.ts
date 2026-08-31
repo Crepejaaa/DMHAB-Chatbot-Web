@@ -87,10 +87,11 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
       take: 20, // จำกัดไม่ให้ยาวเกินไป
     });
 
-    const aiMessages = chatHistory.map((msg) => ({
-      role: msg.sender === "USER" ? "user" : "assistant",
+    const aiMessages: { role: string; content: string }[] = chatHistory.map((msg) => ({
+      role: (msg.sender as string) === "USER" ? "user" : "assistant",
       content: msg.message,
     }));
+
 
     // 4. ส่งไปให้ Ollama ประมวลผล
     const aiResponse: AIResponse = await generateChatResponse(aiMessages);

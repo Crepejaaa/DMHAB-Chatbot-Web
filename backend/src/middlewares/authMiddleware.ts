@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
+if (!process.env.JWT_SECRET) {
+  throw new Error("Missing JWT_SECRET environment variable");
+}
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 // สร้าง Interface เพื่อขยายประเภทของ Request ให้รองรับข้อมูล user
 export interface AuthRequest extends Request {
