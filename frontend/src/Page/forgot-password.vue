@@ -136,13 +136,15 @@ import { ref, inject } from 'vue'
 
 const isColorBlindMode = inject('isColorBlindMode')
 
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+
 const email = ref('')
 
 const handleResetPassword = async () => {
   if (!email.value) return
 
   try {
-    const response = await fetch('http://localhost:3000/api/forgot-password', {
+    const response = await fetch(`${baseURL}/api/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

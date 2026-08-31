@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
@@ -20,7 +22,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(email, password) {
       try {
-        const response = await axios.post('http://localhost:3000/api/login', { email, password });
+        const response = await axios.post(`${baseURL}/api/login`, { email, password });
         
         this.token = response.data.token;
         // Backend แบบ Prisma ไม่ได้ส่ง object user กลับมา ส่งเพียงแค่ token
@@ -53,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(userData) {
       try {
-        const response = await axios.post('http://localhost:3000/api/register', userData);
+        const response = await axios.post(`${baseURL}/api/register`, userData);
         return { success: true, message: response.data.message || 'สมัครสมาชิกสำเร็จ' };
       } catch (error) {
         return { 

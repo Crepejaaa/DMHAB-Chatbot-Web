@@ -103,6 +103,7 @@ import axios from 'axios'
 
 const router = useRouter()
 const chatContainer = ref(null)
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 const newMessage = ref('')
 const messages = ref([])
 
@@ -128,7 +129,7 @@ const fetchMessages = async () => {
     const token = localStorage.getItem('token')
     if (!token) return router.push('/login')
 
-    const response = await axios.get('http://localhost:3000/api/chat/sessions', {
+    const response = await axios.get(`${baseURL}/api/chat/sessions`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     
@@ -170,7 +171,7 @@ const sendMessage = async () => {
   try {
     const token = localStorage.getItem('token')
     
-    const response = await axios.post('http://localhost:3000/api/chat', 
+    const response = await axios.post(`${baseURL}/api/chat`, 
       { message: userText },
       { headers: { Authorization: `Bearer ${token}` } }
     )
