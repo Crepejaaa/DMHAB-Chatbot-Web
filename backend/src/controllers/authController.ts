@@ -9,7 +9,13 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, password, email, phone } = req.body;
+    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ
+    const { name, username = name, password, email, phone } = req.body;
+
+    if (!username || !password) {
+      res.status(400).json({ error: "กรุณาระบุข้อมูลให้ครบถ้วน (ชื่อผู้ใช้, รหัสผ่าน)" });
+      return;
+    }
 
     // ตรวจสอบว่ามีอีเมลหรือ username นี้แล้วหรือยัง
     const existingUser = await prisma.user.findFirst({
