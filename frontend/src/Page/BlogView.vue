@@ -29,6 +29,7 @@
         </div>
 
         <div class="flex gap-3 items-center text-sm">
+        <div class="hidden md:flex gap-3 items-center text-sm">
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
             <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
             <button
@@ -49,6 +50,7 @@
           <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
             Register
           </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 
@@ -84,12 +86,77 @@
           <div class="px-6 pb-6">
             <router-link 
               :to="'/blog/' + article.id" 
+    <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-10 md:py-16">
+      <div class="mt-8 flex justify-end">
+        <div class="inline-flex rounded-full border border-[#0D9488]/20 bg-white p-1 shadow-sm">
+          <button
+            type="button"
+            @click="layoutMode = 'grid'"
+            :class="layoutMode === 'grid' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
+            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+          >
+            Grid
+          </button>
+          <button
+            type="button"
+            @click="layoutMode = 'list'"
+            :class="layoutMode === 'list' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
+            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+          >
+            List
+          </button>
+        </div>
+      </div>
+
+      <div v-if="loading" :class="articleLayoutClass" class="mt-10">
+        <div v-for="n in 6" :key="n" class="animate-pulse overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div class="h-40 bg-[#E5E7EB]"></div>
+          <div class="p-6 space-y-3">
+            <div class="h-4 w-20 rounded-full bg-[#E5E7EB]"></div>
+            <div class="h-5 w-4/5 rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-2/3 rounded bg-[#E5E7EB]"></div>
+            <div class="h-10 w-28 rounded-full bg-[#D9EDE8]"></div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+
+      <div v-else :class="articleLayoutClass" class="mt-10">
+        <article
+          v-for="article in articles"
+          :key="article.id"
+          class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between"
+        >
+          <div>
+            <img
+              :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+              :alt="article.title"
+              class="h-40 w-full object-cover border-b border-gray-100"
+            />
+            <div class="p-6">
+              <div class="mb-2 flex items-center justify-between gap-3">
+                <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
+              </div>
+              <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
+              <p class="text-sm text-[#64748B] leading-relaxed mb-4">{{ article.excerpt || article.content?.slice(0, 120) }}</p>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <div class="mb-4 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
+              <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+              <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+            </div>
+            <router-link
+              :to="'/blog/' + (article.slug || article.id)"
               class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
             >
               อ่านเพิ่มเติม &rarr;
             </router-link>
           </div>
         </div>
+        </article>
       </div>
     </main>
 
@@ -122,6 +189,7 @@
         </div>
         <div>
           <h4 class="font-bold mb-3">Hotline</h4>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
@@ -169,7 +237,7 @@ const fetchArticles = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
-    const { data } = await axios.get('/api/articles')
+    const { data } = await axios.get('http://localhost:3000/api/articles')
     articles.value = Array.isArray(data) && data.length > 0 ? data : fallbackArticles
   } catch (error) {
     console.error('Failed to load articles:', error)
