@@ -266,14 +266,12 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted, ref, computed } from 'vue'
+import { inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
-const loading = ref(false)
-const mobileMenuOpen = ref(false)
 
 const fallbackArticles = [
   {
@@ -328,18 +326,15 @@ const formatDate = (dateValue) => {
 }
 
 const goToLogin = () => {
-  mobileMenuOpen.value = false
   router.push('/login')
 }
 
 const goToRegister = () => {
-  mobileMenuOpen.value = false
   router.push('/register')
 }
 
 const fetchArticles = async () => {
   articles.value = fallbackArticles.map((article) => ({ ...article }))
-  loading.value = false
 
   try {
     const { data } = await axios.get('/api/articles')
@@ -351,16 +346,12 @@ const fetchArticles = async () => {
   } catch (error) {
     console.error('Failed to load articles:', error)
     articles.value = fallbackArticles.map((article) => ({ ...article }))
-  } finally {
-    loading.value = false
   }
 }
 
 let observer = null
 
 onMounted(() => {
-  fetchArticles()
-
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

@@ -205,7 +205,7 @@
 </template>
 
 <script setup>
-import { inject, computed, ref, watch, onMounted } from 'vue'
+import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
@@ -214,8 +214,9 @@ const route = useRoute()
 const loading = ref(true)
 const errorMessage = ref('')
 const article = ref(null)
+const apiRelatedArticles = ref([])
 
-// ข้อมูลบทความทั้งหมด (Fallback)
+// ข้อมูลบทความทั้งหมด
 const articlesData = {
   'stress-management': {
     id: 'stress-management',
@@ -309,28 +310,30 @@ const fetchArticle = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
+
     const articleSlug = route.params.id
-    
-    // ดึงจาก API ด้วย Relative Path
     const { data } = await axios.get(`/api/articles/${articleSlug}`)
     if (data && Object.keys(data).length > 0) {
-       article.value = data
+      article.value = data
     } else {
-       article.value = null
+      article.value = null
+    }
+
+    const allArticlesResponse = await axios.get('/api/articles')
+    if (Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0) {
+      apiRelatedArticles.value = allArticlesResponse.data.filter(item => String(item.id) !== String(articleSlug) && item.slug !== articleSlug).slice(0, 2)
     }
   } catch (error) {
     console.error('Failed to load article detail:', error)
     article.value = null
+    apiRelatedArticles.value = []
+    errorMessage.value = ''
   } finally {
     loading.value = false
   }
 }
 
-watch(() => route.params.id, () => {
-  fetchArticle()
-}, { immediate: true })
-
-// หาบทความปัจจุบันจาก API ถ้ามี ถ้าไม่มีดึงจาก Fallback (articlesData)
+// หาบทความปัจจุบันจาก route param หรือ API
 const currentArticle = computed(() => {
   if (article.value && article.value.title) {
     return article.value
@@ -341,6 +344,9 @@ const currentArticle = computed(() => {
 
 // บทความที่เกี่ยวข้อง (ทุกบทความยกเว้นบทความปัจจุบัน)
 const relatedArticles = computed(() => {
+  if (apiRelatedArticles.value.length > 0) {
+    return apiRelatedArticles.value
+  }
   const currentId = route.params.id
   return Object.values(articlesData)
     .filter(a => a.id !== currentId)

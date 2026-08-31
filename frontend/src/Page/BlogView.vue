@@ -88,14 +88,6 @@
             >
               อ่านเพิ่มเติม &rarr;
             </router-link>
-        <div v-for="article in articles" :key="article.title" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-            {{ article.image }}
-          </div>
-          <div class="p-6">
-            <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
-            <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
-            <p class="text-sm text-[#64748B] leading-relaxed">{{ article.description }}</p>
           </div>
         </div>
       </div>
@@ -141,30 +133,13 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted, computed } from 'vue'
+import { inject, ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const articles = ref([])
 const loading = ref(true)
 const errorMessage = ref('')
-const layoutMode = ref('grid')
-
-const articleLayoutClass = computed(() =>
-  layoutMode.value === 'list'
-    ? 'flex flex-col gap-6'
-    : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'
-)
-
-const formatDate = (dateValue) => {
-  if (!dateValue) return 'ไม่ระบุวันที่'
-  const date = new Date(dateValue)
-  return new Intl.DateTimeFormat('th-TH', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date)
-}
 
 const fallbackArticles = [
   {
