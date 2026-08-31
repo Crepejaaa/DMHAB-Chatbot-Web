@@ -168,4 +168,26 @@ const articles = [
     description: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที'
   }
 ]
+<<<<<<< Updated upstream
+=======
+
+const fetchArticles = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+    const { data } = await axios.get('/api/articles')
+    articles.value = Array.isArray(data) && data.length > 0 ? data : fallbackArticles
+  } catch (error) {
+    console.error('Failed to load articles:', error)
+    errorMessage.value = ''
+    articles.value = fallbackArticles
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchArticles()
+})
+>>>>>>> Stashed changes
 </script>

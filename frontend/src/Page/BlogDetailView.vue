@@ -275,6 +275,7 @@ const articlesData = {
     date: '20 กรกฎาคม 2026',
     readTime: 'อ่าน 6 นาที',
     category: 'คำปรึกษา',
+<<<<<<< Updated upstream
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
     description: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
     intro: 'การดูแลสุขภาพจิตด้วยตัวเองเป็นสิ่งที่ดี แต่บางครั้งเราอาจต้องการความช่วยเหลือจากผู้เชี่ยวชาญ การรู้จักสัญญาณเตือนจะช่วยให้คุณตัดสินใจได้ถูกเวลา',
@@ -298,6 +299,37 @@ const articlesData = {
     ],
     conclusion: 'สุขภาพจิตสำคัญไม่แพ้สุขภาพกาย อย่ารอจนอาการรุนแรง หากสังเกตเห็นสัญญาณเหล่านี้ในตัวเองหรือคนรอบข้าง อย่าลังเลที่จะขอความช่วยเหลือ เพราะการรักษาแต่เนิ่นๆ จะให้ผลลัพธ์ที่ดีกว่า',
     tags: ['สัญญาณเตือน', 'ปรึกษาผู้เชี่ยวชาญ', 'สุขภาพจิต', 'สายด่วน 1323']
+=======
+    coverImageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'Mental Health Foundation',
+    sourceUrl: 'https://www.mentalhealth.org.uk/explore-mental-health/a-z-topics/mental-health-awareness',
+    createdAt: '2026-07-20T00:00:00.000Z'
+  }
+]
+
+const fetchArticle = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+
+    const articleSlug = route.params.id
+    const { data } = await axios.get(`/api/articles/${articleSlug}`)
+    const loadedArticle = data && Object.keys(data).length > 0 ? data : fallbackArticles.find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
+
+    article.value = loadedArticle || fallbackArticles[0]
+
+    const allArticlesResponse = await axios.get('/api/articles')
+    const allArticles = Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0 ? allArticlesResponse.data : fallbackArticles
+    relatedArticles.value = allArticles.filter((item) => item.id !== article.value.id).slice(0, 2)
+  } catch (error) {
+    console.error('Failed to load article detail:', error)
+    const fallbackArticle = fallbackArticles.find((item) => item.slug === route.params.id || String(item.id) === String(route.params.id)) || fallbackArticles[0]
+    article.value = fallbackArticle
+    relatedArticles.value = fallbackArticles.filter((item) => item.id !== fallbackArticle.id).slice(0, 2)
+    errorMessage.value = ''
+  } finally {
+    loading.value = false
+>>>>>>> Stashed changes
   }
 }
 
