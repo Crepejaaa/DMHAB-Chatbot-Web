@@ -46,6 +46,57 @@
         class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
           Register
         </button>
+        <div class="relative md:hidden">
+          <button
+            type="button"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/10 text-white shadow-sm transition hover:bg-white/15"
+            aria-label="Open menu"
+          >
+            <span class="flex flex-col gap-1.5">
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+            </span>
+          </button>
+
+          <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[60] w-[min(82vw,300px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a]/90 text-white shadow-2xl backdrop-blur-sm">
+            <div class="space-y-1 p-3">
+              <button type="button" @click="goToLogin" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Login</span>
+              </button>
+              <button type="button" @click="goToRegister" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Register</span>
+              </button>
+              <router-link to="/about" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>About</span>
+              </router-link>
+              <router-link to="/services" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Service</span>
+              </router-link>
+              <router-link to="/blog" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Blog</span>
+              </router-link>
+
+              <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
+                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Color Blindness</span>
+                <button
+                  type="button"
+                  @click="isColorBlindMode = !isColorBlindMode"
+                  :class="isColorBlindMode ? 'bg-[#16a085]' : 'bg-slate-200'"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
+                >
+                  <span
+                    :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
+                    class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ProfileMenu />
       </div>
     </nav>
 
@@ -212,6 +263,42 @@
             </div>
             <div class="px-6 pb-6 pt-0">
               <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+      <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
+        <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
+          <div class="h-48 bg-[#E5E7EB]"></div>
+          <div class="p-6 space-y-3">
+            <div class="h-4 w-20 rounded-full bg-[#E5E7EB]"></div>
+            <div class="h-5 w-4/5 rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+            <div class="h-4 w-2/3 rounded bg-[#E5E7EB]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="grid md:grid-cols-3 gap-6">
+        <div v-for="article in visibleArticles" :key="article.id" class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <img
+                :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+                :alt="article.title"
+                class="h-48 w-full object-cover border-b border-gray-100 group-hover:scale-[1.02] transition-transform duration-300"
+              />
+              <div class="p-6">
+                <div class="mb-2 flex items-center justify-between gap-3">
+                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                  <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">{{ article.title }}</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">{{ article.excerpt || article.content?.slice(0, 120) }}</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
+                <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+                <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+              </div>
+              <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
             </div>
           </div>
         </div>
@@ -254,6 +341,7 @@
         </div>
         <div>
           <h4 class="font-bold mb-3">Hotline</h4>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
@@ -272,6 +360,9 @@ import axios from 'axios'
 
 const router = useRouter()
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isColorBlindMode = inject('isColorBlindMode', false)
+const loading = ref(false)
+const mobileMenuOpen = ref(false)
 
 const fallbackArticles = [
   {
@@ -337,7 +428,7 @@ const fetchArticles = async () => {
   articles.value = fallbackArticles.map((article) => ({ ...article }))
 
   try {
-    const { data } = await axios.get('/api/articles')
+    const { data } = await axios.get('http://localhost:3000/api/articles')
     if (Array.isArray(data) && data.length > 0) {
       articles.value = data
     } else {

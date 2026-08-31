@@ -126,7 +126,6 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
       severity_level: aiResponse.severity_level,
     });
   } catch (error) {
-    console.error("Chat API Error Details:", error);
     console.error("Error in sendMessage:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการเชื่อมต่อแชทบอท" });
   }

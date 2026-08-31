@@ -50,6 +50,7 @@
           <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
             Register
           </router-link>
+          <ProfileMenu />
         </div>
       </nav>
 
@@ -60,6 +61,7 @@
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
               {{ currentArticle.title }}
+              {{ article?.title || 'บทความ' }}
             </h1>
             <div class="flex items-center gap-4 text-xs md:text-sm text-[#D1FAE5]">
               <span class="flex items-center gap-1">
@@ -67,6 +69,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 {{ currentArticle.date }}
+                {{ article ? formatDate(article.createdAt) : '...' }}
               </span>
               <span class="flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,6 +78,9 @@
                 {{ currentArticle.readTime }}
               </span>
               <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ currentArticle.category }}</span>
+                {{ article ? getReadTime(article.content || '') : '...' }}
+              </span>
+              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ article?.category || 'บทความ' }}</span>
             </div>
           </div>
         </div>
@@ -163,6 +169,102 @@
         </router-link>
       </div>
 
+    <main v-if="loading" class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+      <div class="space-y-8 animate-pulse">
+        <div class="h-80 rounded-[2rem] bg-[#E5E7EB]"></div>
+        <div class="space-y-4 rounded-2xl bg-white p-8 shadow-sm border border-gray-100">
+          <div class="h-5 w-24 rounded-full bg-[#E5E7EB]"></div>
+          <div class="h-8 w-2/3 rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-5/6 rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-4/5 rounded bg-[#E5E7EB]"></div>
+          <div class="h-12 w-40 rounded-full bg-[#D9EDE8]"></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div v-for="n in 2" :key="n" class="h-40 rounded-2xl bg-[#E5E7EB]"></div>
+        </div>
+      </div>
+    </main>
+
+    <main v-else-if="errorMessage" class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">{{ errorMessage }}</div>
+    </main>
+
+    <main v-else class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+
+      <div v-if="article" class="space-y-10">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10">
+          <img
+            :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+            :alt="article.title"
+            class="h-64 md:h-80 w-full object-cover"
+          />
+        </div>
+
+        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
+          <div class="mb-8 flex flex-wrap items-center gap-3 text-xs text-[#64748B]">
+            <span class="bg-[#0D9488]/10 text-[#0D9488] px-3 py-1 rounded-full font-semibold">{{ article.category }}</span>
+            <span>{{ formatDate(article.createdAt) }}</span>
+            <span>{{ getReadTime(article.content || '') }}</span>
+          </div>
+
+          <div class="mb-10">
+            <p class="text-lg text-[#64748B] leading-relaxed font-medium italic border-l-4 border-[#0D9488] pl-6">
+              {{ article.excerpt || article.content?.slice(0, 180) }}
+            </p>
+          </div>
+
+          <div v-for="(paragraph, index) in parseContent(article.content || '')" :key="index" class="mb-6 last:mb-0">
+            <p class="text-[#64748B] leading-relaxed text-base whitespace-pre-line">{{ paragraph }}</p>
+          </div>
+
+          <div class="mt-12 rounded-2xl bg-gradient-to-r from-[#0D9488]/5 to-[#059669]/5 p-6 border border-[#0D9488]/10">
+            <h3 class="text-lg font-bold text-[#1E293B] mb-3">แหล่งอ้างอิง</h3>
+            <p class="text-[#64748B] leading-relaxed">
+              ข้อมูลบทความนี้อ้างอิงจาก
+              <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] underline hover:text-[#045F54]">
+                {{ article.sourceName || 'แหล่งข้อมูล' }}
+              </a>
+              <span v-else>{{ article.sourceName || 'แหล่งข้อมูล' }}</span>
+            </p>
+          </div>
+        </article>
+
+        <section class="mb-10">
+          <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <router-link
+              v-for="related in relatedArticles"
+              :key="related.id"
+              :to="'/blog/' + (related.slug || related.id)"
+              class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group block"
+            >
+              <img
+                :src="related.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+                :alt="related.title"
+                class="h-36 w-full object-cover border-b border-gray-100"
+              />
+              <div class="p-5">
+                <span class="text-xs text-[#64748B] mb-1 block">{{ formatDate(related.createdAt) }}</span>
+                <h3 class="font-bold text-[#1E293B] group-hover:text-[#0D9488] transition-colors">{{ related.title }}</h3>
+              </div>
+            </router-link>
+          </div>
+        </section>
+
+        <div class="text-center">
+          <router-link
+            to="/blog"
+            class="inline-flex items-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition shadow-md"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            กลับไปหน้าบทความทั้งหมด
+          </router-link>
+        </div>
+      </div>
     </main>
 
     <!-- 3. Footer (เหมือน BlogView) -->
@@ -194,6 +296,7 @@
         </div>
         <div>
           <h4 class="font-bold mb-3">Hotline</h4>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
@@ -279,6 +382,12 @@ const articlesData = {
     image: '[รูปภาพบทความ 3]',
     date: '20 กรกฎาคม 2026',
     readTime: 'อ่าน 6 นาที',
+  {
+    id: 3,
+    slug: 'warning-signs',
+    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
+    excerpt: 'สัญญาณบางอย่าง เช่น ความเศร้าอย่างต่อเนื่อง วิตกกังวลมากเกินไป หรือเปลี่ยนแปลงการนอนและการกิน เป็นตัวบ่งชี้ว่าควรขอคำปรึกษาเร็วขึ้น',
+    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น.\n\nสัญญาณที่ควรระวัง เช่น รู้สึกเศร้า สิ้นหวัง หรือหมดแรงเกินไปเป็นเวลานาน ความวิตกกังวลที่รบกวนการทำงาน หรือการเปลี่ยนแปลงพฤติกรรม เช่น นอนไม่หลับ กินผิดปกติ หรือถอนตัวจากคนรอบข้าง.\n\nเมื่อมีความคิดทำร้ายตัวเองหรือมีอาการที่ส่งผลกระทบต่อการใช้ชีวิตประจำวัน ควรขอความช่วยเหลือทันที.',
     category: 'คำปรึกษา',
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
     description: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
@@ -323,6 +432,14 @@ const fetchArticle = async () => {
     if (Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0) {
       apiRelatedArticles.value = allArticlesResponse.data.filter(item => String(item.id) !== String(articleSlug) && item.slug !== articleSlug).slice(0, 2)
     }
+    const { data } = await axios.get(`http://localhost:3000/api/articles/${articleSlug}`)
+    const loadedArticle = data && Object.keys(data).length > 0 ? data : fallbackArticles.find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
+
+    article.value = loadedArticle || fallbackArticles[0]
+
+    const allArticlesResponse = await axios.get('http://localhost:3000/api/articles')
+    const allArticles = Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0 ? allArticlesResponse.data : fallbackArticles
+    relatedArticles.value = allArticles.filter((item) => item.id !== article.value.id).slice(0, 2)
   } catch (error) {
     console.error('Failed to load article detail:', error)
     article.value = null
@@ -352,4 +469,7 @@ const relatedArticles = computed(() => {
     .filter(a => a.id !== currentId)
     .slice(0, 2)
 })
+watch(() => route.params.id, () => {
+  fetchArticle()
+}, { immediate: true })
 </script>
