@@ -263,6 +263,10 @@
             </div>
             <div class="px-6 pb-6 pt-0">
               <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+      </div>
       <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
         <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
           <div class="h-48 bg-[#E5E7EB]"></div>
@@ -359,7 +363,6 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const isColorBlindMode = inject('isColorBlindMode', false)
 const loading = ref(false)
 const mobileMenuOpen = ref(false)
@@ -417,18 +420,21 @@ const formatDate = (dateValue) => {
 }
 
 const goToLogin = () => {
+  mobileMenuOpen.value = false
   router.push('/login')
 }
 
 const goToRegister = () => {
+  mobileMenuOpen.value = false
   router.push('/register')
 }
 
 const fetchArticles = async () => {
   articles.value = fallbackArticles.map((article) => ({ ...article }))
+  loading.value = true
 
   try {
-    const { data } = await axios.get('http://localhost:3000/api/articles')
+    const { data } = await axios.get('/api/articles')
     if (Array.isArray(data) && data.length > 0) {
       articles.value = data
     } else {
@@ -437,6 +443,8 @@ const fetchArticles = async () => {
   } catch (error) {
     console.error('Failed to load articles:', error)
     articles.value = fallbackArticles.map((article) => ({ ...article }))
+  } finally {
+    loading.value = false
   }
 }
 

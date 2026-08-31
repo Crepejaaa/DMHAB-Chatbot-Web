@@ -28,7 +28,6 @@
           <router-link to="/blog" class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
         </div>
 
-        <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex gap-3 items-center text-sm">
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
             <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
@@ -70,22 +69,6 @@
       </div>
     </header>
 
-    <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-16 space-y-8">
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="article in articles" :key="article.id" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
-          <div>
-            <div class="h-40 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-              {{ article.image }}
-            </div>
-            <div class="p-6">
-              <span class="text-xs text-[#64748B] mb-2 block">{{ article.date }}</span>
-              <h3 class="font-bold text-lg mb-2 text-[#1E293B]">{{ article.title }}</h3>
-              <p class="text-sm text-[#64748B] leading-relaxed mb-4">{{ article.description }}</p>
-            </div>
-          </div>
-          <div class="px-6 pb-6">
-            <router-link 
-              :to="'/blog/' + article.id" 
     <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-10 md:py-16">
       <div class="mt-8 flex justify-end">
         <div class="inline-flex rounded-full border border-[#0D9488]/20 bg-white p-1 shadow-sm">
@@ -155,7 +138,6 @@
               อ่านเพิ่มเติม &rarr;
             </router-link>
           </div>
-        </div>
         </article>
       </div>
     </main>
