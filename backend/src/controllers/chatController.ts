@@ -31,7 +31,7 @@ export const getUserChatSessions = async (req: Request, res: Response): Promise<
     });
 
     // แมปกลับไปให้อยู่ในรูปแบบที่ Frontend ต้องการ
-    const formattedMessages = dbMessages.map((msg) => ({
+    const formattedMessages = dbMessages.map((msg: { sender: any; message: any; createdAt: any; }) => ({
       sender: msg.sender,
       text: msg.message,
       timestamp: msg.createdAt,
@@ -87,7 +87,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
       take: 20, // จำกัดไม่ให้ยาวเกินไป
     });
 
-    const aiMessages = chatHistory.reverse().map((msg) => ({
+    const aiMessages = chatHistory.reverse().map((msg: { sender: any; message: any; }) => ({
       role: String(msg.sender) === "USER" ? "user" : "assistant",
       content: msg.message,
     }));
@@ -126,6 +126,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
       severity_level: aiResponse.severity_level,
     });
   } catch (error) {
+    console.error("Chat API Error Details:", error);
     console.error("Error in sendMessage:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการเชื่อมต่อแชทบอท" });
   }
