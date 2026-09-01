@@ -33,6 +33,21 @@
           </button>
         </div>
 
+        <!-- ปุ่ม Login -->
+        <button 
+          @click="$router.push('/login')" 
+          class="hidden md:inline-flex px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition items-center justify-center cursor-pointer text-white"
+        >
+          Login
+        </button>
+        
+        <button
+          @click="$router.push('/register')"
+          class="hidden md:inline-flex px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
+        >
+          Register
+        </button>
+
         <ProfileMenu />
       </div>
     </nav>
@@ -178,11 +193,13 @@
 <script setup>
 import { inject, ref, onMounted } from 'vue'
 import axios from 'axios'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const articles = ref([])
 const loading = ref(true)
 const errorMessage = ref('')
+const layoutMode = ref('grid')
 
 const fallbackArticles = [
   {
@@ -212,7 +229,7 @@ const fetchArticles = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
-    const { data } = await axios.get('http://localhost:3000/api/articles')
+    const { data } = await axios.get('/api/articles')
     articles.value = Array.isArray(data) && data.length > 0 ? data : fallbackArticles
   } catch (error) {
     console.error('Failed to load articles:', error)
