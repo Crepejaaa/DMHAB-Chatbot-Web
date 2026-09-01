@@ -46,6 +46,32 @@
         </svg>
       </div>
 
+
+        <div class="flex gap-3 items-center text-sm">
+          <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
+            <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
+            <button
+              @click="isColorBlindMode = !isColorBlindMode"
+              :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+              class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
+            >
+              <span
+                :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+                class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+              ></span>
+            </button>
+          </div>
+
+          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
+            Login
+          </router-link>
+          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
+            Register
+          </router-link>
+          <ProfileMenu />
+        </div>
+      </nav>
+
       <!-- Page Title -->
       <div class="container mx-auto px-6 lg:px-10 pt-6 pb-20 relative z-10">
         <div class="flex gap-4 items-stretch">
