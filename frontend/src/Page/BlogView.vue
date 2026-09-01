@@ -46,16 +46,6 @@
       </div>
 
 
-          <router-link to="/login" class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition">
-            Login
-          </router-link>
-          <router-link to="/register" class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
-            Register
-          </router-link>
-          <ProfileMenu />
-        </div>
-      </nav>
-
       <div class="container mx-auto px-6 lg:px-10 pt-6 pb-20 relative z-10">
         <div class="flex gap-4 items-stretch">
           <div class="w-1.5 bg-white/80 rounded-full"></div>
