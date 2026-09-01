@@ -2,7 +2,7 @@
   <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isColorBlindMode ? 'grayscale' : '']">
 
     <!-- 1. Navbar -->
-    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
@@ -12,10 +12,10 @@
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition">Service</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">
