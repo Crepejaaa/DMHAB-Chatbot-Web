@@ -33,6 +33,21 @@
           </button>
         </div>
 
+        <!-- ปุ่ม Login -->
+        <button 
+          @click="$router.push('/login')" 
+          class="hidden md:inline-flex px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition items-center justify-center cursor-pointer text-white"
+        >
+          Login
+        </button>
+        
+        <button
+          @click="$router.push('/register')"
+          class="hidden md:inline-flex px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
+        >
+          Register
+        </button>
+
         <ProfileMenu />
       </div>
     </nav>
