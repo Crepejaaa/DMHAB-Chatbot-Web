@@ -12,7 +12,7 @@ const articleRoutes = require('./src/routes/articleRoutes');
 const prisma = require('./src/prismaClient').default || require('./src/prismaClient');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;  // แก้จาก 3000ปกติ  มีคำว่า [process.env. เข้ามา]
 
 app.use(cors());
 app.use(express.json());
@@ -42,6 +42,6 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Backend Server กำลังรันอยู่ที่ http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Backend Server is running on port ${PORT}`);  //แก้จากชี้ไปที่local host เป็นเปิดรับสำหรับ Cloud render
 });

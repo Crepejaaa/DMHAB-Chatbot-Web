@@ -5,11 +5,20 @@ import jwt from "jsonwebtoken";
 // เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
+if (!process.env.JWT_SECRET) {
+  throw new Error("Missing JWT_SECRET environment variable");
+}
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, password, email, phone } = req.body;
+    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ
+    const { name, username = name, password, email, phone } = req.body;
+
+    if (!username || !password) {
+      res.status(400).json({ error: "กรุณาระบุข้อมูลให้ครบถ้วน (ชื่อผู้ใช้, รหัสผ่าน)" });
+      return;
+    }
 
     // ตรวจสอบว่ามีอีเมลหรือ username นี้แล้วหรือยัง
     const existingUser = await prisma.user.findFirst({

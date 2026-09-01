@@ -29,7 +29,7 @@ enum Sender {
 // ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
 model User {
   id           Int           @id @default(autoincrement())
-  username     String?        @unique
+  username     String        @unique
   passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
   email        String?        @unique
   phone        String?

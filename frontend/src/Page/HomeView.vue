@@ -33,6 +33,69 @@
           </button>
         </div>
 
+        <!-- ปุ่ม Login แก้เป็น router-link เรียบร้อยแล้ว -->
+        <button 
+  @click="$router.push('/login')" 
+  class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
+>
+  Login
+</button>
+        
+        <button
+        @click="$router.push('/register')"
+        class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm">
+          Register
+        </button>
+        <div class="relative md:hidden">
+          <button
+            type="button"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/10 text-white shadow-sm transition hover:bg-white/15"
+            aria-label="Open menu"
+          >
+            <span class="flex flex-col gap-1.5">
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+              <span class="h-0.5 w-5 rounded-full bg-white"></span>
+            </span>
+          </button>
+
+          <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[60] w-[min(82vw,300px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a]/90 text-white shadow-2xl backdrop-blur-sm">
+            <div class="space-y-1 p-3">
+              <button type="button" @click="goToLogin" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Login</span>
+              </button>
+              <button type="button" @click="goToRegister" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
+                <span>Register</span>
+              </button>
+              <router-link to="/about" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>About</span>
+              </router-link>
+              <router-link to="/services" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Service</span>
+              </router-link>
+              <router-link to="/blog" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
+                <span>Blog</span>
+              </router-link>
+
+              <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
+                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Color Blindness</span>
+                <button
+                  type="button"
+                  @click="isColorBlindMode = !isColorBlindMode"
+                  :class="isColorBlindMode ? 'bg-[#16a085]' : 'bg-slate-200'"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
+                >
+                  <span
+                    :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
+                    class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <ProfileMenu />
       </div>
     </nav>
@@ -149,6 +212,61 @@
         </router-link>
       </div>
 
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 1]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/stress-management" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 2]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/sleep-and-mood" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
+            <div>
+              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
+                [รูปภาพบทความ 3]
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
+                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
+                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-0">
+              <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+            </div>
+          </div>
+        </div>
+      </div>
       <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
         <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
           <div class="h-48 bg-[#E5E7EB]"></div>
@@ -226,6 +344,7 @@
           </ul>
         </div>
         <div>
+          <h4 class="font-bold mb-3">Hotline</h4>
           <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
@@ -239,10 +358,9 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted, ref, computed } from 'vue'
+import { inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import ProfileMenu from '../components/ProfileMenu.vue'
 
 const router = useRouter()
 const isColorBlindMode = inject('isColorBlindMode', false)
@@ -313,10 +431,10 @@ const goToRegister = () => {
 
 const fetchArticles = async () => {
   articles.value = fallbackArticles.map((article) => ({ ...article }))
-  loading.value = false
+  loading.value = true
 
   try {
-    const { data } = await axios.get('http://localhost:3000/api/articles')
+    const { data } = await axios.get('/api/articles')
     if (Array.isArray(data) && data.length > 0) {
       articles.value = data
     } else {
@@ -333,17 +451,15 @@ const fetchArticles = async () => {
 let observer = null
 
 onMounted(() => {
-  fetchArticles()
-
   observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.remove(
-          'opacity-0',
-          'translate-y-10',
-          'translate-y-16',
-          '-translate-x-16',
-          'translate-x-16',
+          'opacity-0', 
+          'translate-y-10', 
+          'translate-y-16', 
+          '-translate-x-16', 
+          'translate-x-16', 
           'scale-95'
         )
         entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100')
@@ -351,7 +467,7 @@ onMounted(() => {
       }
     })
   }, {
-    threshold: 0.1,
+    threshold: 0.1 
   })
 
   const animElements = document.querySelectorAll('.scroll-anim')
