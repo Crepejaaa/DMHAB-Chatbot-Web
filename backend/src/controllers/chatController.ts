@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prismaClient";
-import { generateChatResponse } from "../services/ollamaService";
+import { generateChatResponse, AIResponse } from "../services/geminiService";
 
 
 
@@ -31,7 +31,7 @@ export const getUserChatSessions = async (req: Request, res: Response): Promise<
     });
 
     // แมปกลับไปให้อยู่ในรูปแบบที่ Frontend ต้องการ
-    const formattedMessages = dbMessages.map((msg) => ({
+    const formattedMessages = dbMessages.map((msg: { sender: any; message: any; createdAt: any; }) => ({
       sender: msg.sender,
       text: msg.message,
       timestamp: msg.createdAt,
@@ -83,17 +83,18 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     // 3. ดึงประวัติแชทของ Session เพื่อใช้เป็น Context ให้ AI
     const chatHistory = await prisma.chatMessage.findMany({
       where: { sessionId: session.id },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       take: 20, // จำกัดไม่ให้ยาวเกินไป
     });
 
-    const aiMessages = chatHistory.map((msg) => ({
-      role: msg.sender === "USER" ? "user" : "assistant",
+    const aiMessages = chatHistory.reverse().map((msg: { sender: any; message: any; }) => ({
+      role: String(msg.sender) === "USER" ? "user" : "assistant",
       content: msg.message,
     }));
 
+
     // 4. ส่งไปให้ Ollama ประมวลผล
-    const aiResponse = await generateChatResponse(aiMessages);
+    const aiResponse: AIResponse = await generateChatResponse(aiMessages);
 
     // 5. บันทึกข้อความตอบกลับของบอท
     await prisma.chatMessage.create({
@@ -125,6 +126,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
       severity_level: aiResponse.severity_level,
     });
   } catch (error) {
+    console.error("Chat API Error Details:", error);
     console.error("Error in sendMessage:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการเชื่อมต่อแชทบอท" });
   }
