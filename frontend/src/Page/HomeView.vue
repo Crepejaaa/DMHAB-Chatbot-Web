@@ -2,7 +2,7 @@
   <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isColorBlindMode ? 'grayscale' : '']">
 
     <!-- 1. Navbar -->
-    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
@@ -12,10 +12,10 @@
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition">Service</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">
@@ -31,56 +31,6 @@
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
-        </div>
-
-        <div class="relative md:hidden">
-          <button
-            type="button"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/10 text-white shadow-sm transition hover:bg-white/15"
-            aria-label="Open menu"
-          >
-            <span class="flex flex-col gap-1.5">
-              <span class="h-0.5 w-5 rounded-full bg-white"></span>
-              <span class="h-0.5 w-5 rounded-full bg-white"></span>
-              <span class="h-0.5 w-5 rounded-full bg-white"></span>
-            </span>
-          </button>
-
-          <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[60] w-[min(82vw,300px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a]/90 text-white shadow-2xl backdrop-blur-sm">
-            <div class="space-y-1 p-3">
-              <button type="button" @click="goToLogin" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
-                <span>Login</span>
-              </button>
-              <button type="button" @click="goToRegister" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5">
-                <span>Register</span>
-              </button>
-              <router-link to="/about" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
-                <span>About</span>
-              </router-link>
-              <router-link to="/services" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
-                <span>Service</span>
-              </router-link>
-              <router-link to="/blog" @click="mobileMenuOpen = false" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5">
-                <span>Blog</span>
-              </router-link>
-
-              <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
-                <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Color Blindness</span>
-                <button
-                  type="button"
-                  @click="isColorBlindMode = !isColorBlindMode"
-                  :class="isColorBlindMode ? 'bg-[#16a085]' : 'bg-slate-200'"
-                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
-                >
-                  <span
-                    :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
-                    class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
-                  ></span>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <ProfileMenu />
