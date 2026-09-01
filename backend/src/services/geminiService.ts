@@ -49,7 +49,7 @@ export const generateChatResponse = async (
 ): Promise<AIResponse> => {
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-pro",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         responseMimeType: "application/json",
