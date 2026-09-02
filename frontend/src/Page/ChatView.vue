@@ -127,7 +127,10 @@ const scrollToBottom = async () => {
 const fetchMessages = async () => {
   try {
     const token = localStorage.getItem('token')
-    if (!token) return router.push('/login')
+    if (!token) {
+      console.warn('Token is missing')
+      return router.push('/login')
+    }
 
     const response = await axios.get(`${baseURL}/api/chat/sessions`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -170,6 +173,10 @@ const sendMessage = async () => {
 
   try {
     const token = localStorage.getItem('token')
+    if (!token) {
+      console.warn('Token is missing')
+      return router.push('/login')
+    }
     
     const response = await axios.post(`${baseURL}/api/chat`, 
       { message: userText },
