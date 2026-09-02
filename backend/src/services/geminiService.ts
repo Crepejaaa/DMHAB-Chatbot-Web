@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -56,11 +56,17 @@ export const generateChatResponse = async (
       parts: [{ text: msg.content }],
     }));
 
-    const result = await model.generateContent({
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
       contents: formattedHistory,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        responseMimeType: "application/json",
+        temperature: 0.2,
+      },
     });
 
-    const aiMessageContent = result.response.text();
+    const aiMessageContent = response.text;
     const parsedData: AIResponse = JSON.parse(aiMessageContent);
     return parsedData;
   } catch (error) {
@@ -68,3 +74,4 @@ export const generateChatResponse = async (
     throw new Error("Gemini API Error");
   }
 };
+
