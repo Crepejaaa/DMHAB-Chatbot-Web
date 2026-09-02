@@ -48,14 +48,8 @@ export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
 ): Promise<AIResponse> => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT,
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.2,
-      },
-    });
+    // แก้จากของเดิมให้เป็นแบบนี้เป๊ะๆ (ระวังอย่าให้มีช่องว่างซ่อนอยู่นะครับ)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     // แปลง Format ข้อความจากของเดิมไปเป็น Format ที่ Gemini ต้องการ
     const formattedHistory = messagesArray.map((msg) => ({
