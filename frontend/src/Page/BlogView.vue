@@ -201,6 +201,13 @@ const loading = ref(true)
 const errorMessage = ref('')
 const layoutMode = ref('grid')
 
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  return new Date(dateString).toLocaleDateString('th-TH', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+};
+
 const fallbackArticles = [
   {
     id: 'stress-management',
