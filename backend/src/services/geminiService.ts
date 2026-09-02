@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -40,34 +40,29 @@ export interface AIResponse {
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
-const apiKey = process.env.GEMINI_API_KEY;
 
-const genAI = new GoogleGenerativeAI(apiKey);
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
 ): Promise<AIResponse> => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: SYSTEM_PROMPT,
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.2,
-      },
-    });
-
-    // แปลง Format ข้อความจากของเดิมไปเป็น Format ที่ Gemini ต้องการ
     const formattedHistory = messagesArray.map((msg) => ({
       role: msg.role === "assistant" || msg.role === "bot" ? "model" : "user",
       parts: [{ text: msg.content }],
     }));
 
-    const result = await model.generateContent({
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
       contents: formattedHistory,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        responseMimeType: "application/json",
+        temperature: 0.2,
+      },
     });
 
-    const aiMessageContent = result.response.text();
+    const aiMessageContent = response.text;
     const parsedData: AIResponse = JSON.parse(aiMessageContent);
     return parsedData;
   } catch (error) {
@@ -75,3 +70,4 @@ export const generateChatResponse = async (
     throw new Error("Gemini API Error");
   }
 };
+
