@@ -38,18 +38,17 @@ export interface AIResponse {
 }
 
 if (!process.env.GEMINI_API_KEY) {
-  throw new Error("Missing GEMINI_API_KEY environment variable");
+  throw new Error("Missing GEMINI_API_KEY in environment variables");
 }
-const apiKey = process.env.GEMINI_API_KEY;
 
-const genAI = new GoogleGenerativeAI(apiKey);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
 ): Promise<AIResponse> => {
   try {
     // แก้จากของเดิมให้เป็นแบบนี้เป๊ะๆ (ระวังอย่าให้มีช่องว่างซ่อนอยู่นะครับ)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // แปลง Format ข้อความจากของเดิมไปเป็น Format ที่ Gemini ต้องการ
     const formattedHistory = messagesArray.map((msg) => ({
