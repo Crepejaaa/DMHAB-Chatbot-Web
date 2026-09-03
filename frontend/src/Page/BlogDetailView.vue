@@ -2,6 +2,58 @@
   <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
 
     <!-- 1. Header & Navbar (เหมือน BlogView) -->
+    <!-- 1. Navbar -->
+    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
+      <div class="flex items-center gap-1">
+        <!-- โลโก้ Navbar -->
+        <div class="w-12 h-12 flex items-center justify-center">
+          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+        </div>
+        <span class="text-xl font-bold tracking-wide">DMHAB</span>
+      </div>
+      
+      <div class="hidden md:flex gap-8 items-center text-sm font-medium">
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+      </div>
+      
+      <div class="flex gap-3 items-center text-sm">
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
+          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <button
+            @click="isColorBlindMode = !isColorBlindMode"
+            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
+          >
+            <span
+              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+            ></span>
+          </button>
+        </div>
+
+        <!-- ปุ่ม Login -->
+        <button 
+          @click="$router.push('/login')" 
+          class="hidden md:inline-flex px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition items-center justify-center cursor-pointer text-white"
+        >
+          Login
+        </button>
+        
+        <button
+          @click="$router.push('/register')"
+          class="hidden md:inline-flex px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
+        >
+          Register
+        </button>
+
+        <ProfileMenu />
+      </div>
+    </nav>
+
+    <!-- 2. Green Banner Header -->
     <header class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-4 pb-16 px-6 lg:px-12 relative overflow-hidden shadow-md">
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none">
         <svg viewBox="0 0 500 500" class="w-full h-full">
@@ -9,155 +61,130 @@
         </svg>
       </div>
 
-      <nav class="w-full flex items-center justify-between mb-10 relative z-10">
-        <div class="flex items-center gap-3">
-          <router-link to="/blog" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้า Blog">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-          </router-link>
-          <router-link to="/" class="flex items-center gap-2">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-10 h-10 object-contain" />
-            <span class="text-xl font-bold tracking-wide">DMHAB</span>
-          </router-link>
-        </div>
-
-        <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-          <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-          <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-          <router-link to="/services" class="hover:text-[#D1FAE5] transition">Services</router-link>
-          <router-link to="/blog" class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
-        </div>
-
-        <div class="flex gap-3 items-center text-sm">
-          <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-            <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
-            <button
-              @click="isColorBlindMode = !isColorBlindMode"
-              :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
-              class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
-            >
-              <span
-                :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
-                class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
-              ></span>
-            </button>
-          </div>
-
-          <ProfileMenu />
-        </div>
-      </nav>
-
       <!-- Page Title -->
       <div class="container mx-auto px-6 lg:px-10 pt-6 pb-20 relative z-10">
         <div class="flex gap-4 items-stretch">
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              {{ currentArticle.title }}
+              {{ article?.title || 'บทความ' }}
             </h1>
             <div class="flex items-center gap-4 text-xs md:text-sm text-[#D1FAE5]">
               <span class="flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                {{ currentArticle.date }}
+                {{ article ? formatDate(article.createdAt) : '...' }}
               </span>
               <span class="flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {{ currentArticle.readTime }}
+                {{ article ? getReadTime(article.content || '') : '...' }}
               </span>
-              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ currentArticle.category }}</span>
+              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ article?.category || 'บทความ' }}</span>
             </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- 2. Main Content -->
-    <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
-
-      <!-- Article Hero Image -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10">
-        <div class="h-64 md:h-80 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm">
-          {{ currentArticle.image }}
+    <main v-if="loading" class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+      <div class="space-y-8 animate-pulse">
+        <div class="h-80 rounded-[2rem] bg-[#E5E7EB]"></div>
+        <div class="space-y-4 rounded-2xl bg-white p-8 shadow-sm border border-gray-100">
+          <div class="h-5 w-24 rounded-full bg-[#E5E7EB]"></div>
+          <div class="h-8 w-2/3 rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-5/6 rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-full rounded bg-[#E5E7EB]"></div>
+          <div class="h-4 w-4/5 rounded bg-[#E5E7EB]"></div>
+          <div class="h-12 w-40 rounded-full bg-[#D9EDE8]"></div>
         </div>
-      </div>
-
-      <!-- Article Body -->
-      <article class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
-        <!-- Introduction -->
-        <div class="mb-10">
-          <p class="text-lg text-[#64748B] leading-relaxed font-medium italic border-l-4 border-[#0D9488] pl-6">
-            {{ currentArticle.intro }}
-          </p>
-        </div>
-
-        <!-- Content Sections -->
-        <div v-for="(section, index) in currentArticle.sections" :key="index" class="mb-10 last:mb-0">
-          <h2 class="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-4 flex items-center gap-3">
-            <span class="w-8 h-8 bg-gradient-to-br from-[#0D9488] to-[#059669] rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0">{{ index + 1 }}</span>
-            {{ section.heading }}
-          </h2>
-          <p class="text-[#64748B] leading-relaxed text-base whitespace-pre-line pl-11">{{ section.content }}</p>
-        </div>
-
-        <!-- Conclusion -->
-        <div class="mt-12 bg-gradient-to-r from-[#0D9488]/5 to-[#059669]/5 rounded-2xl p-8 border border-[#0D9488]/10">
-          <h3 class="text-lg font-bold text-[#1E293B] mb-3 flex items-center gap-2">
-            <span class="text-xl">สรุป</span>
-          </h3>
-          <p class="text-[#64748B] leading-relaxed">{{ currentArticle.conclusion }}</p>
-        </div>
-      </article>
-
-      <!-- Tags -->
-      <div class="flex flex-wrap gap-2 mb-10">
-        <span 
-          v-for="tag in currentArticle.tags" 
-          :key="tag" 
-          class="bg-[#0D9488]/10 text-[#0D9488] px-4 py-1.5 rounded-full text-xs font-semibold"
-        >
-          #{{ tag }}
-        </span>
-      </div>
-
-      <!-- Related Articles -->
-      <section class="mb-10">
-        <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
         <div class="grid md:grid-cols-2 gap-6">
-          <router-link 
-            v-for="related in relatedArticles" 
-            :key="related.id" 
-            :to="'/blog/' + related.id"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group block"
+          <div v-for="n in 2" :key="n" class="h-40 rounded-2xl bg-[#E5E7EB]"></div>
+        </div>
+      </div>
+    </main>
+
+    <main v-else-if="errorMessage" class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">{{ errorMessage }}</div>
+    </main>
+
+    <main v-else class="flex-1 w-full max-w-4xl mx-auto px-6 py-16">
+
+      <div v-if="article" class="space-y-10">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-10">
+          <img
+            :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+            :alt="article.title"
+            class="h-64 md:h-80 w-full object-cover"
+          />
+        </div>
+
+        <article class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
+          <div class="mb-8 flex flex-wrap items-center gap-3 text-xs text-[#64748B]">
+            <span class="bg-[#0D9488]/10 text-[#0D9488] px-3 py-1 rounded-full font-semibold">{{ article.category }}</span>
+            <span>{{ formatDate(article.createdAt) }}</span>
+            <span>{{ getReadTime(article.content || '') }}</span>
+          </div>
+
+          <div class="mb-10">
+            <p class="text-lg text-[#64748B] leading-relaxed font-medium italic border-l-4 border-[#0D9488] pl-6">
+              {{ article.excerpt || article.content?.slice(0, 180) }}
+            </p>
+          </div>
+
+          <div v-for="(paragraph, index) in parseContent(article.content || '')" :key="index" class="mb-6 last:mb-0">
+            <p class="text-[#64748B] leading-relaxed text-base whitespace-pre-line">{{ paragraph }}</p>
+          </div>
+
+          <div class="mt-12 rounded-2xl bg-gradient-to-r from-[#0D9488]/5 to-[#059669]/5 p-6 border border-[#0D9488]/10">
+            <h3 class="text-lg font-bold text-[#1E293B] mb-3">แหล่งอ้างอิง</h3>
+            <p class="text-[#64748B] leading-relaxed">
+              ข้อมูลบทความนี้อ้างอิงจาก
+              <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] underline hover:text-[#045F54]">
+                {{ article.sourceName || 'แหล่งข้อมูล' }}
+              </a>
+              <span v-else>{{ article.sourceName || 'แหล่งข้อมูล' }}</span>
+            </p>
+          </div>
+        </article>
+
+        <section class="mb-10">
+          <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <router-link
+              v-for="related in relatedArticles"
+              :key="related.id"
+              :to="'/blog/' + (related.slug || related.id)"
+              class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group block"
+            >
+              <img
+                :src="related.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+                :alt="related.title"
+                class="h-36 w-full object-cover border-b border-gray-100"
+              />
+              <div class="p-5">
+                <span class="text-xs text-[#64748B] mb-1 block">{{ formatDate(related.createdAt) }}</span>
+                <h3 class="font-bold text-[#1E293B] group-hover:text-[#0D9488] transition-colors">{{ related.title }}</h3>
+              </div>
+            </router-link>
+          </div>
+        </section>
+
+        <div class="text-center">
+          <router-link
+            to="/blog"
+            class="inline-flex items-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition shadow-md"
           >
-            <div class="h-36 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-              {{ related.image }}
-            </div>
-            <div class="p-5">
-              <span class="text-xs text-[#64748B] mb-1 block">{{ related.date }}</span>
-              <h3 class="font-bold text-[#1E293B] group-hover:text-[#0D9488] transition-colors">{{ related.title }}</h3>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            กลับไปหน้าบทความทั้งหมด
           </router-link>
         </div>
-      </section>
-
-      <!-- Back to Blog CTA -->
-      <div class="text-center">
-        <router-link 
-          to="/blog" 
-          class="inline-flex items-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition shadow-md"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          กลับไปหน้าบทความทั้งหมด
-        </router-link>
       </div>
-
     </main>
 
     <!-- 3. Footer (เหมือน BlogView) -->
@@ -188,6 +215,7 @@
           </ul>
         </div>
         <div>
+          <h4 class="font-bold mb-3">Hotline</h4>
           <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
@@ -200,11 +228,16 @@
 </template>
 
 <script setup>
-import { inject, computed } from 'vue'
+import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from 'axios'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const route = useRoute()
+const loading = ref(true)
+const errorMessage = ref('')
+const article = ref(null)
+const apiRelatedArticles = ref([])
 
 // ข้อมูลบทความทั้งหมด
 const articlesData = {
@@ -296,17 +329,49 @@ const articlesData = {
   }
 }
 
-// หาบทความปัจจุบันจาก route param
+const fetchArticle = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+
+    const articleSlug = route.params.id
+    const { data } = await axios.get(`/api/articles/${articleSlug}`)
+    const loadedArticle = data && Object.keys(data).length > 0 ? data : fallbackArticles.find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
+    article.value = loadedArticle || fallbackArticles[0]
+
+    const allArticlesResponse = await axios.get('/api/articles')
+    const allArticles = Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0 ? allArticlesResponse.data : fallbackArticles
+    relatedArticles.value = allArticles.filter((item) => String(item.id) !== String(article.value.id) && item.slug !== articleSlug).slice(0, 2)
+  } catch (error) {
+    console.error('Failed to load article detail:', error)
+    article.value = null
+    apiRelatedArticles.value = []
+    errorMessage.value = ''
+  } finally {
+    loading.value = false
+  }
+}
+
+// หาบทความปัจจุบันจาก route param หรือ API
 const currentArticle = computed(() => {
+  if (article.value && article.value.title) {
+    return article.value
+  }
   const id = route.params.id
   return articlesData[id] || articlesData['stress-management']
 })
 
 // บทความที่เกี่ยวข้อง (ทุกบทความยกเว้นบทความปัจจุบัน)
 const relatedArticles = computed(() => {
+  if (apiRelatedArticles.value.length > 0) {
+    return apiRelatedArticles.value
+  }
   const currentId = route.params.id
   return Object.values(articlesData)
     .filter(a => a.id !== currentId)
     .slice(0, 2)
 })
+watch(() => route.params.id, () => {
+  fetchArticle()
+}, { immediate: true })
 </script>

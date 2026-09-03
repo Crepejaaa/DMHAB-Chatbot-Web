@@ -15,7 +15,7 @@
         </svg>
       </button>
 
-      <div v-if="showProfileMenu" class="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+      <div v-if="showProfileMenu" class="absolute right-0 z-[999] mt-2 w-60 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
         <div class="border-b border-gray-100 px-4 py-3 text-left">
           <p class="text-xs text-gray-500">บัญชีของคุณ</p>
           <p class="mt-1 text-sm font-semibold text-gray-800">{{ authStore.displayName }}</p>
@@ -95,7 +95,7 @@
         </span>
       </button>
 
-      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[60] w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-white/10 bg-[#111827]/95 text-white shadow-2xl backdrop-blur-sm">
+      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
         <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left">
           <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">Account</p>
           <p class="mt-2 text-sm font-semibold">{{ authStore.displayName }}</p>
@@ -103,6 +103,32 @@
         </div>
 
         <div class="space-y-1 p-3">
+          <!-- Common Links (About, Service, Blog) -->
+          <router-link
+            to="/about"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            @click="mobileMenuOpen = false"
+          >
+            <span>About</span>
+          </router-link>
+          <router-link
+            to="/services"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            @click="mobileMenuOpen = false"
+          >
+            <span>Service</span>
+          </router-link>
+          <router-link
+            to="/blog"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            @click="mobileMenuOpen = false"
+          >
+            <span>Blog</span>
+          </router-link>
+
+          <div class="my-1 border-t border-white/10"></div>
+
+          <!-- Unauthenticated Links -->
           <button
             v-if="!authStore.isAuthenticated"
             type="button"
@@ -120,30 +146,7 @@
             <span>Register</span>
           </button>
 
-          <div v-if="!authStore.isAuthenticated" class="space-y-1 border-t border-white/10 px-2 pt-2">
-            <router-link
-              to="/about"
-              class="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-gray-200 transition hover:bg-white/5"
-              @click="mobileMenuOpen = false"
-            >
-              <span>About</span>
-            </router-link>
-            <router-link
-              to="/services"
-              class="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-gray-200 transition hover:bg-white/5"
-              @click="mobileMenuOpen = false"
-            >
-              <span>Service</span>
-            </router-link>
-            <router-link
-              to="/blog"
-              class="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm text-gray-200 transition hover:bg-white/5"
-              @click="mobileMenuOpen = false"
-            >
-              <span>Blog</span>
-            </router-link>
-          </div>
-
+          <!-- Authenticated Links -->
           <button
             v-if="authStore.isAuthenticated"
             type="button"

@@ -88,7 +88,7 @@ const router = createRouter({
 })
 
 // Navigation Guard
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/admin', '/contact', '/assessment', '/profile', '/account-settings']
 
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
@@ -103,10 +103,10 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
   if (authRequired && !authStore.isAuthenticated) {
-    return next('/login');
+    return '/login';
   }
 
-  next();
+  return true;
 })
 
 export default router

@@ -29,7 +29,7 @@ enum Sender {
 // ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
 model User {
   id           Int           @id @default(autoincrement())
-  username     String?        @unique
+  username     String        @unique
   passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
   email        String?        @unique
   phone        String?
@@ -89,14 +89,19 @@ model TestResult {
 
 // ตารางที่ 6: คลังบทความ คำแนะนำกิจกรรม หรือช่องทางติดต่อหน่วยงานฉุกเฉิน
 model Article {
-  id          Int      @id @default(autoincrement())
-  title       String
-  content     String   @db.Text // เนื้อหาบทความยาวๆ
-  category    String   // หมวดหมู่ เช่น "STRESS", "DEPRESSION", "EMERGENCY"
-  createdById Int
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  title         String
+  slug          String?  @unique
+  excerpt       String?  @db.Text
+  content       String   @db.Text // เนื้อหาบทความยาวๆ
+  category      String   // หมวดหมู่ เช่น "STRESS", "DEPRESSION", "EMERGENCY"
+  coverImageUrl String?
+  sourceName    String?
+  sourceUrl     String?
+  createdById   Int
+  createdBy     User     @relation(fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 // ตารางที่ 7: เก็บบันทึกประวัติกิจกรรมและการใช้งานระบบ
