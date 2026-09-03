@@ -3,12 +3,26 @@
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
-      <div class="flex items-center gap-1">
-        <!-- โลโก้ Navbar -->
-        <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
-        </div>
-        <span class="text-xl font-bold tracking-wide">DMHAB</span>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button
+          type="button"
+          @click="$router.options.history.state?.back ? $router.back() : $router.push('/')"
+          class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
+          title="ย้อนกลับ"
+          aria-label="ย้อนกลับ"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </button>
+
+        <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
+          <!-- โลโก้ Navbar -->
+          <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
+            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          </div>
+          <span class="text-xl font-bold tracking-wide">DMHAB</span>
+        </router-link>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
@@ -32,21 +46,6 @@
             ></span>
           </button>
         </div>
-
-        <!-- ปุ่ม Login -->
-        <button 
-          @click="$router.push('/login')" 
-          class="hidden md:inline-flex px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition items-center justify-center cursor-pointer text-white"
-        >
-          Login
-        </button>
-        
-        <button
-          @click="$router.push('/register')"
-          class="hidden md:inline-flex px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
-        >
-          Register
-        </button>
 
         <ProfileMenu />
       </div>
@@ -121,10 +120,9 @@
         <div>
           <h4 class="font-bold mb-3">Services</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
+            <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
+            <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
             <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
-            <li><a href="#" class="hover:underline">Self-Care Resource Library</a></li>
           </ul>
         </div>
         <div>

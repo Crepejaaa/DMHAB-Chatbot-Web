@@ -39,19 +39,7 @@
           </button>
         </div>
 
-        <button 
-          @click="$router.push('/login')" 
-          class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
-        >
-          Login
-        </button>
-        
-        <button
-          @click="$router.push('/register')"
-          class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
-        >
-          Register
-        </button>
+        <ProfileMenu />
       </div>
     </nav>
 
@@ -218,6 +206,7 @@
 <script setup>
 import { inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import ProfileMenu from '../components/ProfileMenu.vue'
 
 const isColorBlindMode = inject('isColorBlindMode')
 const route = useRoute()
