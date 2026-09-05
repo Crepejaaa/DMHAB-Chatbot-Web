@@ -1,32 +1,54 @@
+<!-- App.vue -->
 <template>
-  <div class="container">
-    <h1>DMIHAB เริ่มต้นโปรเจกต์สำเร็จ! 🎉</h1>
-    <p>เราจะใช้ Plain CSS สบายๆ แบบไม่ต้องปวดหัวกับการตั้งค่าครับ</p>
+  <div :class="{ 'grayscale-mode': isColorBlindMode }">
+    <SkeletonLoader />
+    <router-view />
   </div>
 </template>
 
 <script setup>
-// โค้ดส่วนนี้จะว่างเปล่าไปก่อนครับ (เราเอา import โลโก้เก่าออกหมดแล้ว)
+import { ref, provide, watch } from 'vue'
+import SkeletonLoader from './components/SkeletonLoader.vue'
+
+// อ่านค่าที่เคยตั้งไว้จาก localStorage (ถ้ามี) เพื่อให้จำค่าไว้แม้ refresh หน้า
+const isColorBlindMode = ref(localStorage.getItem('colorBlindMode') === 'true')
+
+// เมื่อค่าเปลี่ยน ให้บันทึกลง localStorage ด้วย
+watch(isColorBlindMode, (val) => {
+  localStorage.setItem('colorBlindMode', val)
+})
+
+// ส่งค่านี้ไปให้ทุกหน้า/ทุกคอมโพเนนต์ลูกใช้งานผ่าน inject
+provide('isColorBlindMode', isColorBlindMode)
 </script>
 
-<style scoped>
-/* ส่วนนี้คือ CSS ธรรมดาที่เราสามารถกำหนดความสวยงามได้ตามใจชอบ */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #FAFAF9; /* สีพื้นหลังครีมอ่อนๆ (Vibe Design) */
-  font-family: sans-serif;
+<script>
+export default {
+  components: {
+    SkeletonLoader
+  }
+}
+</script>
+
+<style>
+/* Style ส่วนกลาง (Global Style) สามารถใส่ font หรือการตั้งค่าพื้นฐานตรงนี้ได้ */
+html, body, #app {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #e9ece5;
 }
 
-h1 {
-  color: #0D9488; /* สีเขียว Teal สำหรับ Header */
-  margin-bottom: 10px;
+* {
+  box-sizing: border-box;
 }
 
-p {
-  color: #52525B; /* สีเทาเข้มอ่านง่าย */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.grayscale-mode {
+  filter: grayscale(100%);
 }
 </style>
