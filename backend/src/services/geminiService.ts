@@ -43,6 +43,16 @@ if (!process.env.GEMINI_API_KEY) {
 
 // ใช้งาน SDK ใหม่ที่ถูกต้อง
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
+const parseAIResponse = (content: string): AIResponse => {
+  const jsonContent = content
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "");
+
+  return JSON.parse(jsonContent) as AIResponse;
+};
 
 export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
@@ -54,7 +64,7 @@ export const generateChatResponse = async (
     }));
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-002",
       contents: formattedHistory,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -63,11 +73,17 @@ export const generateChatResponse = async (
       },
     });
 
-    const aiMessageContent = response.text || "{}";
-    const parsedData: AIResponse = JSON.parse(aiMessageContent);
-    return parsedData;
+    const aiMessageContent = response.text;
+    if (!aiMessageContent) {
+      throw new Error("Gemini returned an empty response");
+    }
+
+    return parseAIResponse(aiMessageContent);
   } catch (error) {
-    console.error("Error communicating with Gemini API:", error);
+    console.error("Error communicating with Gemini API:", {
+      model: modelName,
+      error,
+    });
     throw new Error("Gemini API Error");
   }
 };
