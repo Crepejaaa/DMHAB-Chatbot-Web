@@ -19,6 +19,15 @@ const SYSTEM_PROMPT = `
 - MILD: เครียดทั่วไป ชีวิตประจำวันปกติ
 - MODERATE: ความเครียดกระทบชีวิต (นอนไม่หลับ เบื่ออาหาร หมดไฟ) แต่ยังไม่มีความคิดทำร้ายตัวเอง
 - SEVERE: มีความคิดทำร้ายตัวเอง หรือวิกฤตทางอารมณ์รุนแรง
+
+# OUTPUT FORMAT (CRITICAL)
+คุณต้องตอบกลับเป็นรูปแบบ JSON เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายปะปน โครงสร้าง JSON ต้องเป็นดังนี้:
+{
+  "reply_message": "ข้อความตอบกลับผู้ใช้ (ภาษาไทย)",
+  "assessment_status": "IN_PROGRESS" หรือ "COMPLETED",
+  "severity_level": "PENDING", "MILD", "MODERATE", หรือ "SEVERE",
+  "suggested_category": "SLEEP", "STRESS", "BURNOUT", หรือ "NONE"
+}
 `;
 
 export interface AIResponse {
@@ -34,7 +43,17 @@ if (!process.env.GROQ_API_KEY) {
 }
 
 // สร้าง Instance ของ Groq Client โดยระบบจะดึง GROQ_API_KEY จาก Environment ไปใช้โดยอัตโนมัติ
-const groq = new Groq(); //
+const groq = new Groq();
+
+// ฟังก์ชันสำหรับสกัดและแปลงผลลัพธ์เป็น JSON (ป้องกันกรณี AI ใส่ Markdown มา)
+const parseAIResponse = (content: string): AIResponse => {
+  const jsonContent = content
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "");
+
+  return JSON.parse(jsonContent) as AIResponse;
+};
 
 export const generateChatResponse = async (
   messagesArray: { role: "system" | "user" | "assistant"; content: string }[]
@@ -54,18 +73,17 @@ export const generateChatResponse = async (
       messages: formattedMessages,
       temperature: 0.2,
       // บังคับให้ Output เป็นรูปแบบ JSON
-      response_format: { type: "json_object" }, //
+      response_format: { type: "json_object" },
     });
 
-    // 3. ดึงข้อความและแปลงผลลัพธ์
-    // Groq จะส่งคืนค่ามาในรูปแบบ JSON string จากนั้นเรานำไป parse เป็น Object
+    // 3. ดึงข้อความและแปลงผลลัพธ์โดยใช้ฟังก์ชันที่สร้างไว้
     const aiMessageContent = chatCompletion.choices[0]?.message?.content || "{}";
-    const parsedData: AIResponse = JSON.parse(aiMessageContent);
+    const parsedData: AIResponse = parseAIResponse(aiMessageContent);
 
     return parsedData;
 
   } catch (error) {
     console.error("Error communicating with Groq API:", error);
     throw new Error("AI API Error");
-  }
-};
+  } // เติมวงเล็บปิด catch ที่หายไป
+}; // เติมวงเล็บปิดฟังก์ชันที่หายไป
