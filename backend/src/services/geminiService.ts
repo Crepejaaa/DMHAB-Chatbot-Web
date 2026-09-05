@@ -58,16 +58,19 @@ export const generateChatResponse = async (
   messagesArray: { role: string; content: string }[]
 ): Promise<AIResponse> => {
   try {
-    const formattedHistory = messagesArray.map((msg) => ({
-      role: msg.role === "assistant" || msg.role === "bot" ? "model" : "user",
-      parts: [{ text: msg.content }],
-    }));
+    const formattedHistory = [
+      { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+      { role: "model", parts: [{ text: "Understood." }] },
+      ...messagesArray.map((msg) => ({
+        role: msg.role === "assistant" || msg.role === "bot" ? "model" : "user",
+        parts: [{ text: msg.content }],
+      }))
+    ];
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-pro",
+      model: "gemini-pro",
       contents: formattedHistory,
       config: {
-        systemInstruction: SYSTEM_PROMPT,
         responseMimeType: "application/json",
         temperature: 0.2,
       },
