@@ -69,7 +69,7 @@ export const generateChatResponse = async (
     // 2. เรียกใช้งาน Groq API แบบกำหนด JSON Mode
     const chatCompletion = await groq.chat.completions.create({
       // เลือกโมเดลที่ต้องการ แนะนำ Llama 3 รุ่น 70B สำหรับงานภาษาไทย
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-120b",
       messages: formattedMessages,
       temperature: 0.2,
       // บังคับให้ Output เป็นรูปแบบ JSON
