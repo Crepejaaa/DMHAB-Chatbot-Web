@@ -69,7 +69,7 @@ export const generateChatResponse = async (
     // 2. เรียกใช้งาน Groq API แบบกำหนด JSON Mode
     const chatCompletion = await groq.chat.completions.create({
       // เลือกโมเดลที่ต้องการ แนะนำ Llama 3 รุ่น 70B สำหรับงานภาษาไทย
-      model: "llama3-70b-8192",
+      model: "llama-3.1-70b-versatile",
       messages: formattedMessages,
       temperature: 0.2,
       // บังคับให้ Output เป็นรูปแบบ JSON
@@ -85,5 +85,5 @@ export const generateChatResponse = async (
   } catch (error) {
     console.error("Error communicating with Groq API:", error);
     throw new Error("AI API Error");
-  } // เติมวงเล็บปิด catch ที่หายไป
-}; // เติมวงเล็บปิดฟังก์ชันที่หายไป
+  }
+}; 
