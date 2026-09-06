@@ -45,16 +45,16 @@
         </button>
 
         <div class="flex items-center justify-between border-t border-gray-100 px-4 py-3 text-sm text-gray-700">
-          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">Color Blindness</span>
+          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">Dark Mode</span>
           <button
             type="button"
-            @click="toggleColorBlindMode"
-            :class="isColorBlindMode ? 'bg-[#045F54]' : 'bg-slate-200'"
+            @click="toggleDarkMode"
+            :class="isDarkMode ? 'bg-[#045F54]' : 'bg-slate-200'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
-            aria-label="Toggle color blindness mode"
+            aria-label="Toggle dark mode"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
+              :class="isDarkMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -96,9 +96,9 @@
         aria-label="Open menu"
       >
         <span class="flex flex-col gap-1.5">
-          <span class="h-0.5 w-5 rounded-full bg-white"></span>
-          <span class="h-0.5 w-5 rounded-full bg-white"></span>
-          <span class="h-0.5 w-5 rounded-full bg-white"></span>
+          <span class="mobile-menu-toggle-line h-0.5 w-5 rounded-full bg-white"></span>
+          <span class="mobile-menu-toggle-line h-0.5 w-5 rounded-full bg-white"></span>
+          <span class="mobile-menu-toggle-line h-0.5 w-5 rounded-full bg-white"></span>
         </span>
       </button>
 
@@ -178,15 +178,15 @@
           </button>
 
           <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
-            <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Color Blindness</span>
+            <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Dark Mode</span>
             <button
               type="button"
-              @click="toggleColorBlindMode"
-              :class="isColorBlindMode ? 'bg-[#16a085]' : 'bg-slate-200'"
+              @click="toggleDarkMode"
+              :class="isDarkMode ? 'bg-[#16a085]' : 'bg-slate-200'"
               class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
             >
               <span
-                :class="isColorBlindMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
+                :class="isDarkMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
                 class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
               ></span>
             </button>
@@ -213,7 +213,7 @@ import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 const showProfileMenu = ref(false)
 const mobileMenuOpen = ref(false)
 const menuContainerRef = ref(null)
@@ -223,8 +223,8 @@ const userInitial = computed(() => {
   return name.charAt(0).toUpperCase()
 })
 
-const toggleColorBlindMode = () => {
-  isColorBlindMode.value = !isColorBlindMode.value
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value
 }
 
 const goToLogin = () => {

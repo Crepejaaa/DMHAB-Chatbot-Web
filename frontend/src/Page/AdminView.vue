@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] flex flex-col md:flex-row transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['admin-page min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] flex flex-col md:flex-row transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
     
     <!-- Sidebar Navigation -->
     <aside class="w-full md:w-64 bg-gradient-to-b from-[#045F54] via-[#0D9488] to-[#059669] text-white flex flex-col shadow-xl">
@@ -44,16 +44,16 @@
 
       <!-- Sidebar Footer -->
       <div class="p-4 border-t border-white/10 space-y-4">
-        <!-- Color Blind Toggle in Sidebar -->
+        <!-- Dark mode toggle in sidebar -->
         <div class="flex items-center justify-between bg-black/15 p-3 rounded-xl border border-white/10">
-          <div class="text-xs font-semibold">Color Blind Mode</div>
+          <div class="text-xs font-semibold">Dark Mode</div>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none border border-white/20"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -418,8 +418,8 @@
 <script setup>
 import { ref, computed, inject } from 'vue'
 
-// Inject global color blind mode state from App.vue
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+// Inject global dark mode state from App.vue
+const isDarkMode = inject('isDarkMode', ref(false))
 
 // Formatting date
 const currentDate = computed(() => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]">
+  <div :class="['login-page page-dark-surface min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]', isDarkMode ? 'dark-mode-page' : '']">
     
     <!-- Header & Hero Section (ส่วนแถบสีเขียวด้านบน) -->
     <div class="bg-gradient-to-r from-[#21776A] to-[#349E8D] text-white relative overflow-hidden">
@@ -60,14 +60,14 @@
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
             <input v-model="form.email" type="email" placeholder="Your email, e.g : johndoe@gmail.com" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Password -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
             <input v-model="form.password" type="password" placeholder="Enter your password" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Remember me & Forgot Password -->
@@ -165,7 +165,7 @@ import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 
 const form = ref({
   email: '',

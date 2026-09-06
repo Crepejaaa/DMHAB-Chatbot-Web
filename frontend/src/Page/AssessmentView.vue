@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['assessment-page min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Green Banner Header & Navbar -->
     <header class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-4 pb-16 px-6 lg:px-12 relative overflow-hidden shadow-md">
@@ -33,17 +33,17 @@
           <a href="#" class="hover:text-[#D1FAE5] transition">Blog</a>
         </div>
 
-        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Profile Menu -->
+        <!-- ฝั่งขวาสุด: Dark Mode Toggle + Profile Menu -->
         <div class="flex gap-3 items-center text-sm">
           <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-            <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
+            <span class="text-xs font-semibold text-white hidden sm:inline">Dark Mode</span>
             <button
-              @click="isColorBlindMode = !isColorBlindMode"
-              :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+              @click="isDarkMode = !isDarkMode"
+              :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
               class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
             >
               <span
-                :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+                :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
                 class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
               ></span>
             </button>
@@ -286,7 +286,7 @@ import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAssessmentStore } from '../stores/assessmentStore'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 const router = useRouter()
 const assessmentStore = useAssessmentStore()
 

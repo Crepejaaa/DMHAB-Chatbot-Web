@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]">
+  <div :class="['login-page register-page page-dark-surface min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- Header & Hero Section (ส่วนแถบสีเขียวด้านบน) -->
     <div class="bg-gradient-to-r from-[#21776A] to-[#349E8D] text-white relative overflow-hidden">
@@ -10,7 +10,7 @@
         </svg>
       </div>
       <!-- ปุ่ม toggle -->
-  <input type="checkbox" v-model="isColorBlindMode" class="sr-only peer" />
+  
       <!-- Top Navbar -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
 
@@ -77,35 +77,35 @@
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Name</label>
             <input v-model="form.name" type="text" placeholder="Your Name, e.g : John Doe" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Email -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
             <input v-model="form.email" type="email" placeholder="Your email, e.g : johndoe@gmail.com" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
           <!-- Phone Number -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Phone Number</label>
             <input v-model="form.phone" type="tel" inputmode="numeric" placeholder="Your phone number"
               @input="form.phone = form.phone.replace(/[^0-9]/g, '')" maxlength="10" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
           <!-- Password -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
             <input v-model="form.password" type="password" placeholder="Your password, at least 8 character." required
               minlength="8"
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Confirm Password -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Confirm Password</label>
             <input v-model="form.confirmPassword" type="password" placeholder="Re-type your password" required
-              class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
+              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Accept Terms -->
@@ -180,7 +180,7 @@ import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode', ref(false))
 
 const fileInput = ref(null)
 const imagePreview = ref(null)
@@ -244,3 +244,34 @@ const handleRegister = async () => {
   }
 }
 </script>
+<style>
+.register-page .register-field,
+.register-page .register-field:focus {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  -webkit-text-fill-color: #1e293b !important;
+  border: none !important;
+  color-scheme: light !important;
+}
+
+.register-page .register-field::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+.dark-mode .register-page .register-field,
+.dark-mode .register-page .register-field:focus {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  border: 1px solid #64748b !important;
+  color-scheme: dark !important;
+}
+
+.dark-mode .register-page .register-field::placeholder {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+</style>

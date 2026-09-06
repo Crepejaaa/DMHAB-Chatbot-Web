@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-50 relative">
+  <div :class="['page-dark-surface flex flex-col h-screen bg-gray-50 relative', isDarkMode ? 'dark-mode-page' : '']">
     <!-- Header -->
     <header class="flex items-center px-4 py-3 bg-white shadow-sm shrink-0">
       <button @click="$router.push('/')" class="p-2 mr-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
@@ -97,11 +97,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, inject, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
+const isDarkMode = inject('isDarkMode', ref(false))
 const chatContainer = ref(null)
 const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 const newMessage = ref('')

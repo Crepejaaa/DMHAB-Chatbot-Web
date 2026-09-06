@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
@@ -20,14 +20,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -52,8 +52,12 @@
         </button>
       </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
-        <div class="w-80 h-64 bg-white/60 border-2 border-dashed border-[#0D9488]/30 rounded-2xl flex items-center justify-center text-[#0D9488] font-medium">
-          [รูปภาพ]
+        <div class="w-80 h-64 overflow-hidden rounded-2xl bg-white/60 shadow-lg ring-1 ring-[#0D9488]/20">
+          <img
+            src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=85"
+            alt="คุณหมอผู้เชี่ยวชาญด้านการดูแลสุขภาพจิต"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
     </section>
@@ -94,8 +98,12 @@
     <!-- 4. About Us Section -->
     <section class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center overflow-hidden">
       <div class="flex justify-center scroll-anim opacity-0 -translate-x-16 transition-all duration-1000 ease-out">
-        <div class="w-72 h-72 bg-white/60 border-2 border-dashed border-[#0D9488]/30 rounded-2xl flex items-center justify-center text-[#0D9488] font-medium">
-          [รูปภาพ]
+        <div class="w-72 h-72 overflow-hidden rounded-2xl bg-white/60 shadow-md ring-1 ring-[#0D9488]/20">
+          <img
+            src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=85"
+            alt="ผู้คนกำลังพูดคุยและรับฟังกันในพื้นที่ปลอดภัย"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
       <div class="scroll-anim opacity-0 translate-x-16 transition-all duration-1000 delay-200 ease-out">
@@ -113,8 +121,12 @@
     <section class="max-w-6xl mx-auto px-6 py-12">
       <div class="bg-white text-[#1E293B] border border-gray-100 rounded-3xl overflow-hidden grid md:grid-cols-2 shadow-xl scroll-anim opacity-0 translate-y-16 transition-all duration-1000 ease-out">
         <div class="p-8 md:p-12 flex items-center justify-center bg-[#FAF9F5]">
-          <div class="w-48 h-80 bg-white border-2 border-dashed border-[#0D9488]/40 rounded-3xl flex items-center justify-center text-[#0D9488] font-medium shadow-sm hover:scale-105 transition duration-500">
-            [รูปตัวแชท]
+          <div class="w-48 h-80 overflow-hidden bg-white rounded-3xl shadow-sm ring-2 ring-[#0D9488]/30 hover:scale-105 transition duration-500">
+            <img
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=700&q=85"
+              alt="หุ่นยนต์ AI สำหรับให้บริการและช่วยตอบคำถาม"
+              class="h-full w-full object-cover"
+            />
           </div>
         </div>
         <div class="p-8 md:p-12 flex flex-col justify-center">
@@ -254,7 +266,7 @@ import axios from 'axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 const router = useRouter()
-const isColorBlindMode = inject('isColorBlindMode', false)
+const isDarkMode = inject('isDarkMode', false)
 const loading = ref(false)
 const mobileMenuOpen = ref(false)
 
