@@ -262,7 +262,7 @@
 <script setup>
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 const router = useRouter()
