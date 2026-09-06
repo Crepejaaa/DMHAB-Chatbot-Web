@@ -570,11 +570,14 @@ const fetchArticle = async () => {
       if (data && Object.keys(data).length > 0) {
         article.value = localArticle
           ? {
-              ...localArticle,
               ...data,
+              ...localArticle,
               content: (data.content?.length || 0) >= (localArticle.content?.length || 0)
                 ? data.content
-                : localArticle.content
+                : localArticle.content,
+              coverImageUrl: localArticle.coverImageUrl || data.coverImageUrl,
+              sourceName: localArticle.sourceName || data.sourceName,
+              sourceUrl: localArticle.sourceUrl || data.sourceUrl
             }
           : data
       } else {

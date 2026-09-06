@@ -337,7 +337,25 @@ const fetchArticles = async () => {
     loading.value = true
     errorMessage.value = ''
     const { data } = await axios.get('/api/articles')
-    articles.value = Array.isArray(data) && data.length > 0 ? data : fallbackArticles
+    const apiArticles = Array.isArray(data) ? data : []
+    const apiBySlug = new Map(apiArticles.map((article) => [article.slug || String(article.id), article]))
+    const fallbackSlugs = new Set(fallbackArticles.map((article) => article.slug || String(article.id)))
+
+    const mergedFallbackArticles = fallbackArticles.map((fallbackArticle) => {
+      const apiArticle = apiBySlug.get(fallbackArticle.slug || String(fallbackArticle.id))
+      return apiArticle
+        ? {
+            ...fallbackArticle,
+            ...apiArticle,
+            coverImageUrl: fallbackArticle.coverImageUrl || apiArticle.coverImageUrl,
+            sourceName: fallbackArticle.sourceName || apiArticle.sourceName,
+            sourceUrl: fallbackArticle.sourceUrl || apiArticle.sourceUrl
+          }
+        : fallbackArticle
+    })
+
+    const additionalApiArticles = apiArticles.filter((article) => !fallbackSlugs.has(article.slug || String(article.id)))
+    articles.value = [...mergedFallbackArticles, ...additionalApiArticles]
   } catch (error) {
     console.error('Failed to load articles:', error)
     errorMessage.value = ''
