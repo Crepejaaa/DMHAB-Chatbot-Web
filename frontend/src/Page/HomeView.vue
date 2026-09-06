@@ -33,21 +33,6 @@
           </button>
         </div>
 
-        <!-- ปุ่ม Login -->
-        <button 
-          @click="$router.push('/login')" 
-          class="hidden md:inline-flex px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition items-center justify-center cursor-pointer text-white"
-        >
-          Login
-        </button>
-        
-        <button
-          @click="$router.push('/register')"
-          class="hidden md:inline-flex px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
-        >
-          Register
-        </button>
-
         <ProfileMenu />
       </div>
     </nav>
@@ -164,61 +149,6 @@
         </router-link>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
-            <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 1]
-              </div>
-              <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">26 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">วิธีรับมือกับความเครียดจากการทำงาน (Burnout)</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว</p>
-              </div>
-            </div>
-            <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/stress-management" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
-            </div>
-          </div>
-        </div>
-
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
-            <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 2]
-              </div>
-              <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">24 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์</p>
-              </div>
-            </div>
-            <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/sleep-and-mood" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
-            </div>
-          </div>
-        </div>
-
-        <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out">
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
-            <div>
-              <div class="h-48 bg-[#FAF9F5] border-b border-gray-100 flex items-center justify-center text-[#0D9488] font-medium text-sm group-hover:bg-[#D1FAE5]/30 transition-colors">
-                [รูปภาพบทความ 3]
-              </div>
-              <div class="p-6">
-                <span class="text-xs text-[#64748B] mb-2 block">20 กรกฎาคม 2026</span>
-                <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ</h3>
-                <p class="text-sm text-[#64748B] mb-4 line-clamp-2">เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที</p>
-              </div>
-            </div>
-            <div class="px-6 pb-6 pt-0">
-              <router-link to="/blog/warning-signs" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
       <div v-if="loading && visibleArticles.length === 0" class="grid md:grid-cols-3 gap-6">
         <div v-for="n in 3" :key="n" class="animate-pulse rounded-2xl border border-gray-100 bg-white p-0 overflow-hidden shadow-sm">
           <div class="h-48 bg-[#E5E7EB]"></div>
@@ -232,14 +162,23 @@
       </div>
 
       <div v-else class="grid md:grid-cols-3 gap-6">
-        <div v-for="article in visibleArticles" :key="article.id" class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 ease-out">
+        <div
+          v-for="(article, idx) in visibleArticles"
+          :key="article.id || idx"
+          :class="[
+            'scroll-anim opacity-0 translate-y-16 transition-all duration-700 ease-out',
+            idx === 1 ? 'delay-200' : idx === 2 ? 'delay-400' : ''
+          ]"
+        >
           <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow group h-full flex flex-col justify-between">
             <div>
-              <img
-                :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
-                :alt="article.title"
-                class="h-48 w-full object-cover border-b border-gray-100 group-hover:scale-[1.02] transition-transform duration-300"
-              />
+              <div class="h-48 overflow-hidden bg-gray-100 border-b border-gray-100">
+                <img
+                  :src="article.coverImageUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80'"
+                  :alt="article.title"
+                  class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
               <div class="p-6">
                 <div class="mb-2 flex items-center justify-between gap-3">
                   <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
@@ -296,7 +235,6 @@
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Hotline</h4>
           <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
@@ -310,7 +248,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted, ref, computed } from 'vue'
+import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
@@ -322,45 +260,48 @@ const mobileMenuOpen = ref(false)
 
 const fallbackArticles = [
   {
-    id: 1,
+    id: 'stress-management',
     slug: 'stress-management',
-    title: 'วิธีรับมือกับความเครียดจากการทำงาน',
-    excerpt: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อย การรับรู้ และปรับสมดุลชีวิตที่ดีจะช่วยลดความเหนื่อยล้าและรักษาสุขภาพจิตได้',
-    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต.',
+    title: 'วิธีรับมือกับความเครียดจากการทำงาน (Burnout)',
+    excerpt: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว',
+    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต',
     category: 'สุขภาพจิต',
-    coverImageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'World Health Organization',
-    sourceUrl: 'https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response',
+    coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'DMHAB',
+    sourceUrl: '',
     createdAt: '2026-07-26T00:00:00.000Z'
   },
   {
-    id: 2,
+    id: 'sleep-and-mood',
     slug: 'sleep-and-mood',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา',
-    excerpt: 'การนอนหลับที่ไม่เพียงพอ ส่งผลต่อความสามารถในการควบคุมอารมณ์และลดความสามารถในการตอบสนองต่อความเครียด',
-    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง.',
+    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
+    excerpt: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์',
+    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง',
     category: 'การนอนหลับ',
-    coverImageUrl: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'Sleep Foundation',
-    sourceUrl: 'https://www.sleepfoundation.org/sleep-hygiene',
+    coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'DMHAB',
+    sourceUrl: '',
     createdAt: '2026-07-24T00:00:00.000Z'
   },
   {
-    id: 3,
+    id: 'warning-signs',
     slug: 'warning-signs',
     title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'สัญญาณบางอย่าง เช่น ความเศร้าอย่างต่อเนื่อง วิตกกังวลมากเกินไป หรือเปลี่ยนแปลงการนอนและการกิน เป็นตัวบ่งชี้ว่าควรขอคำปรึกษาเร็วขึ้น',
-    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น.',
+    excerpt: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
+    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น',
     category: 'คำปรึกษา',
-    coverImageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'Mental Health Foundation',
-    sourceUrl: 'https://www.mentalhealth.org.uk/explore-mental-health/a-z-topics/mental-health-awareness',
+    coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
+    sourceName: 'DMHAB',
+    sourceUrl: '',
     createdAt: '2026-07-20T00:00:00.000Z'
   }
 ]
 
 const articles = ref(fallbackArticles.map((article) => ({ ...article })))
-const visibleArticles = computed(() => (articles.value && articles.value.length > 0 ? articles.value : fallbackArticles))
+const visibleArticles = computed(() => {
+  const list = articles.value && articles.value.length > 0 ? articles.value : fallbackArticles
+  return list.slice(0, 3)
+})
 
 const formatDate = (dateValue) => {
   if (!dateValue) return 'ไม่ระบุวันที่'
@@ -383,10 +324,8 @@ const goToRegister = () => {
 }
 
 const fetchArticles = async () => {
-  articles.value = fallbackArticles.map((article) => ({ ...article }))
-  loading.value = true
-
   try {
+    loading.value = true
     const { data } = await axios.get('/api/articles')
     if (Array.isArray(data) && data.length > 0) {
       articles.value = data
@@ -398,6 +337,11 @@ const fetchArticles = async () => {
     articles.value = fallbackArticles.map((article) => ({ ...article }))
   } finally {
     loading.value = false
+    nextTick(() => {
+      if (observer) {
+        document.querySelectorAll('.scroll-anim').forEach((el) => observer.observe(el))
+      }
+    })
   }
 }
 
@@ -425,6 +369,8 @@ onMounted(() => {
 
   const animElements = document.querySelectorAll('.scroll-anim')
   animElements.forEach((el) => observer.observe(el))
+
+  fetchArticles()
 })
 
 onUnmounted(() => {

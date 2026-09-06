@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
     displayName: (state) => state.user?.name || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
     userEmail: (state) => state.user?.email || 'example@gmail.com',
+    profileImage: (state) => state.user?.avatar || state.user?.profileImage || '',
   },
   actions: {
     async login(email, password) {
