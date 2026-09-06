@@ -61,8 +61,6 @@
         </svg>
       </div>
 
-
-
       <!-- Page Title Header -->
       <div class="container mx-auto px-6 lg:px-10 pt-6 pb-20 relative z-10">
         <div class="flex gap-4 items-stretch">
@@ -97,9 +95,15 @@
           >
             <h3 class="text-xl md:text-2xl font-bold mb-4">{{ service.title }}</h3>
             <p class="text-gray-300 text-sm mb-8 text-center px-4">{{ service.description }}</p>
-            <router-link :to="'/services/' + service.id" class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block">
-              See detail
+            
+            <!-- แก้ไขตรงนี้: เช็คว่าถ้ามีค่า route เฉพาะตัว ให้ไปที่นั่น ถ้าไม่มีให้ไปแบบเดิม และเปลี่ยนข้อความปุ่ม -->
+            <router-link 
+              :to="service.route || '/services/' + service.id" 
+              class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block"
+            >
+              {{ service.buttonText || 'See detail' }}
             </router-link>
+            
           </div>
         </div>
       </div>
@@ -169,7 +173,9 @@ const servicesList = [
   {
     id: 'listening-space',
     title: 'พื้นที่รับฟัง 24 ชั่วโมง',
-    description: 'แชทพูดคุยระบายความรู้สึกแบบส่วนตัว'
+    description: 'แชทพูดคุยระบายความรู้สึกแบบส่วนตัว',
+    route: '/chat', // นำทางไปหน้าแชท (ตามไฟล์ ChatView.vue ในโฟลเดอร์)
+    buttonText: 'เริ่มต้นใช้งาน' // เปลี่ยนคำบนปุ่มเฉพาะการ์ดนี้
   },
   {
     id: 'relaxation',
