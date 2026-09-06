@@ -218,7 +218,7 @@
 <script setup>
 import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import axios from '../api/axios'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const route = useRoute()

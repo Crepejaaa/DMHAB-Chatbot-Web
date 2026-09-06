@@ -208,7 +208,7 @@
 
 <script setup>
 import { inject, ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))

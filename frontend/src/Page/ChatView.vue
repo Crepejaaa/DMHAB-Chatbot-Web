@@ -99,7 +99,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '../api/axios'
 
 const router = useRouter()
 const chatContainer = ref(null)
@@ -129,9 +129,7 @@ const fetchMessages = async () => {
     const token = localStorage.getItem('token')
     if (!token) return router.push('/login')
 
-    const response = await axios.get(`${baseURL}/api/chat/sessions`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const response = await axios.get('/api/chat/sessions')
     
     if (response.data && response.data.messages) {
       messages.value = response.data.messages
@@ -171,9 +169,8 @@ const sendMessage = async () => {
   try {
     const token = localStorage.getItem('token')
     
-    const response = await axios.post(`${baseURL}/api/chat`, 
-      { message: userText },
-      { headers: { Authorization: `Bearer ${token}` } }
+    const response = await axios.post('/api/chat', 
+      { message: userText }
     )
 
     if (response.data) {
