@@ -6,8 +6,9 @@
         class="flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-3 py-1.5 text-white transition hover:bg-white/15"
         type="button"
       >
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white">
-          {{ userInitial }}
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/40">
+          <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+          <span v-else>{{ userInitial }}</span>
         </div>
         <span class="hidden sm:inline">{{ authStore.displayName }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,10 +17,16 @@
       </button>
 
       <div v-if="showProfileMenu" class="absolute right-0 z-[999] mt-2 w-60 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
-        <div class="border-b border-gray-100 px-4 py-3 text-left">
-          <p class="text-xs text-gray-500">บัญชีของคุณ</p>
-          <p class="mt-1 text-sm font-semibold text-gray-800">{{ authStore.displayName }}</p>
-          <p class="text-xs text-gray-500">{{ authStore.userEmail }}</p>
+        <div class="border-b border-gray-100 px-4 py-3 text-left flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10 text-sm font-bold text-[#0D9488] overflow-hidden border border-[#0D9488]/20">
+            <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+            <span v-else>{{ userInitial }}</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-[11px] text-gray-500">บัญชีของคุณ</p>
+            <p class="text-sm font-semibold text-gray-800 truncate">{{ authStore.displayName }}</p>
+            <p class="text-xs text-gray-500 truncate">{{ authStore.userEmail }}</p>
+          </div>
         </div>
 
         <button
@@ -96,10 +103,16 @@
       </button>
 
       <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
-        <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left">
-          <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">Account</p>
-          <p class="mt-2 text-sm font-semibold">{{ authStore.displayName }}</p>
-          <p class="text-xs text-gray-400">{{ authStore.userEmail }}</p>
+        <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/30">
+            <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+            <span v-else>{{ userInitial }}</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">Account</p>
+            <p class="mt-0.5 text-sm font-semibold truncate">{{ authStore.displayName }}</p>
+            <p class="text-xs text-gray-400 truncate">{{ authStore.userEmail }}</p>
+          </div>
         </div>
 
         <div class="space-y-1 p-3">

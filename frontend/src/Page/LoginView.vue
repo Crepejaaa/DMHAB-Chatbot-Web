@@ -89,10 +89,20 @@
             <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
           </div>
 
-          <!-- Submit Button -->
+          <!-- Submit Button (เพิ่มการตั้งค่า Loading ที่นี่) -->
           <div class="pt-4">
-            <button type="submit" class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer">
-              Login
+            <button 
+              type="submit" 
+              :disabled="isLoading"
+              class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <!-- อนิเมชันโหลด SVG (จะแสดงเมื่อ isLoading เป็น true) -->
+              <svg v-if="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <!-- เปลี่ยนข้อความอัตโนมัติ -->
+              <span>{{ isLoading ? 'กำลังโหลด...' : 'Login' }}</span>
             </button>
           </div>
           
@@ -163,6 +173,8 @@ const form = ref({
   rememberMe: false
 })
 const errorMessage = ref('')
+// 1. เพิ่มตัวแปรสำหรับจัดการสถานะการโหลด
+const isLoading = ref(false)
 
 const handleLogin = async () => {
   errorMessage.value = ''
@@ -171,12 +183,20 @@ const handleLogin = async () => {
     return
   }
 
-  const result = await authStore.login(form.value.email.trim(), form.value.password)
-  
-  if (result.success) {
-    router.push('/')
-  } else {
-    errorMessage.value = result.message
+  // 2. เปลี่ยนสถานะเป็นกำลังโหลดก่อนเริ่มยิง API
+  isLoading.value = true
+
+  try {
+    const result = await authStore.login(form.value.email.trim(), form.value.password)
+    
+    if (result.success) {
+      router.push('/')
+    } else {
+      errorMessage.value = result.message
+    }
+  } finally {
+    // 3. ปิดสถานะการโหลดเสมอ ไม่ว่าจะล็อกอินสำเร็จหรือเกิด Error
+    isLoading.value = false
   }
 }
 </script>

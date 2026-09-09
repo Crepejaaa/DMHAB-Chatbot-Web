@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import axios from '../api/axios';
 
 const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 
@@ -18,13 +18,18 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
     displayName: (state) => state.user?.name || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
     userEmail: (state) => state.user?.email || 'example@gmail.com',
+    profileImage: (state) => state.user?.avatar || state.user?.profileImage || '',
   },
   actions: {
     async login(email, password) {
       try {
-        const response = await axios.post(`${baseURL}/api/login`, { email, password });
+        const response = await axios.post('/api/login', { email, password });
         
         this.token = response.data.token;
+        const refreshToken = response.data.refreshToken;
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
         // Backend แบบ Prisma ไม่ได้ส่ง object user กลับมา ส่งเพียงแค่ token
         // เก็บอีเมลไว้แสดงชั่วคราวก่อน (หรือสามารถแก้ Backend ให้ส่ง Object user กลับมาด้วย)
         this.user = {
@@ -55,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(userData) {
       try {
-        const response = await axios.post(`${baseURL}/api/register`, userData);
+        const response = await axios.post('/api/register', userData);
         return { success: true, message: response.data.message || 'สมัครสมาชิกสำเร็จ' };
       } catch (error) {
         return { 
@@ -68,6 +73,7 @@ export const useAuthStore = defineStore('auth', {
       this.token = null;
       this.user = null;
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     }
   }
