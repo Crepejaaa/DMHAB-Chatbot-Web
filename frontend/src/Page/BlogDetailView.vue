@@ -218,7 +218,7 @@
 <script setup>
 import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import axios from '../api/axios'
 
 const isColorBlindMode = inject('isColorBlindMode', ref(false))
 const route = useRoute()
@@ -285,8 +285,8 @@ Burnout หรือภาวะหมดไฟ เป็นอาการเ�
 **เคล็ดลับการนอนหลับที่ดี (Sleep Hygiene)**
 
 เข้านอนและตื่นในเวลาเดิมทุกวัน แม้ในวันหยุด เพื่อสร้างนาฬิกาชีวภาพที่สม่ำเสมอ หลีกเลี่ยงหน้าจอมือถือและคอมพิวเตอร์อย่างน้อย 1 ชั่วโมงก่อนนอน และสร้างสภาพแวดล้อมที่ห้องนอนมืด เงียบ และเย็นสบาย`,
-    sourceName: 'DMHAB',
-    sourceUrl: '',
+    sourceName: 'National Sleep Foundation (NSF)',
+    sourceUrl: 'https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need',
     tags: ['การนอนหลับ', 'อารมณ์', 'สุขภาพจิต', 'Sleep Hygiene']
   },
   'warning-signs': {
@@ -316,8 +316,8 @@ Burnout หรือภาวะหมดไฟ เป็นอาการเ�
 - สายด่วนสุขภาพจิต กรมสุขภาพจิต โทร **1323** (ตลอด 24 ชั่วโมง)
 - สายด่วนป้องกันการฆ่าตัวตาย โทร **1387**
 - โรงพยาบาลใกล้บ้านทุกแห่ง`,
-    sourceName: 'DMHAB',
-    sourceUrl: '',
+    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
+    sourceUrl: 'https://www.dmh.go.th',
     tags: ['สัญญาณเตือน', 'ปรึกษาผู้เชี่ยวชาญ', 'สุขภาพจิต', 'สายด่วน 1323']
   },
   'depression-teen-mhc11': {
@@ -570,11 +570,14 @@ const fetchArticle = async () => {
       if (data && Object.keys(data).length > 0) {
         article.value = localArticle
           ? {
-              ...localArticle,
               ...data,
+              ...localArticle,
               content: (data.content?.length || 0) >= (localArticle.content?.length || 0)
                 ? data.content
-                : localArticle.content
+                : localArticle.content,
+              coverImageUrl: localArticle.coverImageUrl || data.coverImageUrl,
+              sourceName: localArticle.sourceName || data.sourceName,
+              sourceUrl: localArticle.sourceUrl || data.sourceUrl
             }
           : data
       } else {
