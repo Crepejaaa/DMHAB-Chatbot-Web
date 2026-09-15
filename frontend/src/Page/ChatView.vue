@@ -58,7 +58,7 @@
     </main>
 
     <!-- Suggested Replies (Chips) -->
-    <div v-if="!isCompleted && messages.length > 0 && messages[messages.length - 1].sender === 'BOT'" class="bg-white px-4 py-2 border-t border-gray-100 flex overflow-x-auto space-x-2 scrollbar-hide shrink-0">
+    <div v-if="!isCompleted && messages.length > 0 && messages[messages.length - 1].sender === 'BOT'" class="bg-white px-4 py-2 border-t border-gray-100 flex overflow-x-auto whitespace-nowrap gap-2 pb-2 shrink-0 [&::-webkit-scrollbar]:hidden" style="-ms-overflow-style: none; scrollbar-width: none;">
       <button 
         v-for="(chip, index) in suggestedChips" 
         :key="index"
@@ -164,7 +164,10 @@ const suggestedChips = [
   "วันนี้เหนื่อยมาก",
   "นอนไม่ค่อยหลับเลย",
   "รู้สึกเครียดนิดหน่อย",
-  "ไม่มีคนเข้าใจเลย"
+  "ไม่มีคนเข้าใจเลย",
+  "รู้สึกเศร้าจัง",
+  "อยากหาคนคุยด้วย",
+  "รู้สึกเบื่อหน่าย"
 ]
 
 // Web Speech API - Voice to Text
@@ -253,11 +256,9 @@ const toggleSpeak = (text, index) => {
     
     if (thaiVoice) {
       utterance.voice = thaiVoice;
-    } else if (availableVoices.value.length > 0) {
-      console.warn("No Thai voice found in the browser. Falling back to default voice.");
-      utterance.voice = availableVoices.value[0];
     } else {
-      console.warn("No voices loaded at all.");
+      console.warn("No Thai voice found in the browser. Falling back to absolute native default voice.");
+      // CRITICAL: Do not set utterance.voice if Thai voice is not found.
     }
 
     // 5. Set utterance lang
@@ -273,7 +274,9 @@ const toggleSpeak = (text, index) => {
     };
 
     playingMessageIndex.value = index;
-    synth.speak(utterance);
+    setTimeout(() => {
+      synth.speak(utterance);
+    }, 100);
   }
 }
 
