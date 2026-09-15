@@ -235,8 +235,7 @@ if (synth) {
 }
 
 const toggleSpeak = (text, index) => {
-  if (playingMessageIndex.value === index) {
-    // 7. Ensure logic to stop speech remains intact
+  if (synth.speaking && playingMessageIndex.value === index) {
     synth.cancel();
     playingMessageIndex.value = null;
     return;
@@ -245,10 +244,9 @@ const toggleSpeak = (text, index) => {
   synth.cancel(); // Stop any ongoing speech
   
   if (text) {
-    // 3. Create new SpeechSynthesisUtterance
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // 4. Broaden search for a Thai voice
+    // Broaden search for a Thai voice
     const thaiVoice = availableVoices.value.find(voice => 
       (voice.lang && voice.lang.includes('th')) || 
       (voice.name && (voice.name.includes('Thai') || voice.name.includes('ไทย')))
@@ -256,13 +254,11 @@ const toggleSpeak = (text, index) => {
     
     if (thaiVoice) {
       utterance.voice = thaiVoice;
+      utterance.lang = 'th-TH';
     } else {
       console.warn("No Thai voice found in the browser. Falling back to absolute native default voice.");
-      // CRITICAL: Do not set utterance.voice if Thai voice is not found.
+      // CRITICAL: Do not set utterance.voice or utterance.lang if Thai voice is not found.
     }
-
-    // 5. Set utterance lang
-    utterance.lang = 'th-TH';
     
     utterance.onend = () => {
       playingMessageIndex.value = null;
