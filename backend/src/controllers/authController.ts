@@ -65,13 +65,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: "15m" } // Access token is short-lived now
     );
 
+    // สร้าง Refresh Token
     const refreshToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.REFRESH_TOKEN_SECRET || JWT_SECRET,
       { expiresIn: "7d" } // Refresh token is long-lived
     );
 
-    res.status(200).json({ message: "เข้าสู่ระบบสำเร็จ", token, refreshToken });
+    // 👇 เพิ่มการส่งก้อนข้อมูล user และ role กลับไปให้หน้าบ้าน (จาก commit d7fe903)
+    res.status(200).json({ 
+      message: "เข้าสู่ระบบสำเร็จ", 
+      token, 
+      refreshToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
   }
@@ -105,5 +116,25 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
+  }
+};
+
+// ฟังก์ชันใหม่สำหรับให้หน้า Admin Dashboard ดึงรายชื่อผู้ใช้ทั้งหมด
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        createdAt: true
+      },
+      orderBy: { createdAt: 'desc' } // เรียงคนสมัครล่าสุดขึ้นก่อน
+    });
+    
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้งานได้", details: error });
   }
 };
