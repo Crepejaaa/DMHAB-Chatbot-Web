@@ -83,13 +83,23 @@ const router = createRouter({
       path: '/account-settings',
       name: 'account-settings',
       component: () => import('../Page/AccountSettingsPage.vue')
+    },
+    {
+      path: '/activity-tracker',
+      name: 'activity-tracker',
+      component: () => import('../Page/ActivityTrackerView.vue')
+    },
+    {
+      path: '/daily-checkin',
+      name: 'daily-checkin',
+      component: () => import('../Page/DailyCheckinView.vue')
     }
   ]
 })
 
 // Navigation Guard
 router.beforeEach((to, from) => {
-  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/admin', '/contact', '/assessment', '/profile', '/account-settings']
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/admin', '/contact', '/assessment', '/profile', '/account-settings', '/activity-tracker', '/daily-checkin']
 
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
   const isPublic = publicPages.some(page => {

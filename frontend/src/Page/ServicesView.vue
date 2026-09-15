@@ -95,13 +95,22 @@
             <h3 class="text-xl md:text-2xl font-bold mb-4">{{ service.title }}</h3>
             <p class="text-gray-300 text-sm mb-8 text-center px-4">{{ service.description }}</p>
             
-            <!-- แก้ไขตรงนี้: เช็คว่าถ้ามีค่า route เฉพาะตัว ให้ไปที่นั่น ถ้าไม่มีให้ไปแบบเดิม และเปลี่ยนข้อความปุ่ม -->
-            <router-link 
-              :to="service.route || '/services/' + service.id" 
-              class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block"
-            >
-              {{ service.buttonText || 'See detail' }}
-            </router-link>
+            <!-- ปุ่มเข้าใช้งาน หรือ ดูรายละเอียด -->
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <router-link 
+                v-if="service.route"
+                :to="service.route" 
+                class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-6 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block"
+              >
+                {{ service.buttonText || 'เริ่มต้นใช้งาน' }}
+              </router-link>
+              <router-link 
+                :to="'/services/' + service.id" 
+                :class="service.route ? 'text-xs text-gray-300 hover:text-white underline underline-offset-4 transition' : 'bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block'"
+              >
+                {{ service.route ? 'ดูรายละเอียด' : (service.buttonText || 'See detail') }}
+              </router-link>
+            </div>
             
           </div>
         </div>
@@ -161,12 +170,16 @@ const servicesList = [
   {
     id: 'daily-checkin',
     title: 'เช็คอินสุขภาพจิตรายวัน',
-    description: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน'
+    description: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน',
+    route: '/daily-checkin',
+    buttonText: 'เช็คอินวันนี้'
   },
   {
     id: 'assessment',
     title: 'ประเมินสุขภาพจิตเบื้องต้น',
-    description: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน'
+    description: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน',
+    route: '/assessment',
+    buttonText: 'เริ่มประเมิน'
   },
   {
     id: 'listening-space',
@@ -178,7 +191,9 @@ const servicesList = [
   {
     id: 'relaxation',
     title: 'แนะนำกิจกรรมผ่อนคลาย',
-    description: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ'
+    description: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ',
+    route: '/activity-tracker',
+    buttonText: 'ติดตามกิจกรรม'
   }
 ]
 </script>

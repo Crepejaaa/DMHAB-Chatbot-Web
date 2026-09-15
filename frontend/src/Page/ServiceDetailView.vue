@@ -144,14 +144,44 @@
             <h2 class="text-2xl md:text-3xl font-extrabold mb-4">พร้อมเริ่มต้นดูแลสุขภาพจิตแล้วหรือยัง?</h2>
             <p class="text-[#D1FAE5] mb-8 max-w-xl mx-auto">เริ่มใช้งานบริการของเราวันนี้ เพื่อสุขภาพจิตที่ดีขึ้นในทุกๆ วัน</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                @click="$router.push('/assessment')" 
+              <!-- ปุ่มสำหรับ daily-checkin -->
+              <button
+                v-if="currentService.id === 'daily-checkin' || route.params.id === 'daily-checkin'"
+                @click="$router.push('/daily-checkin')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                📝 เริ่มต้นใช้งาน
+              </button>
+
+              <!-- ปุ่มพิเศษสำหรับ relaxation service -->
+              <button
+                v-else-if="currentService.id === 'relaxation' || route.params.id === 'relaxation'"
+                @click="$router.push('/activity-tracker')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                🧘 เริ่มติดตามกิจกรรม
+              </button>
+
+              <!-- ปุ่มสำหรับ listening-space -->
+              <button
+                v-else-if="currentService.id === 'listening-space' || route.params.id === 'listening-space'"
+                @click="$router.push('/chat')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                💬 เริ่มต้นพูดคุย
+              </button>
+
+              <!-- ปุ่มเริ่มต้นใช้งานสำหรับ assessment และอื่นๆ -->
+              <button
+                v-else
+                @click="$router.push('/assessment')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md"
               >
                 เริ่มต้นใช้งาน
               </button>
-              <router-link 
-                to="/services" 
+
+              <router-link
+                to="/services"
                 class="border-2 border-white/60 text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition"
               >
                 ดูบริการทั้งหมด
@@ -160,6 +190,7 @@
           </div>
         </div>
       </section>
+
 
     </main>
 
@@ -287,7 +318,8 @@ const servicesData = {
 // หา service ปัจจุบันจาก route param
 const currentService = computed(() => {
   const id = route.params.id
-  return servicesData[id] || servicesData['daily-checkin']
+  const data = servicesData[id] || servicesData['daily-checkin']
+  return { ...data, id: id || 'daily-checkin' }
 })
 
 // Scroll animation observer
