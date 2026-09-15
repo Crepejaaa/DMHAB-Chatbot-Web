@@ -190,7 +190,16 @@ const handleLogin = async () => {
     const result = await authStore.login(form.value.email.trim(), form.value.password)
     
     if (result.success) {
-      router.push('/')
+      // 👇 [ส่วนที่แก้ไข]: เพิ่มการเช็คสิทธิ์ (Role) หลังล็อกอินผ่าน
+      // ดึงค่า role จาก localStorage ที่ authStore น่าจะเซฟไว้ให้ (ถ้าไม่มีให้มองเป็น USER ธรรมดา)
+      const userRole = localStorage.getItem('userRole') || 'USER';
+
+      if (userRole === 'ADMIN') {
+        router.push('/admin'); // พาแอดมินไปหน้า Dashboard (แก้ชื่อ path ให้ตรงกับของคุณได้เลย)
+      } else {
+        router.push('/'); // พาคนธรรมดาไปหน้า Home
+      }
+      
     } else {
       errorMessage.value = result.message
     }
