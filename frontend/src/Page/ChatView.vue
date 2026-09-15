@@ -148,6 +148,7 @@ import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 
 const router = useRouter()
+// Try to inject isDarkMode, default to false if not provided
 const isDarkMode = inject('isDarkMode', ref(false))
 const chatContainer = ref(null)
 const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
@@ -214,9 +215,25 @@ const toggleRecording = () => {
 // Web Speech API - Text to Speech
 const playingMessageIndex = ref(null)
 const synth = window.speechSynthesis;
+const availableVoices = ref([]);
+
+// 1 & 2. Load voices when they are ready
+const loadVoices = () => {
+  if (synth) {
+    availableVoices.value = synth.getVoices();
+  }
+};
+
+if (synth) {
+  loadVoices();
+  if (synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = loadVoices;
+  }
+}
 
 const toggleSpeak = (text, index) => {
   if (playingMessageIndex.value === index) {
+    // 7. Ensure logic to stop speech remains intact
     synth.cancel();
     playingMessageIndex.value = null;
     return;
@@ -225,14 +242,30 @@ const toggleSpeak = (text, index) => {
   synth.cancel(); // Stop any ongoing speech
   
   if (text) {
+    // 3. Create new SpeechSynthesisUtterance
     const utterance = new SpeechSynthesisUtterance(text);
+    
+    // 4. Explicitly search for a Thai voice
+    const thaiVoice = availableVoices.value.find(voice => 
+      voice.lang.includes('th') || voice.lang === 'th-TH'
+    );
+    
+    if (thaiVoice) {
+      utterance.voice = thaiVoice;
+    } else {
+      // 6. Log a warning if no Thai voice is found
+      console.warn("No Thai voice found in the browser. Using default voice.");
+    }
+
+    // 5. Set utterance lang
     utterance.lang = 'th-TH';
     
     utterance.onend = () => {
       playingMessageIndex.value = null;
     };
     
-    utterance.onerror = () => {
+    utterance.onerror = (e) => {
+      console.error('Speech synthesis error:', e);
       playingMessageIndex.value = null;
     };
 
