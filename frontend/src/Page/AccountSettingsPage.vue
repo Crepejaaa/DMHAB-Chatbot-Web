@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
     <header class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-4 pb-16 px-6 lg:px-12 relative overflow-hidden shadow-md">
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none">
         <svg viewBox="0 0 500 500" class="w-full h-full">
@@ -29,14 +29,14 @@
 
         <div class="flex items-center gap-3 text-sm">
           <div class="hidden md:flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-            <span class="text-xs font-semibold text-white">Color Blindness</span>
+            <span class="text-xs font-semibold text-white">Dark Mode</span>
             <button
-              @click="isColorBlindMode = !isColorBlindMode"
-              :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+              @click="isDarkMode = !isDarkMode"
+              :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
               class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
             >
               <span
-                :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+                :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
                 class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
               ></span>
             </button>
@@ -158,7 +158,7 @@
 import { inject, ref } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 
 const notifications = ref(true)
 const accessMode = ref(false)
