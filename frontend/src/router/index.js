@@ -84,12 +84,23 @@ const router = createRouter({
       path: '/account-settings',
       name: 'account-settings',
       component: () => import('../Page/AccountSettingsPage.vue')
+    },
+    {
+      path: '/activity-tracker',
+      name: 'activity-tracker',
+      component: () => import('../Page/ActivityTrackerView.vue')
+    },
+    {
+      path: '/daily-checkin',
+      name: 'daily-checkin',
+      component: () => import('../Page/DailyCheckinView.vue')
     }
   ]
 })
 
 // Navigation Guard
 router.beforeEach((to, from) => {
+  
   // 👇 จุดแก้ที่ 2: ลบ '/admin' ออกจาก publicPages เพื่อไม่ให้คนธรรมดาแอบพิมพ์ URL เข้ามา
   const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment', '/profile', '/account-settings']
 

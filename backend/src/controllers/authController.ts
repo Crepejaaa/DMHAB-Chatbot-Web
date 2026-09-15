@@ -62,10 +62,47 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "15m" } // Access token is short-lived now
     );
 
-    res.status(200).json({ message: "เข้าสู่ระบบสำเร็จ", token });
+    const refreshToken = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.REFRESH_TOKEN_SECRET || JWT_SECRET,
+      { expiresIn: "7d" } // Refresh token is long-lived
+    );
+
+    res.status(200).json({ message: "เข้าสู่ระบบสำเร็จ", token, refreshToken });
+  } catch (error) {
+    res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
+  }
+};
+
+export const refresh = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      res.status(401).json({ error: "Refresh token is missing" });
+      return;
+    }
+
+    const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET || JWT_SECRET;
+
+    jwt.verify(refreshToken, REFRESH_SECRET, (err: any, decoded: any) => {
+      if (err || !decoded?.userId) {
+        res.status(403).json({ error: "Invalid or expired refresh token" });
+        return;
+      }
+
+      // Generate a new short-lived access token
+      const newToken = jwt.sign(
+        { userId: decoded.userId, role: decoded.role || "USER" },
+        JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      res.status(200).json({ token: newToken });
+    });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
   }

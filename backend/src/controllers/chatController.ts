@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prismaClient";
-import { generateChatResponse, AIResponse } from "../services/geminiService";
+import { generateChatResponse, AIResponse } from "../services/groqService";
 
 
 

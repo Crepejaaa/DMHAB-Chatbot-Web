@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -20,13 +20,13 @@ const SYSTEM_PROMPT = `
 - MODERATE: ความเครียดกระทบชีวิต (นอนไม่หลับ เบื่ออาหาร หมดไฟ) แต่ยังไม่มีความคิดทำร้ายตัวเอง
 - SEVERE: มีความคิดทำร้ายตัวเอง หรือวิกฤตทางอารมณ์รุนแรง
 
-# OUTPUT FORMAT
-ตอบกลับเป็น JSON Format เท่านั้น ห้ามมีข้อความอื่นปน
+# OUTPUT FORMAT (CRITICAL)
+คุณต้องตอบกลับเป็นรูปแบบ JSON เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายปะปน โครงสร้าง JSON ต้องเป็นดังนี้:
 {
   "reply_message": "ข้อความตอบกลับผู้ใช้ (ภาษาไทย)",
-  "assessment_status": "IN_PROGRESS" | "COMPLETED",
-  "severity_level": "PENDING" | "MILD" | "MODERATE" | "SEVERE",
-  "suggested_category": "SLEEP" | "STRESS" | "BURNOUT" | "NONE"
+  "assessment_status": "IN_PROGRESS" หรือ "COMPLETED",
+  "severity_level": "PENDING", "MILD", "MODERATE", หรือ "SEVERE",
+  "suggested_category": "SLEEP", "STRESS", "BURNOUT", หรือ "NONE"
 }
 `;
 
@@ -37,37 +37,53 @@ export interface AIResponse {
   suggested_category: "SLEEP" | "STRESS" | "BURNOUT" | "NONE";
 }
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("Missing GEMINI_API_KEY in environment variables");
+// ตรวจสอบตัวแปร Environment
+if (!process.env.GROQ_API_KEY) {
+  throw new Error("Missing GROQ_API_KEY in environment variables");
 }
 
-// ใช้งาน SDK ใหม่ที่ถูกต้อง
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// สร้าง Instance ของ Groq Client โดยระบบจะดึง GROQ_API_KEY จาก Environment ไปใช้โดยอัตโนมัติ
+const groq = new Groq();
+
+// ฟังก์ชันสำหรับสกัดและแปลงผลลัพธ์เป็น JSON (ป้องกันกรณี AI ใส่ Markdown มา)
+const parseAIResponse = (content: string): AIResponse => {
+  const jsonContent = content
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "");
+
+  return JSON.parse(jsonContent) as AIResponse;
+};
 
 export const generateChatResponse = async (
-  messagesArray: { role: string; content: string }[]
+  messagesArray: { role: "system" | "user" | "assistant"; content: string }[]
 ): Promise<AIResponse> => {
   try {
-    const formattedHistory = messagesArray.map((msg) => ({
-      role: msg.role === "assistant" || msg.role === "bot" ? "model" : "user",
-      parts: [{ text: msg.content }],
-    }));
+    // 1. เตรียมรูปแบบประวัติการสนทนาให้ตรงกับที่ Groq (OpenAI format) ต้องการ
+    // โดยแทรก System Prompt ไว้เป็นข้อความแรกสุด
+    const formattedMessages: any[] = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messagesArray
+    ];
 
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: formattedHistory,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-        temperature: 0.2,
-      },
+    // 2. เรียกใช้งาน Groq API แบบกำหนด JSON Mode
+    const chatCompletion = await groq.chat.completions.create({
+      // เลือกโมเดลที่ต้องการ แนะนำ Llama 3 รุ่น 70B สำหรับงานภาษาไทย
+      model: "openai/gpt-oss-120b",
+      messages: formattedMessages,
+      temperature: 0.2,
+      // บังคับให้ Output เป็นรูปแบบ JSON
+      response_format: { type: "json_object" },
     });
 
-    const aiMessageContent = response.text || "{}";
-    const parsedData: AIResponse = JSON.parse(aiMessageContent);
+    // 3. ดึงข้อความและแปลงผลลัพธ์โดยใช้ฟังก์ชันที่สร้างไว้
+    const aiMessageContent = chatCompletion.choices[0]?.message?.content || "{}";
+    const parsedData: AIResponse = parseAIResponse(aiMessageContent);
+
     return parsedData;
+
   } catch (error) {
-    console.error("Error communicating with Gemini API:", error);
-    throw new Error("Gemini API Error");
+    console.error("Error communicating with Groq API:", error);
+    throw new Error("AI API Error");
   }
-};
+}; 
