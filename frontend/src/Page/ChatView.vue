@@ -245,16 +245,19 @@ const toggleSpeak = (text, index) => {
     // 3. Create new SpeechSynthesisUtterance
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // 4. Explicitly search for a Thai voice
+    // 4. Broaden search for a Thai voice
     const thaiVoice = availableVoices.value.find(voice => 
-      voice.lang.includes('th') || voice.lang === 'th-TH'
+      (voice.lang && voice.lang.includes('th')) || 
+      (voice.name && (voice.name.includes('Thai') || voice.name.includes('ไทย')))
     );
     
     if (thaiVoice) {
       utterance.voice = thaiVoice;
+    } else if (availableVoices.value.length > 0) {
+      console.warn("No Thai voice found in the browser. Falling back to default voice.");
+      utterance.voice = availableVoices.value[0];
     } else {
-      // 6. Log a warning if no Thai voice is found
-      console.warn("No Thai voice found in the browser. Using default voice.");
+      console.warn("No voices loaded at all.");
     }
 
     // 5. Set utterance lang
@@ -408,6 +411,7 @@ const sendMessage = async () => {
 }
 
 onMounted(() => {
+  loadVoices()
   fetchMessages()
 })
 </script>
