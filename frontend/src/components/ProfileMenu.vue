@@ -102,7 +102,7 @@
         </span>
       </button>
 
-      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
+      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
         <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left flex items-center gap-3">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/30">
             <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
