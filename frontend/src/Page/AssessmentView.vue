@@ -52,52 +52,6 @@
         </svg>
       </div>
 
-<<<<<<< Updated upstream
-      <!-- Navbar -->
-      <nav class="w-full flex items-center justify-between mb-10 relative z-10">
-        <!-- ฝั่งซ้ายสุด: ปุ่มย้อนกลับ + โลโก้ -->
-        <div class="flex items-center gap-3">
-          <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้าหลัก">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-          </router-link>
-          <router-link to="/" class="flex items-center gap-2">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-10 h-10 object-contain" />
-            <span class="text-xl font-bold tracking-wide">DMHAB</span>
-          </router-link>
-        </div>
-
-        <!-- ตรงกลาง: Menu Links -->
-        <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-          <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-          <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-          <a href="#" class="hover:text-[#D1FAE5] transition">Services</a>
-          <a href="#" class="hover:text-[#D1FAE5] transition">Blog</a>
-        </div>
-
-        <!-- ฝั่งขวาสุด: Color Blindness Toggle + Profile Menu -->
-        <div class="flex gap-3 items-center text-sm">
-          <div class="flex items-center gap-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-            <span class="text-xs font-semibold text-white hidden sm:inline">Color Blindness</span>
-            <button
-              @click="isColorBlindMode = !isColorBlindMode"
-              :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
-              class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
-            >
-              <span
-                :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
-                class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
-              ></span>
-            </button>
-          </div>
-
-          <ProfileMenu />
-        </div>
-      </nav>
-
-=======
->>>>>>> Stashed changes
       <!-- Page Title Header -->
       <div class="container mx-auto px-6 lg:px-10 relative z-10">
         <div class="flex gap-4 items-stretch">
