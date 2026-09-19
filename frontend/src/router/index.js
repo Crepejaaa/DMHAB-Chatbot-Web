@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
+// 👇 จุดแก้ที่ 1: ลบบรรทัด import AdminView from '../views/AdminView.vue' ทิ้งไป เพราะเราดึงไฟล์ถูกที่แล้วในบรรทัดที่ 46 และป้องกัน Error หาไฟล์ไม่เจอจนหน้าขาว
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,7 +100,9 @@ const router = createRouter({
 
 // Navigation Guard
 router.beforeEach((to, from) => {
-  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/admin', '/contact', '/assessment', '/profile', '/account-settings', '/activity-tracker', '/daily-checkin']
+  
+  // 👇 จุดแก้ที่ 2: ลบ '/admin' ออกจาก publicPages เพื่อไม่ให้คนธรรมดาแอบพิมพ์ URL เข้ามา
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment', '/profile', '/account-settings']
 
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
   const isPublic = publicPages.some(page => {
@@ -111,6 +114,15 @@ router.beforeEach((to, from) => {
 
   // เรียกใช้การตรวจสอบสิทธิ์ผ่าน Pinia Store
   const authStore = useAuthStore();
+
+  // 👇 จุดแก้ที่ 3: เช็คสิทธิ์แอดมินขั้นเด็ดขาด (ถ้าจะเข้าหน้า admin ต้องมีสิทธิ์ ADMIN เท่านั้น)
+  if (to.path === '/admin') {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole !== 'ADMIN') {
+      alert('คุณไม่มีสิทธิ์เข้าถึงหน้า Admin Dashboard');
+      return '/'; // เตะผู้ใช้ธรรมดากลับไปหน้าหลัก
+    }
+  }
 
   if (authRequired && !authStore.isAuthenticated) {
     return '/login';

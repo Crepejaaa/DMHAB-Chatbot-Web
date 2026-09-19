@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]">
+  <div :class="['page-dark-surface min-h-screen flex flex-col font-sans bg-[#FCFBF8] text-[#1E293B]', isDarkMode ? 'dark-mode-page' : '']">
     
     <!-- Header & Hero Section (ส่วนแถบสีเขียวด้านบน) -->
     <div class="bg-gradient-to-r from-[#21776A] to-[#349E8D] text-white relative overflow-hidden">
@@ -134,7 +134,7 @@
 <script setup>
 import { ref, inject } from 'vue'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 
 const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 

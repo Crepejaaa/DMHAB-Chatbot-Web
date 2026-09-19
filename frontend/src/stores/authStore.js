@@ -35,10 +35,17 @@ export const useAuthStore = defineStore('auth', {
         this.user = {
           email,
           name: email.split('@')[0],
+          // 👇 [จุดที่ 1 ที่เพิ่มเข้ามา]: นำข้อมูล user ที่ Backend เพิ่งแก้ให้ส่งมา (รวมถึง role) มารวมไว้ในตัวแปรนี้ด้วย
+          ...(response.data.user || {})
         };
         
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
+        
+        // 👇 [จุดที่ 2 ที่เพิ่มเข้ามา]: เซฟสิทธิ์ (role) แยกลง localStorage เพื่อให้ Login.vue นำไปเช็คเงื่อนไขย้ายหน้า
+        if (response.data.user && response.data.user.role) {
+          localStorage.setItem('userRole', response.data.user.role);
+        }
         
         return { success: true, message: response.data.message || 'เข้าสู่ระบบสำเร็จ' };
       } catch (error) {
@@ -75,6 +82,8 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
+      // 👇 [จุดที่ 3 ที่เพิ่มเข้ามา]: อย่าลืมลบ userRole ทิ้งตอนที่ผู้ใช้กดออกจากระบบด้วยครับ
+      localStorage.removeItem('userRole');
     }
   }
 });

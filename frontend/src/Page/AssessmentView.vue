@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['assessment-page min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
@@ -285,7 +285,7 @@ import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAssessmentStore } from '../stores/assessmentStore'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 const router = useRouter()
 const assessmentStore = useAssessmentStore()
 

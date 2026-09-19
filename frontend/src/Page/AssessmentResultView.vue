@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" :class="{ 'grayscale': isColorBlindMode }">
+  <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" :class="{ 'dark-mode-page': isDarkMode }">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="px-6 py-8 sm:p-10">
         <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">ผลการประเมินของคุณ</h1>
@@ -60,7 +60,7 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { useAssessmentStore } from '../stores/assessmentStore'
 
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 const assessmentStore = useAssessmentStore()
 
 // Use real data from store

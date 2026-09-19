@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Header & Navbar (เหมือน BlogView) -->
     <!-- 1. Navbar -->
@@ -21,14 +21,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -220,7 +220,7 @@ import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 const route = useRoute()
 const loading = ref(true)
 const errorMessage = ref('')
@@ -256,8 +256,8 @@ Burnout หรือภาวะหมดไฟ เป็นอาการเ�
 **กิจกรรมผ่อนคลายหลังเลิกงาน**
 
 ออกกำลังกายอย่างน้อย 30 นาทีต่อวัน ไม่จำเป็นต้องหนัก แค่เดินเร็ว โยคะ หรือว่ายน้ำก็ได้ การออกกำลังกายช่วยปลดปล่อยสารเอ็นดอร์ฟินที่ทำให้รู้สึกดี และการเขียนไดอารี่ก่อนนอนบันทึกสิ่งที่รู้สึกขอบคุณก็ช่วยเพิ่มความสุขได้จริง`,
-    sourceName: 'DMHAB',
-    sourceUrl: '',
+    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
+    sourceUrl: 'https://www.dmh.go.th/news-dmh/',
     tags: ['ความเครียด', 'Burnout', 'สุขภาพจิต', 'การทำงาน', 'Work-Life Balance']
   },
   'sleep-and-mood': {
