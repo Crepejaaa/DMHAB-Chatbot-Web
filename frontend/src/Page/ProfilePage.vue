@@ -17,9 +17,9 @@
 
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">DMHAB</span>
+          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
 
@@ -176,8 +176,8 @@
       <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-8 pb-8 border-b border-white/20 text-sm">
         <div>
           <div class="flex items-center gap-1 mb-3">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-10 h-10 object-contain" />
-            <span class="font-bold text-lg">DMHAB</span>
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-10 h-10 object-contain rounded-full" />
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -193,7 +193,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 +123 456 789</li>
-            <li>✉️ DMHAB@domain.com</li>
+            <li>✉️ PhuenJaiZone@domain.com</li>
           </ul>
         </div>
         <div>
@@ -201,7 +201,7 @@
           <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
         </div>
       </div>
-      <div class="text-center text-xs text-[#A7F3D0] pt-6">DMHAB@domain all right reserved</div>
+      <div class="text-center text-xs text-[#A7F3D0] pt-6">PhuenJaiZone@domain all right reserved</div>
     </footer>
   </div>
 </template>

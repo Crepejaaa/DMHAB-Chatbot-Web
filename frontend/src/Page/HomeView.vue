@@ -6,9 +6,9 @@
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
         </div>
-        <span class="text-xl font-bold tracking-wide">DMHAB</span>
+        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
@@ -202,7 +202,7 @@
             </div>
             <div class="px-6 pb-6 pt-0">
               <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+                <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
                 <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
               </div>
               <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
@@ -225,9 +225,9 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -243,7 +243,7 @@
           <router-link to="/contact" class="font-bold mb-3 block hover:underline">Contact</router-link>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -252,7 +252,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
 
@@ -279,7 +279,7 @@ const fallbackArticles = [
     content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต',
     category: 'สุขภาพจิต',
     coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
+    sourceName: 'PhuenJaiZone',
     sourceUrl: '',
     createdAt: '2026-07-26T00:00:00.000Z'
   },
@@ -291,7 +291,7 @@ const fallbackArticles = [
     content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง',
     category: 'การนอนหลับ',
     coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
+    sourceName: 'PhuenJaiZone',
     sourceUrl: '',
     createdAt: '2026-07-24T00:00:00.000Z'
   },
@@ -303,7 +303,7 @@ const fallbackArticles = [
     content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น',
     category: 'คำปรึกษา',
     coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
+    sourceName: 'PhuenJaiZone',
     sourceUrl: '',
     createdAt: '2026-07-20T00:00:00.000Z'
   }

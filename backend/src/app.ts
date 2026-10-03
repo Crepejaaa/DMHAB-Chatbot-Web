@@ -17,7 +17,7 @@ app.use("/api/chat", chatRoutes);
 
 // 3. Route เริ่มต้น (สำหรับเช็กว่าเซิร์ฟเวอร์ทำงานปกติไหม)
 app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ message: "Welcome to DMHAB Chatbot API!" });
+  res.status(200).json({ message: "Welcome to PhuenJaiZone Chatbot API!" });
 });
 
 // 4. สั่งให้เซิร์ฟเวอร์เริ่มทำงาน

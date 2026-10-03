@@ -22,10 +22,10 @@
           </router-link>
         </div>
 
-        <!-- ฝั่งขวา: โลโก้ และ DMHAB -->
+        <!-- ฝั่งขวา: โลโก้ และ PhuenJaiZone -->
         <div class="flex items-center gap-2.5 cursor-default">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-7 h-7 object-contain" />
-          <span class="text-xl font-bold tracking-wide text-white">DMHAB</span>
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-7 h-7 object-contain rounded-full" />
+          <span class="text-xl font-bold tracking-wide text-white">PhuenJaiZone</span>
         </div>
         </div>
       <!-- Hero Title -->
@@ -96,9 +96,9 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-white/70 text-xs leading-relaxed">
             We are dedicated to providing the best mental health resources and support for everyone.
@@ -116,7 +116,7 @@
           <h4 class="font-bold mb-4">Contact</h4>
           <ul class="space-y-2 text-white/80 text-xs">
             <li class="flex items-center gap-2">📞 +66 234 567</li>
-            <li class="flex items-center gap-2">✉️ DMHAB@gmail.com</li>
+            <li class="flex items-center gap-2">✉️ PhuenJaiZone@gmail.com</li>
           </ul>
         </div>
         <div>
@@ -125,7 +125,7 @@
         </div>
       </div>
       <div class="container mx-auto px-6 mt-8 pt-6 border-t border-white/20 text-center text-white/60 text-xs">
-        <p>© DMHAB 2024. All rights reserved.</p>
+        <p>© PhuenJaiZone 2024. All rights reserved.</p>
       </div>
     </footer>
   </div>
@@ -136,7 +136,7 @@ import { ref, inject } from 'vue'
 
 const isDarkMode = inject('isDarkMode')
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
 const email = ref('')
 

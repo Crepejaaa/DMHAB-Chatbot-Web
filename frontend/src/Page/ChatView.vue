@@ -151,7 +151,7 @@ const router = useRouter()
 // Try to inject isDarkMode, default to false if not provided
 const isDarkMode = inject('isDarkMode', ref(false))
 const chatContainer = ref(null)
-const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 const newMessage = ref('')
 const messages = ref([])
 
