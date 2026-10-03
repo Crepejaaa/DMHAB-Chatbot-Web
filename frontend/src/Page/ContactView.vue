@@ -14,7 +14,7 @@
           </svg>
         </button>
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
         </div>
       </div>
 
@@ -100,7 +100,7 @@
               <div class="w-10 h-10 bg-[#0D9488]/10 rounded-full flex items-center justify-center text-[#0D9488]">
                 ✉️
               </div>
-              <span class="text-sm font-medium text-[#1E293B]">DMHAB@domain.com</span>
+              <span class="text-sm font-medium text-[#1E293B]">PhuenJaiZone@domain.com</span>
             </div>
           </div>
         </div>
@@ -185,9 +185,9 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -203,7 +203,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 +14 234 567</li>
-            <li>✉️ DMHAB@domain.com</li>
+            <li>✉️ PhuenJaiZone@domain.com</li>
           </ul>
         </div>
         <div>
@@ -226,7 +226,7 @@
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
           </a>
         </div>
-        <p class="text-xs text-[#A7F3D0]">DMHAB@domain all right reserved</p>
+        <p class="text-xs text-[#A7F3D0]">PhuenJaiZone@domain all right reserved</p>
       </div>
     </footer>
 

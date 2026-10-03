@@ -2,7 +2,7 @@ import axios from 'axios';
 import router from '../router';
 import { useAuthStore } from '../stores/authStore';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
 const axiosInstance = axios.create({
   baseURL,

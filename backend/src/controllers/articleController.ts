@@ -48,7 +48,7 @@ const serializeArticle = (article: any) => ({
   content: article.content,
   category: article.category,
   coverImageUrl: article.coverImageUrl || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
-  sourceName: article.sourceName || "DMHAB",
+  sourceName: article.sourceName || "PhuenJaiZone",
   sourceUrl: article.sourceUrl || "https://www.who.int/health-topics/mental-health",
   createdAt: article.createdAt || new Date().toISOString(),
   createdBy: article.createdBy || null,

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from '../api/axios';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({

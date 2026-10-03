@@ -6,10 +6,10 @@
       <!-- Sidebar Header / Logo -->
       <div class="p-6 flex items-center gap-3 border-b border-white/10">
         <div class="w-10 h-10 flex items-center justify-center bg-white/10 rounded-xl p-1">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
         </div>
         <div>
-          <span class="text-lg font-bold tracking-wide block">DMHAB Admin</span>
+          <span class="text-lg font-bold tracking-wide block">PhuenJaiZone Admin</span>
           <span class="text-xs text-[#D1FAE5]/80">System Management</span>
         </div>
       </div>
@@ -636,10 +636,10 @@ const mockStats = ref({
 
 // User Account list mock data
 const mockUsers = ref([
-  { id: 1, username: 'Ohm Dev', email: 'ohm.dev@dmhab.com', role: 'ADMIN', joined: '10 ม.ค. 2026' },
+  { id: 1, username: 'Ohm Dev', email: 'ohm.dev@phuenjaizone.com', role: 'ADMIN', joined: '10 ม.ค. 2026' },
   { id: 2, username: 'Somying', email: 'somying@gmail.com', role: 'USER', joined: '22 ก.พ. 2026' },
   { id: 3, username: 'Naphatsorn', email: 'naphat@gmail.com', role: 'USER', joined: '01 มี.ค. 2026' },
-  { id: 4, username: 'Gi', email: 'Gikung@dmhab.com', role: 'ADMIN', joined: '15 มี.ค. 2026' },
+  { id: 4, username: 'Gi', email: 'Gikung@phuenjaizone.com', role: 'ADMIN', joined: '15 มี.ค. 2026' },
   { id: 5, username: 'Vichai', email: 'vichai45@outlook.com', role: 'USER', joined: '12 เม.ย. 2026' },
   { id: 6, username: 'Nalintip', email: 'nalintip56@gmail.com', role: 'USER', joined: '30 เม.ย. 2026' }
 ])
