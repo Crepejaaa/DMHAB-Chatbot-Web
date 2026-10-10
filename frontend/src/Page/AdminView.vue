@@ -16,25 +16,25 @@
 
       <!-- Navigation Links -->
       <nav class="flex-1 p-4 space-y-1">
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/15 text-white font-medium shadow-sm transition">
+        <a href="#" @click.prevent="scrollToSection('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/15 text-white font-medium shadow-sm transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"></path>
           </svg>
           Dashboard
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
+        <a href="#" @click.prevent="scrollToSection('user-accounts')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
           </svg>
           User Accounts
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
+        <a href="#" @click.prevent="scrollToSection('chat-sessions')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
           </svg>
           Chat Sessions
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
+        <a href="#" @click.prevent="scrollToSection('articles')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#D1FAE5] hover:bg-white/5 hover:text-white transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
@@ -72,7 +72,7 @@
     <main class="flex-1 p-6 md:p-10 flex flex-col space-y-8 overflow-y-auto">
       
       <!-- Top Bar -->
-      <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gray-200 pb-5">
+      <header id="dashboard" class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gray-200 pb-5">
         <div>
           <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">Admin Control Panel</h1>
           <p class="text-sm text-gray-500">ตรวจสอบและติดตามผลการประเมินสุขภาพจิต, ผู้ใช้งานที่กำลังใช้งานระบบ (Active Users) และบันทึกเหตุวิกฤตขั้นรุนแรง</p>
@@ -201,7 +201,7 @@
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- User Accounts Table (Left column) -->
-        <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
+        <div id="user-accounts" class="lg:col-span-2 bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
           <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
               <h2 class="text-xl font-extrabold text-[#1E293B]">User Registry</h2>
@@ -287,7 +287,7 @@
         </div>
 
         <!-- Recent Chat Sessions (Right column) -->
-        <div class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
+        <div id="chat-sessions" class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
           <div>
             <h2 class="text-xl font-extrabold text-[#1E293B]">Recent Chat Logs</h2>
             <p class="text-xs text-gray-500">ระบบติดตามแชตบอตแบบเรียลไทม์และการวินิจฉัยสภาวะอารมณ์</p>
@@ -328,7 +328,7 @@
       </section>
 
       <!-- Articles Manager -->
-      <section class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
+      <section id="articles" class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
             <h2 class="text-xl font-extrabold text-[#1E293B]">Articles &amp; Help Resources</h2>
@@ -534,20 +534,29 @@
     </Transition>
 
     <!-- Delete Confirm Modal -->
+    <!-- Change Role Confirm Modal -->
     <Transition name="modal">
-      <div v-if="isDeleteConfirmOpen" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" @click="isDeleteConfirmOpen = false"></div>
+      <div v-if="isRoleConfirmOpen" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" @click="isRoleConfirmOpen = false"></div>
         <div class="relative bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
-          <div class="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          <div class="w-14 h-14 bg-[#0D9488]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <!-- Icon -->
+            <svg class="w-7 h-7 text-[#0D9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
-          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการลบ?</h3>
-          <p class="text-sm text-gray-500 mb-6">บทความนี้จะถูกลบถาวร ไม่สามารถกู้คืนได้</p>
+          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการเปลี่ยนสิทธิ์?</h3>
+          <p v-if="userToChangeRole" class="text-sm text-gray-500 mb-6">
+            คุณต้องการเปลี่ยนสิทธิ์ของ <strong>{{ userToChangeRole.username }}</strong><br/>
+            จาก <span class="font-bold">{{ userToChangeRole.role }}</span> เป็น <span class="font-bold text-[#0D9488]">{{ userToChangeRole.role === 'ADMIN' ? 'USER' : 'ADMIN' }}</span> ใช่หรือไม่?
+          </p>
           <div class="flex gap-3">
-            <button @click="isDeleteConfirmOpen = false" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer">ยกเลิก</button>
-            <button @click="executeDeleteArticle" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold transition cursor-pointer">🗑 ลบเลย</button>
+            <button @click="isRoleConfirmOpen = false" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+              ยกเลิก
+            </button>
+            <button @click="executeChangeRole" class="flex-1 py-2.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:opacity-90 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer">
+              ยืนยัน
+            </button>
           </div>
         </div>
       </div>
@@ -615,10 +624,22 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted } from 'vue'
 
 // Inject global dark mode state from App.vue
 const isDarkMode = inject('isDarkMode', ref(false))
+
+// Action: Smooth Scroll ไปยังส่วนต่างๆ ของหน้า
+const scrollToSection = (sectionId) => {
+  const el = document.getElementById(sectionId)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+// Change Role confirm
+const isRoleConfirmOpen = ref(false)
+const userToChangeRole = ref(null)
 
 // Formatting date
 const currentDate = computed(() => {
@@ -659,12 +680,25 @@ const mockSessions = ref([
   { id: 1237, username: 'Somchai', mood: 'MILD', lastMessage: 'สวัสดีครับ แวะมาเช็คอินอารมณ์เฉยๆ วันนี้โอเคดีครับ', time: '1 วันที่แล้ว' }
 ])
 
-// Articles management mock data
-const mockArticles = ref([
-  { id: 1, category: 'STRESS', title: '5 วิธีจัดการความเครียดในการทำงานระดับ Burnout', content: 'Burnout หรือภาวะหมดไฟในการทำงาน เกิดขึ้นจากความเครียดเรื้อรังที่ไม่ได้แก้ วิธีจัดการคือ การกำหนดขอบเขตงาน ชื่นชมความสำเร็จเล็กๆ และปรึกษาผู้เชี่ยวชาญ...', date: '26 ก.ค. 2026', authorId: 1 },
-  { id: 2, category: 'DEPRESSION', title: 'ความเข้าใจผิดเรื่องโรคซึมเศร้า และข้อเท็จจริงทางการแพทย์', content: 'โรคซึมเศร้าไม่ใช่เพียงความอ่อนแอทางอารมณ์ แต่เกิดจากสารเคมีในสมองที่ไม่สมดุล ผู้ป่วยต้องการความเข้าใจ การประคับประคอง และการรักษาทางการแพทย์ที่ถูกต้อง...', date: '24 ก.ค. 2026', authorId: 4 },
-  { id: 3, category: 'EMERGENCY', title: 'ช่องทางและสายด่วนช่วยเหลือเมื่อรู้สึกไม่ไหว', content: 'หากคุณต้องการใครสักคนที่คอยรับฟังและแนะนำในชั่วโมงที่มืดมนที่สุด สายด่วนสุขภาพจิต 1323 คือที่พึ่งฟรีตลอด 24 ชั่วโมง หรือติดต่อสายด่วนสมาคมสะมาริตันส์...', date: '10 ก.ค. 2026', authorId: 1 }
-])
+// Articles management (เชื่อมต่อฐานข้อมูลจริงด้วย fetch API)
+const mockArticles = ref([])
+
+// 1. ฟังก์ชันดึงบทความจาก Backend (GET)
+const fetchAdminArticles = async () => {
+  try {
+    const response = await fetch('/api/articles');
+    if (!response.ok) throw new Error('Failed to fetch articles');
+    const data = await response.json();
+    mockArticles.value = data;
+  } catch (error) {
+    console.error('Error loading articles:', error);
+  }
+};
+
+// สั่งให้โหลดข้อมูลทันทีที่เปิดหน้า Admin
+onMounted(() => {
+  fetchAdminArticles();
+})
 
 // Search Query model
 const searchQuery = ref('')
@@ -687,7 +721,20 @@ const dismissAlert = (id) => {
 
 // Action: Toggle user roles between USER and ADMIN
 const toggleUserRole = (user) => {
-  user.role = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
+  userToChangeRole.value = user
+  isRoleConfirmOpen.value = true
+}
+
+// สร้างฟังก์ชันใหม่: สำหรับเปลี่ยน Role จริงๆ เมื่อผู้ใช้กดยืนยันบน Pop-Up
+const executeChangeRole = () => {
+  if (userToChangeRole.value) {
+    const newRole = userToChangeRole.value.role === 'ADMIN' ? 'USER' : 'ADMIN'
+    userToChangeRole.value.role = newRole
+    toastMessage.value = `เปลี่ยนสิทธิ์เป็น ${newRole} สำเร็จ`
+    triggerSuccessToast()
+  }
+  isRoleConfirmOpen.value = false
+  userToChangeRole.value = null
 }
 
 // Action: Delete user
@@ -748,46 +795,41 @@ function validateArticleForm() {
   return Object.keys(errors).length === 0
 }
 
-function saveArticle() {
+// 2. ฟังก์ชันบันทึกบทความ (POST สำหรับสร้างใหม่ / PUT สำหรับแก้ไข) ด้วย fetch API
+async function saveArticle() {
   if (!validateArticleForm()) return
 
-  const now = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
-
-  if (editingArticle.value?.id) {
-    // Edit existing
-    const idx = mockArticles.value.findIndex(a => a.id === editingArticle.value.id)
-    if (idx !== -1) {
-      mockArticles.value[idx] = {
-        ...mockArticles.value[idx],
-        title: articleForm.value.title,
-        category: articleForm.value.category,
-        excerpt: articleForm.value.excerpt,
-        content: articleForm.value.content,
-        sourceName: articleForm.value.sourceName,
-        coverImageUrl: articleForm.value.coverImageUrl,
-        date: now
-      }
-    }
-    toastMessage.value = 'แก้ไขบทความสำเร็จ'
-  } else {
-    // Create new
-    const newId = (mockArticles.value.length > 0 ? Math.max(...mockArticles.value.map(a => a.id)) : 0) + 1
-    mockArticles.value.unshift({
-      id: newId,
+  try {
+    const payload = {
       title: articleForm.value.title,
       category: articleForm.value.category,
       excerpt: articleForm.value.excerpt,
       content: articleForm.value.content,
       sourceName: articleForm.value.sourceName,
       coverImageUrl: articleForm.value.coverImageUrl,
-      date: now,
-      authorId: 1
-    })
-    toastMessage.value = 'สร้างบทความใหม่สำเร็จ'
-  }
+    }
 
-  closeArticleEditor()
-  triggerSuccessToast()
+    const isEdit = !!editingArticle.value?.id;
+    const url = isEdit ? `/api/articles/${editingArticle.value.id}` : '/api/articles';
+    const method = isEdit ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) throw new Error('Failed to save article');
+
+    toastMessage.value = isEdit ? 'แก้ไขบทความสำเร็จ' : 'สร้างบทความใหม่สำเร็จ';
+    
+    closeArticleEditor();
+    triggerSuccessToast();
+    fetchAdminArticles(); // โหลดข้อมูลใหม่จาก DB ทันที
+  } catch (error) {
+    console.error("Error saving article:", error);
+    alert("เกิดข้อผิดพลาดในการบันทึกบทความ");
+  }
 }
 
 function triggerSuccessToast() {

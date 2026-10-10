@@ -16,7 +16,11 @@
         <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
         <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
         <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+
+        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Admin Dashboard</router-link>
       </div>
+
+      
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
@@ -262,13 +266,16 @@
 <script setup>
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const isDarkMode = inject('isDarkMode', false)
 const loading = ref(false)
 const mobileMenuOpen = ref(false)
+
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
 
 const fallbackArticles = [
   {
@@ -338,7 +345,12 @@ const goToRegister = () => {
 const fetchArticles = async () => {
   try {
     loading.value = true
-    const { data } = await axios.get('/api/articles')
+    // เปลี่ยนมาใช้ fetch API มาตรฐาน
+    const response = await fetch('/api/articles')
+    if (!response.ok) throw new Error('Failed to fetch articles')
+    
+    const data = await response.json()
+    
     if (Array.isArray(data) && data.length > 0) {
       articles.value = data
     } else {
