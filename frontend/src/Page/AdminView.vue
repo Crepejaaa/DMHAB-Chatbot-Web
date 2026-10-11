@@ -626,9 +626,6 @@
 <script setup>
 import { ref, computed, inject, onMounted } from 'vue'
 
-// 1. กำหนด Base URL ของ Backend (เพื่อไม่ให้ Vercel หาทางไป Backend ไม่เจอ)
-const API_URL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
-
 // Inject global dark mode state from App.vue
 const isDarkMode = inject('isDarkMode', ref(false))
 
@@ -686,10 +683,10 @@ const mockSessions = ref([
 // Articles management (เชื่อมต่อฐานข้อมูลจริงด้วย fetch API)
 const mockArticles = ref([])
 
-// 2. ฟังก์ชันดึงบทความจาก Backend (GET)
+// 1. ฟังก์ชันดึงบทความจาก Backend (GET)
 const fetchAdminArticles = async () => {
   try {
-    const response = await fetch(`${API_URL}/api/articles`);
+    const response = await fetch('/api/articles');
     if (!response.ok) throw new Error('Failed to fetch articles');
     const data = await response.json();
     mockArticles.value = data;
@@ -798,7 +795,7 @@ function validateArticleForm() {
   return Object.keys(errors).length === 0
 }
 
-// 3. ฟังก์ชันบันทึกบทความ (POST สำหรับสร้างใหม่ / PUT สำหรับแก้ไข) ด้วย fetch API
+// 2. ฟังก์ชันบันทึกบทความ (POST สำหรับสร้างใหม่ / PUT สำหรับแก้ไข) ด้วย fetch API
 async function saveArticle() {
   if (!validateArticleForm()) return
 
@@ -813,18 +810,12 @@ async function saveArticle() {
     }
 
     const isEdit = !!editingArticle.value?.id;
-    const url = isEdit ? `${API_URL}/api/articles/${editingArticle.value.id}` : `${API_URL}/api/articles`;
+    const url = isEdit ? `/api/articles/${editingArticle.value.id}` : '/api/articles';
     const method = isEdit ? 'PUT' : 'POST';
-
-    // ดึง Token มาแนบไปด้วยเผื่อ Backend ล็อกป้องกันไว้
-    const token = localStorage.getItem('token');
 
     const response = await fetch(url, {
       method: method,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : '' // ส่ง Token ยืนยันตัวตนแอดมิน
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
@@ -852,28 +843,13 @@ function confirmDeleteArticle(id) {
   isDeleteConfirmOpen.value = true
 }
 
-// 4. ฟังก์ชันลบบทความ (DELETE) ด้วย fetch API
-async function executeDeleteArticle() {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/api/articles/${articleToDeleteId.value}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : ''
-      }
-    });
-
-    if (!response.ok) throw new Error('Failed to delete article');
-
-    isDeleteConfirmOpen.value = false
-    articleToDeleteId.value = null
-    toastMessage.value = 'ลบบบทความสำเร็จ'
-    triggerSuccessToast()
-    fetchAdminArticles(); // โหลดตารางใหม่หลังลบ
-  } catch (error) {
-    console.error("Error deleting article:", error);
-    alert("เกิดข้อผิดพลาดในการลบบทความ");
-  }
+function executeDeleteArticle() {
+  const idx = mockArticles.value.findIndex(art => art.id === articleToDeleteId.value)
+  if (idx !== -1) mockArticles.value.splice(idx, 1)
+  isDeleteConfirmOpen.value = false
+  articleToDeleteId.value = null
+  toastMessage.value = 'ลบบทความสำเร็จ'
+  triggerSuccessToast()
 }
 
 // Legacy deleteArticle kept for safety
