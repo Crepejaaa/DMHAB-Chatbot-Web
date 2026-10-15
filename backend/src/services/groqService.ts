@@ -38,13 +38,17 @@ export interface AIResponse {
   suggested_category: "SLEEP" | "STRESS" | "BURNOUT" | "NONE";
 }
 
-// ตรวจสอบตัวแปร Environment
-if (!process.env.GROQ_API_KEY) {
-  throw new Error("Missing GROQ_API_KEY in environment variables");
+// ตรวจสอบตัวแปร Environment และสร้าง Instance อย่างปลอดภัย
+let groq: any = null;
+if (process.env.GROQ_API_KEY) {
+  try {
+    groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  } catch (err) {
+    console.warn("Failed to initialize Groq client:", err);
+  }
+} else {
+  console.warn("⚠️ Missing GROQ_API_KEY in environment variables. Groq will operate in fallback mode.");
 }
-
-// สร้าง Instance ของ Groq Client โดยระบบจะดึง GROQ_API_KEY จาก Environment ไปใช้โดยอัตโนมัติ
-const groq = new Groq();
 
 // ฟังก์ชันสำหรับสกัดและแปลงผลลัพธ์เป็น JSON (ป้องกันกรณี AI ใส่ Markdown มา)
 const parseAIResponse = (content: string): AIResponse => {
@@ -59,6 +63,14 @@ const parseAIResponse = (content: string): AIResponse => {
 export const generateChatResponse = async (
   messagesArray: { role: "system" | "user" | "assistant"; content: string }[]
 ): Promise<AIResponse> => {
+  if (!groq) {
+    return {
+      reply_message: "สวัสดีครับ ตอนนี้ระบบ AI เชื่อมต่อโหมดจำลอง ยินดีรับฟังและพร้อมให้กำลังใจคุณเสมอครับ",
+      assessment_status: "IN_PROGRESS",
+      severity_level: "MILD",
+      suggested_category: "NONE"
+    };
+  }
   try {
     // 1. เตรียมรูปแบบประวัติการสนทนาให้ตรงกับที่ Groq (OpenAI format) ต้องการ
     // โดยแทรก System Prompt ไว้เป็นข้อความแรกสุด

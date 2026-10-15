@@ -155,10 +155,6 @@
             <input v-model="form.email" type="email" class="w-full bg-transparent text-lg font-medium text-gray-800 outline-none" placeholder="name@example.com" />
           </div>
 
-          <div class="rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">เบอร์โทร</label>
-            <input v-model="form.phone" type="tel" class="w-full bg-transparent text-lg font-medium text-gray-800 outline-none" placeholder="0812345678" />
-          </div>
         </div>
 
         <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -229,8 +225,7 @@ const fileInputRef = ref(null)
 
 const form = ref({
   name: authStore.user?.name || authStore.displayName || 'ผู้ใช้งาน',
-  email: authStore.user?.email || authStore.userEmail || 'user@example.com',
-  phone: authStore.user?.phone || '0812345678'
+  email: authStore.user?.email || authStore.userEmail || 'user@example.com'
 })
 
 const triggerFileInput = () => {
@@ -294,7 +289,6 @@ const saveProfile = () => {
   authStore.updateUserProfile({
     name: form.value.name,
     email: form.value.email,
-    phone: form.value.phone,
     avatar: profileImage.value
   })
 
@@ -306,8 +300,7 @@ const cancelEdit = () => {
   profileImage.value = currentUser.avatar || defaultAvatar
   form.value = {
     name: currentUser.name || authStore.displayName || 'ผู้ใช้งาน',
-    email: currentUser.email || authStore.userEmail || 'user@example.com',
-    phone: currentUser.phone || '0812345678'
+    email: currentUser.email || authStore.userEmail || 'user@example.com'
   }
 }
 
@@ -319,8 +312,7 @@ onMounted(() => {
     }
     form.value = {
       name: storedUser.name || storedUser.email?.split('@')[0] || 'ผู้ใช้งาน',
-      email: storedUser.email || form.value.email,
-      phone: storedUser.phone || form.value.phone
+      email: storedUser.email || form.value.email
     }
   } else if (authStore.profileImage) {
     profileImage.value = authStore.profileImage

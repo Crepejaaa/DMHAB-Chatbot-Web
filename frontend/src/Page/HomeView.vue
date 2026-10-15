@@ -2,62 +2,112 @@
   <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
-    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
-      <div class="flex items-center gap-1">
-        <!-- โลโก้ Navbar -->
-        <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+    <AppNavbar />
+
+    <!-- 2. Hero Section -->
+    <section class="max-w-6xl mx-auto px-6 py-12 md:py-16 grid md:grid-cols-2 gap-8 items-center">
+      <div class="scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold mb-4">
+          <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>เพื่อนคู่คิดดิจิทัลด้านสุขภาพจิต 24 ชั่วโมง</span>
         </div>
-        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
-      </div>
-      
-      <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
-      </div>
-      
-      <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1E293B] leading-tight mb-4">
+          Daily Mental Health<br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669]">Assessment Bot</span>
+        </h1>
+        <p class="text-[#64748B] mb-8 text-base leading-relaxed">
+          "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
+          การเช็กอินอารมณ์และประเมินตนเองเป็นประจำ คือก้าวแรกของการรักและดูแลจิตใจตัวเอง
+        </p>
+        
+        <!-- Quick Shortcut CTA Buttons -->
+        <div class="flex flex-wrap gap-4 items-center">
           <button
-            @click="isDarkMode = !isDarkMode"
-            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
-            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
+            @click="$router.push('/assessment')"
+            class="bg-gradient-to-r from-emerald-500 via-teal-600 to-[#045F54] hover:from-emerald-400 hover:to-teal-700 text-white px-7 py-4 text-base font-bold rounded-2xl shadow-xl shadow-teal-700/25 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2.5 cursor-pointer ring-4 ring-emerald-500/20"
+            title="เริ่มทำแบบประเมินด่วน"
           >
-            <span
-              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
-              class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
-            ></span>
+            <span class="text-2xl animate-pulse">⚡</span>
+            <span class="tracking-wide">เข้าประเมินด่วน</span>
+            <span class="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full font-semibold ml-1">2 นาที</span>
+          </button>
+
+          <button
+            @click="$router.push('/chat')"
+            class="bg-white hover:bg-gray-50 text-[#0D9488] border-2 border-[#0D9488]/30 px-6 py-3.5 text-base font-bold rounded-2xl shadow-sm hover:shadow hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 cursor-pointer"
+            title="พูดคุยปรึกษาแชทบอท"
+          >
+            <span class="text-xl">💬</span>
+            <span>คุยกับแชทบอท</span>
           </button>
         </div>
 
-        <ProfileMenu />
+        <div class="flex items-center gap-4 mt-6 text-xs text-[#64748B]">
+          <span class="flex items-center gap-1">✓ คัดกรอง 2Q / 9Q / 8Q</span>
+          <span class="flex items-center gap-1">✓ รู้ผลทันที</span>
+          <span class="flex items-center gap-1">✓ ฟรีและเป็นส่วนตัว</span>
+        </div>
       </div>
-    </nav>
 
-    <!-- 2. Hero Section -->
-    <section class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-8 items-center">
-      <div class="scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-        <h1 class="text-4xl font-extrabold text-[#1E293B] leading-tight mb-4">
-          Daily Mental Health<br />Assessment Bot
-        </h1>
-        <p class="text-[#64748B] mb-8 text-base">
-          "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
-          "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
-        </p>
-        <button @click="$router.push('/assessment')" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-5 py-2.5 text-sm font-medium rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
-          เริ่มต้นใช้งาน
-        </button>
-      </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
-        <div class="w-80 h-64 overflow-hidden rounded-2xl bg-white/60 shadow-lg ring-1 ring-[#0D9488]/20">
+        <div class="w-80 h-72 md:w-96 md:h-80 overflow-hidden rounded-3xl bg-white/60 shadow-xl ring-2 ring-[#0D9488]/20 relative">
           <img
             src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=85"
             alt="คุณหมอผู้เชี่ยวชาญด้านการดูแลสุขภาพจิต"
             class="h-full w-full object-cover"
           />
+          <!-- Quick Shortcut Floating Badge -->
+          <div class="absolute bottom-4 left-4 right-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-teal-500/20 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">📋</span>
+              <div>
+                <p class="text-xs font-bold text-gray-800 dark:text-gray-100">เช็คอินวันนี้หรือยัง?</p>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400">บันทึกอารมณ์ & ติดตามผลย้อนหลัง</p>
+              </div>
+            </div>
+            <router-link
+              to="/daily-checkin"
+              class="text-xs font-bold px-3 py-1.5 rounded-xl bg-[#0D9488] text-white hover:bg-[#045F54] transition shadow-sm"
+            >
+              ดูประวัติ
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Shortcut Action Banner -->
+    <section class="max-w-6xl mx-auto px-6 mb-8">
+      <div class="rounded-3xl bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white p-6 md:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex items-center gap-4 relative z-10">
+          <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl shrink-0 shadow-inner">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-xl md:text-2xl font-black tracking-tight">เข้าประเมินด่วน (Quick Screening)</h3>
+              <span class="bg-amber-300 text-amber-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase">แนะนำ</span>
+            </div>
+            <p class="text-xs md:text-sm text-emerald-100 leading-relaxed max-w-xl">
+              สำรวจสุขภาพใจของคุณวันนี้ด้วยแบบประเมินมาตรฐาน กรมสุขภาพจิต (2Q, 9Q, 8Q) รู้ผลทันที พร้อมคำแนะนำและระบบช่วยเหลือฉุกเฉิน
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto relative z-10 shrink-0">
+          <button
+            @click="$router.push('/assessment')"
+            class="px-6 py-3.5 bg-white text-[#045F54] hover:bg-emerald-50 rounded-2xl font-extrabold text-sm shadow-lg hover:scale-105 active:scale-95 transition-all text-center inline-flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>📝 เริ่มประเมินตอนนี้</span>
+            <span>&rarr;</span>
+          </button>
+          <router-link
+            to="/daily-checkin"
+            class="px-5 py-3.5 bg-black/20 hover:bg-black/30 border border-white/25 rounded-2xl font-semibold text-sm text-center text-white transition-all inline-flex items-center justify-center gap-2"
+          >
+            <span>📋 บันทึกประวัติ</span>
+          </router-link>
         </div>
       </div>
     </section>
@@ -264,6 +314,7 @@ import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AppNavbar from '../components/AppNavbar.vue'
 
 const router = useRouter()
 const isDarkMode = inject('isDarkMode', false)
