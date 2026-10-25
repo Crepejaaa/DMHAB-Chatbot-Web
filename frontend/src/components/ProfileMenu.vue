@@ -88,7 +88,7 @@
       </button>
     </div>
 
-    <div v-if="showMobileMenu" class="relative sm:hidden">
+    <div class="relative sm:hidden">
       <button
         type="button"
         @click="mobileMenuOpen = !mobileMenuOpen"
@@ -210,13 +210,6 @@
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
-
-const props = defineProps({
-  showMobileMenu: {
-    type: Boolean,
-    default: true
-  }
-})
 
 const router = useRouter()
 const authStore = useAuthStore()

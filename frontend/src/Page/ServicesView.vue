@@ -2,7 +2,54 @@
   <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
-    <AppNavbar :show-back="true" />
+    <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button
+          type="button"
+          @click="$router.options.history.state?.back ? $router.back() : $router.push('/')"
+          class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
+          title="ย้อนกลับ"
+          aria-label="ย้อนกลับ"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </button>
+
+        <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
+          <!-- โลโก้ Navbar -->
+          <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+          </div>
+          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+        </router-link>
+      </div>
+      
+      <div class="hidden md:flex gap-8 items-center text-sm font-medium">
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+      </div>
+      
+      <div class="flex gap-3 items-center text-sm">
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
+          <button
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
+            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
+          >
+            <span
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
+            ></span>
+          </button>
+        </div>
+
+        <ProfileMenu />
+      </div>
+    </nav>
 
     <!-- 2. Green Banner Header -->
     <header class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-4 pb-16 px-6 lg:px-12 relative overflow-hidden shadow-md">
@@ -113,7 +160,6 @@
 
 <script setup>
 import { inject } from 'vue'
-import AppNavbar from '../components/AppNavbar.vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)

@@ -133,15 +133,27 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-semibold text-[#1E293B] mb-2">Email</label>
-              <input 
-                v-model="form.email"
-                @input="filterEmailOnly"
-                type="email" 
-                placeholder="email@domain.com" 
-                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition placeholder-[#94A3B8]"
-              />
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">Email</label>
+                <input 
+                  v-model="form.email"
+                  @input="filterEmailOnly"
+                  type="email" 
+                  placeholder="email@domain.com" 
+                  class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition placeholder-[#94A3B8]"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">Phone</label>
+                <input 
+                  v-model="form.phone"
+                  @input="filterNumberOnly"
+                  type="tel" 
+                  placeholder="+21 228xxxx" 
+                  class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition placeholder-[#94A3B8]"
+                />
+              </div>
             </div>
 
             <div>
@@ -231,6 +243,7 @@ const form = ref({
   firstName: '',
   lastName: '',
   email: '',
+  phone: '',
   subject: ''
 })
 
@@ -240,6 +253,7 @@ const handleSubmit = () => {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     subject: ''
   }
 }
@@ -255,7 +269,10 @@ const filterEmailOnly = () => {
   form.value.email = form.value.email.replace(/[^a-zA-Z0-9@._\-+]/g, '')
 }
 
-
+const filterNumberOnly = () => {
+  // อนุญาตเฉพาะตัวเลข
+  form.value.phone = form.value.phone.replace(/[^0-9]/g, '')
+}
 
 // Scroll animation observer (เหมือน HomeView)
 let observer = null
