@@ -86,13 +86,6 @@
             <input v-model="form.email" type="email" placeholder="Your email, e.g : johndoe@gmail.com" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
-          <!-- Phone Number -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Phone Number</label>
-            <input v-model="form.phone" type="tel" inputmode="numeric" placeholder="Your phone number"
-              @input="form.phone = form.phone.replace(/[^0-9]/g, '')" maxlength="10" required
-              class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
-          </div>
           <!-- Password -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
@@ -253,7 +246,6 @@ const imagePreview = ref(null)
 const form = ref({
   name: '',
   email: '',
-  phone: '',
   password: '',
   confirmPassword: '',
   acceptTerms: false, // ใช้ตัวแปรนี้ผูกกับ Checkbox (v-model="form.acceptTerms")
@@ -313,7 +305,6 @@ const handleRegister = async () => {
   const userData = {
     name: form.value.name,
     email: form.value.email,
-    phone: form.value.phone,
     password: form.value.password,
     confirmPassword: form.value.confirmPassword
   }
