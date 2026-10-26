@@ -57,9 +57,54 @@
         <div class="flex gap-4 items-stretch">
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">
-              แบบประเมินสุขภาพจิตเบื้องต้น
-            </h1>
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                แบบประเมินสุขภาพจิตเบื้องต้น
+              </h1>
+              <!-- Main Assessment Guide / Help Icon -->
+              <AssessmentHelpTooltip
+                title="คู่มือและวิธีขั้นตอนการทำแบบประเมินสุขภาพจิต"
+                variant="banner"
+                iconType="question"
+                badgeText="คำแนะนำการทำแบบประเมิน"
+              >
+                <div class="space-y-3 text-xs sm:text-sm text-slate-700">
+                  <p class="leading-relaxed">
+                    แบบประเมินนี้จัดทำขึ้นตามเกณฑ์มาตรฐานของ <b class="text-[#045F54]">กรมสุขภาพจิต กระทรวงสาธารณสุข</b> เพื่อคัดกรองสภาวะอารมณ์ ระดับความเครียด และภาวะซึมเศร้าเบื้องต้น
+                  </p>
+
+                  <!-- Steps of Assessment -->
+                  <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
+                    <div class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                       ขั้นตอนการทำแบบประเมิน (4 ขั้นตอน):
+                    </div>
+                    <ol class="space-y-1.5 pl-1 leading-relaxed">
+                      <li><b>ขั้นที่ 1:</b> อ่านข้อคำถามในแต่ละส่วนอย่างละเอียดตามลำดับ (ส่วน 2Q, 9Q และ 8Q)</li>
+                      <li><b>ขั้นที่ 2:</b> เลือกคำตอบตามความเป็นจริงและความรู้สึกตรงๆ ในช่วงเวลาที่ระบุ (2 สัปดาห์ หรือ 1 เดือน)</li>
+                      <li class="text-amber-800 font-semibold bg-amber-50/80 p-1.5 rounded-lg border border-amber-200/60">
+                        <b>ขั้นที่ 3 (เงื่อนไขสำคัญ):</b> <u>ต้องตอบคำถามให้ครบทุกข้อ ทุกส่วน (รวม 19 ข้อ)</u> หากตอบไม่ครบ ปุ่มส่งแบบประเมินจะไม่เปิดใช้งาน
+                      </li>
+                      <li><b>ขั้นที่ 4:</b> เมื่อตอบครบทุกข้อแล้ว กดปุ่ม <b>"ส่งแบบประเมิน"</b> ด้านล่างสุดเพื่อดูผลวิเคราะห์และแนวทางช่วยเหลือ</li>
+                    </ol>
+                  </div>
+
+                  <!-- 3 Sections Overview -->
+                  <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 space-y-1.5 text-xs text-emerald-950">
+                    <div class="font-bold text-emerald-800">โครงสร้างแบบประเมิน 3 ส่วน:</div>
+                    <p><b>1. แบบคัดกรอง 2Q (2 ข้อ):</b> สำรวจอารมณ์เศร้า/เบื่อ ใน 2 สัปดาห์</p>
+                    <p><b>2. แบบประเมิน 9Q (9 ข้อ):</b> วัดระดับความรุนแรงของอาการ ใน 2 สัปดาห์</p>
+                    <p><b>3. แบบประเมิน 8Q (8 ข้อ):</b> ประเมินความเสี่ยงต่อการทำร้ายตนเอง ใน 1 เดือน</p>
+                  </div>
+
+                  <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                    <span>สายด่วนสุขภาพจิต (โทรฟรี 24 ชม.):</span>
+                    <a href="tel:1323" class="font-bold text-emerald-700 hover:underline flex items-center gap-1">
+                      <span>📞 1323</span>
+                    </a>
+                  </div>
+                </div>
+              </AssessmentHelpTooltip>
+            </div>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed">
               เพื่อนคู่คิดดิจิทัล เพื่อชีวิตที่ดีของคุณ<br />
               เช็กอารมณ์และความเครียดสั้นๆ ผ่านบทสนทนาที่เป็นมิตร สะท้อนสภาวะจิตใจประจำวัน
@@ -75,7 +120,28 @@
       <!-- ===== Section 2Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <h2 class="text-lg font-bold text-[#1E293B] mb-1">โปรดตอบคำถามต่อไปนี้ตามความเป็นจริงในช่วง 2 สัปดาห์ที่ผ่านมา</h2>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <h2 class="text-lg font-bold text-[#1E293B]">โปรดตอบคำถามต่อไปนี้ตามความเป็นจริงในช่วง 2 สัปดาห์ที่ผ่านมา</h2>
+            <AssessmentHelpTooltip
+              title="วิธีทำและข้อกำหนดแบบคัดกรอง 2Q"
+              variant="section"
+              iconType="info"
+            >
+              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
+                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
+                  <p>1. สำรวจความรู้สึกของตนเองในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
+                  <p>2. กดเลือกคำตอบ <b>"มี"</b> หรือ <b>"ไม่มี"</b> ให้ครบทั้ง 2 ข้อ</p>
+                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 2 ข้อ</u> ร่วมกับส่วนอื่นๆ จึงจะส่งแบบประเมินได้</p>
+                </div>
+
+                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
+                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์ข้อกำหนด:</span>
+                  หากตอบ <b>"มี"</b> ข้อใดข้อหนึ่ง (แม้เพียง 1 ข้อ) แสดงว่ามีแนวโน้มภาวะซึมเศร้า ระบบจะนำผลไปประมวลร่วมกับแบบประเมิน 9Q ต่อไป
+                </div>
+              </div>
+            </AssessmentHelpTooltip>
+          </div>
         </div>
 
         <div class="overflow-x-auto px-8 pb-8">
@@ -123,7 +189,38 @@
       <!-- ===== Section 9Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <h2 class="text-lg font-bold text-[#1E293B] mb-2">ในช่วง 2 สัปดาห์ที่ผ่านมา ท่านมีอาการต่อไปนี้บ่อยแค่ไหน</h2>
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 2 สัปดาห์ที่ผ่านมา ท่านมีอาการต่อไปนี้บ่อยแค่ไหน</h2>
+            <AssessmentHelpTooltip
+              title="วิธีทำและข้อกำหนดแบบประเมิน 9Q"
+              variant="section"
+              iconType="info"
+            >
+              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
+                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
+                  <p>1. สำรวจความถี่ของอาการที่เกิดขึ้นในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
+                  <p>2. กดเลือกระดับคะแนน <b>0 ถึง 3</b> ในแต่ละข้อตามความถี่จริง</p>
+                  <ul class="list-disc list-inside space-y-0.5 pl-2 text-slate-600">
+                    <li><b>0:</b> ไม่มีเลย</li>
+                    <li><b>1:</b> เป็นบางวัน (1 - 7 วัน)</li>
+                    <li><b>2:</b> เป็นบ่อย (> 7 วัน)</li>
+                    <li><b>3:</b> เป็นทุกวัน</li>
+                  </ul>
+                  <p class="text-amber-800 font-semibold pt-1">3. <u>ต้องตอบให้ครบทั้ง 9 ข้อ</u> เพื่อคำนวณคะแนนรวมและปลดล็อกการส่ง</p>
+                </div>
+
+                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
+                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 27):</span>
+                  • คะแนน &lt; 7: ปกติ/ไม่มีอาการหรือมีน้อยมาก<br>
+                  • คะแนน 7 - 12: ภาวะซึมเศร้าระดับน้อย<br>
+                  • คะแนน 13 - 18: ภาวะซึมเศร้าระดับปานกลาง<br>
+                  • คะแนน &ge; 19: ภาวะซึมเศร้าระดับรุนแรง<br>
+                  <span class="text-emerald-800 font-semibold mt-1 block">*หากคะแนนรวมตั้งแต่ 7 คะแนนขึ้นไป แนะนำให้ประเมินส่วน 8Q ต่อ</span>
+                </div>
+              </div>
+            </AssessmentHelpTooltip>
+          </div>
 
           <!-- Score Legend -->
           <div class="flex flex-wrap gap-3 mb-6">
@@ -172,7 +269,32 @@
       <!-- ===== Section 8Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <h2 class="text-lg font-bold text-[#1E293B] mb-1">ในช่วง 1 เดือนที่ผ่านมา มีเหตุการณ์ต่อไปนี้เกิดขึ้นหรือไม่</h2>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 1 เดือนที่ผ่านมา มีเหตุการณ์ต่อไปนี้เกิดขึ้นหรือไม่</h2>
+            <AssessmentHelpTooltip
+              title="วิธีทำและข้อกำหนดแบบประเมิน 8Q"
+              variant="danger"
+              iconType="info"
+            >
+              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
+                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
+                  <p>1. สำรวจความคิด ความรู้สึก หรือพฤติกรรมในช่วง <b>1 เดือนที่ผ่านมา</b></p>
+                  <p>2. กดเลือก <b>"ไม่มี" (0 คะแนน)</b> หรือ <b>"มี" (รับคะแนนความเสี่ยงตามน้ำหนักข้อนั้น)</b></p>
+                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 8 ข้อ</u> เพื่อให้ผลการประเมินมีความถูกต้องและครบถ้วน</p>
+                </div>
+
+                <div class="bg-rose-50/80 p-3 rounded-2xl border border-rose-200/90 text-xs leading-relaxed text-rose-950">
+                  <span class="font-bold text-rose-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 52):</span>
+                  • 0 คะแนน: ไม่มีแนวโน้มทำร้ายตนเองในปัจจุบัน<br>
+                  • 1 - 8 คะแนน: มีแนวโน้มระดับน้อย<br>
+                  • 9 - 16 คะแนน: มีแนวโน้มระดับปานกลาง<br>
+                  • &ge; 17 คะแนน: มีแนวโน้มระดับรุนแรง<br>
+                  <span class="text-rose-700 font-semibold mt-1 block">หากได้คะแนน &ge; 9 คะแนน มีความเสี่ยงสูง ควรปรึกษาจิตแพทย์หรือติดต่อสายด่วน 1323 ทันที</span>
+                </div>
+              </div>
+            </AssessmentHelpTooltip>
+          </div>
         </div>
 
         <div class="overflow-x-auto px-8 pb-8">
@@ -226,12 +348,31 @@
         </div>
       </section>
 
-      <!-- ===== Submit Button ===== -->
-      <div class="text-right pb-2">
+      <!-- ===== Submit Button & Completion Status ===== -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-5 bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm">
+        <div class="text-xs sm:text-sm">
+          <div v-if="!isFormValid" class="flex items-center gap-2.5 text-amber-800 bg-amber-50/80 px-4 py-2.5 rounded-xl border border-amber-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-amber-600 animate-pulse" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <div>
+              <span class="font-bold">ยังตอบไม่ครบ:</span> ทำแล้ว <b>{{ totalAnsweredCount }}/{{ totalQuestionsCount }}</b> ข้อ (ต้องตอบให้ครบทุกข้อจึงจะส่งแบบประเมินได้)
+            </div>
+          </div>
+          <div v-else class="flex items-center gap-2.5 text-emerald-800 bg-emerald-50/90 px-4 py-2.5 rounded-xl border border-emerald-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <div>
+              <span class="font-bold">ตอบครบทุกข้อแล้ว</span> (<b>{{ totalQuestionsCount }}/{{ totalQuestionsCount }}</b> ข้อ) พร้อมส่งแบบประเมิน
+            </div>
+          </div>
+        </div>
+
         <button
           @click="submitAssessment"
-          :disabled="!isFormValid || isSaving"
-          class="px-10 py-3 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="!isFormValid"
+          class="w-full sm:w-auto px-10 py-3.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transform active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap text-center"
         >
           {{ isSaving ? 'กำลังบันทึกผล...' : 'ส่งแบบประเมิน' }}
         </button>
@@ -288,6 +429,8 @@ import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useAssessmentStore } from '../stores/assessmentStore'
+import ProfileMenu from '../components/ProfileMenu.vue'
+import AssessmentHelpTooltip from '../components/AssessmentHelpTooltip.vue'
 
 const isDarkMode = inject('isDarkMode')
 const router = useRouter()
@@ -337,7 +480,12 @@ const q8Questions = [
 const q8Answers = ref({})
 const q8TotalScore = computed(() => Object.values(q8Answers.value).reduce((a, b) => a + b, 0))
 
-// ===== Validation =====
+// ===== Validation & Progress =====
+const totalQuestionsCount = computed(() => q2Questions.length + q9Questions.length + q8Questions.length)
+const totalAnsweredCount = computed(() => {
+  return Object.keys(q2Answers.value).length + Object.keys(q9Answers.value).length + Object.keys(q8Answers.value).length
+})
+
 const isFormValid = computed(() => {
   const q2Done = q2Questions.every(q => q2Answers.value[q.id] !== undefined)
   const q9Done = q9Questions.every(q => q9Answers.value[q.id] !== undefined)
