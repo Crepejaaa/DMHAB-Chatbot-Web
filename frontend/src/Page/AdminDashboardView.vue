@@ -19,13 +19,27 @@
           </svg>
           {{ isLoading ? 'กำลังดึงข้อมูล...' : 'รีเฟรชข้อมูล' }}
         </button>
-        <div class="bg-emerald-50 text-[#0D9488] font-bold px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 border border-[#0D9488]/20 animate-pulse">
-          <span class="w-2 h-2 rounded-full bg-[#0D9488]"></span>
-          ระบบออนไลน์
+        <div
+          :class="hasLoadedStats && !errorMessage
+            ? 'bg-emerald-50 text-[#0D9488] border-[#0D9488]/20'
+            : errorMessage
+              ? 'bg-rose-50 text-rose-700 border-rose-200'
+              : 'bg-amber-50 text-amber-700 border-amber-200'"
+          class="font-bold px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 border"
+        >
+          <span
+            :class="hasLoadedStats && !errorMessage ? 'bg-[#0D9488]' : errorMessage ? 'bg-rose-500' : 'bg-amber-500'"
+            class="w-2 h-2 rounded-full"
+          ></span>
+          {{ isLoading ? 'กำลังเชื่อมต่อฐานข้อมูล' : errorMessage ? 'อัปเดตไม่สำเร็จ' : hasLoadedStats ? 'เชื่อมต่อฐานข้อมูลแล้ว' : 'ยังไม่ได้เชื่อมต่อ' }}
         </div>
         <span class="text-xs text-gray-400 font-mono hidden md:inline">วันที่: {{ currentDate }}</span>
       </div>
     </header>
+
+    <div v-if="errorMessage" role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      {{ errorMessage }}
+    </div>
 
     <!-- Stat Cards (3 สถิติข้างบนตามฐานข้อมูล) -->
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -435,11 +449,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../api/axios'
 
 // Tab view state
 const activeChartTab = ref('all')
 const isLoading = ref(false)
+const hasLoadedStats = ref(false)
+const errorMessage = ref('')
 
 // Formatting date in Thai
 const currentDate = computed(() => {
@@ -447,45 +463,54 @@ const currentDate = computed(() => {
   return new Date().toLocaleDateString('th-TH', options)
 })
 
-// Statistics State (อิงจาก 3 สิ่งในฐานข้อมูล)
+// Start empty; dashboard values are populated only after the API responds.
 const stats = ref({
-  totalUsers: 24,
-  assessmentsCompleted: 35,
-  avgScore: 12.2,
+  totalUsers: 0,
+  assessmentsCompleted: 0,
+  avgScore: 0,
   userRoles: {
-    users: 20,
-    admins: 4
+    users: 0,
+    admins: 0
   },
   assessmentLevels: {
-    normal: 5,
-    moderate: 27,
-    severe: 3
+    normal: 0,
+    moderate: 0,
+    severe: 0
   },
   scoreDistribution: [
-    { label: '0-6 คะแนน (ปกติ)', count: 5, description: 'สุขภาพจิตปกติ' },
-    { label: '7-12 คะแนน (เครียดเล็กน้อย)', count: 12, description: 'เริ่มมีความเครียด' },
-    { label: '13-18 คะแนน (เสี่ยงปานกลาง)', count: 15, description: 'ควรติดตามอาการ' },
-    { label: '19-21 คะแนน (เสี่ยงรุนแรง)', count: 3, description: 'ควรปรึกษาแพทย์' }
+    { label: '0-6 คะแนน (ปกติ)', count: 0, description: 'สุขภาพจิตปกติ' },
+    { label: '7-12 คะแนน (เครียดเล็กน้อย)', count: 0, description: 'เริ่มมีความเครียด' },
+    { label: '13-18 คะแนน (เสี่ยงปานกลาง)', count: 0, description: 'ควรติดตามอาการ' },
+    { label: '19-21 คะแนน (เสี่ยงรุนแรง)', count: 0, description: 'ควรปรึกษาแพทย์' }
   ]
 })
 
-// Fetch live stats from backend API (connected to Neon DB)
 const fetchStats = async () => {
   isLoading.value = true
+  errorMessage.value = ''
   try {
     const res = await axios.get('/api/admin/stats')
-    if (res.data) {
-      stats.value = {
-        totalUsers: res.data.totalUsers ?? stats.value.totalUsers,
-        assessmentsCompleted: res.data.assessmentsCompleted ?? stats.value.assessmentsCompleted,
-        avgScore: res.data.avgScore ?? stats.value.avgScore,
-        userRoles: res.data.userRoles || stats.value.userRoles,
-        assessmentLevels: res.data.assessmentLevels || stats.value.assessmentLevels,
-        scoreDistribution: res.data.scoreDistribution || stats.value.scoreDistribution
-      }
+    const data = res.data
+    const requiredCounts = [
+      data?.totalUsers,
+      data?.assessmentsCompleted,
+      data?.avgScore,
+      data?.userRoles?.users,
+      data?.userRoles?.admins,
+      data?.assessmentLevels?.normal,
+      data?.assessmentLevels?.moderate,
+      data?.assessmentLevels?.severe
+    ]
+
+    if (!requiredCounts.every(Number.isFinite) || !Array.isArray(data.scoreDistribution)) {
+      throw new Error('รูปแบบข้อมูลสถิติจากเซิร์ฟเวอร์ไม่ถูกต้อง')
     }
+
+    stats.value = data
+    hasLoadedStats.value = true
   } catch (error) {
-    console.warn("Could not fetch latest stats from backend, using database cache:", error)
+    console.error('Could not fetch admin stats from the backend:', error)
+    errorMessage.value = error.response?.data?.error || error.message || 'ไม่สามารถโหลดข้อมูลจากฐานข้อมูลได้ กรุณาลองรีเฟรชอีกครั้ง'
   } finally {
     isLoading.value = false
   }

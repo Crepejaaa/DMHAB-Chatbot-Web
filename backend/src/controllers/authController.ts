@@ -73,7 +73,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     );
 
     // 👇 เพิ่มการส่งก้อนข้อมูล user และ role กลับไปให้หน้าบ้าน (จาก commit d7fe903)
-    res.status(200).json({ 
+    res.status(200).json({
       message: "เข้าสู่ระบบสำเร็จ", 
       token, 
       refreshToken,
@@ -165,6 +165,7 @@ export const getAdminStats = async (req: Request, res: Response): Promise<void> 
     const range13to18 = await prisma.testResult.count({ where: { totalScore: { gte: 13, lte: 18 } } });
     const range19to21 = await prisma.testResult.count({ where: { totalScore: { gte: 19 } } });
 
+    res.setHeader("Cache-Control", "no-store");
     res.status(200).json({
       totalUsers,
       assessmentsCompleted,

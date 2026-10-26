@@ -72,7 +72,7 @@ axiosInstance.interceptors.response.use(
       try {
         // 3. Pause the failed request and automatically make a POST request to refresh
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.post(`${baseURL}/api/auth/refresh`, { refreshToken });
+        const response = await axios.post(`${baseURL}/api/refresh`, { refreshToken });
         
         // 4. If refresh is successful, save the new access token
         const newAccessToken = response.data.token || response.data.accessToken; 
