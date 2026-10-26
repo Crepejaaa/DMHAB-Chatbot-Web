@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -17,7 +17,7 @@ try {
 
   prisma = new PrismaClient({ ...(adapter ? { adapter } : {}) });
 } catch (error) {
-  console.warn("Prisma client is unavailable. Using fallback mock data for the app.");
+  console.warn("Prisma client is unavailable. Using fallback mock data for the app.", error);
   prisma = {
     user: {
       findFirst: async () => null,
