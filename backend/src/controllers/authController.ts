@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ
-    const { name, username = name, password, email, phone } = req.body;
+    const { name, username = name, password, email } = req.body;
 
     if (!username || !password) {
       res.status(400).json({ error: "กรุณาระบุข้อมูลให้ครบถ้วน (ชื่อผู้ใช้, รหัสผ่าน)" });
@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // เข้ารหัสผ่านและสร้างผู้ใช้ใหม่
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
-      data: { username, email, passwordHash, phone },
+      data: { username, email, passwordHash },
     });
 
     res.status(201).json({ message: "สมัครสมาชิกสำเร็จ", userId: newUser.id });
