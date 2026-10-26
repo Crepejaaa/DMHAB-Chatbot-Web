@@ -289,13 +289,6 @@ const handleRegister = async () => {
     return
   }
 
-  // เช็กเบอร์โทรศัพท์ฝั่งหน้าเว็บ
-  const phoneRegex = /^0[689]\d{8}$/;
-  if (!phoneRegex.test(form.value.phone)) {
-    errorMessage.value = "กรุณากรอกเบอร์โทรศัพท์มือถือให้ถูกต้อง (10 หลัก เริ่มด้วย 06, 08 หรือ 09)";
-    return;
-  }
-
   // เช็กรหัสผ่าน
   if (form.value.password !== form.value.confirmPassword) {
     errorMessage.value = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!"
