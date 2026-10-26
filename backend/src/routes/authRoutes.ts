@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { register, login, refresh } from "../controllers/authController";
+import { register, login, refresh, getAllUsers, getAdminStats, createTestResult } from "../controllers/authController";
+import { verifyAdmin, verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -7,5 +8,8 @@ const router = Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/refresh", refresh);
+router.get("/admin/users", getAllUsers);
+router.get("/admin/stats", verifyToken, verifyAdmin, getAdminStats);
+router.post("/assessment/save", verifyToken, createTestResult);
 
 export default router;

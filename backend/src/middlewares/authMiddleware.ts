@@ -35,3 +35,12 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
     res.status(403).json({ error: "Invalid Token: โทเค็นไม่ถูกต้องหรือหมดอายุ" });
   }
 };
+
+export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  if (req.user?.role !== "ADMIN") {
+    res.status(403).json({ error: "ไม่มีสิทธิ์เข้าถึงข้อมูลผู้ดูแลระบบ" });
+    return;
+  }
+
+  next();
+};

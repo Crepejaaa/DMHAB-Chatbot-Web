@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 // เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET environment variable");
@@ -13,7 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ
-    const { name, username = name, password, email, phone } = req.body;
+    const { name, username = name, password, email } = req.body;
 
     if (!username || !password) {
       res.status(400).json({ error: "กรุณาระบุข้อมูลให้ครบถ้วน (ชื่อผู้ใช้, รหัสผ่าน)" });
@@ -33,7 +34,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // เข้ารหัสผ่านและสร้างผู้ใช้ใหม่
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
-      data: { username, email, passwordHash, phone },
+      data: { username, email, passwordHash },
     });
 
     res.status(201).json({ message: "สมัครสมาชิกสำเร็จ", userId: newUser.id });
@@ -65,13 +66,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: "15m" } // Access token is short-lived now
     );
 
+    // สร้าง Refresh Token
     const refreshToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.REFRESH_TOKEN_SECRET || JWT_SECRET,
       { expiresIn: "7d" } // Refresh token is long-lived
     );
 
-    res.status(200).json({ message: "เข้าสู่ระบบสำเร็จ", token, refreshToken });
+    // 👇 เพิ่มการส่งก้อนข้อมูล user และ role กลับไปให้หน้าบ้าน (จาก commit d7fe903)
+    res.status(200).json({
+      message: "เข้าสู่ระบบสำเร็จ", 
+      token, 
+      refreshToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
   }
@@ -105,5 +117,114 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
+  }
+};
+
+// ฟังก์ชันใหม่สำหรับให้หน้า Admin Dashboard ดึงรายชื่อผู้ใช้ทั้งหมด
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        createdAt: true
+      },
+      orderBy: { createdAt: 'desc' } // เรียงคนสมัครล่าสุดขึ้นก่อน
+    });
+    
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้งานได้", details: error });
+  }
+};
+
+// ฟังก์ชันสำหรับดึงสถิติ 3 ด้านหลักจากฐานข้อมูล สำหรับ Admin Dashboard
+export const getAdminStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // 1. จำนวนผู้ใช้ทั้งหมด + จำแนกสิทธิ์
+    const totalUsers = await prisma.user.count();
+    const userRoleCount = await prisma.user.count({ where: { role: 'USER' } });
+    const adminRoleCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+
+    // 2. การประเมินสำเร็จ + จำแนกระดับผลลัพธ์
+    const assessmentsCompleted = await prisma.testResult.count();
+    const normalCount = await prisma.testResult.count({ where: { totalScore: { lt: 7 } } });
+    const moderateCount = await prisma.testResult.count({ where: { totalScore: { gte: 7, lte: 18 } } });
+    const severeCount = await prisma.testResult.count({ where: { totalScore: { gt: 18 } } });
+
+    // 3. คะแนนประเมินเฉลี่ย + การกระจายตัวของคะแนน
+    const avgScoreAgg = await prisma.testResult.aggregate({
+      _avg: { totalScore: true }
+    });
+    const avgScoreVal = avgScoreAgg._avg.totalScore ? Number(avgScoreAgg._avg.totalScore.toFixed(1)) : 0;
+
+    // ช่วงคะแนน
+    const range0to6 = await prisma.testResult.count({ where: { totalScore: { lte: 6 } } });
+    const range7to12 = await prisma.testResult.count({ where: { totalScore: { gte: 7, lte: 12 } } });
+    const range13to18 = await prisma.testResult.count({ where: { totalScore: { gte: 13, lte: 18 } } });
+    const range19to21 = await prisma.testResult.count({ where: { totalScore: { gte: 19 } } });
+
+    res.setHeader("Cache-Control", "no-store");
+    res.status(200).json({
+      totalUsers,
+      assessmentsCompleted,
+      avgScore: avgScoreVal,
+      userRoles: {
+        users: userRoleCount,
+        admins: adminRoleCount
+      },
+      assessmentLevels: {
+        normal: normalCount,
+        moderate: moderateCount,
+        severe: severeCount
+      },
+      scoreDistribution: [
+        { label: '0-6 คะแนน (ปกติ)', count: range0to6, description: 'สุขภาพจิตปกติ' },
+        { label: '7-12 คะแนน (เครียดเล็กน้อย)', count: range7to12, description: 'เริ่มมีความเครียด' },
+        { label: '13-18 คะแนน (เสี่ยงปานกลาง)', count: range13to18, description: 'ควรติดตามอาการ' },
+        { label: '19-21 คะแนน (เสี่ยงรุนแรง)', count: range19to21, description: 'ควรปรึกษาแพทย์' }
+      ]
+    });
+  } catch (error) {
+    console.error("Error fetching admin stats:", error);
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลสถิติได้", details: error });
+  }
+};
+
+// ฟังก์ชันสำหรับบันทึกผลการทำแบบประเมินลงตาราง TestResult
+export const createTestResult = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { totalScore, interpretation } = req.body;
+    const userId = Number(req.user?.userId);
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่" });
+      return;
+    }
+
+    if (!Number.isInteger(totalScore) || totalScore < 0 || totalScore > 27) {
+      res.status(400).json({ error: "คะแนนแบบประเมินไม่ถูกต้อง" });
+      return;
+    }
+
+    if (typeof interpretation !== "string" || !interpretation.trim()) {
+      res.status(400).json({ error: "กรุณาระบุผลการประเมิน" });
+      return;
+    }
+
+    const newResult = await prisma.testResult.create({
+      data: {
+        userId,
+        totalScore,
+        interpretation: interpretation.trim()
+      }
+    });
+
+    res.status(201).json(newResult);
+  } catch (error) {
+    console.error("Error creating test result:", error);
+    res.status(500).json({ error: "ไม่สามารถบันทึกผลการประเมินได้", details: error });
   }
 };
