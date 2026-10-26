@@ -230,11 +230,14 @@
       <div class="text-right pb-2">
         <button
           @click="submitAssessment"
-          :disabled="!isFormValid"
+          :disabled="!isFormValid || isSaving"
           class="px-10 py-3 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          ส่งแบบประเมิน
+          {{ isSaving ? 'กำลังบันทึกผล...' : 'ส่งแบบประเมิน' }}
         </button>
+        <p v-if="saveError" role="alert" class="mt-3 text-sm text-rose-600">
+          {{ saveError }}
+        </p>
       </div>
 
     </main>
@@ -283,12 +286,14 @@
 <script setup>
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '../api/axios'
 import { useAssessmentStore } from '../stores/assessmentStore'
 
 const isDarkMode = inject('isDarkMode')
 const router = useRouter()
 const assessmentStore = useAssessmentStore()
+const isSaving = ref(false)
+const saveError = ref('')
 
 // ===== 2Q =====
 const q2Questions = [
@@ -341,7 +346,9 @@ const isFormValid = computed(() => {
 })
 
 // ===== Submit =====
-const submitAssessment = () => {
+const submitAssessment = async () => {
+  if (isSaving.value || !isFormValid.value) return
+
   const q9Score = q9TotalScore.value
   const q8Score = q8TotalScore.value
 
@@ -361,16 +368,19 @@ const submitAssessment = () => {
     needsQ8: q9Score >= 7,
   })
 
-  // บันทึกผลลงฐานข้อมูลตาราง TestResult
+  isSaving.value = true
+  saveError.value = ''
   try {
-    axios.post('/api/assessment/save', {
+    await axios.post('/api/assessment/save', {
       totalScore: q9Score,
       interpretation: level === 'SEVERE' ? 'เสี่ยงซึมเศร้ารุนแรง' : (level === 'MODERATE' ? 'มีความเครียด/เสี่ยงปานกลาง' : 'ปกติ')
-    }).catch(err => console.warn('Could not save test result to DB:', err))
+    })
+    await router.push('/assessment-result')
   } catch (err) {
-    console.warn(err)
+    console.error('Could not save test result to the backend:', err)
+    saveError.value = err.response?.data?.error || 'บันทึกผลประเมินไม่สำเร็จ กรุณาลองส่งอีกครั้ง'
+  } finally {
+    isSaving.value = false
   }
-
-  router.push('/assessment-result')
 }
 </script>

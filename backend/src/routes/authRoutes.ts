@@ -10,6 +10,6 @@ router.post("/login", login);
 router.post("/refresh", refresh);
 router.get("/admin/users", getAllUsers);
 router.get("/admin/stats", verifyToken, verifyAdmin, getAdminStats);
-router.post("/assessment/save", createTestResult);
+router.post("/assessment/save", verifyToken, createTestResult);
 
 export default router;

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 // เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET environment variable");
@@ -193,20 +194,31 @@ export const getAdminStats = async (req: Request, res: Response): Promise<void> 
 };
 
 // ฟังก์ชันสำหรับบันทึกผลการทำแบบประเมินลงตาราง TestResult
-export const createTestResult = async (req: Request, res: Response): Promise<void> => {
+export const createTestResult = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { userId, totalScore, interpretation } = req.body;
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const firstUser = await prisma.user.findFirst({ select: { id: true } });
-      targetUserId = firstUser ? firstUser.id : 1;
+    const { totalScore, interpretation } = req.body;
+    const userId = Number(req.user?.userId);
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่" });
+      return;
+    }
+
+    if (!Number.isInteger(totalScore) || totalScore < 0 || totalScore > 27) {
+      res.status(400).json({ error: "คะแนนแบบประเมินไม่ถูกต้อง" });
+      return;
+    }
+
+    if (typeof interpretation !== "string" || !interpretation.trim()) {
+      res.status(400).json({ error: "กรุณาระบุผลการประเมิน" });
+      return;
     }
 
     const newResult = await prisma.testResult.create({
       data: {
-        userId: Number(targetUserId),
-        totalScore: Number(totalScore) || 0,
-        interpretation: interpretation || 'แบบประเมินสุขภาพจิต'
+        userId,
+        totalScore,
+        interpretation: interpretation.trim()
       }
     });
 
