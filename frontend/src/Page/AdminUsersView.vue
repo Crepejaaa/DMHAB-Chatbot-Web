@@ -129,7 +129,8 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted } from 'vue'
+import axios from 'axios'
 
 const triggerSuccessToast = inject('triggerSuccessToast')
 
@@ -146,15 +147,34 @@ const userToChangeRole = ref(null)
 // Search Query model
 const searchQuery = ref('')
 
-// User Account list mock data
+// User Account list data (เชื่อมต่อตาราง User ในฐานข้อมูล Neon)
 const mockUsers = ref([
   { id: 1, username: 'Ohm Dev', email: 'ohm.dev@phuenjaizone.com', role: 'ADMIN', joined: '10 ม.ค. 2026' },
   { id: 2, username: 'Somying', email: 'somying@gmail.com', role: 'USER', joined: '22 ก.พ. 2026' },
-  { id: 3, username: 'Naphatsorn', email: 'naphat@gmail.com', role: 'USER', joined: '01 มี.ค. 2026' },
-  { id: 4, username: 'Gi', email: 'Gikung@phuenjaizone.com', role: 'ADMIN', joined: '15 มี.ค. 2026' },
-  { id: 5, username: 'Vichai', email: 'vichai45@outlook.com', role: 'USER', joined: '12 เม.ย. 2026' },
-  { id: 6, username: 'Nalintip', email: 'nalintip56@gmail.com', role: 'USER', joined: '30 เม.ย. 2026' }
+  { id: 3, username: 'Naphatsorn', email: 'naphat@gmail.com', role: 'USER', joined: '01 มี.ค. 2026' }
 ])
+
+// ดึงรายชื่อผู้ใช้จริงจากตาราง User ในฐานข้อมูล
+const fetchUsers = async () => {
+  try {
+    const res = await axios.get('/api/admin/users')
+    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+      mockUsers.value = res.data.map(u => ({
+        id: u.id,
+        username: u.username || `ผู้ใช้ #${u.id}`,
+        email: u.email || 'ไม่มีอีเมล',
+        role: u.role || 'USER',
+        joined: u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : 'ไม่ระบุ'
+      }))
+    }
+  } catch (err) {
+    console.warn('Could not fetch users from backend, using fallback:', err)
+  }
+}
+
+onMounted(() => {
+  fetchUsers()
+})
 
 // Computed filtered user list
 const filteredUsers = computed(() => {

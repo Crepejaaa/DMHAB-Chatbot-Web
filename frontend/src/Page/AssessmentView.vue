@@ -283,6 +283,7 @@
 <script setup>
 import { ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { useAssessmentStore } from '../stores/assessmentStore'
 
 const isDarkMode = inject('isDarkMode')
@@ -359,6 +360,16 @@ const submitAssessment = () => {
     needsQ9: Object.values(q2Answers.value).some(v => v === 1),
     needsQ8: q9Score >= 7,
   })
+
+  // บันทึกผลลงฐานข้อมูลตาราง TestResult
+  try {
+    axios.post('/api/assessment/save', {
+      totalScore: q9Score,
+      interpretation: level === 'SEVERE' ? 'เสี่ยงซึมเศร้ารุนแรง' : (level === 'MODERATE' ? 'มีความเครียด/เสี่ยงปานกลาง' : 'ปกติ')
+    }).catch(err => console.warn('Could not save test result to DB:', err))
+  } catch (err) {
+    console.warn(err)
+  }
 
   router.push('/assessment-result')
 }

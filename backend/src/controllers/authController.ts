@@ -138,3 +138,80 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้งานได้", details: error });
   }
 };
+
+// ฟังก์ชันสำหรับดึงสถิติ 3 ด้านหลักจากฐานข้อมูล สำหรับ Admin Dashboard
+export const getAdminStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // 1. จำนวนผู้ใช้ทั้งหมด + จำแนกสิทธิ์
+    const totalUsers = await prisma.user.count();
+    const userRoleCount = await prisma.user.count({ where: { role: 'USER' } });
+    const adminRoleCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+
+    // 2. การประเมินสำเร็จ + จำแนกระดับผลลัพธ์
+    const assessmentsCompleted = await prisma.testResult.count();
+    const normalCount = await prisma.testResult.count({ where: { totalScore: { lt: 7 } } });
+    const moderateCount = await prisma.testResult.count({ where: { totalScore: { gte: 7, lte: 18 } } });
+    const severeCount = await prisma.testResult.count({ where: { totalScore: { gt: 18 } } });
+
+    // 3. คะแนนประเมินเฉลี่ย + การกระจายตัวของคะแนน
+    const avgScoreAgg = await prisma.testResult.aggregate({
+      _avg: { totalScore: true }
+    });
+    const avgScoreVal = avgScoreAgg._avg.totalScore ? Number(avgScoreAgg._avg.totalScore.toFixed(1)) : 0;
+
+    // ช่วงคะแนน
+    const range0to6 = await prisma.testResult.count({ where: { totalScore: { lte: 6 } } });
+    const range7to12 = await prisma.testResult.count({ where: { totalScore: { gte: 7, lte: 12 } } });
+    const range13to18 = await prisma.testResult.count({ where: { totalScore: { gte: 13, lte: 18 } } });
+    const range19to21 = await prisma.testResult.count({ where: { totalScore: { gte: 19 } } });
+
+    res.status(200).json({
+      totalUsers,
+      assessmentsCompleted,
+      avgScore: avgScoreVal,
+      userRoles: {
+        users: userRoleCount,
+        admins: adminRoleCount
+      },
+      assessmentLevels: {
+        normal: normalCount,
+        moderate: moderateCount,
+        severe: severeCount
+      },
+      scoreDistribution: [
+        { label: '0-6 คะแนน (ปกติ)', count: range0to6, description: 'สุขภาพจิตปกติ' },
+        { label: '7-12 คะแนน (เครียดเล็กน้อย)', count: range7to12, description: 'เริ่มมีความเครียด' },
+        { label: '13-18 คะแนน (เสี่ยงปานกลาง)', count: range13to18, description: 'ควรติดตามอาการ' },
+        { label: '19-21 คะแนน (เสี่ยงรุนแรง)', count: range19to21, description: 'ควรปรึกษาแพทย์' }
+      ]
+    });
+  } catch (error) {
+    console.error("Error fetching admin stats:", error);
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลสถิติได้", details: error });
+  }
+};
+
+// ฟังก์ชันสำหรับบันทึกผลการทำแบบประเมินลงตาราง TestResult
+export const createTestResult = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId, totalScore, interpretation } = req.body;
+    let targetUserId = userId;
+    if (!targetUserId) {
+      const firstUser = await prisma.user.findFirst({ select: { id: true } });
+      targetUserId = firstUser ? firstUser.id : 1;
+    }
+
+    const newResult = await prisma.testResult.create({
+      data: {
+        userId: Number(targetUserId),
+        totalScore: Number(totalScore) || 0,
+        interpretation: interpretation || 'แบบประเมินสุขภาพจิต'
+      }
+    });
+
+    res.status(201).json(newResult);
+  } catch (error) {
+    console.error("Error creating test result:", error);
+    res.status(500).json({ error: "ไม่สามารถบันทึกผลการประเมินได้", details: error });
+  }
+};
