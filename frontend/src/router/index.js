@@ -8,7 +8,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../Page/HomeView.vue') 
+      component: () => import('../Page/HomeView.vue')
     },
     {
       path: '/login',
@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      component: () => import('../Page/RegisterView.vue') 
+      component: () => import('../Page/RegisterView.vue')
     },
     {
       path: '/assessment',
@@ -57,8 +57,24 @@ const router = createRouter({
     },
     {
       path: '/admin',
-      name: 'admin',
-      component: () => import('../Page/AdminView.vue')
+      component: () => import('../Page/AdminLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'admin-dashboard',
+          component: () => import('../Page/AdminDashboardView.vue')
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('../Page/AdminUsersView.vue')
+        },
+        {
+          path: 'articles',
+          name: 'admin-articles',
+          component: () => import('../Page/AdminArticlesView.vue')
+        }
+      ]
     },
     {
       path: '/contact',
@@ -100,7 +116,7 @@ const router = createRouter({
 
 // Navigation Guard
 router.beforeEach((to, from) => {
-  
+
   // 👇 จุดแก้ที่ 2: ลบ '/admin' ออกจาก publicPages เพื่อไม่ให้คนธรรมดาแอบพิมพ์ URL เข้ามา
   const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment', '/profile', '/account-settings']
 
@@ -119,7 +135,7 @@ router.beforeEach((to, from) => {
   if (to.path === '/admin') {
     const userRole = localStorage.getItem('userRole');
     if (userRole !== 'ADMIN') {
-      alert('คุณไม่มีสิทธิ์เข้าถึงหน้า Admin Dashboard');
+      alert('คุณไม่มีสิทธิ์เข้าถึงหน้าแอดมิน');
       return '/'; // เตะผู้ใช้ธรรมดากลับไปหน้าหลัก
     }
   }
