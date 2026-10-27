@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 // เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
@@ -13,8 +14,40 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ
-    const { name, username = name, password, email } = req.body;
+    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ recaptchaToken
+    const { name, username = name, password, email, recaptchaToken } = req.body;
+
+    // ตรวจสอบ reCAPTCHA Token
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    if (!recaptchaToken) {
+      res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+      return;
+    }
+
+    try {
+      const params = new URLSearchParams();
+      params.append("secret", secretKey || "");
+      params.append("response", recaptchaToken);
+
+      const verifyResponse = await axios.post(
+        "https://www.google.com/recaptcha/api/siteverify",
+        params.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        }
+      );
+
+      if (!verifyResponse.data?.success) {
+        res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+        return;
+      }
+    } catch (recaptchaError) {
+      console.error("reCAPTCHA verification error:", recaptchaError);
+      res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+      return;
+    }
 
     if (!username || !password) {
       res.status(400).json({ error: "กรุณาระบุข้อมูลให้ครบถ้วน (ชื่อผู้ใช้, รหัสผ่าน)" });

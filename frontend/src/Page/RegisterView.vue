@@ -178,11 +178,31 @@
     </div>
   </div>
 </div>
+          <!-- Google reCAPTCHA v2 (แบบ Checkbox) -->
+          <div class="flex justify-center pt-2">
+            <VueRecaptcha
+              ref="recaptchaWidget"
+              :sitekey="recaptchaSiteKey"
+              :load-recaptcha-script="true"
+              @verify="onRecaptchaVerify"
+              @expired="onRecaptchaExpired"
+              @error="onRecaptchaError"
+            />
+          </div>
+
           <!-- Submit Button -->
           <div class="pt-4">
-            <button type="submit"
-              class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer">
-              Register
+            <button 
+              type="submit"
+              :disabled="!recaptchaToken"
+              :class="[
+                'w-full font-bold py-3.5 px-4 rounded-xl shadow-md transition transform',
+                !recaptchaToken
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
+                  : 'bg-[#29CBAE] hover:bg-[#25B89D] text-white active:scale-95 cursor-pointer'
+              ]"
+            >
+              สมัครสมาชิก
             </button>
           </div>
         </form>
@@ -233,6 +253,7 @@
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
+import { VueRecaptcha } from 'vue-recaptcha'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -240,6 +261,24 @@ const isDarkMode = inject('isDarkMode', ref(false))
 
 const fileInput = ref(null)
 const imagePreview = ref(null)
+
+// ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || ''
+const recaptchaToken = ref('')
+const recaptchaWidget = ref(null)
+
+const onRecaptchaVerify = (token) => {
+  recaptchaToken.value = token
+  errorMessage.value = ''
+}
+
+const onRecaptchaExpired = () => {
+  recaptchaToken.value = ''
+}
+
+const onRecaptchaError = () => {
+  recaptchaToken.value = ''
+}
 
 const form = ref({
   name: '',
@@ -287,6 +326,12 @@ const handleRegister = async () => {
     return
   }
 
+  // เช็กว่าผู้ใช้ติ๊ก reCAPTCHA หรือยัง
+  if (!recaptchaToken.value) {
+    errorMessage.value = "กรุณายืนยันตัวตนผ่าน reCAPTCHA ก่อนทำการสมัครสมาชิก"
+    return
+  }
+
   // เช็กรหัสผ่าน
   if (form.value.password !== form.value.confirmPassword) {
     errorMessage.value = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!"
@@ -297,7 +342,8 @@ const handleRegister = async () => {
     name: form.value.name,
     email: form.value.email,
     password: form.value.password,
-    confirmPassword: form.value.confirmPassword
+    confirmPassword: form.value.confirmPassword,
+    recaptchaToken: recaptchaToken.value
   }
 
   const result = await authStore.register(userData)
@@ -307,6 +353,11 @@ const handleRegister = async () => {
     router.push('/login')
   } else {
     errorMessage.value = result.message
+    // รีเซ็ต Token และ Widget หากเกิดข้อผิดพลาดในการสมัคร
+    recaptchaToken.value = ''
+    if (recaptchaWidget.value?.reset) {
+      recaptchaWidget.value.reset()
+    }
   }
 }
 </script>
