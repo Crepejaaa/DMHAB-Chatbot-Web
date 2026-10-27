@@ -8,9 +8,20 @@
         <p class="text-sm text-gray-500">จัดการบัญชีผู้ใช้ที่ลงทะเบียนและปรับเปลี่ยนบทบาทในระบบ</p>
       </div>
       <div class="flex items-center gap-3">
+        <button
+          @click="fetchUsers"
+          :disabled="isLoading"
+          class="px-3.5 py-1.5 bg-white border border-gray-200 text-gray-700 hover:text-[#0D9488] hover:border-[#0D9488] rounded-xl text-xs font-semibold shadow-sm transition disabled:opacity-50"
+        >
+          {{ isLoading ? 'กำลังโหลด...' : 'รีเฟรชข้อมูล' }}
+        </button>
         <span class="text-xs text-gray-400 font-mono">วันที่: {{ currentDate }}</span>
       </div>
     </header>
+
+    <div v-if="errorMessage" role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      {{ errorMessage }}
+    </div>
 
     <!-- User Accounts Table -->
     <section class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
@@ -72,25 +83,22 @@
                 <div class="flex items-center justify-end gap-2">
                   <button 
                     @click="toggleUserRole(user)" 
+                    :disabled="isUpdatingRole || user.id === currentUserId"
                     class="px-3 py-1 bg-[#FAF9F5] border border-gray-200 hover:border-[#0D9488]/30 hover:bg-[#0D9488]/5 rounded-lg text-xs font-medium text-gray-700 hover:text-[#0D9488] transition cursor-pointer"
+                    :class="{ 'opacity-50 cursor-not-allowed': isUpdatingRole || user.id === currentUserId }"
+                    :title="user.id === currentUserId ? 'ไม่สามารถเปลี่ยนสิทธิ์บัญชีของตนเองได้' : 'เปลี่ยนสิทธิ์ผู้ใช้'"
                   >
-                    เปลี่ยนสิทธิ์
-                  </button>
-                  <button 
-                    @click="deleteUser(user.id)" 
-                    class="p-1 hover:bg-rose-50 text-gray-400 hover:text-[#E11D48] rounded-lg transition cursor-pointer"
-                    title="ลบผู้ใช้"
-                  >
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
+                    {{ isUpdatingRole && userToChangeRole?.id === user.id ? 'กำลังบันทึก...' : 'เปลี่ยนสิทธิ์' }}
                   </button>
                 </div>
               </td>
             </tr>
+            <tr v-if="isLoading && users.length === 0">
+              <td colspan="4" class="py-8 text-center text-gray-400 text-sm">กำลังโหลดรายชื่อผู้ใช้งาน...</td>
+            </tr>
             <tr v-if="filteredUsers.length === 0">
               <td colspan="4" class="py-8 text-center text-gray-400 text-sm">
-                ไม่พบผู้ใช้งานที่ตรงกับคำค้นหา
+                {{ isLoading ? '' : errorMessage ? 'ยังไม่สามารถโหลดรายชื่อผู้ใช้งานได้' : 'ไม่พบผู้ใช้งานที่ตรงกับคำค้นหา' }}
               </td>
             </tr>
           </tbody>
@@ -101,7 +109,7 @@
     <!-- Change Role Confirm Modal -->
     <Transition name="modal">
       <div v-if="isRoleConfirmOpen" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" @click="isRoleConfirmOpen = false"></div>
+        <div class="absolute inset-0 bg-black/50" @click="closeRoleConfirmation"></div>
         <div class="relative bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
           <div class="w-14 h-14 bg-[#0D9488]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <svg class="w-7 h-7 text-[#0D9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,11 +122,11 @@
             จาก <span class="font-bold">{{ userToChangeRole.role === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน' }}</span> เป็น <span class="font-bold text-[#0D9488]">{{ userToChangeRole.role === 'ADMIN' ? 'ผู้ใช้งาน' : 'แอดมิน' }}</span> ใช่หรือไม่?
           </p>
           <div class="flex gap-3">
-            <button @click="isRoleConfirmOpen = false" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+            <button @click="closeRoleConfirmation" :disabled="isUpdatingRole" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer disabled:opacity-50">
               ยกเลิก
             </button>
-            <button @click="executeChangeRole" class="flex-1 py-2.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:opacity-90 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer">
-              ยืนยัน
+            <button @click="executeChangeRole" :disabled="isUpdatingRole" class="flex-1 py-2.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:opacity-90 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer disabled:opacity-50">
+              {{ isUpdatingRole ? 'กำลังบันทึก...' : 'ยืนยัน' }}
             </button>
           </div>
         </div>
@@ -130,9 +138,12 @@
 
 <script setup>
 import { ref, computed, inject, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '../api/axios'
+import { useAuthStore } from '../stores/authStore'
 
 const triggerSuccessToast = inject('triggerSuccessToast')
+const authStore = useAuthStore()
+const currentUserId = Number(authStore.user?.id)
 
 // Formatting date
 const currentDate = computed(() => {
@@ -143,32 +154,35 @@ const currentDate = computed(() => {
 // Change Role confirm
 const isRoleConfirmOpen = ref(false)
 const userToChangeRole = ref(null)
+const isUpdatingRole = ref(false)
+const isLoading = ref(false)
+const errorMessage = ref('')
 
 // Search Query model
 const searchQuery = ref('')
 
-// User Account list data (เชื่อมต่อตาราง User ในฐานข้อมูล Neon)
-const mockUsers = ref([
-  { id: 1, username: 'Ohm Dev', email: 'ohm.dev@phuenjaizone.com', role: 'ADMIN', joined: '10 ม.ค. 2026' },
-  { id: 2, username: 'Somying', email: 'somying@gmail.com', role: 'USER', joined: '22 ก.พ. 2026' },
-  { id: 3, username: 'Naphatsorn', email: 'naphat@gmail.com', role: 'USER', joined: '01 มี.ค. 2026' }
-])
+const users = ref([])
 
-// ดึงรายชื่อผู้ใช้จริงจากตาราง User ในฐานข้อมูล
 const fetchUsers = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
   try {
     const res = await axios.get('/api/admin/users')
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-      mockUsers.value = res.data.map(u => ({
+    if (!Array.isArray(res.data)) {
+      throw new Error('รูปแบบรายชื่อผู้ใช้จากเซิร์ฟเวอร์ไม่ถูกต้อง')
+    }
+    users.value = res.data.map(u => ({
         id: u.id,
         username: u.username || `ผู้ใช้ #${u.id}`,
         email: u.email || 'ไม่มีอีเมล',
-        role: u.role || 'USER',
+        role: u.role,
         joined: u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : 'ไม่ระบุ'
       }))
-    }
   } catch (err) {
-    console.warn('Could not fetch users from backend, using fallback:', err)
+    console.error('Could not fetch users from the backend:', err)
+    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถโหลดรายชื่อผู้ใช้งานได้'
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -178,9 +192,9 @@ onMounted(() => {
 
 // Computed filtered user list
 const filteredUsers = computed(() => {
-  if (!searchQuery.value) return mockUsers.value
+  if (!searchQuery.value) return users.value
   const query = searchQuery.value.toLowerCase().trim()
-  return mockUsers.value.filter(user => 
+  return users.value.filter(user =>
     user.username.toLowerCase().includes(query) || 
     user.email.toLowerCase().includes(query)
   )
@@ -193,19 +207,35 @@ const toggleUserRole = (user) => {
 }
 
 // สร้างฟังก์ชันใหม่: สำหรับเปลี่ยน Role จริงๆ เมื่อผู้ใช้กดยืนยันบน Pop-Up
-const executeChangeRole = () => {
-  if (userToChangeRole.value) {
-    const newRole = userToChangeRole.value.role === 'ADMIN' ? 'USER' : 'ADMIN'
-    userToChangeRole.value.role = newRole
-    triggerSuccessToast(`เปลี่ยนสิทธิ์เป็น ${newRole === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน'} สำเร็จ`)
+const closeRoleConfirmation = () => {
+  if (!isUpdatingRole.value) {
+    isRoleConfirmOpen.value = false
+    userToChangeRole.value = null
   }
-  isRoleConfirmOpen.value = false
-  userToChangeRole.value = null
 }
 
-// Action: Delete user
-const deleteUser = (id) => {
-  mockUsers.value = mockUsers.value.filter(user => user.id !== id)
+const executeChangeRole = async () => {
+  const user = userToChangeRole.value
+  if (!user || isUpdatingRole.value) return
+
+  const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
+  isUpdatingRole.value = true
+  errorMessage.value = ''
+  try {
+    const res = await axios.patch(`/api/admin/users/${user.id}/role`, { role: newRole })
+    const updatedUser = users.value.find(item => item.id === res.data.id)
+    if (!updatedUser || res.data.role !== newRole) {
+      throw new Error('เซิร์ฟเวอร์ส่งผลการเปลี่ยนสิทธิ์กลับมาไม่ถูกต้อง')
+    }
+    updatedUser.role = res.data.role
+    triggerSuccessToast?.(`เปลี่ยนสิทธิ์เป็น ${newRole === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน'} สำเร็จ`)
+    closeRoleConfirmation()
+  } catch (err) {
+    console.error('Could not update user role:', err)
+    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถเปลี่ยนสิทธิ์ผู้ใช้งานได้'
+  } finally {
+    isUpdatingRole.value = false
+  }
 }
 </script>
 
