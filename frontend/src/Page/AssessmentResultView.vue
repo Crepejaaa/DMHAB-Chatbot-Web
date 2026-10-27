@@ -5,9 +5,11 @@
         <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">ผลการประเมินของคุณ</h1>
         
         <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
-            <span class="text-4xl font-bold text-white">{{ scoreText }}</span>
+          <div class="inline-flex flex-col items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
+            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}</span>
+            <span class="text-xs font-medium text-white/90 mt-1">คะแนน</span>
           </div>
+          <p class="text-xl font-bold text-gray-800 mb-3">{{ statusText }}</p>
           <h2 class="text-2xl font-semibold text-gray-800">{{ suggestionTitle }}</h2>
           <p class="mt-4 text-lg text-gray-600">{{ suggestionDetail }}</p>
         </div>
@@ -145,6 +147,8 @@ const showEmergencyModal = ref(false)
 const showTermsModal = ref(false)
 const isAccepted = ref(false)
 
+const totalScore = computed(() => assessmentResult.value?.score ?? 0)
+
 const scoreColorClass = computed(() => {
   if (assessmentResult.value.level === 'NORMAL') return 'bg-green-500'
   if (assessmentResult.value.level === 'MODERATE') return 'bg-yellow-500'
@@ -157,6 +161,10 @@ const scoreText = computed(() => {
   if (assessmentResult.value.level === 'MODERATE') return 'ปานกลาง'
   if (assessmentResult.value.level === 'SEVERE') return 'รุนแรง'
   return 'ไม่ทราบผล'
+})
+
+const statusText = computed(() => {
+  return `สถานะอยู่ในระดับ${scoreText.value}`
 })
 
 const suggestionTitle = computed(() => {

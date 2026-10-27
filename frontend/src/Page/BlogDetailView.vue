@@ -140,7 +140,7 @@
           </div>
         </article>
 
-        <section class="mb-10">
+        <section v-if="relatedArticles.length" class="mb-10">
           <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <router-link
@@ -563,68 +563,31 @@ const fetchArticle = async () => {
     errorMessage.value = ''
 
     const articleSlug = route.params.id
-    const localArticle = articlesData[articleSlug] || Object.values(articlesData).find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
+    const { data } = await axios.get(`/api/articles/${articleSlug}`)
+    article.value = data
 
-    try {
-      const { data } = await axios.get(`/api/articles/${articleSlug}`)
-      if (data && Object.keys(data).length > 0) {
-        article.value = localArticle
-          ? {
-              ...data,
-              ...localArticle,
-              content: (data.content?.length || 0) >= (localArticle.content?.length || 0)
-                ? data.content
-                : localArticle.content,
-              coverImageUrl: localArticle.coverImageUrl || data.coverImageUrl,
-              sourceName: localArticle.sourceName || data.sourceName,
-              sourceUrl: localArticle.sourceUrl || data.sourceUrl
-            }
-          : data
-      } else {
-        article.value = localArticle || Object.values(articlesData)[0]
-      }
-    } catch {
-      article.value = localArticle || Object.values(articlesData)[0]
-    }
-
-    try {
-      const allArticlesResponse = await axios.get('/api/articles')
-      if (Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0) {
-        apiRelatedArticles.value = allArticlesResponse.data.filter((item) => String(item.id) !== String(article.value?.id) && item.slug !== articleSlug).slice(0, 2)
-      } else {
-        apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== articleSlug && item.slug !== articleSlug).slice(0, 2)
-      }
-    } catch {
-      apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== articleSlug && item.slug !== articleSlug).slice(0, 2)
-    }
+    const allArticlesResponse = await axios.get('/api/articles')
+    apiRelatedArticles.value = Array.isArray(allArticlesResponse.data)
+      ? allArticlesResponse.data
+          .filter((item) => String(item.id) !== String(data.id))
+          .slice(0, 2)
+      : []
   } catch (error) {
     console.error('Failed to load article detail:', error)
-    article.value = articlesData[route.params.id] || Object.values(articlesData)[0]
-    apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== route.params.id).slice(0, 2)
-    errorMessage.value = ''
+    article.value = null
+    apiRelatedArticles.value = []
+    errorMessage.value = error.response?.data?.error || 'ไม่พบบทความที่ร้องขอ หรือไม่สามารถโหลดบทความได้'
   } finally {
     loading.value = false
   }
 }
 
-// หาบทความปัจจุบันจาก route param หรือ API
 const currentArticle = computed(() => {
-  if (article.value && article.value.title) {
-    return article.value
-  }
-  const id = route.params.id
-  return articlesData[id] || Object.values(articlesData)[0]
+  return article.value
 })
 
-// บทความที่เกี่ยวข้อง
 const relatedArticles = computed(() => {
-  if (apiRelatedArticles.value.length > 0) {
-    return apiRelatedArticles.value
-  }
-  const currentId = route.params.id
-  return Object.values(articlesData)
-    .filter(a => a.id !== currentId && a.slug !== currentId)
-    .slice(0, 2)
+  return apiRelatedArticles.value
 })
 
 watch(() => route.params.id, () => {
