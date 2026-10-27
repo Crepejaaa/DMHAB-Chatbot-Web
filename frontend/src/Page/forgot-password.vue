@@ -50,7 +50,7 @@
 
         <h2 class="text-center text-xl font-bold text-gray-800 mb-2">ลืมรหัสผ่าน?</h2>
         <p class="text-center text-xs text-gray-500 mb-8 leading-relaxed">
-          กรอกอีเมลบัญชีของคุณเพื่อส่งคำร้องไปยังแอดมิน เมื่อได้รับอนุมัติแล้ว คุณจะตั้งรหัสผ่านใหม่ได้
+          กรุณากรอกอีเมลที่ใช้สมัครบัญชี เราจะส่งลิงก์สำหรับรีเซ็ตรหัสผ่านไปให้คุณ
         </p>
 
         <form @submit.prevent="handleResetPassword" class="space-y-5">
@@ -60,24 +60,19 @@
             <input 
               v-model="email" 
               type="email" 
-              placeholder="อีเมลที่ใช้สมัครบัญชี"
-              autocomplete="email"
+              placeholder="Your email, e.g : johndoe@gmail.com" 
               required
               class="w-full bg-[#F1F5F9] border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" 
             />
           </div>
 
-          <p v-if="message" role="status" class="text-sm text-emerald-700">{{ message }}</p>
-          <p v-if="errorMessage" role="alert" class="text-sm text-rose-600">{{ errorMessage }}</p>
-
           <!-- Submit Button -->
           <div class="pt-2">
             <button 
               type="submit" 
-              :disabled="isLoading"
-              class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+              class="w-full bg-[#29CBAE] hover:bg-[#25B89D] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition transform active:scale-95 cursor-pointer"
             >
-              {{ isLoading ? 'กำลังส่งคำร้อง...' : 'ส่งคำร้องรีเซ็ตรหัสผ่าน' }}
+              ส่งลิงก์รีเซ็ตรหัสผ่าน
             </button>
           </div>
           
@@ -138,33 +133,35 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from '../api/axios'
 
 const isDarkMode = inject('isDarkMode')
-const router = useRouter()
+
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 
 const email = ref('')
-const isLoading = ref(false)
-const message = ref('')
-const errorMessage = ref('')
 
 const handleResetPassword = async () => {
-  if (!email.value || isLoading.value) return
-  isLoading.value = true
-  message.value = ''
-  errorMessage.value = ''
+  if (!email.value) return
+
   try {
-    const normalizedEmail = email.value.trim().toLowerCase()
-    const { data } = await axios.post('/api/forgot-password', { email: normalizedEmail })
-    sessionStorage.setItem('passwordResetRequestId', String(data.requestId))
-    sessionStorage.setItem('passwordResetRequestToken', data.accessToken)
-    message.value = data.message || 'ส่งคำร้องไปยังแอดมินแล้ว'
-    await router.push('/password-reset-request')
+    const response = await fetch(`${baseURL}/api/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email.value })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'เกิดข้อผิดพลาด')
+    }
+
+    alert(data.message)
+    email.value = ''
   } catch (error) {
-    errorMessage.value = error.response?.data?.error || 'ส่งคำร้องไม่สำเร็จ กรุณาลองอีกครั้ง'
-  } finally {
-    isLoading.value = false
+    alert(error.message)
   }
 }
 </script>

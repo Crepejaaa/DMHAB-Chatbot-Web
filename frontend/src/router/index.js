@@ -21,16 +21,6 @@ const router = createRouter({
       component: () => import('../Page/forgot-password.vue')
     },
     {
-      path: '/password-reset-request',
-      name: 'password-reset-request',
-      component: () => import('../Page/PasswordResetRequestView.vue')
-    },
-    {
-      path: '/reset-password',
-      name: 'reset-password',
-      component: () => import('../Page/ResetPasswordView.vue')
-    },
-    {
       path: '/register',
       name: 'register',
       component: () => import('../Page/RegisterView.vue')
@@ -128,7 +118,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
 
   // 👇 จุดแก้ที่ 2: ลบ '/admin' ออกจาก publicPages เพื่อไม่ให้คนธรรมดาแอบพิมพ์ URL เข้ามา
-  const publicPages = ['/', '/login', '/register', '/forgot-password', '/password-reset-request', '/reset-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment', '/profile', '/account-settings']
+  const publicPages = ['/', '/login', '/register', '/forgot-password', '/services', '/services/:id', '/blog', '/blog/:id', '/about', '/contact', '/assessment', '/profile', '/account-settings']
 
   // ตรวจสอบว่าหน้าที่ไปเป็น public page หรือไม่ (รองรับ dynamic route)
   const isPublic = publicPages.some(page => {

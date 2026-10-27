@@ -22,19 +22,6 @@ enum Sender {
   BOT
 }
 
-enum PasswordResetRequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  COMPLETED
-}
-
-enum NotificationType {
-  PASSWORD_RESET_REQUEST
-  PASSWORD_RESET_APPROVED
-  PASSWORD_RESET_REJECTED
-}
-
 // ==========================================
 // 4. โครงสร้างตารางฐานข้อมูล (Models)
 // ==========================================
@@ -55,42 +42,6 @@ model User {
   testResults  TestResult[]  // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
   articles     Article[]     // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
   systemLogs   SystemLog[]   // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
-  passwordResetRequests PasswordResetRequest[]
-  reviewedPasswordResetRequests PasswordResetRequest[] @relation("PasswordResetReviewedBy")
-  notifications Notification[]
-}
-
-model PasswordResetRequest {
-  id                 Int                         @id @default(autoincrement())
-  userId             Int
-  user               User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status             PasswordResetRequestStatus  @default(PENDING)
-  accessTokenHash    String                      @unique
-  resetTokenHash     String?                     @unique
-  resetTokenExpiresAt DateTime?
-  reviewedById       Int?
-  reviewedBy         User?                       @relation("PasswordResetReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
-  reviewedAt         DateTime?
-  createdAt          DateTime                    @default(now())
-  updatedAt          DateTime                    @updatedAt
-  notifications      Notification[]
-
-  @@index([status, createdAt])
-}
-
-model Notification {
-  id               Int                     @id @default(autoincrement())
-  userId           Int
-  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  passwordResetRequestId Int?
-  passwordResetRequest PasswordResetRequest? @relation(fields: [passwordResetRequestId], references: [id], onDelete: Cascade)
-  type             NotificationType
-  title            String
-  message          String                  @db.Text
-  readAt           DateTime?
-  createdAt        DateTime                @default(now())
-
-  @@index([userId, readAt, createdAt])
 }
 
 // ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง

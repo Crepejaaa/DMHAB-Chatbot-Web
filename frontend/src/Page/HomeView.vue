@@ -37,7 +37,6 @@
           </button>
         </div>
 
-        <NotificationBell v-if="authStore.isAuthenticated" />
         <ProfileMenu />
       </div>
     </nav>
@@ -276,7 +275,6 @@
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
-import NotificationBell from '../components/NotificationBell.vue'
 import { useAuthStore } from '../stores/authStore'
 import axios from '../api/axios'
 
