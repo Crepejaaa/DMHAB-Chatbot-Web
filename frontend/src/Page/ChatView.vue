@@ -13,6 +13,7 @@
         </div>
         <div>
           <h1 class="text-lg font-semibold text-gray-900">น้องมุกห่วงใย</h1>
+          <p class="text-xs text-gray-500 flex items-center">(ห้ามใส่ชื่อ-นามสกุลจริง)</p>
           <p class="text-xs text-green-500 flex items-center">
             <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span> ออนไลน์
           </p>

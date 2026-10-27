@@ -76,7 +76,7 @@
           <!-- Name -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Name</label>
-            <input v-model="form.name" type="text" placeholder="Your Name, e.g : John Doe" required
+            <input v-model="form.name" type="text" placeholder="Your Name, e.g : John Doe (ห้ามใส่ชื่อ-นามสกุลจริง)" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
