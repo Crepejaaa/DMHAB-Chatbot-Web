@@ -90,6 +90,17 @@
                   >
                     {{ isUpdatingRole && userToChangeRole?.id === user.id ? 'กำลังบันทึก...' : 'เปลี่ยนสิทธิ์' }}
                   </button>
+                  <button
+                    @click="confirmDeleteUser(user)"
+                    :disabled="isDeletingUser || user.id === currentUserId"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 hover:bg-rose-600 hover:border-rose-600 text-rose-700 hover:text-white rounded-lg text-xs font-bold transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    :title="user.id === currentUserId ? 'ไม่สามารถลบบัญชีของตนเองได้' : 'ลบบัญชีออกจากฐานข้อมูล'"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    {{ isDeletingUser && userToDelete?.id === user.id ? 'กำลังลบ...' : 'ลบบัญชี' }}
+                  </button>
                 </div>
               </td>
             </tr>
@@ -133,6 +144,33 @@
       </div>
     </Transition>
 
+    <!-- Delete User Confirm Modal -->
+    <Transition name="modal">
+      <div v-if="isDeleteConfirmOpen" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" @click="closeDeleteConfirmation"></div>
+        <div class="relative bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+          <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการลบบัญชี?</h3>
+          <p v-if="userToDelete" class="text-sm text-gray-500 mb-6">
+            ต้องการลบบัญชี <strong>{{ userToDelete.username }}</strong> ใช่หรือไม่?
+            การลบไม่สามารถย้อนกลับได้ และประวัติแชทกับผลประเมินของบัญชีนี้จะถูกลบด้วย
+          </p>
+          <div class="flex gap-3">
+            <button @click="closeDeleteConfirmation" :disabled="isDeletingUser" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer disabled:opacity-50">
+              ยกเลิก
+            </button>
+            <button @click="executeDeleteUser" :disabled="isDeletingUser" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer disabled:opacity-50">
+              {{ isDeletingUser ? 'กำลังลบ...' : 'ยืนยันลบบัญชี' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
   </div>
 </template>
 
@@ -155,6 +193,9 @@ const currentDate = computed(() => {
 const isRoleConfirmOpen = ref(false)
 const userToChangeRole = ref(null)
 const isUpdatingRole = ref(false)
+const isDeleteConfirmOpen = ref(false)
+const userToDelete = ref(null)
+const isDeletingUser = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
@@ -235,6 +276,37 @@ const executeChangeRole = async () => {
     errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถเปลี่ยนสิทธิ์ผู้ใช้งานได้'
   } finally {
     isUpdatingRole.value = false
+  }
+}
+
+const confirmDeleteUser = (user) => {
+  userToDelete.value = user
+  isDeleteConfirmOpen.value = true
+}
+
+const closeDeleteConfirmation = () => {
+  if (!isDeletingUser.value) {
+    isDeleteConfirmOpen.value = false
+    userToDelete.value = null
+  }
+}
+
+const executeDeleteUser = async () => {
+  const user = userToDelete.value
+  if (!user || isDeletingUser.value) return
+
+  isDeletingUser.value = true
+  errorMessage.value = ''
+  try {
+    await axios.delete(`/api/admin/users/${user.id}`)
+    users.value = users.value.filter(item => item.id !== user.id)
+    triggerSuccessToast?.(`ลบบัญชี ${user.username} จากฐานข้อมูลแล้ว`)
+    closeDeleteConfirmation()
+  } catch (err) {
+    console.error('Could not delete user:', err)
+    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถลบบัญชีผู้ใช้งานได้'
+  } finally {
+    isDeletingUser.value = false
   }
 }
 </script>

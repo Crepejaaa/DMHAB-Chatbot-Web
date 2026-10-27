@@ -200,6 +200,65 @@ export const updateUserRole = async (req: AuthRequest, res: Response): Promise<v
   }
 };
 
+export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
+  const userId = Number(req.params.id);
+  const requesterId = Number(req.user?.userId);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    res.status(400).json({ error: "รหัสผู้ใช้งานไม่ถูกต้อง" });
+    return;
+  }
+
+  if (requesterId === userId) {
+    res.status(400).json({ error: "ไม่สามารถลบบัญชีของตนเองได้" });
+    return;
+  }
+
+  try {
+    const result = await prisma.$transaction(async (transaction: any) => {
+      const targetUser = await transaction.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true }
+      });
+
+      if (!targetUser) {
+        return { error: "ไม่พบผู้ใช้งานนี้", status: 404 };
+      }
+
+      if (targetUser.role === "ADMIN") {
+        const adminCount = await transaction.user.count({ where: { role: "ADMIN" } });
+        if (adminCount <= 1) {
+          return { error: "ไม่สามารถลบแอดมินคนสุดท้ายได้", status: 400 };
+        }
+      }
+
+      const authoredArticles = await transaction.article.count({
+        where: { createdById: userId }
+      });
+
+      if (authoredArticles > 0) {
+        return {
+          error: "ไม่สามารถลบบัญชีนี้ได้ เนื่องจากยังมีบทความที่บัญชีนี้เป็นผู้เขียน กรุณาจัดการบทความก่อน",
+          status: 409
+        };
+      }
+
+      await transaction.user.delete({ where: { id: userId } });
+      return null;
+    }, { isolationLevel: "Serializable" });
+
+    if (result) {
+      res.status(result.status).json({ error: result.error });
+      return;
+    }
+
+    res.status(200).json({ message: "ลบบัญชีผู้ใช้งานและข้อมูลที่เกี่ยวข้องแล้ว" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "ไม่สามารถลบบัญชีผู้ใช้งานได้" });
+  }
+};
+
 // ฟังก์ชันสำหรับดึงสถิติ 3 ด้านหลักจากฐานข้อมูล สำหรับ Admin Dashboard
 export const getAdminStats = async (req: Request, res: Response): Promise<void> => {
   try {
