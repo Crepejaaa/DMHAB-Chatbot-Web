@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Header & Navbar (เหมือน BlogView) -->
     <!-- 1. Navbar -->
@@ -7,9 +7,9 @@
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
         </div>
-        <span class="text-xl font-bold tracking-wide">DMHAB</span>
+        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
@@ -21,14 +21,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -140,7 +140,7 @@
           </div>
         </article>
 
-        <section class="mb-10">
+        <section v-if="relatedArticles.length" class="mb-10">
           <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <router-link
@@ -182,9 +182,9 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -200,7 +200,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -209,7 +209,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
   </div>
@@ -220,7 +220,7 @@ import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 const route = useRoute()
 const loading = ref(true)
 const errorMessage = ref('')
@@ -256,8 +256,8 @@ Burnout หรือภาวะหมดไฟ เป็นอาการเ�
 **กิจกรรมผ่อนคลายหลังเลิกงาน**
 
 ออกกำลังกายอย่างน้อย 30 นาทีต่อวัน ไม่จำเป็นต้องหนัก แค่เดินเร็ว โยคะ หรือว่ายน้ำก็ได้ การออกกำลังกายช่วยปลดปล่อยสารเอ็นดอร์ฟินที่ทำให้รู้สึกดี และการเขียนไดอารี่ก่อนนอนบันทึกสิ่งที่รู้สึกขอบคุณก็ช่วยเพิ่มความสุขได้จริง`,
-    sourceName: 'DMHAB',
-    sourceUrl: '',
+    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
+    sourceUrl: 'https://www.dmh.go.th/news-dmh/',
     tags: ['ความเครียด', 'Burnout', 'สุขภาพจิต', 'การทำงาน', 'Work-Life Balance']
   },
   'sleep-and-mood': {
@@ -563,68 +563,31 @@ const fetchArticle = async () => {
     errorMessage.value = ''
 
     const articleSlug = route.params.id
-    const localArticle = articlesData[articleSlug] || Object.values(articlesData).find((item) => item.slug === articleSlug || String(item.id) === String(articleSlug))
+    const { data } = await axios.get(`/api/articles/${articleSlug}`)
+    article.value = data
 
-    try {
-      const { data } = await axios.get(`/api/articles/${articleSlug}`)
-      if (data && Object.keys(data).length > 0) {
-        article.value = localArticle
-          ? {
-              ...data,
-              ...localArticle,
-              content: (data.content?.length || 0) >= (localArticle.content?.length || 0)
-                ? data.content
-                : localArticle.content,
-              coverImageUrl: localArticle.coverImageUrl || data.coverImageUrl,
-              sourceName: localArticle.sourceName || data.sourceName,
-              sourceUrl: localArticle.sourceUrl || data.sourceUrl
-            }
-          : data
-      } else {
-        article.value = localArticle || Object.values(articlesData)[0]
-      }
-    } catch {
-      article.value = localArticle || Object.values(articlesData)[0]
-    }
-
-    try {
-      const allArticlesResponse = await axios.get('/api/articles')
-      if (Array.isArray(allArticlesResponse.data) && allArticlesResponse.data.length > 0) {
-        apiRelatedArticles.value = allArticlesResponse.data.filter((item) => String(item.id) !== String(article.value?.id) && item.slug !== articleSlug).slice(0, 2)
-      } else {
-        apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== articleSlug && item.slug !== articleSlug).slice(0, 2)
-      }
-    } catch {
-      apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== articleSlug && item.slug !== articleSlug).slice(0, 2)
-    }
+    const allArticlesResponse = await axios.get('/api/articles')
+    apiRelatedArticles.value = Array.isArray(allArticlesResponse.data)
+      ? allArticlesResponse.data
+          .filter((item) => String(item.id) !== String(data.id))
+          .slice(0, 2)
+      : []
   } catch (error) {
     console.error('Failed to load article detail:', error)
-    article.value = articlesData[route.params.id] || Object.values(articlesData)[0]
-    apiRelatedArticles.value = Object.values(articlesData).filter((item) => item.id !== route.params.id).slice(0, 2)
-    errorMessage.value = ''
+    article.value = null
+    apiRelatedArticles.value = []
+    errorMessage.value = error.response?.data?.error || 'ไม่พบบทความที่ร้องขอ หรือไม่สามารถโหลดบทความได้'
   } finally {
     loading.value = false
   }
 }
 
-// หาบทความปัจจุบันจาก route param หรือ API
 const currentArticle = computed(() => {
-  if (article.value && article.value.title) {
-    return article.value
-  }
-  const id = route.params.id
-  return articlesData[id] || Object.values(articlesData)[0]
+  return article.value
 })
 
-// บทความที่เกี่ยวข้อง
 const relatedArticles = computed(() => {
-  if (apiRelatedArticles.value.length > 0) {
-    return apiRelatedArticles.value
-  }
-  const currentId = route.params.id
-  return Object.values(articlesData)
-    .filter(a => a.id !== currentId && a.slug !== currentId)
-    .slice(0, 2)
+  return apiRelatedArticles.value
 })
 
 watch(() => route.params.id, () => {

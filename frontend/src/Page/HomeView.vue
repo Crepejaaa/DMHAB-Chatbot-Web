@@ -1,14 +1,14 @@
 <template>
-  <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
         </div>
-        <span class="text-xl font-bold tracking-wide">DMHAB</span>
+        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
@@ -16,18 +16,22 @@
         <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
         <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
         <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+
+        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Admin Dashboard</router-link>
       </div>
+
+      
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -47,13 +51,17 @@
           "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
           "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
         </p>
-        <button @click="$router.push('/assessment')" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-5 py-2.5 text-sm font-medium rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
+        <button @click="$router.push('/assessment')" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
           เริ่มต้นใช้งาน
         </button>
       </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
-        <div class="w-80 h-64 bg-white/60 border-2 border-dashed border-[#0D9488]/30 rounded-2xl flex items-center justify-center text-[#0D9488] font-medium">
-          [รูปภาพ]
+        <div class="w-80 h-64 overflow-hidden rounded-2xl bg-white/60 shadow-lg ring-1 ring-[#0D9488]/20">
+          <img
+            src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=85"
+            alt="คุณหมอผู้เชี่ยวชาญด้านการดูแลสุขภาพจิต"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
     </section>
@@ -94,8 +102,12 @@
     <!-- 4. About Us Section -->
     <section class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center overflow-hidden">
       <div class="flex justify-center scroll-anim opacity-0 -translate-x-16 transition-all duration-1000 ease-out">
-        <div class="w-72 h-72 bg-white/60 border-2 border-dashed border-[#0D9488]/30 rounded-2xl flex items-center justify-center text-[#0D9488] font-medium">
-          [รูปภาพ]
+        <div class="w-72 h-72 overflow-hidden rounded-2xl bg-white/60 shadow-md ring-1 ring-[#0D9488]/20">
+          <img
+            src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=85"
+            alt="ผู้คนกำลังพูดคุยและรับฟังกันในพื้นที่ปลอดภัย"
+            class="h-full w-full object-cover"
+          />
         </div>
       </div>
       <div class="scroll-anim opacity-0 translate-x-16 transition-all duration-1000 delay-200 ease-out">
@@ -113,8 +125,12 @@
     <section class="max-w-6xl mx-auto px-6 py-12">
       <div class="bg-white text-[#1E293B] border border-gray-100 rounded-3xl overflow-hidden grid md:grid-cols-2 shadow-xl scroll-anim opacity-0 translate-y-16 transition-all duration-1000 ease-out">
         <div class="p-8 md:p-12 flex items-center justify-center bg-[#FAF9F5]">
-          <div class="w-48 h-80 bg-white border-2 border-dashed border-[#0D9488]/40 rounded-3xl flex items-center justify-center text-[#0D9488] font-medium shadow-sm hover:scale-105 transition duration-500">
-            [รูปตัวแชท]
+          <div class="w-48 h-80 overflow-hidden bg-white rounded-3xl shadow-sm ring-2 ring-[#0D9488]/30 hover:scale-105 transition duration-500">
+            <img
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=700&q=85"
+              alt="หุ่นยนต์ AI สำหรับให้บริการและช่วยตอบคำถาม"
+              class="h-full w-full object-cover"
+            />
           </div>
         </div>
         <div class="p-8 md:p-12 flex flex-col justify-center">
@@ -161,6 +177,14 @@
         </div>
       </div>
 
+      <p v-else-if="articlesError" class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        {{ articlesError }}
+      </p>
+
+      <p v-else-if="visibleArticles.length === 0" class="rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
+        ยังไม่มีบทความ
+      </p>
+
       <div v-else class="grid md:grid-cols-3 gap-6">
         <div
           v-for="(article, idx) in visibleArticles"
@@ -190,7 +214,7 @@
             </div>
             <div class="px-6 pb-6 pt-0">
               <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+                <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
                 <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
               </div>
               <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
@@ -213,9 +237,9 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -231,7 +255,7 @@
           <router-link to="/contact" class="font-bold mb-3 block hover:underline">Contact</router-link>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -240,7 +264,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
 
@@ -250,58 +274,21 @@
 <script setup>
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import { useAuthStore } from '../stores/authStore'
+import axios from '../api/axios'
 
 const router = useRouter()
-const isColorBlindMode = inject('isColorBlindMode', false)
-const loading = ref(false)
+const isDarkMode = inject('isDarkMode', false)
+const loading = ref(true)
 const mobileMenuOpen = ref(false)
 
-const fallbackArticles = [
-  {
-    id: 'stress-management',
-    slug: 'stress-management',
-    title: 'วิธีรับมือกับความเครียดจากการทำงาน (Burnout)',
-    excerpt: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว',
-    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต',
-    category: 'สุขภาพจิต',
-    coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
-    sourceUrl: '',
-    createdAt: '2026-07-26T00:00:00.000Z'
-  },
-  {
-    id: 'sleep-and-mood',
-    slug: 'sleep-and-mood',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
-    excerpt: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์',
-    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง',
-    category: 'การนอนหลับ',
-    coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
-    sourceUrl: '',
-    createdAt: '2026-07-24T00:00:00.000Z'
-  },
-  {
-    id: 'warning-signs',
-    slug: 'warning-signs',
-    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
-    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น',
-    category: 'คำปรึกษา',
-    coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'DMHAB',
-    sourceUrl: '',
-    createdAt: '2026-07-20T00:00:00.000Z'
-  }
-]
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
 
-const articles = ref(fallbackArticles.map((article) => ({ ...article })))
-const visibleArticles = computed(() => {
-  const list = articles.value && articles.value.length > 0 ? articles.value : fallbackArticles
-  return list.slice(0, 3)
-})
+const articles = ref([])
+const articlesError = ref('')
+const visibleArticles = computed(() => articles.value.slice(0, 3))
 
 const formatDate = (dateValue) => {
   if (!dateValue) return 'ไม่ระบุวันที่'
@@ -326,15 +313,13 @@ const goToRegister = () => {
 const fetchArticles = async () => {
   try {
     loading.value = true
+    articlesError.value = ''
     const { data } = await axios.get('/api/articles')
-    if (Array.isArray(data) && data.length > 0) {
-      articles.value = data
-    } else {
-      articles.value = fallbackArticles.map((article) => ({ ...article }))
-    }
+    articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    articles.value = fallbackArticles.map((article) => ({ ...article }))
+    articles.value = []
+    articlesError.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
   } finally {
     loading.value = false
     nextTick(() => {

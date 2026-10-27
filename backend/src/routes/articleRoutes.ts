@@ -10,6 +10,7 @@ import { verifyAdmin, verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+// Endpoint สำหรับดึงข้อมูล (หน้าบ้านและแอดมินใช้ร่วมกัน)
 router.get("/", getArticles);
 router.get("/:slug", getArticleBySlug);
 

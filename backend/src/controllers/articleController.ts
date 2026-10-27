@@ -49,7 +49,7 @@ const serializeArticle = (article: any) => ({
   content: article.content,
   category: article.category,
   coverImageUrl: article.coverImageUrl || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
-  sourceName: article.sourceName || "DMHAB",
+  sourceName: article.sourceName || "PhuenJaiZone",
   sourceUrl: article.sourceUrl || "https://www.who.int/health-topics/mental-health",
   createdAt: article.createdAt || new Date().toISOString(),
   createdById: article.createdById ?? null,
@@ -151,6 +151,62 @@ export const updateArticle = async (req: Request, res: Response): Promise<void> 
         sourceUrl: typeof sourceUrl === "string" && sourceUrl.trim() ? sourceUrl.trim() : null
       },
       include: { createdBy: { select: { id: true, username: true, email: true } } }
+    });
+    res.status(200).json({ message: "อัปเดตบทความสำเร็จ", article: serializeArticle(updatedArticle) });
+  } catch (error) {
+    console.error("Error updating article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตบทความ" });
+  }
+};
+
+export const deleteArticle = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    await prisma.article.delete({
+      where: { id: Number(id) }
+    });
+    res.status(200).json({ message: "ลบบทความสำเร็จ" });
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบบทความ" });
+  }
+};
+
+export const createArticle = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // สมมติว่าดึง userId จาก Token ถ้าไม่มีให้ใช้ 1 (แอดมินคนแรก)
+    const userId = (req as any).user?.userId || 1; 
+    const { title, category, excerpt, content, sourceName, coverImageUrl, sourceUrl } = req.body;
+
+    const newArticle = await prisma.article.create({
+      data: {
+        title,
+        category,
+        excerpt,
+        content,
+        sourceName,
+        coverImageUrl,
+        sourceUrl,
+        // สร้าง slug พื้นฐานจากชื่อ หรือใช้เวลาสุ่มเพื่อไม่ให้ซ้ำ
+        slug: `article-${Date.now()}`, 
+        createdById: userId
+      }
+    });
+    res.status(201).json({ message: "สร้างบทความสำเร็จ", article: serializeArticle(newArticle) });
+  } catch (error) {
+    console.error("Error creating article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการสร้างบทความ" });
+  }
+};
+
+export const updateArticle = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { title, category, excerpt, content, sourceName, coverImageUrl, sourceUrl } = req.body;
+
+    const updatedArticle = await prisma.article.update({
+      where: { id: Number(id) },
+      data: { title, category, excerpt, content, sourceName, coverImageUrl, sourceUrl }
     });
     res.status(200).json({ message: "อัปเดตบทความสำเร็จ", article: serializeArticle(updatedArticle) });
   } catch (error) {

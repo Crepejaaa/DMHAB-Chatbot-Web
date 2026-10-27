@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500 overflow-x-hidden', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar (เหมือน HomeView) -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
@@ -11,9 +11,9 @@
         </router-link>
         <router-link to="/" class="flex items-center gap-1">
           <div class="w-12 h-12 flex items-center justify-center">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">DMHAB</span>
+          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
       
@@ -26,14 +26,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -144,14 +144,44 @@
             <h2 class="text-2xl md:text-3xl font-extrabold mb-4">พร้อมเริ่มต้นดูแลสุขภาพจิตแล้วหรือยัง?</h2>
             <p class="text-[#D1FAE5] mb-8 max-w-xl mx-auto">เริ่มใช้งานบริการของเราวันนี้ เพื่อสุขภาพจิตที่ดีขึ้นในทุกๆ วัน</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                @click="$router.push('/assessment')" 
+              <!-- ปุ่มสำหรับ daily-checkin -->
+              <button
+                v-if="currentService.id === 'daily-checkin' || route.params.id === 'daily-checkin'"
+                @click="$router.push('/daily-checkin')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                📝 เริ่มต้นใช้งาน
+              </button>
+
+              <!-- ปุ่มพิเศษสำหรับ relaxation service -->
+              <button
+                v-else-if="currentService.id === 'relaxation' || route.params.id === 'relaxation'"
+                @click="$router.push('/activity-tracker')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                🧘 เริ่มติดตามกิจกรรม
+              </button>
+
+              <!-- ปุ่มสำหรับ listening-space -->
+              <button
+                v-else-if="currentService.id === 'listening-space' || route.params.id === 'listening-space'"
+                @click="$router.push('/chat')"
+                class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
+              >
+                💬 เริ่มต้นพูดคุย
+              </button>
+
+              <!-- ปุ่มเริ่มต้นใช้งานสำหรับ assessment และอื่นๆ -->
+              <button
+                v-else
+                @click="$router.push('/assessment')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md"
               >
                 เริ่มต้นใช้งาน
               </button>
-              <router-link 
-                to="/services" 
+
+              <router-link
+                to="/services"
                 class="border-2 border-white/60 text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition"
               >
                 ดูบริการทั้งหมด
@@ -161,6 +191,7 @@
         </div>
       </section>
 
+
     </main>
 
     <!-- 4. Footer (เหมือน HomeView) -->
@@ -169,9 +200,9 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -187,7 +218,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -196,7 +227,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
 
@@ -208,7 +239,7 @@ import { inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 const route = useRoute()
 const router = useRouter()
 
@@ -287,7 +318,8 @@ const servicesData = {
 // หา service ปัจจุบันจาก route param
 const currentService = computed(() => {
   const id = route.params.id
-  return servicesData[id] || servicesData['daily-checkin']
+  const data = servicesData[id] || servicesData['daily-checkin']
+  return { ...data, id: id || 'daily-checkin' }
 })
 
 // Scroll animation observer

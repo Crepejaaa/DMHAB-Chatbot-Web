@@ -2,7 +2,7 @@ import axios from 'axios';
 import router from '../router';
 import { useAuthStore } from '../stores/authStore';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'https://dmhab-chatbot-web.onrender.com');
 
 const axiosInstance = axios.create({
   baseURL,
@@ -72,7 +72,7 @@ axiosInstance.interceptors.response.use(
       try {
         // 3. Pause the failed request and automatically make a POST request to refresh
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.post(`${baseURL}/api/auth/refresh`, { refreshToken });
+        const response = await axios.post(`${baseURL}/api/refresh`, { refreshToken });
         
         // 4. If refresh is successful, save the new access token
         const newAccessToken = response.data.token || response.data.accessToken; 

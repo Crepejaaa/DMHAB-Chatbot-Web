@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
@@ -19,9 +19,9 @@
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <!-- โลโก้ Navbar -->
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">DMHAB</span>
+          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
       
@@ -34,14 +34,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -95,13 +95,22 @@
             <h3 class="text-xl md:text-2xl font-bold mb-4">{{ service.title }}</h3>
             <p class="text-gray-300 text-sm mb-8 text-center px-4">{{ service.description }}</p>
             
-            <!-- แก้ไขตรงนี้: เช็คว่าถ้ามีค่า route เฉพาะตัว ให้ไปที่นั่น ถ้าไม่มีให้ไปแบบเดิม และเปลี่ยนข้อความปุ่ม -->
-            <router-link 
-              :to="service.route || '/services/' + service.id" 
-              class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block"
-            >
-              {{ service.buttonText || 'See detail' }}
-            </router-link>
+            <!-- ปุ่มเข้าใช้งาน หรือ ดูรายละเอียด -->
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <router-link 
+                v-if="service.route"
+                :to="service.route" 
+                class="bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-6 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block"
+              >
+                {{ service.buttonText || 'เริ่มต้นใช้งาน' }}
+              </router-link>
+              <router-link 
+                :to="'/services/' + service.id" 
+                :class="service.route ? 'text-xs text-gray-300 hover:text-white underline underline-offset-4 transition' : 'bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white px-8 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition shadow-md inline-block'"
+              >
+                {{ service.route ? 'ดูรายละเอียด' : (service.buttonText || 'See detail') }}
+              </router-link>
+            </div>
             
           </div>
         </div>
@@ -115,9 +124,9 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -133,7 +142,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -142,7 +151,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
 
@@ -154,19 +163,23 @@ import { inject } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
-const isColorBlindMode = inject('isColorBlindMode')
+const isDarkMode = inject('isDarkMode')
 
 // ข้อมูลสำหรับวนลูปสร้างการ์ด (ช่วยให้โค้ดส่วน Template สะอาดขึ้น)
 const servicesList = [
   {
     id: 'daily-checkin',
     title: 'เช็คอินสุขภาพจิตรายวัน',
-    description: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน'
+    description: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน',
+    route: '/daily-checkin',
+    buttonText: 'เช็คอินวันนี้'
   },
   {
     id: 'assessment',
     title: 'ประเมินสุขภาพจิตเบื้องต้น',
-    description: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน'
+    description: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน',
+    route: '/assessment',
+    buttonText: 'เริ่มประเมิน'
   },
   {
     id: 'listening-space',
@@ -178,7 +191,9 @@ const servicesList = [
   {
     id: 'relaxation',
     title: 'แนะนำกิจกรรมผ่อนคลาย',
-    description: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ'
+    description: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ',
+    route: '/activity-tracker',
+    buttonText: 'ติดตามกิจกรรม'
   }
 ]
 </script>

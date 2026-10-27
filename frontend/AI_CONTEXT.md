@@ -1,4 +1,4 @@
-# 🤖 AI Context: DMHAB-Chatbot-Web
+# 🤖 AI Context: PhuenJaiZone-Chatbot-Web
 **Last Updated:** กรกฎาคม 2026 
 **Author:** ทีมพัฒนา (ดูแลและอัปเดตโดย โอม/เอฟ - QA & Dev)
 

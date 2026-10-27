@@ -1,5 +1,5 @@
 <template>
-  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isColorBlindMode ? 'grayscale' : '']">
+  <div :class="['min-h-screen flex flex-col bg-[#FAF9F5] font-sans text-[#1E293B] transition-all duration-500', isDarkMode ? 'dark-mode-page' : '']">
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
@@ -19,9 +19,9 @@
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <!-- โลโก้ Navbar -->
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">DMHAB</span>
+          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
       
@@ -34,14 +34,14 @@
       
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Color Blindness</span>
+          <span class="text-xs font-semibold text-white">Dark Mode</span>
           <button
-            @click="isColorBlindMode = !isColorBlindMode"
-            :class="isColorBlindMode ? 'bg-white' : 'bg-[#045F54]'"
+            @click="isDarkMode = !isDarkMode"
+            :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30"
           >
             <span
-              :class="isColorBlindMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
+              :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"
             ></span>
           </button>
@@ -118,6 +118,9 @@
         </div>
       </div>
       <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+      <div v-else-if="articles.length === 0" class="mt-10 rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
+        ยังไม่มีบทความ
+      </div>
 
       <div v-else :class="articleLayoutClass" class="mt-10">
         <article
@@ -152,7 +155,7 @@
 
               <div>
                 <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                  <span>แหล่ง: {{ article.sourceName || 'DMHAB' }}</span>
+                  <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
                   <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
                 </div>
                 <router-link
@@ -173,9 +176,9 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/image_Logo.png" alt="DMHAB Logo" class="w-full h-full object-contain" />
+              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">DMHAB</span>
+            <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
@@ -191,7 +194,7 @@
           <h4 class="font-bold mb-3">Contact</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
-            <li>✉️ DMHAB@Domain.com</li>
+            <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
@@ -200,7 +203,7 @@
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 DMHAB. All rights reserved.
+        © 2026 PhuenJaiZone. All rights reserved.
       </div>
     </footer>
   </div>
@@ -211,7 +214,7 @@ import { inject, ref, computed, onMounted } from 'vue'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 
-const isColorBlindMode = inject('isColorBlindMode', ref(false))
+const isDarkMode = inject('isDarkMode', ref(false))
 const articles = ref([])
 const loading = ref(true)
 const errorMessage = ref('')
@@ -230,136 +233,15 @@ const formatDate = (dateString) => {
   });
 };
 
-const fallbackArticles = [
-  {
-    id: 'stress-management',
-    slug: 'stress-management',
-    coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-26',
-    category: 'สุขภาพจิต',
-    title: 'วิธีรับมือกับความเครียดจากการทำงาน',
-    excerpt: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงานเพื่อรักษาสุขภาพจิตที่ดีในระยะยาว',
-    sourceName: 'DMHAB',
-    sourceUrl: ''
-  },
-  {
-    id: 'sleep-and-mood',
-    slug: 'sleep-and-mood',
-    coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-24',
-    category: 'การนอนหลับ',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
-    excerpt: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวลและความแปรปรวนทางอารมณ์',
-    sourceName: 'DMHAB',
-    sourceUrl: ''
-  },
-  {
-    id: 'warning-signs',
-    slug: 'warning-signs',
-    coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-20',
-    category: 'คำปรึกษา',
-    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
-    sourceName: 'DMHAB',
-    sourceUrl: ''
-  },
-  {
-    id: 'depression-teen-mhc11',
-    slug: 'depression-teen-mhc11',
-    coverImageUrl: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-01',
-    category: 'โรคซึมเศร้า',
-    title: 'โรคซึมเศร้าในวัยรุ่น: รู้จัก เข้าใจ และช่วยเหลือ',
-    excerpt: 'วัยรุ่นที่เป็นโรคซึมเศร้ามักไม่ได้รับการวินิจฉัยเพราะสัญญาณที่แตกต่างจากผู้ใหญ่ รู้จักอาการและวิธีช่วยเหลือ',
-    sourceName: 'ศูนย์สุขภาพจิตที่ 11 กรมสุขภาพจิต',
-    sourceUrl: 'https://mhc11.dmh.go.th/knowledge/5094/'
-  },
-  {
-    id: 'anxiety-disorder-mhc11',
-    slug: 'anxiety-disorder-mhc11',
-    coverImageUrl: 'https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-05',
-    category: 'ความวิตกกังวล',
-    title: 'โรควิตกกังวล: มากกว่าแค่ "ขี้กังวล"',
-    excerpt: 'ความวิตกกังวลที่มากเกินไปจนส่งผลต่อชีวิตประจำวันอาจเป็นสัญญาณของโรค ไม่ใช่แค่นิสัยส่วนตัว',
-    sourceName: 'ศูนย์สุขภาพจิตที่ 11 กรมสุขภาพจิต',
-    sourceUrl: 'https://mhc11.dmh.go.th/knowledge/5106/'
-  },
-  {
-    id: 'depression-brochure-dmhpd',
-    slug: 'depression-brochure-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-10',
-    category: 'โรคซึมเศร้า',
-    title: 'โรคซึมเศร้า: เข้าใจและรักษาได้',
-    excerpt: 'โรคซึมเศร้าเป็นโรคที่รักษาได้ ไม่ใช่ความอ่อนแอ ทำความเข้าใจอาการ สาเหตุ และวิธีรักษา เพื่อกลับมามีชีวิตที่ดีได้อีกครั้ง',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/media-brochure-depression-68-05-01/'
-  },
-  {
-    id: 'suicide-prevention-dmhpd',
-    slug: 'suicide-prevention-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-12',
-    category: 'การป้องกัน',
-    title: 'วิธีช่วยเหลือคนที่คิดจะทำร้ายตัวเอง',
-    excerpt: 'เมื่อคนที่คุณรักอยู่ในวิกฤต คุณจะทำอะไรได้บ้าง? เรียนรู้วิธีรับฟัง สังเกตสัญญาณ และขอความช่วยเหลืออย่างถูกวิธี',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/suicide1/'
-  },
-  {
-    id: 'burnout-workplace-dmhpd',
-    slug: 'burnout-workplace-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-15',
-    category: 'Burnout',
-    title: 'Burnout: ภาวะหมดไฟในการทำงาน รู้จัก รับมือ ฟื้นตัว',
-    excerpt: 'เมื่อทุ่มเทกับงานจนร่างกายและจิตใจหมดแรง ภาวะ Burnout ไม่ใช่ความอ่อนแอ แต่เป็นสัญญาณที่ต้องใส่ใจ',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/burnout2/'
-  },
-  {
-    id: 'resilience-quotient-dmhpd',
-    slug: 'resilience-quotient-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1488998527040-85054a85150e?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-20',
-    category: 'ความยืดหยุ่น',
-    title: 'RQ ความฉลาดทางด้านการฟื้นคืนพลัง: พลังแห่งการลุกขึ้นใหม่',
-    excerpt: 'ความสามารถในการฟื้นตัวจากความยากลำบากเป็นสิ่งที่ฝึกได้ RQ หรือ Resilience Quotient คือกุญแจสำคัญสู่สุขภาพจิตที่แข็งแรง',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/resilience-quotient1/'
-  }
-]
-
 const fetchArticles = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
     const { data } = await axios.get('/api/articles')
-    const apiArticles = Array.isArray(data) ? data : []
-    const apiBySlug = new Map(apiArticles.map((article) => [article.slug || String(article.id), article]))
-    const fallbackSlugs = new Set(fallbackArticles.map((article) => article.slug || String(article.id)))
-
-    const mergedFallbackArticles = fallbackArticles.map((fallbackArticle) => {
-      const apiArticle = apiBySlug.get(fallbackArticle.slug || String(fallbackArticle.id))
-      return apiArticle
-        ? {
-            ...fallbackArticle,
-            ...apiArticle,
-            coverImageUrl: fallbackArticle.coverImageUrl || apiArticle.coverImageUrl,
-            sourceName: fallbackArticle.sourceName || apiArticle.sourceName,
-            sourceUrl: fallbackArticle.sourceUrl || apiArticle.sourceUrl
-          }
-        : fallbackArticle
-    })
-
-    const additionalApiArticles = apiArticles.filter((article) => !fallbackSlugs.has(article.slug || String(article.id)))
-    articles.value = [...mergedFallbackArticles, ...additionalApiArticles]
+    articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    errorMessage.value = ''
-    articles.value = fallbackArticles
+    errorMessage.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
   } finally {
     loading.value = false
   }
