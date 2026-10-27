@@ -167,15 +167,34 @@
               <p v-if="formErrors.content" class="text-xs text-rose-500 mt-1">{{ formErrors.content }}</p>
             </div>
 
-            <!-- Cover Image URL -->
+           <!-- Cover Image Upload (เลือกรูปจากเครื่อง) -->
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">URL รูปปก (ถ้ามี)</label>
-              <input
-                v-model="articleForm.coverImageUrl"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition"
-              />
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">รูปปกบทความ (ถ้ามี)</label>
+              <div class="flex items-center gap-4">
+                <!-- ปุ่มเลือกไฟล์ (ซ่อน input file แท้ไว้ด้านใน) -->
+                <label class="cursor-pointer inline-flex items-center px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 font-medium hover:bg-gray-100 hover:border-[#0D9488] hover:text-[#0D9488] transition-all">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  เลือกรูปภาพจากเครื่อง
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                    @change="handleCoverImageUpload"
+                  />
+                </label>
+                
+                <!-- แสดงพรีวิวรูปภาพที่เลือก -->
+                <div v-if="articleForm.coverImageUrl" class="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                  <img :src="articleForm.coverImageUrl" class="w-full h-full object-cover" alt="Cover Preview" />
+                  <!-- ปุ่มกากบาทสำหรับลบรูป -->
+                  <button type="button" @click="articleForm.coverImageUrl = ''" class="absolute top-0 right-0 bg-rose-500 text-white w-4 h-4 flex items-center justify-center rounded-bl cursor-pointer hover:bg-rose-600 transition" title="ลบรูป">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <span v-else class="text-xs text-gray-400">ยังไม่ได้เลือกไฟล์</span>
+              </div>
             </div>
 
             <div>
