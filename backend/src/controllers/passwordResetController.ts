@@ -7,14 +7,6 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 
 const RESET_TOKEN_TTL_MS = 10 * 60 * 1000;
 
-class NoAdministratorError extends Error {}
-
-const isPrismaSchemaError = (error: unknown): boolean =>
-  typeof error === "object" &&
-  error !== null &&
-  "code" in error &&
-  (error.code === "P2021" || error.code === "P2022");
-
 const hashToken = (token: string): string =>
   createHash("sha256").update(token).digest("hex");
 
@@ -33,7 +25,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
 
   try {
     const user = await prisma.user.findUnique({
-      where: { email: { equals: email, mode: "insensitive" } },
+      where: { email },
       select: { id: true, username: true, email: true },
     });
     if (!user) {
@@ -51,7 +43,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
         select: { id: true },
       });
       if (!admins.length) {
-        throw new NoAdministratorError();
+        throw new Error("No administrator accounts are available to review password reset requests");
       }
       await transaction.notification.createMany({
         data: admins.map((admin) => ({
@@ -72,14 +64,6 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
     });
   } catch (error) {
     console.error("Error creating password reset request:", error);
-    if (error instanceof NoAdministratorError) {
-      res.status(503).json({ error: "ยังไม่มีบัญชีแอดมินที่รับคำร้องได้ กรุณาติดต่อผู้ดูแลระบบ" });
-      return;
-    }
-    if (isPrismaSchemaError(error)) {
-      res.status(503).json({ error: "ฐานข้อมูล production ยังไม่ได้อัปเดตสำหรับระบบคำร้องรีเซ็ตรหัสผ่าน กรุณาแจ้งผู้ดูแลระบบ" });
-      return;
-    }
     res.status(500).json({ error: "ส่งคำร้องไม่สำเร็จ กรุณาลองใหม่" });
   }
 };
@@ -135,10 +119,6 @@ export const getNotifications = async (req: AuthRequest, res: Response): Promise
     res.status(200).json(notifications);
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    if (isPrismaSchemaError(error)) {
-      res.status(503).json({ error: "ฐานข้อมูล production ยังไม่ได้อัปเดตสำหรับระบบแจ้งเตือน กรุณาแจ้งผู้ดูแลระบบ" });
-      return;
-    }
     res.status(500).json({ error: "ไม่สามารถโหลดการแจ้งเตือนได้" });
   }
 };
