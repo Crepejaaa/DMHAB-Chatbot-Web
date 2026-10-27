@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prismaClient";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 const fallbackArticles = [
   {
@@ -47,27 +48,31 @@ const serializeArticle = (article: any) => ({
   excerpt: article.excerpt || article.content?.slice(0, 180) || "",
   content: article.content,
   category: article.category,
+<<<<<<< Updated upstream
   coverImageUrl: article.coverImageUrl || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
   sourceName: article.sourceName || "DMHAB",
   sourceUrl: article.sourceUrl || "https://www.who.int/health-topics/mental-health",
+=======
+  coverImageUrl: article.coverImageUrl || null,
+  sourceName: article.sourceName || null,
+  sourceUrl: article.sourceUrl || null,
+>>>>>>> Stashed changes
   createdAt: article.createdAt || new Date().toISOString(),
+  createdById: article.createdById ?? null,
   createdBy: article.createdBy || null,
 });
 
 export const getArticles = async (req: Request, res: Response): Promise<void> => {
   try {
-    const articles = prisma?.article?.findMany
-      ? await prisma.article.findMany({
-          orderBy: { createdAt: "desc" },
-          include: { createdBy: { select: { id: true, username: true, email: true } } },
-        })
-      : [];
+    const articles = await prisma.article.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { createdBy: { select: { id: true, username: true, email: true } } },
+    });
 
-    const serialized = (Array.isArray(articles) && articles.length ? articles : fallbackArticles).map(serializeArticle);
-    res.status(200).json(serialized);
+    res.status(200).json(articles.map(serializeArticle));
   } catch (error) {
     console.error("Error fetching articles:", error);
-    res.status(200).json(fallbackArticles.map(serializeArticle));
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลบทความจากฐานข้อมูลได้" });
   }
 };
 
@@ -75,32 +80,103 @@ export const getArticleBySlug = async (req: Request, res: Response): Promise<voi
   try {
     const { slug } = req.params;
 
-    const article = prisma?.article?.findFirst
-      ? await prisma.article.findFirst({
-          where: { OR: [{ slug }, { id: Number(slug) || -1 }] },
-          include: { createdBy: { select: { id: true, username: true, email: true } } },
-        })
-      : null;
+    const article = await prisma.article.findFirst({
+      where: { OR: [{ slug }, { id: Number(slug) || -1 }] },
+      include: { createdBy: { select: { id: true, username: true, email: true } } },
+    });
 
     if (article) {
       res.status(200).json(serializeArticle(article));
       return;
     }
 
-    const fallbackArticle = fallbackArticles.find((item) => item.slug === slug || String(item.id) === slug)
-    if (fallbackArticle) {
-      res.status(200).json(serializeArticle(fallbackArticle));
-      return;
-    }
-
     res.status(404).json({ error: "ไม่พบบทความที่ร้องขอ" });
   } catch (error) {
     console.error("Error fetching article by slug:", error);
-    const fallbackArticle = fallbackArticles.find((item) => item.slug === req.params.slug || String(item.id) === req.params.slug)
-    if (fallbackArticle) {
-      res.status(200).json(serializeArticle(fallbackArticle));
-      return;
-    }
     res.status(500).json({ error: "ไม่สามารถดึงข้อมูลบทความได้" });
   }
 };
+<<<<<<< Updated upstream
+=======
+
+export const createArticle = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    const { title, category, excerpt, content, sourceName, coverImageUrl, sourceUrl } = req.body;
+
+    if (!userId || typeof title !== "string" || !title.trim() ||
+      typeof category !== "string" || !category.trim() ||
+      typeof content !== "string" || !content.trim()) {
+      res.status(400).json({ error: "กรุณากรอกชื่อบทความ หมวดหมู่ และเนื้อหาบทความให้ครบถ้วน" });
+      return;
+    }
+
+    const newArticle = await prisma.article.create({
+      data: {
+        title: title.trim(),
+        category: category.trim(),
+        excerpt: typeof excerpt === "string" && excerpt.trim() ? excerpt.trim() : null,
+        content: content.trim(),
+        sourceName: typeof sourceName === "string" && sourceName.trim() ? sourceName.trim() : null,
+        coverImageUrl: typeof coverImageUrl === "string" && coverImageUrl.trim() ? coverImageUrl.trim() : null,
+        sourceUrl: typeof sourceUrl === "string" && sourceUrl.trim() ? sourceUrl.trim() : null,
+        // สร้าง slug พื้นฐานจากชื่อ หรือใช้เวลาสุ่มเพื่อไม่ให้ซ้ำ
+        slug: `article-${Date.now()}`, 
+        createdById: userId
+      },
+      include: { createdBy: { select: { id: true, username: true, email: true } } },
+    });
+    res.status(201).json({ message: "สร้างบทความสำเร็จ", article: serializeArticle(newArticle) });
+  } catch (error) {
+    console.error("Error creating article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการสร้างบทความ" });
+  }
+};
+
+export const updateArticle = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { title, category, excerpt, content, sourceName, coverImageUrl, sourceUrl } = req.body;
+    const articleId = Number(id);
+
+    if (!Number.isInteger(articleId) || articleId <= 0 ||
+      typeof title !== "string" || !title.trim() ||
+      typeof category !== "string" || !category.trim() ||
+      typeof content !== "string" || !content.trim()) {
+      res.status(400).json({ error: "ข้อมูลบทความไม่ถูกต้อง หรือกรอกข้อมูลที่จำเป็นไม่ครบถ้วน" });
+      return;
+    }
+
+    const updatedArticle = await prisma.article.update({
+      where: { id: articleId },
+      data: {
+        title: title.trim(),
+        category: category.trim(),
+        excerpt: typeof excerpt === "string" && excerpt.trim() ? excerpt.trim() : null,
+        content: content.trim(),
+        sourceName: typeof sourceName === "string" && sourceName.trim() ? sourceName.trim() : null,
+        coverImageUrl: typeof coverImageUrl === "string" && coverImageUrl.trim() ? coverImageUrl.trim() : null,
+        sourceUrl: typeof sourceUrl === "string" && sourceUrl.trim() ? sourceUrl.trim() : null
+      },
+      include: { createdBy: { select: { id: true, username: true, email: true } } }
+    });
+    res.status(200).json({ message: "อัปเดตบทความสำเร็จ", article: serializeArticle(updatedArticle) });
+  } catch (error) {
+    console.error("Error updating article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตบทความ" });
+  }
+};
+
+export const deleteArticle = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    await prisma.article.delete({
+      where: { id: Number(id) }
+    });
+    res.status(200).json({ message: "ลบบทความสำเร็จ" });
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบบทความ" });
+  }
+};
+>>>>>>> Stashed changes
