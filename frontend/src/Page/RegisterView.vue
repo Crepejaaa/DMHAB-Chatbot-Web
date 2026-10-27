@@ -263,7 +263,7 @@ const fileInput = ref(null)
 const imagePreview = ref(null)
 
 // ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2
-const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || ''
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 const recaptchaToken = ref('')
 const recaptchaWidget = ref(null)
 
