@@ -127,9 +127,7 @@
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-white/70 text-xs leading-relaxed">
-            We are dedicated to providing the best mental health resources and support for everyone.
-          </p>
+          <p class="text-white/70 text-xs leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
         </div>
         <div>
           <h4 class="font-bold mb-4">Services</h4>
