@@ -2,20 +2,23 @@
   <div v-if="authStore.isAuthenticated" class="relative">
     <button
       type="button"
-      class="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20"
+      :class="variant === 'admin'
+        ? 'relative flex min-h-11 items-center gap-2 rounded-xl border border-teal-800 bg-teal-800 px-4 text-white shadow-md transition hover:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2'
+        : 'relative flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20'"
       aria-label="การแจ้งเตือน"
       :aria-expanded="isOpen"
       @click="toggleNotifications"
     >
-      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
       </svg>
-      <span v-if="unreadCount" class="absolute -right-1 -top-1 min-w-5 rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-5 text-white">
+      <span v-if="variant === 'admin'" class="text-sm font-bold">การแจ้งเตือน</span>
+      <span v-if="unreadCount" class="absolute -right-2 -top-2 min-w-5 rounded-full border-2 border-white bg-rose-600 px-1 text-center text-[10px] font-bold leading-4 text-white shadow">
         {{ unreadCount > 9 ? '9+' : unreadCount }}
       </span>
     </button>
 
-    <section v-if="isOpen" class="absolute right-0 z-[150] mt-3 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-gray-200 bg-white text-left text-gray-800 shadow-2xl">
+    <section v-if="isOpen" class="absolute right-0 z-[150] mt-3 w-[min(26rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-gray-200 bg-white text-left text-gray-800 shadow-2xl">
       <header class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <h2 class="font-bold">การแจ้งเตือน</h2>
         <button type="button" class="text-xs font-semibold text-teal-700 hover:underline" :disabled="isLoading" @click="fetchNotifications">
@@ -25,7 +28,7 @@
 
       <p v-if="errorMessage" role="alert" class="m-3 rounded-lg bg-rose-50 p-3 text-xs text-rose-700">{{ errorMessage }}</p>
       <p v-if="isLoading && !notifications.length" class="px-4 py-8 text-center text-sm text-gray-500">กำลังโหลด...</p>
-      <p v-else-if="!notifications.length" class="px-4 py-8 text-center text-sm text-gray-500">ยังไม่มีการแจ้งเตือน</p>
+      <p v-else-if="!isLoading && !errorMessage && !notifications.length" class="px-4 py-8 text-center text-sm text-gray-500">ยังไม่มีการแจ้งเตือน</p>
 
       <ul v-else class="max-h-[min(70vh,30rem)] divide-y divide-gray-100 overflow-y-auto">
         <li v-for="item in notifications" :key="item.id" class="px-4 py-3" :class="{ 'bg-teal-50/50': !item.readAt }">
@@ -92,6 +95,14 @@ import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const props = defineProps({
+  variant: {
+    type: String,
+    default: 'default',
+    validator: value => ['default', 'admin'].includes(value),
+  },
+})
+const variant = props.variant
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN')
 const notifications = ref([])
 const unreadCount = computed(() => notifications.value.filter(item => !item.readAt).length)
@@ -111,7 +122,8 @@ const fetchNotifications = async () => {
     errorMessage.value = ''
   } catch (error) {
     console.error('Could not load notifications:', error)
-    errorMessage.value = error.response?.data?.error || 'โหลดการแจ้งเตือนไม่สำเร็จ'
+    errorMessage.value = error.response?.data?.error
+      || (error.response ? `โหลดการแจ้งเตือนไม่สำเร็จ (HTTP ${error.response.status})` : 'เชื่อมต่อ API ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต')
   } finally {
     isLoading.value = false
   }

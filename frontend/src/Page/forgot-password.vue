@@ -162,7 +162,8 @@ const handleResetPassword = async () => {
     message.value = data.message || 'ส่งคำร้องไปยังแอดมินแล้ว'
     await router.push('/password-reset-request')
   } catch (error) {
-    errorMessage.value = error.response?.data?.error || 'ส่งคำร้องไม่สำเร็จ กรุณาลองอีกครั้ง'
+    errorMessage.value = error.response?.data?.error
+      || (error.response ? `ส่งคำร้องไม่สำเร็จ (HTTP ${error.response.status}) กรุณาตรวจสอบ API production` : 'เชื่อมต่อ API ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง')
   } finally {
     isLoading.value = false
   }

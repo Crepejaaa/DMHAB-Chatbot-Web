@@ -77,8 +77,8 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 p-6 md:p-10 flex flex-col space-y-8 overflow-y-auto">
-      <div class="flex justify-end">
-        <NotificationBell />
+      <div class="sticky top-0 z-[140] -mx-6 -mt-6 flex justify-end border-b border-gray-200 bg-[#FAF9F5]/95 px-6 py-4 backdrop-blur md:-mx-10 md:-mt-10 md:px-10">
+        <NotificationBell variant="admin" />
       </div>
       <router-view />
     </main>
