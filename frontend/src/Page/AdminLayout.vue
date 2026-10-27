@@ -77,6 +77,9 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 p-6 md:p-10 flex flex-col space-y-8 overflow-y-auto">
+      <div class="flex justify-end">
+        <NotificationBell />
+      </div>
       <router-view />
     </main>
 
@@ -97,6 +100,7 @@
 <script setup>
 import { ref, inject, provide, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import NotificationBell from '../components/NotificationBell.vue'
 
 const route = useRoute()
 const currentRoute = computed(() => route.name)

@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 
-// เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
 import { AuthRequest } from "../middlewares/authMiddleware";
 
@@ -11,7 +10,6 @@ if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET environment variable");
 }
 const JWT_SECRET = process.env.JWT_SECRET as string;
-
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ recaptchaToken
