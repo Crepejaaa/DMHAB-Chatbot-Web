@@ -48,15 +48,9 @@ const serializeArticle = (article: any) => ({
   excerpt: article.excerpt || article.content?.slice(0, 180) || "",
   content: article.content,
   category: article.category,
-<<<<<<< Updated upstream
   coverImageUrl: article.coverImageUrl || "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
   sourceName: article.sourceName || "DMHAB",
   sourceUrl: article.sourceUrl || "https://www.who.int/health-topics/mental-health",
-=======
-  coverImageUrl: article.coverImageUrl || null,
-  sourceName: article.sourceName || null,
-  sourceUrl: article.sourceUrl || null,
->>>>>>> Stashed changes
   createdAt: article.createdAt || new Date().toISOString(),
   createdById: article.createdById ?? null,
   createdBy: article.createdBy || null,
@@ -96,8 +90,6 @@ export const getArticleBySlug = async (req: Request, res: Response): Promise<voi
     res.status(500).json({ error: "ไม่สามารถดึงข้อมูลบทความได้" });
   }
 };
-<<<<<<< Updated upstream
-=======
 
 export const createArticle = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -179,4 +171,3 @@ export const deleteArticle = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบบทความ" });
   }
 };
->>>>>>> Stashed changes
