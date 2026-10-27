@@ -1,0 +1,8 @@
+ALTER TABLE "Article"
+  ADD COLUMN IF NOT EXISTS "slug" TEXT,
+  ADD COLUMN IF NOT EXISTS "excerpt" TEXT,
+  ADD COLUMN IF NOT EXISTS "coverImageUrl" TEXT,
+  ADD COLUMN IF NOT EXISTS "sourceName" TEXT,
+  ADD COLUMN IF NOT EXISTS "sourceUrl" TEXT;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "Article_slug_key" ON "Article"("slug");

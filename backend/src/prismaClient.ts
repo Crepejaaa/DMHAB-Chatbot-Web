@@ -16,8 +16,8 @@ try {
   const adapter = pool ? new PrismaPg(pool) : undefined;
 
   prisma = new PrismaClient({ ...(adapter ? { adapter } : {}) });
-} catch (error) {
-  console.warn("Prisma client is unavailable. Using fallback mock data for the app.", error);
+} catch (error: any) {
+  console.warn("Prisma client is unavailable. Using fallback mock data for the app. Error:", error?.message || error);
   prisma = {
     user: {
       findFirst: async () => null,

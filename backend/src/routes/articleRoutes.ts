@@ -6,6 +6,7 @@ import {
   updateArticle, 
   deleteArticle 
 } from "../controllers/articleController";
+import { verifyAdmin, verifyToken } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -14,8 +15,8 @@ router.get("/", getArticles);
 router.get("/:slug", getArticleBySlug);
 
 // Endpoint สำหรับ Admin จัดการข้อมูล
-router.post("/", createArticle);          // สร้างบทความใหม่
-router.put("/:id", updateArticle);        // แก้ไขบทความ
-router.delete("/:id", deleteArticle);     // ลบบทความ
+router.post("/", verifyToken, verifyAdmin, createArticle);
+router.put("/:id", verifyToken, verifyAdmin, updateArticle);
+router.delete("/:id", verifyToken, verifyAdmin, deleteArticle);
 
 export default router;

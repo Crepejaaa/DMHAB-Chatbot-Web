@@ -37,10 +37,9 @@ export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction)
 };
 
 export const verifyAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
-  if (req.user?.role !== "ADMIN") {
-    res.status(403).json({ error: "ไม่มีสิทธิ์เข้าถึงข้อมูลผู้ดูแลระบบ" });
+  if (!req.user || req.user.role !== "ADMIN") {
+    res.status(403).json({ error: "Access Denied: สำหรับผู้ดูแลระบบ (Admin) เท่านั้น" });
     return;
   }
-
   next();
 };
