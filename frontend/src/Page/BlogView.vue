@@ -118,6 +118,9 @@
         </div>
       </div>
       <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
+      <div v-else-if="articles.length === 0" class="mt-10 rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
+        ยังไม่มีบทความ
+      </div>
 
       <div v-else :class="articleLayoutClass" class="mt-10">
         <article
@@ -230,136 +233,15 @@ const formatDate = (dateString) => {
   });
 };
 
-const fallbackArticles = [
-  {
-    id: 'stress-management',
-    slug: 'stress-management',
-    coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-26',
-    category: 'สุขภาพจิต',
-    title: 'วิธีรับมือกับความเครียดจากการทำงาน',
-    excerpt: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงานเพื่อรักษาสุขภาพจิตที่ดีในระยะยาว',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: ''
-  },
-  {
-    id: 'sleep-and-mood',
-    slug: 'sleep-and-mood',
-    coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-24',
-    category: 'การนอนหลับ',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
-    excerpt: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวลและความแปรปรวนทางอารมณ์',
-    sourceName: 'National Sleep Foundation (NSF)',
-    sourceUrl: ''
-  },
-  {
-    id: 'warning-signs',
-    slug: 'warning-signs',
-    coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-07-20',
-    category: 'คำปรึกษา',
-    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้ามเพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: ''
-  },
-  {
-    id: 'depression-teen-mhc11',
-    slug: 'depression-teen-mhc11',
-    coverImageUrl: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-01',
-    category: 'โรคซึมเศร้า',
-    title: 'โรคซึมเศร้าในวัยรุ่น: รู้จัก เข้าใจ และช่วยเหลือ',
-    excerpt: 'วัยรุ่นที่เป็นโรคซึมเศร้ามักไม่ได้รับการวินิจฉัยเพราะสัญญาณที่แตกต่างจากผู้ใหญ่ รู้จักอาการและวิธีช่วยเหลือ',
-    sourceName: 'ศูนย์สุขภาพจิตที่ 11 กรมสุขภาพจิต',
-    sourceUrl: 'https://mhc11.dmh.go.th/knowledge/5094/'
-  },
-  {
-    id: 'anxiety-disorder-mhc11',
-    slug: 'anxiety-disorder-mhc11',
-    coverImageUrl: 'https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-05',
-    category: 'ความวิตกกังวล',
-    title: 'โรควิตกกังวล: มากกว่าแค่ "ขี้กังวล"',
-    excerpt: 'ความวิตกกังวลที่มากเกินไปจนส่งผลต่อชีวิตประจำวันอาจเป็นสัญญาณของโรค ไม่ใช่แค่นิสัยส่วนตัว',
-    sourceName: 'ศูนย์สุขภาพจิตที่ 11 กรมสุขภาพจิต',
-    sourceUrl: 'https://mhc11.dmh.go.th/knowledge/5106/'
-  },
-  {
-    id: 'depression-brochure-dmhpd',
-    slug: 'depression-brochure-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-10',
-    category: 'โรคซึมเศร้า',
-    title: 'โรคซึมเศร้า: เข้าใจและรักษาได้',
-    excerpt: 'โรคซึมเศร้าเป็นโรคที่รักษาได้ ไม่ใช่ความอ่อนแอ ทำความเข้าใจอาการ สาเหตุ และวิธีรักษา เพื่อกลับมามีชีวิตที่ดีได้อีกครั้ง',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/media-brochure-depression-68-05-01/'
-  },
-  {
-    id: 'suicide-prevention-dmhpd',
-    slug: 'suicide-prevention-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-12',
-    category: 'การป้องกัน',
-    title: 'วิธีช่วยเหลือคนที่คิดจะทำร้ายตัวเอง',
-    excerpt: 'เมื่อคนที่คุณรักอยู่ในวิกฤต คุณจะทำอะไรได้บ้าง? เรียนรู้วิธีรับฟัง สังเกตสัญญาณ และขอความช่วยเหลืออย่างถูกวิธี',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/suicide1/'
-  },
-  {
-    id: 'burnout-workplace-dmhpd',
-    slug: 'burnout-workplace-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-15',
-    category: 'Burnout',
-    title: 'Burnout: ภาวะหมดไฟในการทำงาน รู้จัก รับมือ ฟื้นตัว',
-    excerpt: 'เมื่อทุ่มเทกับงานจนร่างกายและจิตใจหมดแรง ภาวะ Burnout ไม่ใช่ความอ่อนแอ แต่เป็นสัญญาณที่ต้องใส่ใจ',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/burnout2/'
-  },
-  {
-    id: 'resilience-quotient-dmhpd',
-    slug: 'resilience-quotient-dmhpd',
-    coverImageUrl: 'https://images.unsplash.com/photo-1488998527040-85054a85150e?auto=format&fit=crop&w=1200&q=80',
-    createdAt: '2026-08-20',
-    category: 'ความยืดหยุ่น',
-    title: 'RQ ความฉลาดทางด้านการฟื้นคืนพลัง: พลังแห่งการลุกขึ้นใหม่',
-    excerpt: 'ความสามารถในการฟื้นตัวจากความยากลำบากเป็นสิ่งที่ฝึกได้ RQ หรือ Resilience Quotient คือกุญแจสำคัญสู่สุขภาพจิตที่แข็งแรง',
-    sourceName: 'กรมสุขภาพจิต กระทรวงสาธารณสุข',
-    sourceUrl: 'https://dmhpd.dmh.go.th/resilience-quotient1/'
-  }
-]
-
 const fetchArticles = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
     const { data } = await axios.get('/api/articles')
-    const apiArticles = Array.isArray(data) ? data : []
-    const apiBySlug = new Map(apiArticles.map((article) => [article.slug || String(article.id), article]))
-    const fallbackSlugs = new Set(fallbackArticles.map((article) => article.slug || String(article.id)))
-
-    const mergedFallbackArticles = fallbackArticles.map((fallbackArticle) => {
-      const apiArticle = apiBySlug.get(fallbackArticle.slug || String(fallbackArticle.id))
-      return apiArticle
-        ? {
-            ...fallbackArticle,
-            ...apiArticle,
-            coverImageUrl: fallbackArticle.coverImageUrl || apiArticle.coverImageUrl,
-            sourceName: fallbackArticle.sourceName || apiArticle.sourceName,
-            sourceUrl: fallbackArticle.sourceUrl || apiArticle.sourceUrl
-          }
-        : fallbackArticle
-    })
-
-    const additionalApiArticles = apiArticles.filter((article) => !fallbackSlugs.has(article.slug || String(article.id)))
-    articles.value = [...mergedFallbackArticles, ...additionalApiArticles]
+    articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    errorMessage.value = ''
-    articles.value = fallbackArticles
+    errorMessage.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
   } finally {
     loading.value = false
   }

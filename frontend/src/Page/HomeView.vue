@@ -177,6 +177,14 @@
         </div>
       </div>
 
+      <p v-else-if="articlesError" class="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        {{ articlesError }}
+      </p>
+
+      <p v-else-if="visibleArticles.length === 0" class="rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
+        ยังไม่มีบทความ
+      </p>
+
       <div v-else class="grid md:grid-cols-3 gap-6">
         <div
           v-for="(article, idx) in visibleArticles"
@@ -268,59 +276,19 @@ import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
 import { useAuthStore } from '../stores/authStore'
+import axios from '../api/axios'
 
 const router = useRouter()
 const isDarkMode = inject('isDarkMode', false)
-const loading = ref(false)
+const loading = ref(true)
 const mobileMenuOpen = ref(false)
 
 const authStore = useAuthStore()
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
 
-const fallbackArticles = [
-  {
-    id: 'stress-management',
-    slug: 'stress-management',
-    title: 'วิธีรับมือกับความเครียดจากการทำงาน (Burnout)',
-    excerpt: 'เรียนรู้วิธีจัดการความเครียดและปรับสมดุลชีวิตการทำงาน เพื่อรักษาสุขภาพจิตที่ดีในระยะยาว',
-    content: 'ความเครียดจากการทำงานเป็นเรื่องที่พบได้บ่อยในยุคปัจจุบัน หลายคนรู้สึกเหนื่อยล้า ขาดแรงจูงใจ และมีความกังวลจนส่งผลต่อสุขภาพกายและสุขภาพจิต',
-    category: 'สุขภาพจิต',
-    coverImageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'PhuenJaiZone',
-    sourceUrl: '',
-    createdAt: '2026-07-26T00:00:00.000Z'
-  },
-  {
-    id: 'sleep-and-mood',
-    slug: 'sleep-and-mood',
-    title: 'ทำไมการนอนหลับถึงส่งผลต่ออารมณ์ของเรา?',
-    excerpt: 'การพักผ่อนที่ไม่เพียงพออาจเป็นสาเหตุหลักของอาการวิตกกังวล และความแปรปรวนทางอารมณ์',
-    content: 'การนอนหลับมีบทบาทสำคัญต่อการควบคุมอารมณ์และการทำงานของสมอง หากร่างกายไม่ได้พักผ่อนเพียงพอ ความสามารถในการคิดวิเคราะห์จะลดลง',
-    category: 'การนอนหลับ',
-    coverImageUrl: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'PhuenJaiZone',
-    sourceUrl: '',
-    createdAt: '2026-07-24T00:00:00.000Z'
-  },
-  {
-    id: 'warning-signs',
-    slug: 'warning-signs',
-    title: 'สัญญาณเตือนว่าคุณควรปรึกษาผู้เชี่ยวชาญ',
-    excerpt: 'เช็คลิสต์อาการเบื้องต้นที่คุณไม่ควรมองข้าม เพื่อรับการดูแลและคำปรึกษาอย่างทันท่วงที',
-    content: 'สุขภาพจิตที่ดีไม่ได้หมายถึงการที่ไม่มีอารมณ์แปรปรวน แต่หมายถึงความสามารถในการรับมือกับอารมณ์และหาทางช่วยเหลือเมื่อความกังวลเริ่มท่วมท้น',
-    category: 'คำปรึกษา',
-    coverImageUrl: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=1200&q=80',
-    sourceName: 'PhuenJaiZone',
-    sourceUrl: '',
-    createdAt: '2026-07-20T00:00:00.000Z'
-  }
-]
-
-const articles = ref(fallbackArticles.map((article) => ({ ...article })))
-const visibleArticles = computed(() => {
-  const list = articles.value && articles.value.length > 0 ? articles.value : fallbackArticles
-  return list.slice(0, 3)
-})
+const articles = ref([])
+const articlesError = ref('')
+const visibleArticles = computed(() => articles.value.slice(0, 3))
 
 const formatDate = (dateValue) => {
   if (!dateValue) return 'ไม่ระบุวันที่'
@@ -345,20 +313,13 @@ const goToRegister = () => {
 const fetchArticles = async () => {
   try {
     loading.value = true
-    // เปลี่ยนมาใช้ fetch API มาตรฐาน
-    const response = await fetch('/api/articles')
-    if (!response.ok) throw new Error('Failed to fetch articles')
-    
-    const data = await response.json()
-    
-    if (Array.isArray(data) && data.length > 0) {
-      articles.value = data
-    } else {
-      articles.value = fallbackArticles.map((article) => ({ ...article }))
-    }
+    articlesError.value = ''
+    const { data } = await axios.get('/api/articles')
+    articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    articles.value = fallbackArticles.map((article) => ({ ...article }))
+    articles.value = []
+    articlesError.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
   } finally {
     loading.value = false
     nextTick(() => {

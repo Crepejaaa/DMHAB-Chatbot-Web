@@ -32,8 +32,12 @@
         </button>
       </div>
 
+      <p v-if="articlesLoadError" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        {{ articlesLoadError }}
+      </p>
+
       <!-- Empty state -->
-      <div v-if="mockArticles.length === 0" class="flex flex-col items-center justify-center py-16 text-gray-400">
+      <div v-else-if="mockArticles.length === 0" class="flex flex-col items-center justify-center py-16 text-gray-400">
         <svg class="w-12 h-12 mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
@@ -56,13 +60,13 @@
               >
                 {{ categoryLabel(article.category) }}
               </span>
-              <span class="text-[10px] text-gray-400 font-mono">{{ article.date }}</span>
+              <span class="text-[10px] text-gray-400 font-mono">{{ formatArticleDate(article.createdAt) }}</span>
             </div>
             <h3 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2 group-hover:text-[#0D9488] transition">{{ article.title }}</h3>
             <p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed">{{ article.excerpt || article.content }}</p>
           </div>
           <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-            <span class="text-[10px] text-gray-400">โดย แอดมิน #{{ article.authorId }}</span>
+            <span class="text-[10px] text-gray-400">โดย แอดมิน #{{ article.createdById }}</span>
             <div class="flex gap-2">
               <button type="button" @click.stop="openArticleEditor(article)" class="text-xs text-[#0D9488] font-bold hover:underline cursor-pointer">แก้ไข</button>
               <button type="button" @click.stop="deleteArticle(article.id)" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer">ลบ</button>
@@ -174,6 +178,16 @@
               />
             </div>
 
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">URL แหล่งที่มา (ถ้ามี)</label>
+              <input
+                v-model="articleForm.sourceUrl"
+                type="url"
+                placeholder="https://example.com/article"
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition"
+              />
+            </div>
+
             <!-- Preview card -->
             <div v-if="articleForm.title || articleForm.content" class="border border-dashed border-[#0D9488]/30 rounded-2xl p-4 bg-[#F0FDF9]">
               <p class="text-xs font-bold text-[#0D9488] mb-2 uppercase tracking-wider">👁 ตัวอย่างการ์ด</p>
@@ -248,8 +262,7 @@ import { ref, computed, inject, onMounted } from 'vue'
 
 const triggerSuccessToast = inject('triggerSuccessToast')
 
-// 1. กำหนด Base URL ของ Backend
-const API_URL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
+const API_URL = import.meta.env.DEV ? '' : (import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com');
 
 // Formatting date
 const currentDate = computed(() => {
@@ -263,16 +276,31 @@ const todayDateFormatted = computed(() => {
 
 // Articles management (เชื่อมต่อฐานข้อมูลจริงด้วย fetch API)
 const mockArticles = ref([])
+const articlesLoadError = ref('')
+
+function formatArticleDate(dateValue) {
+  if (!dateValue) return 'ไม่ระบุวันที่'
+  return new Date(dateValue).toLocaleDateString('th-TH', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
+}
 
 // 2. ฟังก์ชันดึงบทความจาก Backend (GET)
 const fetchAdminArticles = async () => {
   try {
+    articlesLoadError.value = ''
     const response = await fetch(`${API_URL}/api/articles`);
-    if (!response.ok) throw new Error('Failed to fetch articles');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to fetch articles (${response.status})`);
+    }
     const data = await response.json();
-    mockArticles.value = data;
+    mockArticles.value = Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Error loading articles:', error);
+    articlesLoadError.value = error.message || 'ไม่สามารถโหลดบทความจากฐานข้อมูลได้';
   }
 };
 
@@ -284,7 +312,7 @@ onMounted(() => {
 // ==================== Article Editor ====================
 const isArticleEditorOpen = ref(false)
 const editingArticle = ref(null)
-const articleForm = ref({ title: '', category: '', excerpt: '', content: '', sourceName: '', coverImageUrl: '' })
+const articleForm = ref({ title: '', category: '', excerpt: '', content: '', sourceName: '', coverImageUrl: '', sourceUrl: '' })
 const formErrors = ref({})
 
 // Article delete confirm
@@ -301,10 +329,11 @@ function openArticleEditor(article) {
       excerpt: article.excerpt || '',
       content: article.content || '',
       sourceName: article.sourceName || '',
-      coverImageUrl: article.coverImageUrl || ''
+      coverImageUrl: article.coverImageUrl || '',
+      sourceUrl: article.sourceUrl || ''
     }
   } else {
-    articleForm.value = { title: '', category: '', excerpt: '', content: '', sourceName: '', coverImageUrl: '' }
+    articleForm.value = { title: '', category: '', excerpt: '', content: '', sourceName: '', coverImageUrl: '', sourceUrl: '' }
   }
   isArticleEditorOpen.value = true
 }
@@ -336,6 +365,7 @@ async function saveArticle() {
       content: articleForm.value.content,
       sourceName: articleForm.value.sourceName,
       coverImageUrl: articleForm.value.coverImageUrl,
+      sourceUrl: articleForm.value.sourceUrl,
     }
 
     const isEdit = !!editingArticle.value?.id;
@@ -354,14 +384,17 @@ async function saveArticle() {
       body: JSON.stringify(payload)
     });
 
-    if (!response.ok) throw new Error('Failed to save article');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to save article (${response.status})`);
+    }
 
     closeArticleEditor();
     triggerSuccessToast(isEdit ? 'แก้ไขบทความสำเร็จ' : 'สร้างบทความใหม่สำเร็จ');
-    fetchAdminArticles(); // โหลดข้อมูลใหม่จาก DB ทันที
+    await fetchAdminArticles();
   } catch (error) {
     console.error("Error saving article:", error);
-    alert("เกิดข้อผิดพลาดในการบันทึกบทความ");
+    alert(error.message || "เกิดข้อผิดพลาดในการบันทึกบทความ");
   }
 }
 
@@ -381,15 +414,18 @@ async function executeDeleteArticle() {
       }
     });
 
-    if (!response.ok) throw new Error('Failed to delete article');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to delete article (${response.status})`);
+    }
 
     isDeleteConfirmOpen.value = false
     articleToDeleteId.value = null
     triggerSuccessToast('ลบบทความสำเร็จ')
-    fetchAdminArticles(); // โหลดตารางใหม่หลังลบ
+    await fetchAdminArticles();
   } catch (error) {
     console.error("Error deleting article:", error);
-    alert("เกิดข้อผิดพลาดในการลบบทความ");
+    alert(error.message || "เกิดข้อผิดพลาดในการลบบทความ");
   }
 }
 

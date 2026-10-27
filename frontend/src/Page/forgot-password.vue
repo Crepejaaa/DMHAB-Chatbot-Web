@@ -136,7 +136,7 @@ import { ref, inject } from 'vue'
 
 const isDarkMode = inject('isDarkMode')
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
+const baseURL = import.meta.env.VITE_API_URL || 'https://dmhab-chatbot-web.onrender.com';
 
 const email = ref('')
 
