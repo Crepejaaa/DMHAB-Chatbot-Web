@@ -182,7 +182,7 @@
           <div class="flex justify-center pt-2">
             <VueRecaptcha
               ref="recaptchaWidget"
-              :sitekey="recaptchaSiteKey"
+              :sitekey="siteKey"
               :load-recaptcha-script="true"
               @verify="onRecaptchaVerify"
               @expired="onRecaptchaExpired"
@@ -263,7 +263,7 @@ const fileInput = ref(null)
 const imagePreview = ref(null)
 
 // ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2
-const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 const recaptchaToken = ref('')
 const recaptchaWidget = ref(null)
 
