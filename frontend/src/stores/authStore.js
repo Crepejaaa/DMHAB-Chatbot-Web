@@ -67,7 +67,15 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(userData) {
       try {
-        const response = await axios.post('/api/register', userData);
+        const payload = {
+          name: userData?.name,
+          username: userData?.username || userData?.name,
+          email: userData?.email,
+          password: userData?.password,
+          confirmPassword: userData?.confirmPassword,
+          recaptchaToken: userData?.recaptchaToken,
+        };
+        const response = await axios.post('/api/register', payload);
         return { success: true, message: response.data.message || 'สมัครสมาชิกสำเร็จ' };
       } catch (error) {
         return { 
