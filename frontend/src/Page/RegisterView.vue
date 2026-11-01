@@ -194,15 +194,16 @@
           <div class="pt-4">
             <button 
               type="submit"
-              :disabled="!recaptchaToken"
+              :disabled="!recaptchaToken || isLoading"
               :class="[
-                'w-full font-bold py-3.5 px-4 rounded-xl shadow-md transition transform',
-                !recaptchaToken
+                'w-full font-bold py-3.5 px-4 rounded-xl shadow-md transition transform flex items-center justify-center gap-2',
+                (!recaptchaToken || isLoading)
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60'
                   : 'bg-[#29CBAE] hover:bg-[#25B89D] text-white active:scale-95 cursor-pointer'
               ]"
             >
-              สมัครสมาชิก
+              <span v-if="isLoading">กำลังสมัครสมาชิก...</span>
+              <span v-else>สมัครสมาชิก</span>
             </button>
           </div>
         </form>
@@ -261,14 +262,21 @@ const isDarkMode = inject('isDarkMode', ref(false))
 
 const fileInput = ref(null)
 const imagePreview = ref(null)
+const isLoading = ref(false)
 
-// ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2
-const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+// ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2 (พร้อม fallback กรณีบน Vercel ยังไม่ได้ตั้งค่า env)
+const siteKey = (
+  import.meta.env.VITE_RECAPTCHA_SITE_KEY ||
+  '6LdABQMuAAAAAOC7puNnMililfhW3Y9hWCUKy19s'
+)
+  .trim()
+  .replace(/^["']|["']$/g, '')
+
 const recaptchaToken = ref('')
 const recaptchaWidget = ref(null)
 
 const onRecaptchaVerify = (token) => {
-  recaptchaToken.value = token
+  recaptchaToken.value = typeof token === 'string' ? token.trim() : ''
   errorMessage.value = ''
 }
 
@@ -278,6 +286,7 @@ const onRecaptchaExpired = () => {
 
 const onRecaptchaError = () => {
   recaptchaToken.value = ''
+  errorMessage.value = 'ไม่สามารถโหลดหรือยืนยัน reCAPTCHA ได้ กรุณาลองใหม่อีกครั้ง'
 }
 
 const form = ref({
@@ -309,6 +318,10 @@ const acceptAndClose = () => {
   showTermsModal.value = false
 }
 
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
 const handleImageUpload = (event) => {
   const file = event.target.files[0]
   if (file) {
@@ -318,6 +331,7 @@ const handleImageUpload = (event) => {
 }
 
 const handleRegister = async () => {
+  if (isLoading.value) return
   errorMessage.value = ''
   
   // เช็กว่าผู้ใช้ยอมรับเงื่อนไขแล้วหรือยัง
@@ -327,7 +341,8 @@ const handleRegister = async () => {
   }
 
   // เช็กว่าผู้ใช้ติ๊ก reCAPTCHA หรือยัง
-  if (!recaptchaToken.value) {
+  const token = recaptchaToken.value?.trim()
+  if (!token) {
     errorMessage.value = "กรุณายืนยันตัวตนผ่าน reCAPTCHA ก่อนทำการสมัครสมาชิก"
     return
   }
@@ -339,25 +354,31 @@ const handleRegister = async () => {
   }
 
   const userData = {
-    name: form.value.name,
-    email: form.value.email,
+    name: form.value.name.trim(),
+    username: form.value.name.trim(),
+    email: form.value.email.trim(),
     password: form.value.password,
     confirmPassword: form.value.confirmPassword,
-    recaptchaToken: recaptchaToken.value
+    recaptchaToken: token
   }
 
-  const result = await authStore.register(userData)
+  isLoading.value = true
+  try {
+    const result = await authStore.register(userData)
 
-  if (result.success) {
-    alert(result.message)
-    router.push('/login')
-  } else {
-    errorMessage.value = result.message
-    // รีเซ็ต Token และ Widget หากเกิดข้อผิดพลาดในการสมัคร
-    recaptchaToken.value = ''
-    if (recaptchaWidget.value?.reset) {
-      recaptchaWidget.value.reset()
+    if (result.success) {
+      alert(result.message)
+      router.push('/login')
+    } else {
+      errorMessage.value = result.message
+      // รีเซ็ต Token และ Widget หากเกิดข้อผิดพลาดในการสมัคร (เพราะ Token ของ Google ใช้ได้ครั้งเดียว)
+      recaptchaToken.value = ''
+      if (recaptchaWidget.value?.reset) {
+        recaptchaWidget.value.reset()
+      }
     }
+  } finally {
+    isLoading.value = false
   }
 }
 </script>

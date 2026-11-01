@@ -2,6 +2,12 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import axios from "axios";
+import dotenv from "dotenv";
+import path from "path";
+
+if (!process.env.JWT_SECRET || !process.env.RECAPTCHA_SECRET_KEY) {
+  dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+}
 
 // เปลี่ยนจาก new PrismaClient() มาเป็นการเรียกใช้ผ่าน adapter ที่เราตั้งค่าไว้
 import prisma from "../prismaClient";
@@ -15,19 +21,45 @@ const ACCESS_TOKEN_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || "1d") as jwt.Sign
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ recaptchaToken
-    const { name, username = name, password, email, recaptchaToken } = req.body;
+    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ recaptchaToken / g-recaptcha-response
+    const { name, username = name, password, email } = req.body || {};
+    const rawRecaptchaToken = req.body?.recaptchaToken ?? req.body?.["g-recaptcha-response"];
+    const recaptchaToken = typeof rawRecaptchaToken === "string" ? rawRecaptchaToken.trim() : "";
 
-    // ตรวจสอบ reCAPTCHA Token
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    // อ่านค่า RECAPTCHA_SECRET_KEY และตัดช่องว่างหรือเครื่องหมายคำพูดที่อาจติดมาจาก .env / Render
+    const secretKey = (process.env.RECAPTCHA_SECRET_KEY || "")
+      .trim()
+      .replace(/^["']|["']$/g, "");
+
+    // Log ตรวจสอบค่าก่อนส่งไป Verify กับ Google Siteverify API
+    console.log("[Register reCAPTCHA Check]", {
+      hasRecaptchaToken: Boolean(recaptchaToken),
+      tokenLength: recaptchaToken.length,
+      tokenPreview: recaptchaToken ? `${recaptchaToken.slice(0, 12)}...` : null,
+      hasSecretKey: Boolean(secretKey),
+      secretKeyLength: secretKey.length,
+      bodyKeys: Object.keys(req.body || {}),
+    });
+
     if (!recaptchaToken) {
-      res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+      console.warn("[Register reCAPTCHA] Missing recaptchaToken in request body");
+      res.status(400).json({
+        error: "กรุณายืนยันตัวตนผ่าน reCAPTCHA ก่อนทำการสมัครสมาชิก (ไม่พบ recaptchaToken)",
+      });
+      return;
+    }
+
+    if (!secretKey) {
+      console.error("[Register reCAPTCHA] Missing RECAPTCHA_SECRET_KEY in environment variables");
+      res.status(500).json({
+        error: "ระบบยังไม่ได้ตั้งค่า RECAPTCHA_SECRET_KEY บนเซิร์ฟเวอร์ (Backend)",
+      });
       return;
     }
 
     try {
       const params = new URLSearchParams();
-      params.append("secret", secretKey || "");
+      params.append("secret", secretKey);
       params.append("response", recaptchaToken);
 
       const verifyResponse = await axios.post(
@@ -40,13 +72,52 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         }
       );
 
+      const errorCodes: string[] = verifyResponse.data?.["error-codes"] || [];
+      console.log("[Register reCAPTCHA Siteverify Result]", {
+        success: verifyResponse.data?.success,
+        hostname: verifyResponse.data?.hostname,
+        challenge_ts: verifyResponse.data?.challenge_ts,
+        errorCodes,
+      });
+
       if (!verifyResponse.data?.success) {
-        res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+        if (
+          errorCodes.includes("missing-input-secret") ||
+          errorCodes.includes("invalid-input-secret")
+        ) {
+          console.error("[Register reCAPTCHA] Invalid RECAPTCHA_SECRET_KEY:", errorCodes);
+          res.status(500).json({
+            error: "ค่า RECAPTCHA_SECRET_KEY บนเซิร์ฟเวอร์ไม่ถูกต้อง",
+            details: errorCodes,
+          });
+          return;
+        }
+
+        if (errorCodes.includes("timeout-or-duplicate")) {
+          res.status(400).json({
+            error: "reCAPTCHA หมดอายุหรือถูกใช้งานไปแล้ว กรุณาติ๊กยืนยันใหม่อีกครั้ง",
+            details: errorCodes,
+          });
+          return;
+        }
+
+        if (errorCodes.includes("invalid-input-response")) {
+          res.status(400).json({
+            error: "reCAPTCHA Token ไม่ถูกต้อง (โปรดตรวจสอบว่า Site Key ตรงกับ Secret Key)",
+            details: errorCodes,
+          });
+          return;
+        }
+
+        res.status(400).json({
+          error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ",
+          details: errorCodes,
+        });
         return;
       }
     } catch (recaptchaError) {
       console.error("reCAPTCHA verification error:", recaptchaError);
-      res.status(400).json({ error: "reCAPTCHA ไม่ถูกต้อง หรือหมดอายุ" });
+      res.status(400).json({ error: "ไม่สามารถเชื่อมต่อระบบตรวจสอบ reCAPTCHA ได้ กรุณาลองใหม่อีกครั้ง" });
       return;
     }
 
@@ -168,128 +239,9 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
       orderBy: { createdAt: 'desc' } // เรียงคนสมัครล่าสุดขึ้นก่อน
     });
     
-    res.setHeader("Cache-Control", "no-store");
     res.status(200).json(users);
   } catch (error) {
-    console.error("Error fetching admin users:", error);
     res.status(500).json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้งานได้", details: error });
-  }
-};
-
-export const updateUserRole = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const userId = Number(req.params.id);
-    const { role } = req.body;
-
-    if (!Number.isInteger(userId) || userId <= 0) {
-      res.status(400).json({ error: "รหัสผู้ใช้งานไม่ถูกต้อง" });
-      return;
-    }
-
-    if (role !== "USER" && role !== "ADMIN") {
-      res.status(400).json({ error: "Role ต้องเป็น USER หรือ ADMIN เท่านั้น" });
-      return;
-    }
-
-    if (Number(req.user?.userId) === userId) {
-      res.status(400).json({ error: "ไม่สามารถเปลี่ยนสิทธิ์บัญชีของตนเองได้" });
-      return;
-    }
-
-    const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, role: true }
-    });
-
-    if (!targetUser) {
-      res.status(404).json({ error: "ไม่พบผู้ใช้งานนี้" });
-      return;
-    }
-
-    if (targetUser.role === "ADMIN" && role === "USER") {
-      const adminCount = await prisma.user.count({ where: { role: "ADMIN" } });
-      if (adminCount <= 1) {
-        res.status(400).json({ error: "ไม่สามารถลดสิทธิ์แอดมินคนสุดท้ายได้" });
-        return;
-      }
-    }
-
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { role },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        role: true,
-        createdAt: true
-      }
-    });
-
-    res.setHeader("Cache-Control", "no-store");
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.error("Error updating user role:", error);
-    res.status(500).json({ error: "ไม่สามารถเปลี่ยนสิทธิ์ผู้ใช้งานได้" });
-  }
-};
-
-export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
-  const userId = Number(req.params.id);
-  const requesterId = Number(req.user?.userId);
-
-  if (!Number.isInteger(userId) || userId <= 0) {
-    res.status(400).json({ error: "รหัสผู้ใช้งานไม่ถูกต้อง" });
-    return;
-  }
-
-  if (requesterId === userId) {
-    res.status(400).json({ error: "ไม่สามารถลบบัญชีของตนเองได้" });
-    return;
-  }
-
-  try {
-    const result = await prisma.$transaction(async (transaction: any) => {
-      const targetUser = await transaction.user.findUnique({
-        where: { id: userId },
-        select: { id: true, role: true }
-      });
-
-      if (!targetUser) {
-        return { error: "ไม่พบผู้ใช้งานนี้", status: 404 };
-      }
-
-      if (targetUser.role === "ADMIN") {
-        const adminCount = await transaction.user.count({ where: { role: "ADMIN" } });
-        if (adminCount <= 1) {
-          return { error: "ไม่สามารถลบแอดมินคนสุดท้ายได้", status: 400 };
-        }
-      }
-
-      const authoredArticles = await transaction.article.count({
-        where: { createdById: userId }
-      });
-
-      if (authoredArticles > 0) {
-        return {
-          error: "ไม่สามารถลบบัญชีนี้ได้ เนื่องจากยังมีบทความที่บัญชีนี้เป็นผู้เขียน กรุณาจัดการบทความก่อน",
-          status: 409
-        };
-      }
-
-      await transaction.user.delete({ where: { id: userId } });
-      return null;
-    }, { isolationLevel: "Serializable" });
-
-    if (result) {
-      res.status(result.status).json({ error: result.error });
-      return;
-    }
-
-    res.status(200).json({ message: "ลบบัญชีผู้ใช้งานและข้อมูลที่เกี่ยวข้องแล้ว" });
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({ error: "ไม่สามารถลบบัญชีผู้ใช้งานได้" });
   }
 };
 
