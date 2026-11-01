@@ -1,4 +1,3 @@
-
 import path from "path";
 import dotenv from "dotenv";
 import { defineConfig } from "prisma/config";
@@ -7,4 +6,11 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
+  ...(process.env.DATABASE_URL
+    ? {
+        datasource: {
+          url: process.env.DATABASE_URL,
+        },
+      }
+    : {}),
 });

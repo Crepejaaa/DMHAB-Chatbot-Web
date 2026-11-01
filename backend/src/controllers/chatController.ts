@@ -1,14 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import prisma from "../prismaClient";
 import { generateChatResponse, AIResponse } from "../services/groqService";
-
-
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 // ดึงประวัติการสนทนาของ Session ปัจจุบัน
-export const getUserChatSessions = async (req: Request, res: Response): Promise<void> => {
+export const getUserChatSessions = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user?.userId;
-    if (!userId) {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
@@ -45,12 +44,12 @@ export const getUserChatSessions = async (req: Request, res: Response): Promise<
 };
 
 // ส่งข้อความและโต้ตอบกับ บอท
-export const sendMessage = async (req: Request, res: Response): Promise<void> => {
+export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user?.userId;
+    const userId = Number(req.user?.userId);
     const { message } = req.body;
 
-    if (!userId) {
+    if (!Number.isInteger(userId) || userId <= 0) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
