@@ -11,6 +11,7 @@ if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET environment variable");
 }
 const JWT_SECRET = process.env.JWT_SECRET as string;
+const ACCESS_TOKEN_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || "1d") as jwt.SignOptions["expiresIn"];
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -96,7 +97,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       JWT_SECRET,
-      { expiresIn: "15m" } // Access token is short-lived now
+      { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
     );
 
     // สร้าง Refresh Token
@@ -139,11 +140,11 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
         return;
       }
 
-      // Generate a new short-lived access token
+      // Generate a new access token
       const newToken = jwt.sign(
         { userId: decoded.userId, role: decoded.role || "USER" },
         JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
       );
 
       res.status(200).json({ token: newToken });
