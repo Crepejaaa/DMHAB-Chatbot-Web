@@ -264,13 +264,15 @@ const fileInput = ref(null)
 const imagePreview = ref(null)
 const isLoading = ref(false)
 
-// ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2 (พร้อม fallback กรณีบน Vercel ยังไม่ได้ตั้งค่า env)
-const siteKey = (
-  import.meta.env.VITE_RECAPTCHA_SITE_KEY ||
-  '6LdABQMuAAAAAOC7puNnMililfhW3Y9hWCUKy19s'
-)
+// ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2 (ดึงจาก Environment Variable เท่านั้น ไม่ใช้ Hardcode Fallback)
+const siteKey = (import.meta.env.VITE_RECAPTCHA_SITE_KEY || '')
   .trim()
   .replace(/^["']|["']$/g, '')
+
+console.log(
+  'Current Site Key:',
+  siteKey ? siteKey.substring(0, 5) + '...' + siteKey.slice(-5) : '(empty)'
+)
 
 const recaptchaToken = ref('')
 const recaptchaWidget = ref(null)
