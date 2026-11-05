@@ -7,7 +7,7 @@
         type="button"
       >
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/40">
-          <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+          <img v-if="authStore.profileImage" :src="authStore.profileImage" :alt="$t('profileMenu.profileAlt')" class="h-full w-full object-cover" />
           <span v-else>{{ userInitial }}</span>
         </div>
         <span class="hidden sm:inline">{{ authStore.displayName }}</span>
@@ -19,11 +19,11 @@
       <div v-if="showProfileMenu" class="absolute right-0 z-[999] mt-2 w-60 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
         <div class="border-b border-gray-100 px-4 py-3 text-left flex items-center gap-3">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0D9488]/10 text-sm font-bold text-[#0D9488] overflow-hidden border border-[#0D9488]/20">
-            <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+            <img v-if="authStore.profileImage" :src="authStore.profileImage" :alt="$t('profileMenu.profileAlt')" class="h-full w-full object-cover" />
             <span v-else>{{ userInitial }}</span>
           </div>
           <div class="overflow-hidden">
-            <p class="text-[11px] text-gray-500">บัญชีของคุณ</p>
+            <p class="text-[11px] text-gray-500">{{ $t('profileMenu.yourAccount') }}</p>
             <p class="text-sm font-semibold text-gray-800 truncate">{{ authStore.displayName }}</p>
             <p class="text-xs text-gray-500 truncate">{{ authStore.userEmail }}</p>
           </div>
@@ -34,24 +34,24 @@
           @click="goToProfile"
           class="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-[#F3F4F6]"
         >
-          <span>จัดการโปรไฟล์</span>
+          <span>{{ $t('profileMenu.manageProfile') }}</span>
         </button>
         <button
           type="button"
           @click="goToAccount"
           class="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-[#F3F4F6]"
         >
-          <span>จัดการข้อมูล</span>
+          <span>{{ $t('profileMenu.manageData') }}</span>
         </button>
 
         <div class="flex items-center justify-between border-t border-gray-100 px-4 py-3 text-sm text-gray-700">
-          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">Dark Mode</span>
+          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">{{ $t('nav.darkMode') }}</span>
           <button
             type="button"
             @click="toggleDarkMode"
             :class="isDarkMode ? 'bg-[#045F54]' : 'bg-slate-200'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300"
-            aria-label="Toggle dark mode"
+            :aria-label="$t('profileMenu.toggleDarkMode')"
           >
             <span
               :class="isDarkMode ? 'translate-x-4 bg-white' : 'translate-x-1 bg-slate-700'"
@@ -65,7 +65,7 @@
           @click="handleLogout"
           class="flex w-full items-center justify-between border-t border-gray-100 px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
         >
-          <span>ออกจากระบบ</span>
+          <span>{{ $t('profileMenu.logout') }}</span>
         </button>
       </div>
     </div>
@@ -76,7 +76,7 @@
         class="px-5 py-1.5 rounded-full border border-white/60 hover:bg-white/10 transition inline-flex items-center justify-center cursor-pointer text-white"
         type="button"
       >
-        Login
+        {{ $t('profileMenu.login') }}
       </button>
 
       <button
@@ -84,7 +84,7 @@
         class="px-5 py-1.5 bg-[#023832] hover:bg-[#01221E] text-white rounded-full font-medium transition shadow-sm"
         type="button"
       >
-        Register
+        {{ $t('profileMenu.register') }}
       </button>
     </div>
 
@@ -93,7 +93,7 @@
         type="button"
         @click="mobileMenuOpen = !mobileMenuOpen"
         class="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/5 text-white shadow-sm transition hover:bg-white/10"
-        aria-label="Open menu"
+        :aria-label="$t('profileMenu.openMenu')"
       >
         <span class="flex flex-col gap-1.5">
           <span class="mobile-menu-toggle-line h-0.5 w-5 rounded-full bg-white"></span>
@@ -105,11 +105,11 @@
       <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
         <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left flex items-center gap-3">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/30">
-            <img v-if="authStore.profileImage" :src="authStore.profileImage" alt="Profile" class="h-full w-full object-cover" />
+            <img v-if="authStore.profileImage" :src="authStore.profileImage" :alt="$t('profileMenu.profileAlt')" class="h-full w-full object-cover" />
             <span v-else>{{ userInitial }}</span>
           </div>
           <div class="overflow-hidden">
-            <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">Account</p>
+            <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">{{ $t('profileMenu.account') }}</p>
             <p class="mt-0.5 text-sm font-semibold truncate">{{ authStore.displayName }}</p>
             <p class="text-xs text-gray-400 truncate">{{ authStore.userEmail }}</p>
           </div>
@@ -122,21 +122,21 @@
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
             @click="mobileMenuOpen = false"
           >
-            <span>About</span>
+            <span>{{ $t('nav.about') }}</span>
           </router-link>
           <router-link
             to="/services"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
             @click="mobileMenuOpen = false"
           >
-            <span>Service</span>
+            <span>{{ $t('nav.services') }}</span>
           </router-link>
           <router-link
             to="/blog"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
             @click="mobileMenuOpen = false"
           >
-            <span>Blog</span>
+            <span>{{ $t('nav.blog') }}</span>
           </router-link>
 
           <div class="my-1 border-t border-white/10"></div>
@@ -148,7 +148,7 @@
             @click="goToLogin"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5"
           >
-            <span>Login</span>
+            <span>{{ $t('profileMenu.login') }}</span>
           </button>
           <button
             v-if="!authStore.isAuthenticated"
@@ -156,7 +156,7 @@
             @click="goToRegister"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5"
           >
-            <span>Register</span>
+            <span>{{ $t('profileMenu.register') }}</span>
           </button>
 
           <!-- Authenticated Links -->
@@ -166,7 +166,7 @@
             @click="goToProfile"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
           >
-            <span>จัดการโปรไฟล์</span>
+            <span>{{ $t('profileMenu.manageProfile') }}</span>
           </button>
           <button
             v-if="authStore.isAuthenticated"
@@ -174,11 +174,11 @@
             @click="goToAccount"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
           >
-            <span>จัดการข้อมูล</span>
+            <span>{{ $t('profileMenu.manageData') }}</span>
           </button>
 
           <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
-            <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Dark Mode</span>
+            <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">{{ $t('nav.darkMode') }}</span>
             <button
               type="button"
               @click="toggleDarkMode"
@@ -198,7 +198,7 @@
             @click="handleLogout"
             class="flex w-full items-center justify-between rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-3 text-left text-sm font-medium text-red-300 transition hover:bg-red-500/15"
           >
-            <span>ออกจากระบบ</span>
+            <span>{{ $t('profileMenu.logout') }}</span>
           </button>
         </div>
       </div>

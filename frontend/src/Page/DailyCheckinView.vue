@@ -5,33 +5,34 @@
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-2 sm:gap-3">
         <button type="button" @click="$router.push('/services/daily-checkin')"
-          class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center" title="ย้อนกลับ">
+          class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center" :title="$t('common.back')">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
           <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" class="hover:text-[#D1FAE5] transition">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
       </div>
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button @click="isDarkMode = !isDarkMode" :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none shadow-inner border border-white/30">
             <span :class="isDarkMode ? 'translate-x-4 bg-[#1E293B]' : 'translate-x-1 bg-white'"
               class="inline-block h-3 w-3 transform rounded-full transition-transform duration-300"></span>
           </button>
         </div>
+        <LanguageSwitcher />
         <ProfileMenu />
       </div>
     </nav>
@@ -56,10 +57,10 @@
           <div>
             <div class="flex items-center gap-3 mb-3">
               <span class="text-4xl">📝</span>
-              <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">เช็คอินสุขภาพจิตรายวัน</h1>
+              <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{{ $t('checkin.title') }}</h1>
             </div>
             <p class="text-sm md:text-base text-[#D1FAE5] max-w-2xl leading-relaxed">
-              บันทึกและติดตามความรู้สึกประจำวัน เพื่อให้คุณรู้จักตัวเองมากขึ้นในทุกๆ วัน
+              {{ $t('checkin.subtitle') }}
             </p>
           </div>
         </div>
@@ -76,15 +77,15 @@
           <!-- Card Header -->
           <div class="bg-gradient-to-r from-[#0D9488] to-[#059669] px-6 py-5 flex items-center justify-between">
             <div>
-              <p class="text-[#D1FAE5] text-xs font-semibold uppercase tracking-wider mb-0.5">วันนี้</p>
+              <p class="text-[#D1FAE5] text-xs font-semibold uppercase tracking-wider mb-0.5">{{ $t('checkin.today') }}</p>
               <h2 class="text-white font-extrabold text-lg">{{ todayFullDate }}</h2>
             </div>
             <div class="flex items-center gap-3">
               <span v-if="todayCheckin" class="flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                ✅ เช็คอินแล้ว
+                {{ $t('checkin.checkedIn') }}
               </span>
               <span v-else class="flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
-                ⏳ ยังไม่ได้เช็คอิน
+                {{ $t('checkin.notCheckedIn') }}
               </span>
             </div>
           </div>
@@ -93,7 +94,7 @@
             <!-- Mood Picker -->
             <div class="mb-8">
               <p :class="['text-sm font-bold mb-4', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                😊 วันนี้คุณรู้สึกอย่างไร?
+                {{ $t('checkin.howFeel') }}
               </p>
               <div class="grid grid-cols-5 gap-2 md:gap-4">
                 <button
@@ -114,7 +115,7 @@
                     {{ mood.emoji }}
                   </span>
                   <span :class="['text-[10px] md:text-xs font-bold text-center leading-tight', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                    {{ mood.label }}
+                    {{ $t('checkin.mood' + mood.id) }}
                   </span>
                 </button>
               </div>
@@ -123,12 +124,12 @@
             <!-- Mood Detail Sliders (appears after mood selection) -->
             <Transition name="slide-fade">
               <div v-if="selectedMood" class="mb-8 space-y-5">
-                <p :class="['text-sm font-bold', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">📊 บอกรายละเอียดเพิ่มเติม</p>
+                <p :class="['text-sm font-bold', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('checkin.moreDetail') }}</p>
 
                 <div v-for="metric in moodMetrics" :key="metric.id" class="space-y-2">
                   <div class="flex justify-between items-center">
                     <label :class="['text-xs font-semibold flex items-center gap-1.5', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-                      {{ metric.icon }} {{ metric.label }}
+                      {{ metric.icon }} {{ $t(metric.label) }}
                     </label>
                     <span class="text-xs font-bold text-[#0D9488]">{{ metric.value }}/10</span>
                   </div>
@@ -143,8 +144,8 @@
                     />
                   </div>
                   <div class="flex justify-between text-[10px]" :class="isDarkMode ? 'text-[#64748B]' : 'text-gray-400'">
-                    <span>{{ metric.lowLabel }}</span>
-                    <span>{{ metric.highLabel }}</span>
+                    <span>{{ $t(metric.lowLabel) }}</span>
+                    <span>{{ $t(metric.highLabel) }}</span>
                   </div>
                 </div>
               </div>
@@ -153,12 +154,12 @@
             <!-- Note / Journal -->
             <div class="mb-6">
               <label :class="['text-sm font-bold mb-2 block', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                📓 บันทึกสั้นๆ (ไม่บังคับ)
+                {{ $t('checkin.noteLabel') }}
               </label>
               <textarea
                 v-model="noteText"
                 rows="3"
-                placeholder="เล่าให้ฟังหน่อยว่าวันนี้เป็นอย่างไรบ้าง..."
+                :placeholder="$t('checkin.notePlaceholder')"
                 :class="[
                   'w-full px-4 py-3 rounded-2xl text-sm border transition-all duration-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#0D9488]',
                   isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-[#64748B]' : 'bg-gray-50 border-gray-200 text-[#1E293B]'
@@ -168,7 +169,7 @@
 
             <!-- Tags / Activities -->
             <div class="mb-8">
-              <p :class="['text-sm font-bold mb-3', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">🏷️ กิจกรรมที่ทำวันนี้</p>
+              <p :class="['text-sm font-bold mb-3', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('checkin.activitiesToday') }}</p>
               <div class="flex flex-wrap gap-2">
                 <button
                   v-for="tag in activityTags"
@@ -183,7 +184,7 @@
                         : 'border-gray-200 text-[#64748B] bg-white hover:border-[#0D9488]/40'
                   ]"
                 >
-                  {{ tag }}
+                  {{ tagLabel(tag) }}
                 </button>
               </div>
             </div>
@@ -197,7 +198,7 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
               </svg>
-              {{ todayCheckin ? 'อัปเดตการเช็คอินวันนี้' : 'บันทึกการเช็คอิน ✨' }}
+              {{ todayCheckin ? $t('checkin.updateCheckin') : $t('checkin.saveCheckin') }}
             </button>
           </div>
         </div>
@@ -218,11 +219,11 @@
         <div :class="['rounded-3xl border p-6 md:p-8', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h2 :class="['font-extrabold text-lg', isDarkMode ? 'text-white' : 'text-[#1E293B]']">📈 แนวโน้มอารมณ์ 7 วัน</h2>
-              <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">ติดตามสภาวะจิตใจของคุณย้อนหลัง 1 สัปดาห์</p>
+              <h2 :class="['font-extrabold text-lg', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t('checkin.trendTitle') }}</h2>
+              <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('checkin.trendDesc') }}</p>
             </div>
             <div class="flex gap-2">
-              <button v-for="period in ['7 วัน','14 วัน','30 วัน']" :key="period"
+              <button v-for="period in [7, 14, 30]" :key="period"
                 @click="selectedPeriod = period"
                 :class="[
                   'text-xs px-3 py-1.5 rounded-full font-semibold border transition cursor-pointer',
@@ -230,7 +231,7 @@
                     ? 'bg-[#0D9488] border-[#0D9488] text-white'
                     : isDarkMode ? 'border-white/20 text-[#94A3B8] hover:border-[#0D9488]/50' : 'border-gray-200 text-[#64748B] hover:border-[#0D9488]/40'
                 ]"
-              >{{ period }}</button>
+              >{{ $t('checkin.days', { n: period }) }}</button>
             </div>
           </div>
 
@@ -256,7 +257,7 @@
           <div class="flex flex-wrap gap-x-6 gap-y-2 mt-4 pt-4 border-t" :class="isDarkMode ? 'border-white/10' : 'border-gray-100'">
             <div v-for="mood in moodLegend" :key="mood.label" class="flex items-center gap-1.5">
               <div class="w-3 h-3 rounded-full" :style="{ background: mood.color }"></div>
-              <span :class="['text-xs', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ mood.label }}</span>
+              <span :class="['text-xs', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t(mood.label) }}</span>
             </div>
           </div>
         </div>
@@ -265,13 +266,13 @@
       <!-- ===== STEP 4 : History Log ===== -->
       <section class="anim-fade-up" style="animation-delay:.3s">
         <div :class="['rounded-3xl border p-6 md:p-8', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
-          <h2 :class="['font-extrabold text-lg mb-5', isDarkMode ? 'text-white' : 'text-[#1E293B]']">📋 ประวัติการเช็คอิน</h2>
+          <h2 :class="['font-extrabold text-lg mb-5', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t('checkin.historyTitle') }}</h2>
 
           <!-- Empty state -->
           <div v-if="checkinHistory.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
             <span class="text-5xl mb-3">📭</span>
-            <p class="text-sm font-semibold">ยังไม่มีประวัติ</p>
-            <p class="text-xs mt-1">เริ่มเช็คอินวันแรกของคุณด้านบน</p>
+            <p class="text-sm font-semibold">{{ $t('checkin.noHistory') }}</p>
+            <p class="text-xs mt-1">{{ $t('checkin.startFirst') }}</p>
           </div>
 
           <!-- History Timeline -->
@@ -290,12 +291,12 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2">
                   <div>
-                    <p :class="['font-bold text-sm', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ entry.mood.label }}</p>
-                    <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ entry.dateLabel }}</p>
+                    <p :class="['font-bold text-sm', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t('checkin.mood' + entry.mood.id) }}</p>
+                    <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ formatLongDate(entry.dateKey) }}</p>
                   </div>
                   <div class="flex items-center gap-1.5 flex-shrink-0">
                     <div class="w-2 h-2 rounded-full" :style="{ background: moodBarColor(entry.score) }"></div>
-                    <span class="text-xs font-bold text-[#0D9488]">คะแนน {{ entry.score }}/5</span>
+                    <span class="text-xs font-bold text-[#0D9488]">{{ $t('checkin.scoreOf5', { n: entry.score }) }}</span>
                   </div>
                 </div>
                 <!-- Note -->
@@ -306,7 +307,7 @@
                 <div v-if="entry.tags?.length" class="flex flex-wrap gap-1.5 mt-2">
                   <span v-for="tag in entry.tags" :key="tag"
                     class="text-[10px] px-2 py-0.5 rounded-full bg-[#0D9488]/10 text-[#0D9488] font-semibold">
-                    {{ tag }}
+                    {{ tagLabel(tag) }}
                   </span>
                 </div>
               </div>
@@ -317,7 +318,7 @@
               @click="showAllHistory = !showAllHistory"
               :class="['w-full py-3 rounded-2xl text-sm font-semibold border transition cursor-pointer',
                 isDarkMode ? 'border-white/10 text-[#94A3B8] hover:bg-white/5' : 'border-gray-100 text-[#64748B] hover:bg-gray-50']">
-              {{ showAllHistory ? '▲ แสดงน้อยลง' : `▼ ดูทั้งหมด ${checkinHistory.length} รายการ` }}
+              {{ showAllHistory ? $t('checkin.showLess') : $t('checkin.showAll', { n: checkinHistory.length }) }}
             </button>
           </div>
         </div>
@@ -326,20 +327,20 @@
       <!-- ===== STEP 4 : Recommendation ===== -->
       <section class="anim-fade-up" style="animation-delay:.4s">
         <div :class="['rounded-3xl border p-6 md:p-8', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
-          <h2 :class="['font-extrabold text-lg mb-2', isDarkMode ? 'text-white' : 'text-[#1E293B]']">💡 คำแนะนำสำหรับคุณวันนี้</h2>
+          <h2 :class="['font-extrabold text-lg mb-2', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t('checkin.recTitle') }}</h2>
           <p :class="['text-xs mb-6', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-            {{ selectedMood ? 'แนะนำตามอารมณ์ที่บันทึก' : 'เช็คอินก่อนเพื่อรับคำแนะนำที่ตรงกับสภาวะของคุณ' }}
+            {{ selectedMood ? $t('checkin.recByMood') : $t('checkin.recNeedCheckin') }}
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div v-for="rec in currentRecommendations" :key="rec.title"
               :class="['rounded-2xl p-5 border group hover:shadow-md transition-all duration-300 cursor-pointer',
                 isDarkMode ? 'bg-white/5 border-white/10 hover:border-[#0D9488]/40' : 'bg-[#F8FFFE] border-gray-100 hover:border-[#0D9488]/30']">
               <div class="text-3xl mb-3">{{ rec.icon }}</div>
-              <p :class="['font-bold text-sm mb-1', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ rec.title }}</p>
-              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ rec.desc }}</p>
+              <p :class="['font-bold text-sm mb-1', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t(rec.title) }}</p>
+              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t(rec.desc) }}</p>
               <router-link v-if="rec.link" :to="rec.link"
                 class="mt-3 text-xs font-bold text-[#0D9488] hover:underline inline-flex items-center gap-1">
-                ลองทำเลย →
+                {{ $t('checkin.tryIt') }}
               </router-link>
             </div>
           </div>
@@ -366,33 +367,33 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><router-link to="/daily-checkin" class="hover:underline">Daily Check-in</router-link></li>
-            <li><router-link to="/activity-tracker" class="hover:underline">Activity Tracker</router-link></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Blog</router-link></li>
+            <li><router-link to="/daily-checkin" class="hover:underline">{{ $t('common.footerCheckin') }}</router-link></li>
+            <li><router-link to="/activity-tracker" class="hover:underline">{{ $t('common.footerActivity') }}</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerBlog') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
-      <div class="text-center text-xs text-[#A7F3D0] pt-6">© 2026 PhuenJaiZone. All rights reserved.</div>
+      <div class="text-center text-xs text-[#A7F3D0] pt-6">{{ $t('common.copyright') }}</div>
     </footer>
 
   </div>
@@ -401,9 +402,14 @@
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/authStore'
 
 const isDarkMode = inject('isDarkMode')
+const { t, locale } = useI18n()
+const dateLocale = computed(() => (locale.value === 'en' ? 'en-US' : 'th-TH'))
+const formatLongDate = (dateKey) => new Date(dateKey).toLocaleDateString(dateLocale.value, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 const authStore = useAuthStore()
 const storageKey = computed(() => `dailyCheckin_${authStore.user?.email || 'guest'}`)
 
@@ -418,9 +424,9 @@ const moodOptions = [
 
 // ==================== Metric Sliders ====================
 const moodMetrics = ref([
-  { id: 'energy',  icon: '⚡', label: 'ระดับพลังงาน', value: 5, lowLabel: 'หมดแรง', highLabel: 'เต็มพลัง' },
-  { id: 'stress',  icon: '😤', label: 'ระดับความเครียด', value: 5, lowLabel: 'ผ่อนคลาย', highLabel: 'เครียดมาก' },
-  { id: 'social',  icon: '👥', label: 'อยากพบปะผู้คน', value: 5, lowLabel: 'อยากอยู่คนเดียว', highLabel: 'อยากพบเพื่อน' },
+  { id: 'energy',  icon: '⚡', label: 'checkin.metrics.energy', value: 5, lowLabel: 'checkin.metrics.energyLow', highLabel: 'checkin.metrics.energyHigh' },
+  { id: 'stress',  icon: '😤', label: 'checkin.metrics.stress', value: 5, lowLabel: 'checkin.metrics.stressLow', highLabel: 'checkin.metrics.stressHigh' },
+  { id: 'social',  icon: '👥', label: 'checkin.metrics.social', value: 5, lowLabel: 'checkin.metrics.socialLow', highLabel: 'checkin.metrics.socialHigh' },
 ])
 
 // ==================== Activity Tags ====================
@@ -430,6 +436,12 @@ const activityTags = [
   '🎮 เล่นเกม', '🛁 พักผ่อน', '✏️ เขียนไดอารี่', '🌅 ออกไปข้างนอก'
 ]
 
+// tags are stored in Thai (existing saved data) — translate only for display
+const tagLabel = (tag) => {
+  const i = activityTags.indexOf(tag)
+  return i >= 0 ? t(`checkin.tags.${i}`) : tag
+}
+
 // ==================== State ====================
 const selectedMood   = ref(moodOptions[1]) // Default to 'ดี' (🙂) so user can save immediately
 const noteText       = ref('')
@@ -437,7 +449,7 @@ const selectedTags   = ref([])
 const checkinHistory = ref([])
 const todayCheckin   = ref(null)
 const showAllHistory = ref(false)
-const selectedPeriod = ref('7 วัน')
+const selectedPeriod = ref(7)
 const hoveredBar     = ref(null)
 
 // Toast
@@ -451,7 +463,7 @@ let toastTimer   = null
 const todayKey = computed(() => new Date().toDateString())
 
 const todayFullDate = computed(() => {
-  return new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date().toLocaleDateString(dateLocale.value, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 })
 
 // ==================== Computed Stats ====================
@@ -462,24 +474,24 @@ const summaryStats = computed(() => {
     : '—'
   const best = checkinHistory.value.reduce((b, e) => e.score > (b?.score || 0) ? e : b, null)
   return [
-    { icon: '🔥', value: streak, label: 'วัน Streak', color: '#F59E0B' },
-    { icon: '📅', value: checkinHistory.value.length, label: 'เช็คอินทั้งหมด', color: '#0D9488' },
-    { icon: '📊', value: avgScore, label: 'คะแนนเฉลี่ย', color: '#8B5CF6' },
-    { icon: '😊', value: best?.mood?.emoji || '—', label: 'อารมณ์ยอดนิยม', color: '#059669' },
+    { icon: '🔥', value: streak, label: t('checkin.stats.streak'), color: '#F59E0B' },
+    { icon: '📅', value: checkinHistory.value.length, label: t('checkin.stats.total'), color: '#0D9488' },
+    { icon: '📊', value: avgScore, label: t('checkin.stats.avg'), color: '#8B5CF6' },
+    { icon: '😊', value: best?.mood?.emoji || '—', label: t('checkin.stats.topMood'), color: '#059669' },
   ]
 })
 
 // ==================== Chart ====================
 const chartData = computed(() => {
-  const days = selectedPeriod.value === '7 วัน' ? 7 : selectedPeriod.value === '14 วัน' ? 14 : 30
+  const days = selectedPeriod.value
   const result = []
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i)
     const key = d.toDateString()
     const entry = checkinHistory.value.find(e => e.dateKey === key)
-    const shortDay = d.toLocaleDateString('th-TH', { weekday: 'short' })
+    const shortDay = d.toLocaleDateString(dateLocale.value, { weekday: 'short' })
     result.push({
-      label: i === 0 ? 'วันนี้' : shortDay,
+      label: i === 0 ? t('checkin.today') : shortDay,
       score: entry ? entry.score : 0,
       emoji: entry ? entry.mood.emoji : '·',
     })
@@ -488,23 +500,23 @@ const chartData = computed(() => {
 })
 
 const moodLegend = [
-  { label: 'ดีมาก', color: '#059669' },
-  { label: 'ดี',    color: '#0D9488' },
-  { label: 'ปานกลาง', color: '#F59E0B' },
-  { label: 'ไม่ค่อยดี', color: '#F97316' },
-  { label: 'แย่',   color: '#E11D48' },
+  { label: 'checkin.mood5', color: '#059669' },
+  { label: 'checkin.mood4', color: '#0D9488' },
+  { label: 'checkin.mood3', color: '#F59E0B' },
+  { label: 'checkin.mood2', color: '#F97316' },
+  { label: 'checkin.mood1', color: '#E11D48' },
 ]
 
 // ==================== Recommendations ====================
 const defaultRecs = [
-  { icon: '🧘', title: 'ลองหายใจลึกๆ', desc: 'เทคนิค 4-7-8 ช่วยให้สงบได้ใน 2 นาที', link: '/activity-tracker' },
-  { icon: '📝', title: 'เขียนสิ่งดีๆ 3 อย่าง', desc: 'การจดความขอบคุณเพิ่มความสุขได้จริง', link: '/activity-tracker' },
-  { icon: '🌿', title: 'ออกไปรับแสงแดด', desc: 'แค่ 10 นาทีก็ช่วย Serotonin ได้', link: '/activity-tracker' },
+  { icon: '🧘', title: 'checkin.recs.breathe', desc: 'checkin.recs.breatheDesc', link: '/activity-tracker' },
+  { icon: '📝', title: 'checkin.recs.gratitude', desc: 'checkin.recs.gratitudeDesc', link: '/activity-tracker' },
+  { icon: '🌿', title: 'checkin.recs.sunlight', desc: 'checkin.recs.sunlightDesc', link: '/activity-tracker' },
 ]
 const badRecs = [
-  { icon: '🫂', title: 'คุยกับคนที่ไว้ใจ', desc: 'การระบายความในใจช่วยลดความกดดันได้มาก', link: '/chat' },
-  { icon: '🎵', title: 'ฟังเพลงที่ชอบ', desc: 'ดนตรีช่วยปรับอารมณ์ได้อย่างน่าแปลกใจ' },
-  { icon: '☎️', title: 'สายด่วน 1323', desc: 'มีคนรับสายตลอด 24 ชม. พร้อมรับฟังคุณเสมอ' },
+  { icon: '🫂', title: 'checkin.recs.talk', desc: 'checkin.recs.talkDesc', link: '/chat' },
+  { icon: '🎵', title: 'checkin.recs.music', desc: 'checkin.recs.musicDesc' },
+  { icon: '☎️', title: 'checkin.recs.hotline', desc: 'checkin.recs.hotlineDesc' },
 ]
 const currentRecommendations = computed(() => {
   if (!selectedMood.value) return defaultRecs
@@ -563,8 +575,8 @@ function saveCheckin() {
 
   persistData()
   triggerToast(
-    isUpdate ? 'อัปเดตการเช็คอินสำเร็จ!' : 'บันทึกการเช็คอินสำเร็จ! 🎉',
-    `อารมณ์วันนี้: ${selectedMood.value.emoji} ${selectedMood.value.label}`,
+    isUpdate ? t('checkin.toastUpdated') : t('checkin.toastSaved'),
+    t('checkin.toastMood', { mood: `${selectedMood.value.emoji} ${t('checkin.mood' + selectedMood.value.id)}` }),
     '✅'
   )
 }
@@ -637,11 +649,11 @@ function loadData() {
 
 function seedDemoData() {
   const demos = [
-    { offset: 6, moodId: 4, note: 'วันนี้ออกกำลังกายแล้วรู้สึกดีมากเลย', tags: ['🏃 ออกกำลังกาย'] },
+    { offset: 6, moodId: 4, note: t('checkin.demo1'), tags: ['🏃 ออกกำลังกาย'] },
     { offset: 5, moodId: 3, note: '', tags: [] },
-    { offset: 4, moodId: 5, note: 'ได้คุยกับเพื่อนเก่า ดีใจมาก', tags: ['🤝 พบปะเพื่อน', '🎵 ฟังเพลง'] },
-    { offset: 3, moodId: 2, note: 'งานเยอะ เหนื่อยหน่อย', tags: [] },
-    { offset: 2, moodId: 4, note: 'วันหยุด ได้พักผ่อน', tags: ['🛁 พักผ่อน', '📚 อ่านหนังสือ'] },
+    { offset: 4, moodId: 5, note: t('checkin.demo2'), tags: ['🤝 พบปะเพื่อน', '🎵 ฟังเพลง'] },
+    { offset: 3, moodId: 2, note: t('checkin.demo3'), tags: [] },
+    { offset: 2, moodId: 4, note: t('checkin.demo4'), tags: ['🛁 พักผ่อน', '📚 อ่านหนังสือ'] },
     { offset: 1, moodId: 3, note: '', tags: ['🎮 เล่นเกม'] },
   ]
   demos.forEach(d => {
@@ -649,7 +661,7 @@ function seedDemoData() {
     const mood = moodOptions.find(m => m.id === d.moodId)
     checkinHistory.value.push({
       dateKey: date.toDateString(),
-      dateLabel: date.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+      dateLabel: date.toLocaleDateString(dateLocale.value, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
       mood,
       score: mood.score,
       note: d.note,

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
+import i18n from '../i18n'
 // 👇 จุดแก้ที่ 1: ลบบรรทัด import AdminView from '../views/AdminView.vue' ทิ้งไป เพราะเราดึงไฟล์ถูกที่แล้วในบรรทัดที่ 46 และป้องกัน Error หาไฟล์ไม่เจอจนหน้าขาว
 
 const router = createRouter({
@@ -135,7 +136,7 @@ router.beforeEach((to, from) => {
   if (to.path === '/admin') {
     const userRole = localStorage.getItem('userRole');
     if (userRole !== 'ADMIN') {
-      alert('คุณไม่มีสิทธิ์เข้าถึงหน้าแอดมิน');
+      alert(i18n.global.t('app.adminDenied'));
       return '/'; // เตะผู้ใช้ธรรมดากลับไปหน้าหลัก
     }
   }

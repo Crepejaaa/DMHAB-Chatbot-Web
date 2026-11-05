@@ -8,8 +8,8 @@
           type="button"
           @click="$router.options.history.state?.back ? $router.back() : $router.push('/')"
           class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
-          title="ย้อนกลับ"
-          aria-label="ย้อนกลับ"
+          :title="$t('common.back')"
+          :aria-label="$t('common.back')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -19,22 +19,24 @@
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <!-- โลโก้ Navbar -->
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
           <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -68,12 +70,12 @@
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              About Us
+              {{ $t('about.title') }}
             </h1>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed italic">
-              "เพราะทุกความรู้สึกของคุณมีความหมาย"<br />
-              เราคือพื้นที่ปลอดภัยในจอมือถือที่พร้อมอยู่เคียงข้างคุณในทุกๆ วัน<br />
-              ไม่ว่าวันนี้คุณจะเจอเรื่องสุข เศร้า เหงา หรือเหนื่อยล้า
+              {{ $t('about.heroLine1') }}<br />
+              {{ $t('about.heroLine2') }}<br />
+              {{ $t('about.heroLine3') }}
             </p>
           </div>
         </div>
@@ -107,13 +109,13 @@
         <!-- Content Right -->
         <div class="space-y-4">
           <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B]">
-            พันธกิจของเรา
+            {{ $t('about.missionTitle') }}
           </h2>
           <div class="w-12 h-1 bg-[#0D9488] rounded-full"></div>
           <p class="text-sm md:text-base text-[#475569] leading-relaxed pt-2">
-            เพื่อส่งเสริมสุขภาพจิตที่ดีในทุกๆ วัน -<br />
-            เราสร้างแชทบอทนี้เพื่อช่วยให้คุณสำรวจและทำความเข้าใจอารมณ์ของคุณได้อย่างง่ายดาย<br />
-            สนับสนุนเส้นทางสู่ความเป็นอยู่ที่ดีอย่างต่อเนื่อง
+            {{ $t('about.missionLine1') }}<br />
+            {{ $t('about.missionLine2') }}<br />
+            {{ $t('about.missionLine3') }}
           </p>
         </div>
       </section>
@@ -123,13 +125,13 @@
         <!-- Content Left on desktop -->
         <div class="space-y-4 order-2 md:order-1">
           <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B]">
-            จุดเด่นของแชทบอท
+            {{ $t('about.highlightsTitle') }}
           </h2>
           <div class="w-12 h-1 bg-[#0D9488] rounded-full"></div>
           <p class="text-sm md:text-base text-[#475569] leading-relaxed pt-2">
-            สะดวก, สามารถประเมินและแนะนำแนวทางโดยใช้เวลาเพียงไม่กี่นาที<br />
-            ผ่านแชทที่เข้าใจง่าย ข้อมูลของคุณปลอดภัย<br />
-            และรับคำแนะนำในการดูแลตัวเองเบื้องต้น
+            {{ $t('about.highlightsLine1') }}<br />
+            {{ $t('about.highlightsLine2') }}<br />
+            {{ $t('about.highlightsLine3') }}
           </p>
         </div>
 
@@ -183,12 +185,12 @@
         <!-- Content Right -->
         <div class="space-y-4">
           <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B]">
-            ความมุ่งมั่นของเรา
+            {{ $t('about.commitmentTitle') }}
           </h2>
           <div class="w-12 h-1 bg-[#0D9488] rounded-full"></div>
           <p class="text-sm md:text-base text-[#475569] leading-relaxed pt-2">
-            มุ่งมั่นที่จะเติบโตไปพร้อมกับคุณ เราจะพัฒนาแชทบอทอย่าง<br />
-            ต่อเนื่องเพื่อให้การสนับสนุนสุขภาพจิตมีประสิทธิภาพและเข้าถึงได้มากยิ่งขึ้น
+            {{ $t('about.commitmentLine1') }}<br />
+            {{ $t('about.commitmentLine2') }}
           </p>
         </div>
       </section>
@@ -202,34 +204,34 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService1') }}</a></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
 
@@ -239,6 +241,7 @@
 <script setup>
 import { inject } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 // ดึง State ควบคุมโหมดตาบอดสีที่ Provide มาจาก Component หลัก (App.vue)
 const isDarkMode = inject('isDarkMode')

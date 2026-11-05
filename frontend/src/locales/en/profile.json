@@ -1,0 +1,80 @@
+{
+  "common": {
+    "back": "Back",
+    "backHome": "Back to home",
+    "logoAlt": "PhuenJaiZone Logo",
+    "footerDesc": "Your daily mental health assessment companion, always here to reassure you.",
+    "footerServices": "Services",
+    "footerContact": "Contact",
+    "footerHotline": "Hotline",
+    "footerService1": "Daily Chatbot",
+    "footerService2": "Personalized Feedback",
+    "footerService3": "Self-Care Resource Library",
+    "hotlineText": "Mental Health Hotline 1323",
+    "copyright": "© 2026 PhuenJaiZone. All rights reserved.",
+    "footerCheckin": "Daily Check-in",
+    "footerActivity": "Activity Tracker",
+    "footerBlog": "Self-Care Blog"
+  },
+  "auth": {
+    "defaultUser": "User",
+    "loginSuccess": "Logged in successfully",
+    "loginFailed": "Incorrect email or password",
+    "profileSaved": "Your profile and avatar have been saved",
+    "profileUpdateFailed": "Unable to update your profile",
+    "registerSuccess": "Registration successful",
+    "registerFailed": "An error occurred during registration"
+  },
+  "app": {
+    "adminDenied": "You do not have permission to access the admin page"
+  },
+  "profile": {
+    "title": "Edit Account",
+    "quote": "\"Define yourself. It isn't easy, but it's a great start for everyone.\"",
+    "avatarTitle": "Your avatar",
+    "avatarChoose": "Choose your avatar ({label})",
+    "avatarDog": "Dog",
+    "avatarCat": "Cat",
+    "avatarRabbit": "Rabbit",
+    "avatarBear": "Bear",
+    "avatarBird": "Bird",
+    "nameLabel": "Full name (nickname)",
+    "namePlaceholder": "Enter your name",
+    "emailLabel": "Email",
+    "cancel": "Cancel",
+    "save": "Save changes",
+    "saving": "Saving..."
+  },
+  "accountSettings": {
+    "title": "Manage Account",
+    "quote": "\"Adjust your privacy and notification settings to suit the way you use the app.\"",
+    "emailNotifTitle": "Email notifications",
+    "emailNotifDesc": "Receive updates from the system",
+    "accessTitle": "Accessibility mode",
+    "accessDesc": "Makes the app easier to use for people who need accessible features",
+    "privacy": "Privacy",
+    "privacyPublic": "Public",
+    "privacyFriends": "People I know only",
+    "privacyPrivate": "Private",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter new password",
+    "reset": "Reset",
+    "save": "Save",
+    "saved": "Your settings have been saved"
+  },
+  "homeExtra": {
+    "heroImageAlt": "A doctor specializing in mental health care",
+    "aboutImageAlt": "People talking and listening to each other in a safe space",
+    "bannerImageAlt": "An AI robot that provides service and answers questions",
+    "professionalAssessment": "Professional Assessment",
+    "realTimeGuidance": "Real-time Guidance",
+    "articlesEmpty": "No articles yet",
+    "articlesError": "Unable to load articles. Please try again later.",
+    "noDate": "Date not specified",
+    "defaultCategory": "Article",
+    "source": "Source",
+    "viewOriginal": "View original",
+    "readOn": "Read more",
+    "viewAllMobile": "View all articles"
+  }
+}

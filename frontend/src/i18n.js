@@ -1,7 +1,13 @@
 // src/i18n.js — ตั้งค่าระบบหลายภาษา (TH | EN) ด้วย vue-i18n
+// ข้อความแต่ละภาษาแยกเป็นไฟล์ต่อหน้า: src/locales/th/*.json และ src/locales/en/*.json
+// ทุกไฟล์ในโฟลเดอร์จะถูกรวมอัตโนมัติ (แต่ละไฟล์ใช้ top-level key ของตัวเอง เช่น "about", "admin")
 import { createI18n } from 'vue-i18n'
-import th from './locales/th.json'
-import en from './locales/en.json'
+
+const mergeModules = (modules) =>
+  Object.values(modules).reduce((acc, mod) => ({ ...acc, ...(mod.default || mod) }), {})
+
+const th = mergeModules(import.meta.glob('./locales/th/*.json', { eager: true }))
+const en = mergeModules(import.meta.glob('./locales/en/*.json', { eager: true }))
 
 const SUPPORTED = ['th', 'en']
 const saved = localStorage.getItem('locale')
@@ -25,5 +31,7 @@ export function setLocale(locale) {
   document.documentElement.setAttribute('lang', locale)
 }
 
-export default i18n
+// locale tag สำหรับจัดรูปแบบวันที่/เวลาให้ตรงกับภาษาที่เลือก
+export const dateLocale = () => (i18n.global.locale.value === 'en' ? 'en-US' : 'th-TH')
 
+export default i18n

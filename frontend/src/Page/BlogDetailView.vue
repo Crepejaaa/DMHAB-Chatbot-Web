@@ -7,21 +7,23 @@
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+          <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
         </div>
         <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -52,7 +54,7 @@
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              {{ article?.title || 'บทความ' }}
+              {{ article?.title || $t('blogDetail.article') }}
             </h1>
             <div class="flex items-center gap-4 text-xs md:text-sm text-[#D1FAE5]">
               <span class="flex items-center gap-1">
@@ -67,7 +69,7 @@
                 </svg>
                 {{ article ? getReadTime(article.content || '') : '...' }}
               </span>
-              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ article?.category || 'บทความ' }}</span>
+              <span class="bg-white/20 px-3 py-0.5 rounded-full text-xs font-medium">{{ article?.category || $t('blogDetail.article') }}</span>
             </div>
           </div>
         </div>
@@ -129,19 +131,19 @@
           </div>
 
           <div class="mt-12 rounded-2xl bg-gradient-to-r from-[#0D9488]/5 to-[#059669]/5 p-6 border border-[#0D9488]/10">
-            <h3 class="text-lg font-bold text-[#1E293B] mb-3">แหล่งอ้างอิง</h3>
+            <h3 class="text-lg font-bold text-[#1E293B] mb-3">{{ $t('blogDetail.references') }}</h3>
             <p class="text-[#64748B] leading-relaxed">
-              ข้อมูลบทความนี้อ้างอิงจาก
+              {{ $t('blogDetail.referencesFrom') }}
               <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] underline hover:text-[#045F54]">
-                {{ article.sourceName || 'แหล่งข้อมูล' }}
+                {{ article.sourceName || $t('blogDetail.sourceFallback') }}
               </a>
-              <span v-else>{{ article.sourceName || 'แหล่งข้อมูล' }}</span>
+              <span v-else>{{ article.sourceName || $t('blogDetail.sourceFallback') }}</span>
             </p>
           </div>
         </article>
 
         <section v-if="relatedArticles.length" class="mb-10">
-          <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">บทความที่เกี่ยวข้อง</h2>
+          <h2 class="text-2xl font-extrabold text-[#1E293B] mb-6">{{ $t('blogDetail.related') }}</h2>
           <div class="grid md:grid-cols-2 gap-6">
             <router-link
               v-for="related in relatedArticles"
@@ -170,7 +172,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            กลับไปหน้าบทความทั้งหมด
+            {{ $t('blogDetail.backToAll') }}
           </router-link>
         </div>
       </div>
@@ -182,43 +184,49 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('blog.footer.tagline') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('blog.footer.services') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
-            <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('blog.footer.dailyChatbot') }}</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('blog.footer.personalizedFeedback') }}</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('blog.footer.library') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('blog.footer.contact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('blog.footer.hotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('blog.footer.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('blog.footer.rights') }}
       </div>
     </footer>
   </div>
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
+import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { inject, computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../api/axios'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode', ref(false))
 const route = useRoute()
@@ -520,8 +528,8 @@ Burnout หรือภาวะหมดไฟ เป็นอาการเ�
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'ไม่ระบุวันที่'
-  return new Date(dateString).toLocaleDateString('th-TH', {
+  if (!dateString) return t('blogDetail.noDate')
+  return new Date(dateString).toLocaleDateString(dateLocale(), {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -529,10 +537,10 @@ const formatDate = (dateString) => {
 }
 
 const getReadTime = (content) => {
-  if (!content) return 'อ่าน 3 นาที'
+  if (!content) return t('blogDetail.readTime', { minutes: 3 })
   const words = content.length
   const minutes = Math.max(1, Math.ceil(words / 400))
-  return `อ่าน ${minutes} นาที`
+  return t('blogDetail.readTime', { minutes })
 }
 
 const parseContent = (content) => {
@@ -576,7 +584,7 @@ const fetchArticle = async () => {
     console.error('Failed to load article detail:', error)
     article.value = null
     apiRelatedArticles.value = []
-    errorMessage.value = error.response?.data?.error || 'ไม่พบบทความที่ร้องขอ หรือไม่สามารถโหลดบทความได้'
+    errorMessage.value = error.response?.data?.error || t('blogDetail.notFound')
   } finally {
     loading.value = false
   }

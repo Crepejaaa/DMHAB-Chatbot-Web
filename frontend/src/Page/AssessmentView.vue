@@ -4,29 +4,31 @@
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-2 sm:gap-3">
-        <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center" title="กลับหน้าหลัก">
+        <router-link to="/" class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center" :title="$t('common.backHome')">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </router-link>
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
           <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
         </router-link>
       </div>
 
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" class="hover:text-[#D1FAE5] transition">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
       </div>
 
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -59,45 +61,45 @@
           <div>
             <div class="flex flex-wrap items-center gap-3 mb-2">
               <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                แบบประเมินสุขภาพจิตเบื้องต้น
+                {{ $t('assessment.title') }}
               </h1>
               <!-- Main Assessment Guide / Help Icon -->
               <AssessmentHelpTooltip
-                title="คู่มือและวิธีขั้นตอนการทำแบบประเมินสุขภาพจิต"
+                :title="$t('assessment.guideTitle')"
                 variant="banner"
                 iconType="question"
-                badgeText="คำแนะนำการทำแบบประเมิน"
+                :badgeText="$t('assessmentHelp.defaultTitle')"
               >
                 <div class="space-y-3 text-xs sm:text-sm text-slate-700">
                   <p class="leading-relaxed">
-                    แบบประเมินนี้จัดทำขึ้นตามเกณฑ์มาตรฐานของ <b class="text-[#045F54]">กรมสุขภาพจิต กระทรวงสาธารณสุข</b> เพื่อคัดกรองสภาวะอารมณ์ ระดับความเครียด และภาวะซึมเศร้าเบื้องต้น
+                    <span v-html="$t('assessment.intro')"></span>
                   </p>
 
                   <!-- Steps of Assessment -->
                   <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
                     <div class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-                       ขั้นตอนการทำแบบประเมิน (4 ขั้นตอน):
+                       {{ $t('assessment.stepsTitle') }}
                     </div>
                     <ol class="space-y-1.5 pl-1 leading-relaxed">
-                      <li><b>ขั้นที่ 1:</b> อ่านข้อคำถามในแต่ละส่วนอย่างละเอียดตามลำดับ (ส่วน 2Q, 9Q และ 8Q)</li>
-                      <li><b>ขั้นที่ 2:</b> เลือกคำตอบตามความเป็นจริงและความรู้สึกตรงๆ ในช่วงเวลาที่ระบุ (2 สัปดาห์ หรือ 1 เดือน)</li>
+                      <li><span v-html="$t('assessment.step1')"></span></li>
+                      <li><span v-html="$t('assessment.step2')"></span></li>
                       <li class="text-amber-800 font-semibold bg-amber-50/80 p-1.5 rounded-lg border border-amber-200/60">
-                        <b>ขั้นที่ 3 (เงื่อนไขสำคัญ):</b> <u>ต้องตอบคำถามให้ครบทุกข้อ ทุกส่วน (รวม 19 ข้อ)</u> หากตอบไม่ครบ ปุ่มส่งแบบประเมินจะไม่เปิดใช้งาน
+                        <span v-html="$t('assessment.step3')"></span>
                       </li>
-                      <li><b>ขั้นที่ 4:</b> เมื่อตอบครบทุกข้อแล้ว กดปุ่ม <b>"ส่งแบบประเมิน"</b> ด้านล่างสุดเพื่อดูผลวิเคราะห์และแนวทางช่วยเหลือ</li>
+                      <li><span v-html="$t('assessment.step4')"></span></li>
                     </ol>
                   </div>
 
                   <!-- 3 Sections Overview -->
                   <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 space-y-1.5 text-xs text-emerald-950">
-                    <div class="font-bold text-emerald-800">โครงสร้างแบบประเมิน 3 ส่วน:</div>
-                    <p><b>1. แบบคัดกรอง 2Q (2 ข้อ):</b> สำรวจอารมณ์เศร้า/เบื่อ ใน 2 สัปดาห์</p>
-                    <p><b>2. แบบประเมิน 9Q (9 ข้อ):</b> วัดระดับความรุนแรงของอาการ ใน 2 สัปดาห์</p>
-                    <p><b>3. แบบประเมิน 8Q (8 ข้อ):</b> ประเมินความเสี่ยงต่อการทำร้ายตนเอง ใน 1 เดือน</p>
+                    <div class="font-bold text-emerald-800">{{ $t('assessment.structTitle') }}</div>
+                    <p><span v-html="$t('assessment.struct1')"></span></p>
+                    <p><span v-html="$t('assessment.struct2')"></span></p>
+                    <p><span v-html="$t('assessment.struct3')"></span></p>
                   </div>
 
                   <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-                    <span>สายด่วนสุขภาพจิต (โทรฟรี 24 ชม.):</span>
+                    <span>{{ $t('assessment.hotline') }}</span>
                     <a href="tel:1323" class="font-bold text-emerald-700 hover:underline flex items-center gap-1">
                       <span>📞 1323</span>
                     </a>
@@ -106,8 +108,7 @@
               </AssessmentHelpTooltip>
             </div>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed">
-              เพื่อนคู่คิดดิจิทัล เพื่อชีวิตที่ดีของคุณ<br />
-              เช็กอารมณ์และความเครียดสั้นๆ ผ่านบทสนทนาที่เป็นมิตร สะท้อนสภาวะจิตใจประจำวัน
+              <span v-html="$t('assessment.heroDesc')"></span>
             </p>
           </div>
         </div>
@@ -121,23 +122,23 @@
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">โปรดตอบคำถามต่อไปนี้ตามความเป็นจริงในช่วง 2 สัปดาห์ที่ผ่านมา</h2>
+            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q2Heading') }}</h2>
             <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบคัดกรอง 2Q"
+              :title="$t('assessment.q2Guide')"
               variant="section"
               iconType="info"
             >
               <div class="space-y-3 text-xs sm:text-sm text-slate-700">
                 <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความรู้สึกของตนเองในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
-                  <p>2. กดเลือกคำตอบ <b>"มี"</b> หรือ <b>"ไม่มี"</b> ให้ครบทั้ง 2 ข้อ</p>
-                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 2 ข้อ</u> ร่วมกับส่วนอื่นๆ จึงจะส่งแบบประเมินได้</p>
+                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
+                  <p><span v-html="$t('assessment.q2how1')"></span></p>
+                  <p><span v-html="$t('assessment.q2how2')"></span></p>
+                  <p class="text-amber-800 font-semibold"><span v-html="$t('assessment.q2how3')"></span></p>
                 </div>
 
                 <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์ข้อกำหนด:</span>
-                  หากตอบ <b>"มี"</b> ข้อใดข้อหนึ่ง (แม้เพียง 1 ข้อ) แสดงว่ามีแนวโน้มภาวะซึมเศร้า ระบบจะนำผลไปประมวลร่วมกับแบบประเมิน 9Q ต่อไป
+                  <span class="font-bold text-emerald-800 block mb-1">{{ $t('assessment.criteria') }}</span>
+                  <span v-html="$t('assessment.q2rule')"></span>
                 </div>
               </div>
             </AssessmentHelpTooltip>
@@ -148,14 +149,14 @@
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-[#F0FDF4]">
-                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg">คำถาม</th>
-                <th class="py-3 px-6 font-semibold text-[#1E293B] border border-gray-200 text-center w-24">มี</th>
-                <th class="py-3 px-6 font-semibold text-[#1E293B] border border-gray-200 text-center w-24 rounded-tr-lg">ไม่มี</th>
+                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg">{{ $t('assessment.question') }}</th>
+                <th class="py-3 px-6 font-semibold text-[#1E293B] border border-gray-200 text-center w-24">{{ $t('assessment.yes') }}</th>
+                <th class="py-3 px-6 font-semibold text-[#1E293B] border border-gray-200 text-center w-24 rounded-tr-lg">{{ $t('assessment.no') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(q, idx) in q2Questions" :key="q.id" :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'">
-                <td class="py-4 px-4 border border-gray-200 text-[#374151] leading-relaxed">{{ idx + 1 }}. {{ q.text }}</td>
+                <td class="py-4 px-4 border border-gray-200 text-[#374151] leading-relaxed">{{ idx + 1 }}. {{ $t(q.text) }}</td>
                 <td class="py-4 border border-gray-200 text-center">
                   <button
                     type="button"
@@ -166,7 +167,7 @@
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >มี</button>
+                  >{{ $t('assessment.yes') }}</button>
                 </td>
                 <td class="py-4 border border-gray-200 text-center">
                   <button
@@ -178,7 +179,7 @@
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >ไม่มี</button>
+                  >{{ $t('assessment.no') }}</button>
                 </td>
               </tr>
             </tbody>
@@ -190,33 +191,30 @@
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-2 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 2 สัปดาห์ที่ผ่านมา ท่านมีอาการต่อไปนี้บ่อยแค่ไหน</h2>
+            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q9Heading') }}</h2>
             <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบประเมิน 9Q"
+              :title="$t('assessment.q9Guide')"
               variant="section"
               iconType="info"
             >
               <div class="space-y-3 text-xs sm:text-sm text-slate-700">
                 <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความถี่ของอาการที่เกิดขึ้นในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
-                  <p>2. กดเลือกระดับคะแนน <b>0 ถึง 3</b> ในแต่ละข้อตามความถี่จริง</p>
+                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
+                  <p><span v-html="$t('assessment.q9how1')"></span></p>
+                  <p><span v-html="$t('assessment.q9how2')"></span></p>
                   <ul class="list-disc list-inside space-y-0.5 pl-2 text-slate-600">
-                    <li><b>0:</b> ไม่มีเลย</li>
-                    <li><b>1:</b> เป็นบางวัน (1 - 7 วัน)</li>
-                    <li><b>2:</b> เป็นบ่อย (> 7 วัน)</li>
-                    <li><b>3:</b> เป็นทุกวัน</li>
+                    <li><span v-html="$t('assessment.q9leg0')"></span></li>
+                    <li><span v-html="$t('assessment.q9leg1')"></span></li>
+                    <li><span v-html="$t('assessment.q9leg2')"></span></li>
+                    <li><span v-html="$t('assessment.q9leg3')"></span></li>
                   </ul>
-                  <p class="text-amber-800 font-semibold pt-1">3. <u>ต้องตอบให้ครบทั้ง 9 ข้อ</u> เพื่อคำนวณคะแนนรวมและปลดล็อกการส่ง</p>
+                  <p class="text-amber-800 font-semibold pt-1"><span v-html="$t('assessment.q9how3')"></span></p>
                 </div>
 
                 <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 27):</span>
-                  • คะแนน &lt; 7: ปกติ/ไม่มีอาการหรือมีน้อยมาก<br>
-                  • คะแนน 7 - 12: ภาวะซึมเศร้าระดับน้อย<br>
-                  • คะแนน 13 - 18: ภาวะซึมเศร้าระดับปานกลาง<br>
-                  • คะแนน &ge; 19: ภาวะซึมเศร้าระดับรุนแรง<br>
-                  <span class="text-emerald-800 font-semibold mt-1 block">*หากคะแนนรวมตั้งแต่ 7 คะแนนขึ้นไป แนะนำให้ประเมินส่วน 8Q ต่อ</span>
+                  <span class="font-bold text-emerald-800 block mb-1">{{ $t('assessment.q9CriteriaTitle') }}</span>
+                  <span v-html="$t('assessment.q9criteria')"></span>
+                  <span class="text-emerald-800 font-semibold mt-1 block">{{ $t('assessment.q9Note') }}</span>
                 </div>
               </div>
             </AssessmentHelpTooltip>
@@ -226,7 +224,7 @@
           <div class="flex flex-wrap gap-3 mb-6">
             <span v-for="leg in q9Legend" :key="leg.val" class="flex items-center gap-1.5 text-xs font-medium text-gray-600">
               <span class="inline-flex w-7 h-7 rounded-full bg-[#F1F5F9] items-center justify-center font-bold text-[#0D9488]">{{ leg.val }}</span>
-              {{ leg.label }}
+              {{ $t(leg.label) }}
             </span>
           </div>
         </div>
@@ -235,13 +233,13 @@
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-[#F0FDF4]">
-                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg">คำถาม</th>
+                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg">{{ $t('assessment.question') }}</th>
                 <th v-for="leg in q9Legend" :key="leg.val" class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center w-20">{{ leg.val }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(q, idx) in q9Questions" :key="q.id" :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'">
-                <td class="py-4 px-4 border border-gray-200 text-[#374151] leading-relaxed">{{ idx + 1 }}. {{ q.text }}</td>
+                <td class="py-4 px-4 border border-gray-200 text-[#374151] leading-relaxed">{{ idx + 1 }}. {{ $t(q.text) }}</td>
                 <td v-for="score in [0, 1, 2, 3]" :key="score" class="py-4 border border-gray-200 text-center">
                   <button
                     type="button"
@@ -258,7 +256,7 @@
             </tbody>
             <tfoot>
               <tr class="bg-[#F0FDF4]">
-                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">คะแนนรวมทั้งหมด</td>
+                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">{{ $t('assessment.totalScore') }}</td>
                 <td class="py-3 border border-gray-200 text-center font-bold text-[#0D9488]" colspan="4">{{ q9TotalScore }}</td>
               </tr>
             </tfoot>
@@ -270,27 +268,24 @@
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 1 เดือนที่ผ่านมา มีเหตุการณ์ต่อไปนี้เกิดขึ้นหรือไม่</h2>
+            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q8Heading') }}</h2>
             <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบประเมิน 8Q"
+              :title="$t('assessment.q8Guide')"
               variant="danger"
               iconType="info"
             >
               <div class="space-y-3 text-xs sm:text-sm text-slate-700">
                 <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความคิด ความรู้สึก หรือพฤติกรรมในช่วง <b>1 เดือนที่ผ่านมา</b></p>
-                  <p>2. กดเลือก <b>"ไม่มี" (0 คะแนน)</b> หรือ <b>"มี" (รับคะแนนความเสี่ยงตามน้ำหนักข้อนั้น)</b></p>
-                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 8 ข้อ</u> เพื่อให้ผลการประเมินมีความถูกต้องและครบถ้วน</p>
+                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
+                  <p><span v-html="$t('assessment.q8how1')"></span></p>
+                  <p><span v-html="$t('assessment.q8how2')"></span></p>
+                  <p class="text-amber-800 font-semibold"><span v-html="$t('assessment.q8how3')"></span></p>
                 </div>
 
                 <div class="bg-rose-50/80 p-3 rounded-2xl border border-rose-200/90 text-xs leading-relaxed text-rose-950">
-                  <span class="font-bold text-rose-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 52):</span>
-                  • 0 คะแนน: ไม่มีแนวโน้มทำร้ายตนเองในปัจจุบัน<br>
-                  • 1 - 8 คะแนน: มีแนวโน้มระดับน้อย<br>
-                  • 9 - 16 คะแนน: มีแนวโน้มระดับปานกลาง<br>
-                  • &ge; 17 คะแนน: มีแนวโน้มระดับรุนแรง<br>
-                  <span class="text-rose-700 font-semibold mt-1 block">หากได้คะแนน &ge; 9 คะแนน มีความเสี่ยงสูง ควรปรึกษาจิตแพทย์หรือติดต่อสายด่วน 1323 ทันที</span>
+                  <span class="font-bold text-rose-800 block mb-1">{{ $t('assessment.q8CriteriaTitle') }}</span>
+                  <span v-html="$t('assessment.q8criteria')"></span>
+                  <span class="text-rose-700 font-semibold mt-1 block"><span v-html="$t('assessment.q8Note')"></span></span>
                 </div>
               </div>
             </AssessmentHelpTooltip>
@@ -301,16 +296,16 @@
           <table class="w-full text-sm border-collapse">
             <thead>
               <tr class="bg-[#FFF1F2]">
-                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg" style="width:65%">คำถาม</th>
-                <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center">ไม่มี</th>
-                <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center rounded-tr-lg">มี</th>
+                <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg" style="width:65%">{{ $t('assessment.question') }}</th>
+                <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center">{{ $t('assessment.no') }}</th>
+                <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center rounded-tr-lg">{{ $t('assessment.yes') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(q, idx) in q8Questions" :key="q.id" :class="idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'">
                 <td class="py-4 px-4 border border-gray-200 text-[#374151] leading-relaxed">
-                  <span class="font-semibold">{{ idx + 1 }}.</span> {{ q.text }}
-                  <span v-if="q.sub" class="block text-xs text-gray-400 mt-1 italic">({{ q.sub }})</span>
+                  <span class="font-semibold">{{ idx + 1 }}.</span> {{ $t(q.text) }}
+                  <span v-if="q.sub" class="block text-xs text-gray-400 mt-1 italic">({{ $t(q.sub) }})</span>
                 </td>
                 <td class="py-4 border border-gray-200 text-center">
                   <button
@@ -340,7 +335,7 @@
             </tbody>
             <tfoot>
               <tr class="bg-[#FFF1F2]">
-                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">คะแนนรวมทั้งหมด</td>
+                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">{{ $t('assessment.totalScore') }}</td>
                 <td class="py-3 border border-gray-200 text-center font-bold text-rose-600" colspan="2">{{ q8TotalScore }}</td>
               </tr>
             </tfoot>
@@ -356,7 +351,7 @@
               <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
             <div>
-              <span class="font-bold">ยังตอบไม่ครบ:</span> ทำแล้ว <b>{{ totalAnsweredCount }}/{{ totalQuestionsCount }}</b> ข้อ (ต้องตอบให้ครบทุกข้อจึงจะส่งแบบประเมินได้)
+              <span v-html="$t('assessment.incomplete', { done: totalAnsweredCount, total: totalQuestionsCount })"></span>
             </div>
           </div>
           <div v-else class="flex items-center gap-2.5 text-emerald-800 bg-emerald-50/90 px-4 py-2.5 rounded-xl border border-emerald-200">
@@ -364,7 +359,7 @@
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
             <div>
-              <span class="font-bold">ตอบครบทุกข้อแล้ว</span> (<b>{{ totalQuestionsCount }}/{{ totalQuestionsCount }}</b> ข้อ) พร้อมส่งแบบประเมิน
+              <span v-html="$t('assessment.complete', { total: totalQuestionsCount })"></span>
             </div>
           </div>
         </div>
@@ -374,7 +369,7 @@
           :disabled="!isFormValid"
           class="w-full sm:w-auto px-10 py-3.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transform active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap text-center"
         >
-          {{ isSaving ? 'กำลังบันทึกผล...' : 'ส่งแบบประเมิน' }}
+          {{ isSaving ? $t('assessment.saving') : $t('assessment.submit') }}
         </button>
         <p v-if="saveError" role="alert" class="mt-3 text-sm text-rose-600">
           {{ saveError }}
@@ -390,34 +385,34 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService1') }}</a></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
 
@@ -430,7 +425,11 @@ import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useAssessmentStore } from '../stores/assessmentStore'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import AssessmentHelpTooltip from '../components/AssessmentHelpTooltip.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode')
 const router = useRouter()
@@ -440,42 +439,42 @@ const saveError = ref('')
 
 // ===== 2Q =====
 const q2Questions = [
-  { id: 1, text: 'ใน 2 สัปดาห์ที่ผ่านมา รู้สึกหม่นหมอง ไม่มีความสุข หรือสิ้นหวัง' },
-  { id: 2, text: 'ใน 2 สัปดาห์ที่ผ่านมา รู้สึกเบื่อหน่าย ทำอะไรก็ไม่สนุกไม่เพลิดเพลิน' },
+  { id: 1, text: 'assessment.q2.1' },
+  { id: 2, text: 'assessment.q2.2' },
 ]
 const q2Answers = ref({})
 
 // ===== 9Q =====
 const q9Legend = [
-  { val: 0, label: 'ไม่มีเลย' },
-  { val: 1, label: 'เป็นบางวัน 1-7 วัน' },
-  { val: 2, label: 'เป็นบ่อย > 7 วัน' },
-  { val: 3, label: 'เป็นทุกวัน' },
+  { val: 0, label: 'assessment.q9opt.0' },
+  { val: 1, label: 'assessment.q9opt.1' },
+  { val: 2, label: 'assessment.q9opt.2' },
+  { val: 3, label: 'assessment.q9opt.3' },
 ]
 const q9Questions = [
-  { id: 1, text: 'เบื่อ ไม่สนใจอยากทำอะไร' },
-  { id: 2, text: 'ไม่สบายใจ ซึมเศร้า ท้อแท้' },
-  { id: 3, text: 'หลับยากหรือหลับๆ ตื่นๆ หรือหลับมากเกินไป' },
-  { id: 4, text: 'เหนื่อยง่ายหรือไม่ค่อยมีแรง' },
-  { id: 5, text: 'เบื่ออาหารหรือกินมากเกินไป' },
-  { id: 6, text: 'รู้สึกไม่ดีกับตัวเอง คิดว่าตัวเองล้มเหลวหรือครอบครัวผิดหวัง' },
-  { id: 7, text: 'สมาธิไม่ดี เวลาทำอะไรเช่น อ่านหนังสือพิมพ์ ดูโทรทัศน์ สิ่งที่ทำอยู่นั้นได้ยาก' },
-  { id: 8, text: 'พูดช้า หรือทำอะไรช้าลงจนคนอื่นสังเกตได้ หรือกระสับกระส่ายจนไม่สามารถอยู่นิ่งได้มากกว่าปกติ' },
-  { id: 9, text: 'คิดทำร้ายตนเอง หรือคิดว่าตายไปจะดีกว่าอยู่' },
+  { id: 1, text: 'assessment.q9.1' },
+  { id: 2, text: 'assessment.q9.2' },
+  { id: 3, text: 'assessment.q9.3' },
+  { id: 4, text: 'assessment.q9.4' },
+  { id: 5, text: 'assessment.q9.5' },
+  { id: 6, text: 'assessment.q9.6' },
+  { id: 7, text: 'assessment.q9.7' },
+  { id: 8, text: 'assessment.q9.8' },
+  { id: 9, text: 'assessment.q9.9' },
 ]
 const q9Answers = ref({})
 const q9TotalScore = computed(() => Object.values(q9Answers.value).reduce((a, b) => a + b, 0))
 
 // ===== 8Q =====
 const q8Questions = [
-  { id: 1, text: 'คิดอยากตาย หรือ คิดว่าตายไปจะดีกว่า', score: 1 },
-  { id: 2, text: 'อยากทำร้ายร่างกายตนเอง หรือ ทำให้ตนเองบาดเจ็บ', score: 2 },
-  { id: 3, text: 'คิดเรื่องการฆ่าตัวตายบ่อยแค่ไหน', sub: 'ถ้าตอบว่าคิดเรื่องการฆ่าตัวตาย (ในข้อ 1 หรือ 2 แล้ว) ... ท่านสามารถบอกได้ไหมว่า ท่านจะทำหรือไม่', score: 6 },
-  { id: 4, text: 'มีแผนการที่จะฆ่าตัวตาย', score: 8 },
-  { id: 5, text: 'ได้เตรียมการฆ่าตัวตาย หรือเตรียมการจะฆ่าตัวตายโดยตั้งใจวางแผนที่จะทำโดยตายจริง ๆ', score: 9 },
-  { id: 6, text: 'ได้ทำร้ายตนเองจนเกิดบาดแผลหรืออันตรายถึงชีวิต', score: 4 },
-  { id: 7, text: 'ได้เคยพยายามฆ่าตัวตาย/ตั้งใจให้ตายจริงๆ', score: 10 },
-  { id: 8, text: 'คนรอบข้างที่คุณรู้จัก/แวดล้อมท่านฆ่าตัวตาย', score: 4 },
+  { id: 1, text: 'assessment.q8.1', score: 1 },
+  { id: 2, text: 'assessment.q8.2', score: 2 },
+  { id: 3, text: 'assessment.q8.3', sub: 'assessment.q8.3sub', score: 6 },
+  { id: 4, text: 'assessment.q8.4', score: 8 },
+  { id: 5, text: 'assessment.q8.5', score: 9 },
+  { id: 6, text: 'assessment.q8.6', score: 4 },
+  { id: 7, text: 'assessment.q8.7', score: 10 },
+  { id: 8, text: 'assessment.q8.8', score: 4 },
 ]
 const q8Answers = ref({})
 const q8TotalScore = computed(() => Object.values(q8Answers.value).reduce((a, b) => a + b, 0))
@@ -526,7 +525,7 @@ const submitAssessment = async () => {
     await router.push('/assessment-result')
   } catch (err) {
     console.error('Could not save test result to the backend:', err)
-    saveError.value = err.response?.data?.error || 'บันทึกผลประเมินไม่สำเร็จ กรุณาลองส่งอีกครั้ง'
+    saveError.value = err.response?.data?.error || t('assessment.saveError')
   } finally {
     isSaving.value = false
   }

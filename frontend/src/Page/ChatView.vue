@@ -12,13 +12,14 @@
           <span class="text-xl">🤖</span>
         </div>
         <div>
-          <h1 class="text-lg font-semibold text-gray-900">น้องมุกห่วงใย</h1>
-          <p class="text-xs text-gray-500 flex items-center">(ห้ามใส่ชื่อ-นามสกุลจริง)</p>
+          <h1 class="text-lg font-semibold text-gray-900">{{ $t('chat.botName') }}</h1>
+          <p class="text-xs text-gray-500 flex items-center">{{ $t('chat.noRealName') }}</p>
           <p class="text-xs text-green-500 flex items-center">
-            <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span> ออนไลน์
+            <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span> {{ $t('chat.online') }}
           </p>
         </div>
       </div>
+      <div class="ml-auto bg-[#045F54] rounded-full"><LanguageSwitcher /></div>
     </header>
 
     <!-- Chat Area -->
@@ -40,7 +41,7 @@
               v-if="msg.sender === 'BOT'" 
               @click="toggleSpeak(msg.text, index)"
               class="text-gray-400 hover:text-indigo-600 focus:outline-none transition-colors mr-2"
-              title="อ่านออกเสียง"
+              :title="$t('chat.readAloud')"
             >
               <svg v-if="playingMessageIndex !== index" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 10v4a2 2 0 002 2h2.586l4.707 4.707A.996.996 0 0015 20V4a.996.996 0 00-1.707-.707L9.586 8H7a2 2 0 00-2 2z" />
@@ -73,14 +74,14 @@
     <!-- Input Area -->
     <footer class="bg-white border-t border-gray-200 p-3 sm:p-4 shrink-0 relative">
       <div v-if="isCompleted" class="text-center text-sm text-gray-500 mb-2">
-        การประเมินเสร็จสิ้นแล้ว ขอบคุณที่พูดคุยกับเรา
+        {{ $t('chat.completed') }}
       </div>
       <form @submit.prevent="sendMessage" class="flex items-center space-x-2 max-w-4xl mx-auto">
         <div class="relative flex-1">
           <input 
             v-model="newMessage" 
             type="text" 
-            :placeholder="isCompleted ? 'การสนทนาจบลงแล้ว' : 'พิมพ์ข้อความของคุณที่นี่...'" 
+            :placeholder="isCompleted ? $t('chat.ended') : $t('chat.placeholder')" 
             :disabled="isCompleted"
             class="w-full pl-4 pr-12 py-3 bg-gray-100 border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none disabled:opacity-60 disabled:bg-gray-200 disabled:cursor-not-allowed text-base"
             :required="!isRecording"
@@ -91,7 +92,7 @@
             :disabled="isCompleted"
             class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full focus:outline-none transition-colors"
             :class="isRecording ? 'text-rose-500 bg-rose-50 hover:bg-rose-100 animate-pulse' : 'text-gray-400 hover:text-indigo-600 hover:bg-indigo-50'"
-            title="พูดเพื่อพิมพ์"
+            :title="$t('chat.speakToType')"
           >
             <svg v-if="!isRecording" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -107,7 +108,7 @@
           :disabled="(!newMessage.trim() && !isRecording) || isCompleted"
           class="p-3 sm:px-5 sm:py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center shrink-0 shadow-md"
         >
-          <span class="hidden sm:inline mr-2 text-base font-medium">ส่ง</span>
+          <span class="hidden sm:inline mr-2 text-base font-medium">{{ $t('chat.send') }}</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-90" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
           </svg>
@@ -123,19 +124,19 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">คุณกำลังมีความเสี่ยงสูง</h3>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $t('chat.highRiskTitle') }}</h3>
         <p class="text-sm text-gray-600 mb-6">
-          เรารับรู้ถึงความรู้สึกของคุณและอยากให้คุณรู้ว่าคุณไม่ได้อยู่คนเดียว หากต้องการที่ปรึกษาอย่างเร่งด่วน โปรดติดต่อผู้เชี่ยวชาญทันที
+          {{ $t('chat.highRiskBody') }}
         </p>
         <div class="flex flex-col space-y-3">
           <a href="tel:1323" class="w-full flex items-center justify-center px-4 py-3 bg-rose-600 text-white text-base font-medium rounded-xl hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            โทรสายด่วน 1323
+            {{ $t('chat.callHotline') }}
           </a>
           <button @click="isEmergency = false" class="w-full px-4 py-3 bg-white text-gray-700 text-sm font-medium rounded-xl border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-            ปิดหน้าต่างนี้
+            {{ $t('chat.closeWindow') }}
           </button>
         </div>
       </div>
@@ -144,9 +145,14 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, nextTick, onUnmounted } from 'vue'
+import { dateLocale } from '../i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { ref, computed, inject, onMounted, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
 
 const router = useRouter()
 // Try to inject isDarkMode, default to false if not provided
@@ -161,15 +167,15 @@ const isEmergency = ref(false)
 const isCompleted = ref(false)
 
 // Chips
-const suggestedChips = [
-  "วันนี้เหนื่อยมาก",
-  "นอนไม่ค่อยหลับเลย",
-  "รู้สึกเครียดนิดหน่อย",
-  "ไม่มีคนเข้าใจเลย",
-  "รู้สึกเศร้าจัง",
-  "อยากหาคนคุยด้วย",
-  "รู้สึกเบื่อหน่าย"
-]
+const suggestedChips = computed(() => [
+  t('chat.chip1'),
+  t('chat.chip2'),
+  t('chat.chip3'),
+  t('chat.chip4'),
+  t('chat.chip5'),
+  t('chat.chip6'),
+  t('chat.chip7')
+])
 
 // Web Speech API - Voice to Text
 const isRecording = ref(false)
@@ -178,7 +184,7 @@ let recognition = null;
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
-  recognition.lang = 'th-TH';
+  recognition.lang = locale.value === 'en' ? 'en-US' : 'th-TH';
   recognition.continuous = false;
   recognition.interimResults = false;
 
@@ -199,7 +205,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
 const toggleRecording = () => {
   if (!recognition) {
-    alert('เบราว์เซอร์ของคุณไม่รองรับการสั่งงานด้วยเสียง');
+    alert(t('chat.noVoiceSupport'));
     return;
   }
   
@@ -253,7 +259,7 @@ const toggleSpeak = (text, index) => {
       (voice.name && (voice.name.includes('Thai') || voice.name.includes('ไทย')))
     );
     
-    if (thaiVoice) {
+    if (thaiVoice && /[\u0E00-\u0E7F]/.test(text)) {
       utterance.voice = thaiVoice;
       utterance.lang = 'th-TH';
     } else {
@@ -290,7 +296,7 @@ onUnmounted(() => {
 const formatTime = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
-  return new Intl.DateTimeFormat('th-TH', { hour: '2-digit', minute: '2-digit' }).format(date)
+  return new Intl.DateTimeFormat(dateLocale(), { hour: '2-digit', minute: '2-digit' }).format(date)
 }
 
 const scrollToBottom = async () => {
@@ -323,7 +329,7 @@ const fetchMessages = async () => {
     if (messages.value.length === 0) {
       messages.value.push({
         sender: 'BOT',
-        text: 'สวัสดีค่ะ ฉันอยู่ที่นี่เพื่อรับฟังคุณนะ วันนี้คุณรู้สึกอย่างไรบ้าง?',
+        text: t('chat.greeting'),
         timestamp: new Date().toISOString()
       });
     }
@@ -331,7 +337,7 @@ const fetchMessages = async () => {
     scrollToBottom()
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่')
+      alert(t('chat.sessionExpired'))
       localStorage.removeItem('token')
       router.push('/login')
     } else {
@@ -340,7 +346,7 @@ const fetchMessages = async () => {
       if (messages.value.length === 0) {
         messages.value.push({
           sender: 'BOT',
-          text: 'สวัสดีค่ะ ฉันอยู่ที่นี่เพื่อรับฟังคุณนะ วันนี้คุณรู้สึกอย่างไรบ้าง?',
+          text: t('chat.greeting'),
           timestamp: new Date().toISOString()
         });
       }
@@ -400,12 +406,12 @@ const sendMessage = async () => {
     scrollToBottom()
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่')
+      alert(t('chat.sessionExpired'))
       localStorage.removeItem('token')
       router.push('/login')
     } else {
       console.error('Failed to send message:', error)
-      alert('การส่งข้อความล้มเหลว กรุณาลองใหม่อีกครั้ง')
+      alert(t('chat.sendFailed'))
     }
   }
 }

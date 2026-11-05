@@ -1,0 +1,80 @@
+{
+  "common": {
+    "back": "ย้อนกลับ",
+    "backHome": "กลับหน้าหลัก",
+    "logoAlt": "โลโก้ PhuenJaiZone",
+    "footerDesc": "ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ",
+    "footerServices": "บริการ",
+    "footerContact": "ติดต่อ",
+    "footerHotline": "สายด่วน",
+    "footerService1": "แชตบอตประจำวัน",
+    "footerService2": "คำแนะนำเฉพาะบุคคล",
+    "footerService3": "คลังแหล่งข้อมูลดูแลตัวเอง",
+    "hotlineText": "สายด่วนสุขภาพจิต 1323",
+    "copyright": "© 2026 PhuenJaiZone สงวนลิขสิทธิ์",
+    "footerCheckin": "เช็คอินประจำวัน",
+    "footerActivity": "ติดตามกิจกรรม",
+    "footerBlog": "บทความดูแลตัวเอง"
+  },
+  "auth": {
+    "defaultUser": "ผู้ใช้งาน",
+    "loginSuccess": "เข้าสู่ระบบสำเร็จ",
+    "loginFailed": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    "profileSaved": "บันทึกข้อมูลและรูปโปรไฟล์เรียบร้อยแล้ว",
+    "profileUpdateFailed": "ไม่สามารถอัปเดตข้อมูลโปรไฟล์ได้",
+    "registerSuccess": "สมัครสมาชิกสำเร็จ",
+    "registerFailed": "เกิดข้อผิดพลาดในการสมัครสมาชิก"
+  },
+  "app": {
+    "adminDenied": "คุณไม่มีสิทธิ์เข้าถึงหน้าแอดมิน"
+  },
+  "profile": {
+    "title": "แก้ไขบัญชี",
+    "quote": "\"กำหนดตัวตนของคุณเอง ไม่ใช่เรื่องง่าย แต่คือการเริ่มต้นที่ดีของทุกคน\"",
+    "avatarTitle": "อวตารของคุณ",
+    "avatarChoose": "เลือกอวตารประจำตัวของคุณ ({label})",
+    "avatarDog": "สุนัข",
+    "avatarCat": "แมว",
+    "avatarRabbit": "กระต่าย",
+    "avatarBear": "หมี",
+    "avatarBird": "นก",
+    "nameLabel": "ชื่อ-นามสกุล (นามแฝง)",
+    "namePlaceholder": "กรอกชื่อของคุณ",
+    "emailLabel": "อีเมล",
+    "cancel": "ยกเลิก",
+    "save": "บันทึกการเปลี่ยนแปลง",
+    "saving": "กำลังบันทึก..."
+  },
+  "accountSettings": {
+    "title": "จัดการข้อมูล",
+    "quote": "\"ตั้งค่าความเป็นส่วนตัวและการแจ้งเตือนให้เหมาะกับการใช้งานของคุณ\"",
+    "emailNotifTitle": "การแจ้งเตือนทางอีเมล",
+    "emailNotifDesc": "รับข้อมูลอัปเดตจากระบบ",
+    "accessTitle": "โหมดเข้าถึงแบบสะดวก",
+    "accessDesc": "เพิ่มความง่ายสำหรับผู้ใช้งานที่ต้องการฟีเจอร์ที่เข้าถึงง่าย",
+    "privacy": "ความเป็นส่วนตัว",
+    "privacyPublic": "สาธารณะ",
+    "privacyFriends": "เฉพาะคนที่รู้จัก",
+    "privacyPrivate": "ส่วนตัว",
+    "newPassword": "รหัสผ่านใหม่",
+    "newPasswordPlaceholder": "กรอกรหัสผ่านใหม่",
+    "reset": "รีเซ็ต",
+    "save": "บันทึกข้อมูล",
+    "saved": "บันทึกการตั้งค่าข้อมูลเรียบร้อยแล้ว"
+  },
+  "homeExtra": {
+    "heroImageAlt": "คุณหมอผู้เชี่ยวชาญด้านการดูแลสุขภาพจิต",
+    "aboutImageAlt": "ผู้คนกำลังพูดคุยและรับฟังกันในพื้นที่ปลอดภัย",
+    "bannerImageAlt": "หุ่นยนต์ AI สำหรับให้บริการและช่วยตอบคำถาม",
+    "professionalAssessment": "การประเมินโดยผู้เชี่ยวชาญ",
+    "realTimeGuidance": "คำแนะนำแบบเรียลไทม์",
+    "articlesEmpty": "ยังไม่มีบทความ",
+    "articlesError": "ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง",
+    "noDate": "ไม่ระบุวันที่",
+    "defaultCategory": "บทความ",
+    "source": "แหล่ง",
+    "viewOriginal": "ดูต้นฉบับ",
+    "readOn": "อ่านต่อ",
+    "viewAllMobile": "ดูบทความทั้งหมด"
+  }
+}

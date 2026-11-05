@@ -7,27 +7,29 @@
         <button 
           @click="$router.back()" 
           class="hover:bg-white/20 p-2 rounded-full transition text-white" 
-          title="ย้อนกลับ"
+          :title="$t('common.back')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+          <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
         </div>
       </div>
 
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition">Service</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" class="hover:text-[#D1FAE5] transition">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -54,9 +56,9 @@
       </div>
       
       <div class="max-w-6xl mx-auto px-6 py-16 relative z-10">
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">Contact Us</h1>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">{{ $t('contact.title') }}</h1>
         <p class="text-sm md:text-base text-[#D1FAE5] max-w-2xl leading-relaxed scroll-anim opacity-0 translate-y-10 transition-all duration-1000 delay-200 ease-out">
-          เริ่มต้นดูแลสุขภาพใจของตัวคุณและองค์กรเริ่มวันนี้ หากคุณมีข้อสงสัย แนะนำ ร้องเรียน หรือสนใจบริการแผนองค์กรประเมินสุขภาพจิตประจำวัน สามารถติดต่อความสามารถของเราพร้อมให้บริการครบ
+          {{ $t('contact.heroText') }}
         </p>
       </div>
     </section>
@@ -68,14 +70,14 @@
         <!-- ฝั่งซ้าย: ข้อมูลติดต่อ -->
         <div class="scroll-anim opacity-0 -translate-x-16 transition-all duration-1000 ease-out">
           <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8 leading-snug">
-            "เราพร้อมรับฟังทุกปัญหา<br>ของคุณ "
+            <span class="whitespace-pre-line">{{ $t('contact.listenTitle') }}</span>
           </h2>
 
           <!-- Chatbot CTA Card -->
           <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow mb-10 max-w-sm">
             <div class="flex items-center justify-between gap-4">
               <div class="flex-1">
-                <p class="text-sm font-medium text-[#1E293B]">แชทกับ น้องมุกห่วงใย แชทบอท</p>
+                <p class="text-sm font-medium text-[#1E293B]">{{ $t('contact.chatWith') }}</p>
               </div>
               <div class="w-8 h-8 flex items-center justify-center text-[#64748B] hover:text-[#1E293B] transition cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -84,7 +86,7 @@
               </div>
             </div>
             <button type="button" class="mt-4 bg-gradient-to-r from-[#0D9488] to-[#059669] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all cursor-pointer">
-              เริ่มแชทเลย !
+              {{ $t('contact.startChat') }}
             </button>
           </div>
 
@@ -107,27 +109,27 @@
 
         <!-- ฝั่งขวา: แบบฟอร์มติดต่อกลับ -->
         <div class="scroll-anim opacity-0 translate-x-16 transition-all duration-1000 delay-200 ease-out">
-          <h2 class="text-2xl font-bold text-[#1E293B] mb-8 text-center">แบบฟอร์มติดต่อกลับ</h2>
+          <h2 class="text-2xl font-bold text-[#1E293B] mb-8 text-center">{{ $t('contact.formTitle') }}</h2>
           
           <form @submit.prevent="handleSubmit" class="space-y-5">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-[#1E293B] mb-2">First Name</label>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">{{ $t('contact.firstName') }}</label>
                 <input 
                   v-model="form.firstName"
                   @input="filterTextOnly('firstName')"
                   type="text" 
-                  placeholder="Your first name" 
+                  :placeholder="$t('contact.firstNamePlaceholder')" 
                   class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition placeholder-[#94A3B8]"
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-[#1E293B] mb-2">Last Name</label>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">{{ $t('contact.lastName') }}</label>
                 <input 
                   v-model="form.lastName"
                   @input="filterTextOnly('lastName')"
                   type="text" 
-                  placeholder="Your last name" 
+                  :placeholder="$t('contact.lastNamePlaceholder')" 
                   class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition placeholder-[#94A3B8]"
                 />
               </div>
@@ -135,7 +137,7 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-[#1E293B] mb-2">Email</label>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">{{ $t('contact.email') }}</label>
                 <input 
                   v-model="form.email"
                   @input="filterEmailOnly"
@@ -145,7 +147,7 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-[#1E293B] mb-2">Phone</label>
+                <label class="block text-sm font-semibold text-[#1E293B] mb-2">{{ $t('contact.phone') }}</label>
                 <input 
                   v-model="form.phone"
                   @input="filterNumberOnly"
@@ -157,11 +159,11 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-[#1E293B] mb-2">Subject</label>
+              <label class="block text-sm font-semibold text-[#1E293B] mb-2">{{ $t('contact.subject') }}</label>
               <textarea 
                 v-model="form.subject"
                 rows="5" 
-                placeholder="Your message" 
+                :placeholder="$t('contact.subjectPlaceholder')" 
                 class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488]/40 focus:border-[#0D9488] transition resize-none placeholder-[#94A3B8]"
               ></textarea>
             </div>
@@ -170,7 +172,7 @@
               type="submit"
               class="bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white px-8 py-3 rounded-full text-sm font-semibold hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all"
             >
-              Send message
+              {{ $t('contact.send') }}
             </button>
           </form>
         </div>
@@ -185,30 +187,30 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
             <span class="font-bold text-lg">PhuenJaiZone</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService1') }}</a></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 +14 234 567</li>
             <li>✉️ PhuenJaiZone@domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">line: 1323 (โทรฟรี ตลอด 24 ชั่วโมง)</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('contact.hotlineText') }}</p>
         </div>
       </div>
       <div class="max-w-6xl mx-auto px-6 pt-6 flex flex-col items-center gap-4">
@@ -226,7 +228,7 @@
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
           </a>
         </div>
-        <p class="text-xs text-[#A7F3D0]">PhuenJaiZone@domain all right reserved</p>
+        <p class="text-xs text-[#A7F3D0]">{{ $t('contact.rights') }}</p>
       </div>
     </footer>
 
@@ -236,6 +238,10 @@
 <script setup>
 import { inject, ref, onMounted, onUnmounted } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode')
 
@@ -248,7 +254,7 @@ const form = ref({
 })
 
 const handleSubmit = () => {
-  alert('ส่งข้อความเรียบร้อยแล้ว! ขอบคุณที่ติดต่อเรา')
+  alert(t('contact.sentAlert'))
   form.value = {
     firstName: '',
     lastName: '',
