@@ -21,8 +21,14 @@ const ACCESS_TOKEN_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || "1d") as jwt.Sign
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ recaptchaToken / g-recaptcha-response
-    const { name, username = name, password, email } = req.body || {};
+    // รองรับทั้ง name จากหน้าบ้าน และ username ตรงๆ พร้อมกับ avatar และ recaptchaToken / g-recaptcha-response
+    const { name, username = name, password, email, avatar, avatarUrl } = req.body || {};
+    const selectedAvatar =
+      typeof avatar === "string" && avatar.trim()
+        ? avatar.trim()
+        : typeof avatarUrl === "string" && avatarUrl.trim()
+        ? avatarUrl.trim()
+        : "avatar_dog";
     const rawRecaptchaToken = req.body?.recaptchaToken ?? req.body?.["g-recaptcha-response"];
     const recaptchaToken = typeof rawRecaptchaToken === "string" ? rawRecaptchaToken.trim() : "";
 
@@ -136,13 +142,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // เข้ารหัสผ่านและสร้างผู้ใช้ใหม่
+    // เข้ารหัสผ่านและสร้างผู้ใช้ใหม่ (พร้อมบันทึกค่า avatar ที่เลือก เช่น "avatar_dog")
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
-      data: { username, email, passwordHash },
+      data: { username, email, passwordHash, avatarUrl: selectedAvatar },
     });
 
-    res.status(201).json({ message: "สมัครสมาชิกสำเร็จ", userId: newUser.id });
+    res.status(201).json({ message: "สมัครสมาชิกสำเร็จ", userId: newUser.id, avatar: newUser.avatarUrl });
   } catch (error) {
     res.status(500).json({ error: "เซิร์ฟเวอร์ขัดข้อง", details: error });
   }
@@ -186,7 +192,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       user: {
         id: user.id,
         username: user.username,
-        role: user.role
+        role: user.role,
+        avatar: user.avatarUrl || null,
+        avatarUrl: user.avatarUrl || null
       }
     });
   } catch (error) {
