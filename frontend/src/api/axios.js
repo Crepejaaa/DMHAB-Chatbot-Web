@@ -2,7 +2,7 @@ import axios from 'axios';
 import router from '../router';
 import { useAuthStore } from '../stores/authStore';
 
-const baseURL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'https://dmhab-chatbot-web.onrender.com');
+const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
 const axiosInstance = axios.create({
   baseURL,
@@ -21,7 +21,7 @@ const processQueue = (error, token = null) => {
       prom.resolve(token);
     }
   });
-  
+
   failedQueue = [];
 };
 
@@ -73,20 +73,20 @@ axiosInstance.interceptors.response.use(
         // 3. Pause the failed request and automatically make a POST request to refresh
         const refreshToken = localStorage.getItem('refreshToken');
         const response = await axios.post(`${baseURL}/api/refresh`, { refreshToken });
-        
+
         // 4. If refresh is successful, save the new access token
-        const newAccessToken = response.data.token || response.data.accessToken; 
-        
+        const newAccessToken = response.data.token || response.data.accessToken;
+
         localStorage.setItem('token', newAccessToken);
         const authStore = useAuthStore();
         if (authStore) {
-            authStore.token = newAccessToken;
+          authStore.token = newAccessToken;
         }
 
         // Update the authorization header of the original failed request
         axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
         originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
-        
+
         // Process the queued requests with the new token
         processQueue(null, newAccessToken);
 
@@ -95,18 +95,18 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         // 5. If refresh fails, clear auth data and redirect to login
         processQueue(err, null);
-        
+
         const authStore = useAuthStore();
         if (authStore) {
-            authStore.logout(); 
+          authStore.logout();
         } else {
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
         }
 
         router.push('/login');
-        
+
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
