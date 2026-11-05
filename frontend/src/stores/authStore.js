@@ -3,6 +3,19 @@ import axios from '../api/axios';
 
 const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
+const AVATAR_MAP = {
+  avatar_dog: '/avatars/dog.png',
+  avatar_cat: '/avatars/cat.png',
+  avatar_rabbit: '/avatars/rabbit.png',
+  avatar_bear: '/avatars/bear.png',
+  avatar_bird: '/avatars/bird.png',
+};
+
+const resolveAvatarImage = (value) => {
+  if (!value || typeof value !== 'string') return '';
+  return AVATAR_MAP[value] || value;
+};
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
@@ -16,9 +29,9 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
-    displayName: (state) => state.user?.name || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
+    displayName: (state) => state.user?.name || state.user?.username || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
     userEmail: (state) => state.user?.email || 'example@gmail.com',
-    profileImage: (state) => state.user?.avatar || state.user?.profileImage || '',
+    profileImage: (state) => resolveAvatarImage(state.user?.avatar || state.user?.avatarUrl || state.user?.profileImage || ''),
   },
   actions: {
     async login(email, password) {
@@ -73,6 +86,8 @@ export const useAuthStore = defineStore('auth', {
           email: userData?.email,
           password: userData?.password,
           confirmPassword: userData?.confirmPassword,
+          avatar: userData?.avatar || userData?.avatarUrl || 'avatar_dog',
+          avatarUrl: userData?.avatarUrl || userData?.avatar || 'avatar_dog',
           recaptchaToken: userData?.recaptchaToken,
         };
         const response = await axios.post('/api/register', payload);

@@ -9,7 +9,6 @@
           <path d="M0,50 Q25,80 50,50 T100,50" fill="none" stroke="white" stroke-width="0.5" />
         </svg>
       </div>
-      <!-- ปุ่ม toggle -->
   
       <!-- Top Navbar -->
       <div class="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
@@ -47,30 +46,47 @@
 
     <!-- Form Section -->
     <main class="flex-1 container mx-auto px-4 -mt-20 relative z-20 pb-16 flex justify-center">
-      <div class="bg-white rounded-[2rem] shadow-xl w-full max-w-lg pt-14 pb-10 px-8 sm:px-12 relative">
+      <div class="bg-white rounded-[2rem] shadow-xl w-full max-w-lg pt-16 pb-10 px-8 sm:px-12 relative">
 
-        <!-- รูปโปรไฟล์กล้อง (คลิกเพื่ออัปโหลด) -->
-        <div @click="triggerFileInput"
-          class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-[#F1F5F9] rounded-full border-4 border-white shadow-sm flex items-center justify-center cursor-pointer hover:bg-gray-200 transition overflow-hidden group"
-          title="อัปโหลดภาพโปรไฟล์">
-          <!-- แสดงภาพพรีวิวถ้ามีการเลือกรูปแล้ว -->
-          <img v-if="imagePreview" :src="imagePreview" alt="Profile" class="w-full h-full object-cover" />
-
-          <!-- ไอคอนกล้อง (แสดงตอนยังไม่มีรูป) -->
-          <svg v-else xmlns="http://www.w3.org/2000/svg"
-            class="h-8 w-8 text-gray-500 group-hover:text-[#349E8D] transition-colors" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
+        <!-- วงกลมใหญ่ด้านบนสุด แสดงอวตารสัตว์ที่เลือก (แทนไอคอนกล้องเดิม) -->
+        <div
+          class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-[#F1F5F9] rounded-full border-4 border-white shadow-md flex items-center justify-center overflow-hidden transition-all duration-300"
+          :title="selectedAvatarObj?.label || 'อวตารของคุณ'"
+        >
+          <img
+            v-if="selectedAvatarObj"
+            :src="selectedAvatarObj.src"
+            :alt="selectedAvatarObj.label"
+            class="w-full h-full object-cover transition-transform duration-300"
+          />
         </div>
 
-        <!-- Input File ที่ถูกซ่อนไว้ -->
-        <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleImageUpload" />
+        <h2 class="text-center text-xl font-bold text-gray-800 mb-3">Register</h2>
 
-        <h2 class="text-center text-xl font-bold text-gray-800 mb-8">Register</h2>
+        <!-- พื้นที่เลือก Avatar สัตว์น่ารัก 5 ตัว (Animal Avatar Selector) -->
+        <div class="mb-6">
+          <p class="text-center text-xs font-semibold text-gray-500 mb-3">
+            เลือกอวตารประจำตัวของคุณ ({{ selectedAvatarObj?.label }})
+          </p>
+          <div class="flex items-center justify-center gap-3 sm:gap-4">
+            <button
+              v-for="item in avatarOptions"
+              :key="item.id"
+              type="button"
+              @click="selectAvatar(item.id)"
+              :title="item.label"
+              :aria-label="item.label"
+              :class="[
+                'relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden transition-all duration-200 cursor-pointer focus:outline-none',
+                form.avatar === item.id
+                  ? 'ring-4 ring-[#29CBAE] ring-offset-2 scale-110 shadow-md'
+                  : 'opacity-75 hover:opacity-100 hover:scale-105 ring-1 ring-gray-200'
+              ]"
+            >
+              <img :src="item.src" :alt="item.label" class="w-full h-full object-cover" />
+            </button>
+          </div>
+        </div>
 
         <form @submit.prevent="handleRegister" class="space-y-4">
           <!-- Name -->
@@ -86,6 +102,7 @@
             <input v-model="form.email" type="email" placeholder="Your email, e.g : johndoe@gmail.com" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
+
           <!-- Password -->
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
@@ -106,78 +123,28 @@
             <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
           </div>
 
-          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน (ใช้ชุดนี้ชุดเดียว) -->
-<div class="flex items-center gap-2 mt-4">
-  <input 
-    type="checkbox" 
-    id="terms" 
-    v-model="form.acceptTerms" 
-    :disabled="!hasReadTerms"
-    :class="{'cursor-not-allowed opacity-50': !hasReadTerms, 'cursor-pointer': hasReadTerms}"
-    class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded transition-all"
-  />
-  <label for="terms" class="text-sm text-gray-700 select-none">
-    <a 
-      href="#" 
-      @click.prevent="openTermsModal" 
-      class="text-[#349E8D] underline hover:text-[#21776A] cursor-pointer font-medium"
-    >
-      ยอมรับเงื่อนไขการใช้งาน
-    </a>
-  </label>
-</div>
-
-<!-- Modal แสดงรายละเอียดเงื่อนไขและนโยบายความเป็นส่วนตัว -->
-<div v-if="showTermsModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" @click="closeTermsModal"></div>
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-    <div class="inline-block align-bottom bg-white rounded-2xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-      <div>
-        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-teal-100">
-          <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.033C3.12 6.516 3 7.248 3 8c0 5.525 3.797 10.269 9 11.622 0-.752-.12-1.484-.382-2.016z" />
-          </svg>
-        </div>
-        <div class="mt-3 text-center sm:mt-5">
-          <h3 class="text-xl font-bold text-gray-900" id="modal-title">
-            เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
-          </h3>
-          <div class="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl text-left border border-gray-200 max-h-56 overflow-y-auto space-y-3">
-            <p class="font-semibold text-gray-800">เงื่อนไขและข้อตกลงในการใช้งานระบบ PhuenJaiZone:</p>
-            <p>1. การคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy):</p>
-            <ul class="list-disc list-inside text-xs space-y-1 text-gray-600 mt-1 pl-1">
-      <li>ระบบจัดเก็บข้อมูล (ชื่อ, อีเมล, เบอร์โทร, ผลประเมิน) ไว้เป็นความลับอย่างปลอดภัยผ่านการเข้ารหัส HTTPS/SSL</li>
-      <li>ข้อมูลทั้งหมดจะถูกนำไปใช้วิเคราะห์เพื่อติดตามสภาวะอารมณ์ของคุณเท่านั้น โดยไม่มีการเปิดเผยต่อบุคคลภายนอก</li>
-      <li>คุณมีสิทธิในการเข้าถึง แก้ไข หรือร้องขอให้ลบข้อมูลส่วนตัวของคุณได้ตลอดเวลาผ่านส่วนตั้งค่าบัญชี</li>
-            </ul>
-            <p class="font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-200">
-              ข้อชี้แจงสำคัญ: ระบบแชทบอท PhuenJaiZone เป็นเพียงเครื่องมือประเมินและคัดกรองสภาวะอารมณ์เบื้องต้นเท่านั้น **ไม่ใช้สำหรับการวินิจฉัยโรคทางจิตเวชและไม่มีการจ่ายยาเด็ดขาด**
-            </p>
-            <p>2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที</p>
-            
+          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน -->
+          <div class="flex items-center gap-2 mt-4">
+            <input 
+              type="checkbox" 
+              id="terms" 
+              v-model="form.acceptTerms" 
+              class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded transition-all cursor-pointer"
+            />
+            <label for="terms" class="text-sm text-gray-700 select-none">
+              ฉันได้อ่านและยอมรับ
+              <span 
+                role="button"
+                tabindex="0"
+                @click.stop.prevent="openTermsModal"
+                @keydown.enter.stop.prevent="openTermsModal"
+                class="text-[#349E8D] underline hover:text-[#21776A] cursor-pointer font-semibold"
+              >
+                เงื่อนไขการใช้งาน
+              </span>
+            </label>
           </div>
-        </div>
-      </div>
-      <div class="mt-6 flex flex-col sm:flex-row-reverse gap-2">
-        <button 
-          type="button" 
-          class="w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-5 py-2.5 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm cursor-pointer"
-          @click="acceptAndClose"
-        >
-          ยอมรับเงื่อนไข
-        </button>
-        <button 
-          type="button" 
-          class="w-full inline-flex justify-center rounded-full border border-gray-300 shadow-sm px-5 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer"
-          @click="closeTermsModal"
-        >
-          ปิด
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+
           <!-- Google reCAPTCHA v2 (แบบ Checkbox) -->
           <div class="flex justify-center pt-2">
             <VueRecaptcha
@@ -209,6 +176,60 @@
         </form>
       </div>
     </main>
+
+    <!-- Overlay Modal แสดงรายละเอียดเงื่อนไขการใช้งาน -->
+    <div
+      v-if="showTermsModal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/70 backdrop-blur-xs transition-opacity"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      @click.self="closeTermsModal"
+    >
+      <div class="bg-white rounded-2xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all w-full max-w-lg border border-gray-100">
+        <div>
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-teal-100">
+            <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.033C3.12 6.516 3 7.248 3 8c0 5.525 3.797 10.269 9 11.622 0-.752-.12-1.484-.382-2.016z" />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-4">
+            <h3 class="text-xl font-bold text-gray-900" id="modal-title">
+              เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
+            </h3>
+            <div class="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl text-left border border-gray-200 max-h-60 overflow-y-auto space-y-3">
+              <p class="font-semibold text-gray-800">เงื่อนไขและข้อตกลงในการใช้งานระบบ PhuenJaiZone:</p>
+              <p>1. การคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy):</p>
+              <ul class="list-disc list-inside text-xs space-y-1 text-gray-600 mt-1 pl-1">
+                <li>ระบบจัดเก็บข้อมูล (ชื่อนามแฝง, อีเมล, รูปอวตาร, ผลประเมิน) ไว้เป็นความลับอย่างปลอดภัยผ่านการเข้ารหัส HTTPS/SSL</li>
+                <li>ข้อมูลทั้งหมดจะถูกนำไปใช้วิเคราะห์เพื่อติดตามสภาวะอารมณ์ของคุณเท่านั้น โดยไม่มีการเปิดเผยต่อบุคคลภายนอก</li>
+                <li>คุณมีสิทธิในการเข้าถึง แก้ไข หรือร้องขอให้ลบข้อมูลส่วนตัวของคุณได้ตลอดเวลาผ่านส่วนตั้งค่าบัญชี</li>
+              </ul>
+              <p class="font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-200">
+                ข้อชี้แจงสำคัญ: ระบบแชทบอท PhuenJaiZone เป็นเพียงเครื่องมือประเมินและคัดกรองสภาวะอารมณ์เบื้องต้นเท่านั้น **ไม่ใช้สำหรับการวินิจฉัยโรคทางจิตเวชและไม่มีการจ่ายยาเด็ดขาด**
+              </p>
+              <p>2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 flex flex-col sm:flex-row-reverse gap-2">
+          <button 
+            type="button" 
+            class="w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-5 py-2.5 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm cursor-pointer transition"
+            @click="acceptAndClose"
+          >
+            ยอมรับ
+          </button>
+          <button 
+            type="button" 
+            class="w-full inline-flex justify-center rounded-full border border-gray-300 shadow-sm px-5 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer transition"
+            @click="closeTermsModal"
+          >
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-[#21776A] to-[#349E8D] text-white py-10 text-sm">
@@ -251,18 +272,30 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { VueRecaptcha } from 'vue-recaptcha'
 
+import dogAvatar from '../assets/avatars/dog.png'
+import catAvatar from '../assets/avatars/cat.png'
+import rabbitAvatar from '../assets/avatars/rabbit.png'
+import bearAvatar from '../assets/avatars/bear.png'
+import birdAvatar from '../assets/avatars/bird.png'
+
 const router = useRouter()
 const authStore = useAuthStore()
 const isDarkMode = inject('isDarkMode', ref(false))
-
-const fileInput = ref(null)
-const imagePreview = ref(null)
 const isLoading = ref(false)
+
+// รายการอวตารสัตว์ 5 ตัว
+const avatarOptions = [
+  { id: 'avatar_dog', label: 'สุนัข', src: dogAvatar },
+  { id: 'avatar_cat', label: 'แมว', src: catAvatar },
+  { id: 'avatar_rabbit', label: 'กระต่าย', src: rabbitAvatar },
+  { id: 'avatar_bear', label: 'หมี', src: bearAvatar },
+  { id: 'avatar_bird', label: 'นก', src: birdAvatar },
+]
 
 // ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2 (ดึงจาก Environment Variable เท่านั้น ไม่ใช้ Hardcode Fallback)
 const siteKey = (import.meta.env.VITE_RECAPTCHA_SITE_KEY || '')
@@ -296,17 +329,23 @@ const form = ref({
   email: '',
   password: '',
   confirmPassword: '',
-  acceptTerms: false, // ใช้ตัวแปรนี้ผูกกับ Checkbox (v-model="form.acceptTerms")
-  profileImage: null
+  acceptTerms: false,
+  avatar: 'avatar_dog'
 })
 const errorMessage = ref('')
 
-// เพิ่มตัวแปรสำหรับเช็กว่าเคยกดเปิดอ่านเงื่อนไขหรือยัง
-const hasReadTerms = ref(false)
+const selectedAvatarObj = computed(() => {
+  return avatarOptions.find((item) => item.id === form.value.avatar) || avatarOptions[0]
+})
+
+const selectAvatar = (avatarId) => {
+  form.value.avatar = avatarId
+}
+
+// ตัวแปรและฟังก์ชันสำหรับ Modal เงื่อนไขการใช้งาน
 const showTermsModal = ref(false)
 
 const openTermsModal = () => {
-  hasReadTerms.value = true // ปลดล็อก Checkbox ให้กดติ๊กได้เมื่อเปิดอ่านเงื่อนไขแล้ว
   showTermsModal.value = true
 }
 
@@ -315,21 +354,8 @@ const closeTermsModal = () => {
 }
 
 const acceptAndClose = () => {
-  form.value.acceptTerms = true // ติ๊กถูกให้อัตโนมัติเมื่อกด "ยอมรับเงื่อนไข" ใน Pop-up
-  hasReadTerms.value = true
+  form.value.acceptTerms = true // ติ๊กถูกในช่อง checkbox ให้อัตโนมัติเมื่อกด "ยอมรับ"
   showTermsModal.value = false
-}
-
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
-const handleImageUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    form.value.profileImage = file
-    imagePreview.value = URL.createObjectURL(file)
-  }
 }
 
 const handleRegister = async () => {
@@ -361,6 +387,8 @@ const handleRegister = async () => {
     email: form.value.email.trim(),
     password: form.value.password,
     confirmPassword: form.value.confirmPassword,
+    avatar: form.value.avatar,
+    avatarUrl: form.value.avatar,
     recaptchaToken: token
   }
 
