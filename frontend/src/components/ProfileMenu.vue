@@ -102,16 +102,18 @@
         </span>
       </button>
 
-      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-white/10 bg-[#0f172a] text-white shadow-2xl">
-        <div v-if="authStore.isAuthenticated" class="border-b border-white/10 px-4 py-3 text-left flex items-center gap-3">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white overflow-hidden border border-white/30">
+      <div v-if="mobileMenuOpen" class="absolute right-0 top-12 z-[999] w-[min(88vw,320px)] max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border shadow-2xl"
+        :class="isDarkMode ? 'border-white/10 bg-[#0f172a] text-white' : 'border-gray-200 bg-white text-gray-800'">
+        <div v-if="authStore.isAuthenticated" class="border-b px-4 py-3 text-left flex items-center gap-3" :class="isDarkMode ? 'border-white/10' : 'border-gray-100'">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold overflow-hidden border"
+            :class="isDarkMode ? 'bg-white/20 text-white border-white/30' : 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/20'">
             <img v-if="authStore.profileImage" :src="authStore.profileImage" :alt="$t('profileMenu.profileAlt')" class="h-full w-full object-cover" />
             <span v-else>{{ userInitial }}</span>
           </div>
           <div class="overflow-hidden">
-            <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400">{{ $t('profileMenu.account') }}</p>
+            <p class="text-[10px] uppercase tracking-[0.25em]" :class="mutedCls">{{ $t('profileMenu.account') }}</p>
             <p class="mt-0.5 text-sm font-semibold truncate">{{ authStore.displayName }}</p>
-            <p class="text-xs text-gray-400 truncate">{{ authStore.userEmail }}</p>
+            <p class="text-xs truncate" :class="mutedCls">{{ authStore.userEmail }}</p>
           </div>
         </div>
 
@@ -119,34 +121,43 @@
           <!-- Common Links (About, Service, Blog) -->
           <router-link
             to="/about"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
             @click="mobileMenuOpen = false"
           >
             <span>{{ $t('nav.about') }}</span>
           </router-link>
           <router-link
             to="/services"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
             @click="mobileMenuOpen = false"
           >
             <span>{{ $t('nav.services') }}</span>
           </router-link>
           <router-link
             to="/blog"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
             @click="mobileMenuOpen = false"
           >
             <span>{{ $t('nav.blog') }}</span>
           </router-link>
+          <router-link
+            v-if="isAdmin"
+            to="/admin"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition"
+            :class="isDarkMode ? 'text-[#5EEAD4] hover:bg-white/5' : 'text-[#0D9488] hover:bg-[#0D9488]/10'"
+            @click="mobileMenuOpen = false"
+          >
+            <span>{{ $t('nav.admin') }}</span>
+          </router-link>
 
-          <div class="my-1 border-t border-white/10"></div>
+          <div class="my-1 border-t" :class="isDarkMode ? 'border-white/10' : 'border-gray-100'"></div>
 
           <!-- Unauthenticated Links -->
           <button
             v-if="!authStore.isAuthenticated"
             type="button"
             @click="goToLogin"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium transition" :class="itemCls"
           >
             <span>{{ $t('profileMenu.login') }}</span>
           </button>
@@ -154,7 +165,7 @@
             v-if="!authStore.isAuthenticated"
             type="button"
             @click="goToRegister"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-white transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium transition" :class="itemCls"
           >
             <span>{{ $t('profileMenu.register') }}</span>
           </button>
@@ -164,7 +175,7 @@
             v-if="authStore.isAuthenticated"
             type="button"
             @click="goToProfile"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
           >
             <span>{{ $t('profileMenu.manageProfile') }}</span>
           </button>
@@ -172,13 +183,13 @@
             v-if="authStore.isAuthenticated"
             type="button"
             @click="goToAccount"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-gray-200 transition hover:bg-white/5"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
           >
             <span>{{ $t('profileMenu.manageData') }}</span>
           </button>
 
-          <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-200">
-            <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">{{ $t('nav.darkMode') }}</span>
+          <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm">
+            <span class="text-[10px] font-medium uppercase tracking-[0.2em]" :class="mutedCls">{{ $t('nav.darkMode') }}</span>
             <button
               type="button"
               @click="toggleDarkMode"
@@ -196,7 +207,8 @@
             v-if="authStore.isAuthenticated"
             type="button"
             @click="handleLogout"
-            class="flex w-full items-center justify-between rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-3 text-left text-sm font-medium text-red-300 transition hover:bg-red-500/15"
+            class="flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-sm font-medium transition"
+            :class="isDarkMode ? 'border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/15' : 'border-red-200 bg-red-50 text-red-600 hover:bg-red-100'"
           >
             <span>{{ $t('profileMenu.logout') }}</span>
           </button>
@@ -217,6 +229,10 @@ const isDarkMode = inject('isDarkMode', ref(false))
 const showProfileMenu = ref(false)
 const mobileMenuOpen = ref(false)
 const menuContainerRef = ref(null)
+
+const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
+const itemCls = computed(() => (isDarkMode.value ? 'text-gray-200 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-100'))
+const mutedCls = computed(() => (isDarkMode.value ? 'text-gray-400' : 'text-gray-500'))
 
 const userInitial = computed(() => {
   const name = authStore.displayName || 'U'
