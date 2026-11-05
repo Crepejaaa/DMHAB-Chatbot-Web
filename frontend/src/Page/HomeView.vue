@@ -12,19 +12,22 @@
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
 
-        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Admin Dashboard</router-link>
+        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.admin') }}</router-link>
       </div>
 
       
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <!-- ปุ่มสลับภาษา TH | EN -->
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -45,14 +48,14 @@
     <section class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-8 items-center">
       <div class="scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
         <h1 class="text-4xl font-extrabold text-[#1E293B] leading-tight mb-4">
-          Daily Mental Health<br />Assessment Bot
+          {{ $t('home.heroTitle1') }}<br />{{ $t('home.heroTitle2') }}
         </h1>
         <p class="text-[#64748B] mb-8 text-base">
-          "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
-          "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
+          {{ $t('home.heroQuote1') }}
+          {{ $t('home.heroQuote2') }}
         </p>
         <button @click="startAssessment" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
-          เริ่มต้นใช้งาน
+          {{ $t('home.start') }}
         </button>
       </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
@@ -69,31 +72,31 @@
     <!-- 3. Features Highlight Section -->
     <section class="max-w-6xl mx-auto px-6 py-12 text-center">
       <h2 class="text-xl md:text-2xl font-bold mb-10 text-[#1E293B] scroll-anim opacity-0 translate-y-10 transition-all duration-700 ease-out">
-        "ทำไมแชทบอทของเราถึงเป็นเพื่อนคู่คิดด้านสุขภาพจิตที่ดีที่สุดของคุณ"
+        {{ $t('home.featuresTitle') }}
       </h2>
       
       <div class="grid md:grid-cols-3 gap-6 items-stretch">
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out h-full">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center h-full hover:shadow-md transition">
             <div class="text-3xl mb-4">❤️</div>
-            <h3 class="font-bold text-lg mb-2">การดูแลแบบเฉพาะบุคคล</h3>
-            <p class="text-xs text-[#64748B]">แนวทางการบำบัดให้ตอบโจทย์ปัญหาและเป้าหมายของแต่ละบุคคล</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature1Title') }}</h3>
+            <p class="text-xs text-[#64748B]">{{ $t('home.feature1Desc') }}</p>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out h-full">
           <div class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white p-8 rounded-2xl shadow-lg transform md:-translate-y-2 flex flex-col items-center justify-center h-full">
             <div class="text-3xl mb-4">✨</div>
-            <h3 class="font-bold text-lg mb-2">พูดคุยได้ 24 ชั่วโมง</h3>
-            <p class="text-xs text-[#D1FAE5]">มีบริการให้คำปรึกษาออนไลน์ที่เลือกเวลาได้ตามสะดวก</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature2Title') }}</h3>
+            <p class="text-xs text-[#D1FAE5]">{{ $t('home.feature2Desc') }}</p>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out h-full">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center h-full hover:shadow-md transition">
             <div class="text-3xl mb-4">🛡️</div>
-            <h3 class="font-bold text-lg mb-2">พื้นที่ปลอดภัย</h3>
-            <p class="text-xs text-[#64748B]">การันตีการเก็บรักษาความลับของคุณจะปลอดภัยในบรรยากาศที่สบายใจ</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature3Title') }}</h3>
+            <p class="text-xs text-[#64748B]">{{ $t('home.feature3Desc') }}</p>
           </div>
         </div>
       </div>
@@ -113,10 +116,10 @@
       <div class="scroll-anim opacity-0 translate-x-16 transition-all duration-1000 delay-200 ease-out">
         <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">About Us</span>
         <h2 class="text-2xl font-bold mt-2 mb-4 leading-snug">
-          "เราคือพื้นที่ปลอดภัยในรูปแบบแชทบอท ที่พร้อมรับฟังเช็คอินอารมณ์และช่วยคุณดูแลสุขภาพจิตในชีวิตประจำวันตลอด 24 ชั่วโมงเพราะเราเชื่อว่าทุกความรู้สึกของคุณมีความหมาย"
+          {{ $t('home.aboutText') }}
         </h2>
         <button class="px-6 py-2 bg-[#0D9488] hover:bg-[#045F54] text-white rounded-full font-medium text-sm transition shadow-sm mt-2">
-          อ่านต่อ
+          {{ $t('home.readMore') }}
         </button>
       </div>
     </section>
@@ -135,7 +138,7 @@
         </div>
         <div class="p-8 md:p-12 flex flex-col justify-center">
           <h2 class="text-2xl font-bold mb-6 leading-relaxed text-[#1E293B]">
-            การใช้แชทบอทวิเคราะห์และประเมินสุขภาพจิต เพื่อยกระดับคุณภาพชีวิตในทุกๆ วัน
+            {{ $t('home.bannerTitle') }}
           </h2>
           <div class="space-y-4 text-sm">
             <div class="flex items-center gap-3 bg-[#FAF9F5] p-3 rounded-xl border border-gray-100 transition hover:bg-[#D1FAE5]/30">
@@ -157,11 +160,11 @@
         <div>
           <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">Articles</span>
           <h2 class="text-2xl font-bold mt-2 text-[#1E293B]">
-            บทความที่น่ารู้เกี่ยวกับสภาวะจิตใจ
+            {{ $t('home.articlesTitle') }}
           </h2>
         </div>
         <router-link to="/blog" class="hidden md:block text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition">
-          ดูบทความทั้งหมด &rarr;
+          {{ $t('home.viewAllArticles') }} &rarr;
         </router-link>
       </div>
 
@@ -275,6 +278,7 @@
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { useAuthStore } from '../stores/authStore'
 import axios from '../api/axios'
 

@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "blog": "Blog",
+    "admin": "Admin Dashboard",
+    "darkMode": "Dark Mode",
+    "darkModeTitle": "Grayscale mode for color-blind users"
+  },
+  "home": {
+    "heroTitle1": "Daily Mental Health",
+    "heroTitle2": "Assessment Bot",
+    "heroQuote1": "\"A chatbot may not have a heart, but it was built to help you open up on your most exhausting days.\"",
+    "heroQuote2": "\"Logging your mood today is the first step to loving yourself tomorrow.\"",
+    "start": "Get Started",
+    "featuresTitle": "\"Why our chatbot is your best mental health companion\"",
+    "feature1Title": "Personalized Care",
+    "feature1Desc": "Guidance tailored to each person's challenges and goals",
+    "feature2Title": "Available 24/7",
+    "feature2Desc": "Online support available whenever it suits you",
+    "feature3Title": "Safe Space",
+    "feature3Desc": "Your privacy is guaranteed in a comfortable, secure environment",
+    "aboutLabel": "About Us",
+    "aboutText": "\"We are a safe space in the form of a chatbot, ready to listen, check in on your mood, and help you care for your mental health every day, 24 hours a day — because we believe every feeling you have matters.\"",
+    "readMore": "Read more",
+    "bannerTitle": "Using a chatbot to analyze and assess mental health, improving your quality of life every day",
+    "articlesLabel": "Articles",
+    "articlesTitle": "Insightful articles about mental well-being",
+    "viewAllArticles": "View all articles"
+  }
+}
+
