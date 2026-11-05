@@ -190,13 +190,10 @@ const handleLogin = async () => {
     if (result.success) {
       // 👇 [ส่วนที่แก้ไข]: เพิ่มการเช็คสิทธิ์ (Role) หลังล็อกอินผ่าน
       // ดึงค่า role จาก localStorage ที่ authStore น่าจะเซฟไว้ให้ (ถ้าไม่มีให้มองเป็น USER ธรรมดา)
-      const userRole = localStorage.getItem('userRole') || 'USER';
-
-      if (userRole === 'ADMIN') {
-        router.push('/admin'); // พาแอดมินไปหน้า Dashboard (แก้ชื่อ path ให้ตรงกับของคุณได้เลย)
-      } else {
-        router.push('/'); // พาคนธรรมดาไปหน้า Home
-      }
+      // ทุก role (รวมถึง ADMIN) ไปหน้า Home — แอดมินเข้า Dashboard ได้จากเมนู "Admin Dashboard" บน navbar
+      // ถ้ามี redirect (เช่น มาจากปุ่มเริ่มต้นใช้งาน) ให้กลับไปหน้านั้น ไม่งั้นไปหน้า Home
+      const redirect = router.currentRoute.value.query.redirect;
+      router.push(typeof redirect === 'string' && redirect.startsWith('/') ? redirect : '/');
       
     } else {
       errorMessage.value = result.message

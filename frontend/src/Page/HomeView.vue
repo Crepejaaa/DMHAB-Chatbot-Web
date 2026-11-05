@@ -51,7 +51,7 @@
           "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
           "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
         </p>
-        <button @click="$router.push('/assessment')" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
+        <button @click="startAssessment" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
           เริ่มต้นใช้งาน
         </button>
       </div>
@@ -285,6 +285,15 @@ const mobileMenuOpen = ref(false)
 
 const authStore = useAuthStore()
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
+
+// ปุ่มเริ่มต้นใช้งาน: ถ้ายังไม่ล็อกอิน ให้ไปหน้า Login ก่อน (พร้อม redirect กลับมาหน้าแบบประเมิน)
+const startAssessment = () => {
+  if (authStore.isAuthenticated || localStorage.getItem('token')) {
+    router.push('/assessment')
+  } else {
+    router.push({ path: '/login', query: { redirect: '/assessment' } })
+  }
+}
 
 const articles = ref([])
 const articlesError = ref('')
