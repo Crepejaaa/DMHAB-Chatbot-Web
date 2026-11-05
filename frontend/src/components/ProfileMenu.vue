@@ -144,7 +144,7 @@
             v-if="isAdmin"
             to="/admin"
             class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition"
-            :class="isDarkMode ? 'text-[#5EEAD4] hover:bg-white/5' : 'text-[#0D9488] hover:bg-[#0D9488]/10'"
+            :class="isDarkMode ? 'text-[#5EEAD4] hover:bg-white/5' : 'text-[#0D9488] bg-[#0D9488]/5 border border-[#0D9488]/30 hover:bg-[#0D9488]/10'"
             @click="mobileMenuOpen = false"
           >
             <span>{{ $t('nav.admin') }}</span>
@@ -231,7 +231,7 @@ const mobileMenuOpen = ref(false)
 const menuContainerRef = ref(null)
 
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
-const itemCls = computed(() => (isDarkMode.value ? 'text-gray-200 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-100'))
+const itemCls = computed(() => (isDarkMode.value ? 'text-gray-200 hover:bg-white/5' : 'text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 hover:border-gray-300'))
 const mutedCls = computed(() => (isDarkMode.value ? 'text-gray-400' : 'text-gray-500'))
 
 const userInitial = computed(() => {
