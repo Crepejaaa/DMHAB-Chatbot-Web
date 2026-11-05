@@ -123,26 +123,22 @@
             <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
           </div>
 
-          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน -->
-          <div class="flex items-center gap-2 mt-4">
+          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน (คลิกข้อความ "ฉันได้อ่านและยอมรับ..." เพื่อเปิด Modal) -->
+          <div class="flex items-center gap-2.5 mt-4">
             <input 
               type="checkbox" 
               id="terms" 
               v-model="form.acceptTerms" 
-              class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded transition-all cursor-pointer"
+              @click="handleTermsCheckboxClick"
+              class="h-4 w-4 accent-[#0D9488] text-teal-600 focus:ring-teal-500 border-gray-300 rounded transition-all cursor-pointer shrink-0"
             />
-            <label for="terms" class="text-sm text-gray-700 select-none">
-              ฉันได้อ่านและยอมรับ
-              <span 
-                role="button"
-                tabindex="0"
-                @click.stop.prevent="openTermsModal"
-                @keydown.enter.stop.prevent="openTermsModal"
-                class="text-[#349E8D] underline hover:text-[#21776A] cursor-pointer font-semibold"
-              >
-                เงื่อนไขการใช้งาน
-              </span>
-            </label>
+            <a
+              href="#"
+              @click.prevent="openTermsModal"
+              class="text-sm text-[#21776A] hover:text-[#045F54] underline underline-offset-4 decoration-[#349E8D] cursor-pointer font-semibold select-none transition-colors"
+            >
+              ฉันได้อ่านและยอมรับเงื่อนไขการใช้งาน
+            </a>
           </div>
 
           <!-- Google reCAPTCHA v2 (แบบ Checkbox) -->
@@ -177,59 +173,68 @@
       </div>
     </main>
 
-    <!-- Overlay Modal แสดงรายละเอียดเงื่อนไขการใช้งาน -->
-    <div
-      v-if="showTermsModal"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/70 backdrop-blur-xs transition-opacity"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-      @click.self="closeTermsModal"
-    >
-      <div class="bg-white rounded-2xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all w-full max-w-lg border border-gray-100">
-        <div>
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-teal-100">
-            <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Overlay Modal แสดงรายละเอียดเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว -->
+    <Transition name="terms-modal">
+      <div
+        v-if="showTermsModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-[2px]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        @click.self="closeTermsModal"
+      >
+        <div class="bg-white rounded-[1.75rem] px-6 pt-7 pb-6 text-left overflow-hidden shadow-2xl w-full max-w-lg border border-gray-100">
+          <!-- Icon โล่สีเขียวมิ้นต์ด้านบน -->
+          <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-[#CCFBF1]">
+            <svg class="h-7 w-7 text-[#0D9488]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.033C3.12 6.516 3 7.248 3 8c0 5.525 3.797 10.269 9 11.622 0-.752-.12-1.484-.382-2.016z" />
             </svg>
           </div>
-          <div class="mt-3 text-center sm:mt-4">
-            <h3 class="text-xl font-bold text-gray-900" id="modal-title">
+
+          <!-- หัวข้อ Modal -->
+          <div class="mt-4 text-center">
+            <h3 class="text-xl font-extrabold text-[#1E293B]" id="modal-title">
               เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
             </h3>
-            <div class="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl text-left border border-gray-200 max-h-60 overflow-y-auto space-y-3">
-              <p class="font-semibold text-gray-800">เงื่อนไขและข้อตกลงในการใช้งานระบบ PhuenJaiZone:</p>
-              <p>1. การคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy):</p>
-              <ul class="list-disc list-inside text-xs space-y-1 text-gray-600 mt-1 pl-1">
+
+            <!-- กล่องเนื้อหาเงื่อนไข (Scrollable) -->
+            <div class="mt-4 text-sm text-gray-600 bg-[#F8FAFC] p-4 rounded-2xl text-left border border-gray-200 max-h-64 overflow-y-auto space-y-3 leading-relaxed">
+              <p class="font-bold text-[#1E293B]">เงื่อนไขและข้อตกลงในการใช้งานระบบ PhuenJaiZone:</p>
+              <p class="font-medium text-gray-700">1. การคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy):</p>
+              <ul class="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-gray-600 pl-1">
                 <li>ระบบจัดเก็บข้อมูล (ชื่อนามแฝง, อีเมล, รูปอวตาร, ผลประเมิน) ไว้เป็นความลับอย่างปลอดภัยผ่านการเข้ารหัส HTTPS/SSL</li>
                 <li>ข้อมูลทั้งหมดจะถูกนำไปใช้วิเคราะห์เพื่อติดตามสภาวะอารมณ์ของคุณเท่านั้น โดยไม่มีการเปิดเผยต่อบุคคลภายนอก</li>
                 <li>คุณมีสิทธิในการเข้าถึง แก้ไข หรือร้องขอให้ลบข้อมูลส่วนตัวของคุณได้ตลอดเวลาผ่านส่วนตั้งค่าบัญชี</li>
               </ul>
-              <p class="font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-200">
+              <p class="font-bold text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 text-xs sm:text-sm leading-relaxed">
                 ข้อชี้แจงสำคัญ: ระบบแชทบอท PhuenJaiZone เป็นเพียงเครื่องมือประเมินและคัดกรองสภาวะอารมณ์เบื้องต้นเท่านั้น **ไม่ใช้สำหรับการวินิจฉัยโรคทางจิตเวชและไม่มีการจ่ายยาเด็ดขาด**
               </p>
-              <p>2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที</p>
+              <p class="text-xs sm:text-sm text-gray-700">
+                2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที
+              </p>
             </div>
           </div>
-        </div>
-        <div class="mt-6 flex flex-col sm:flex-row-reverse gap-2">
-          <button 
-            type="button" 
-            class="w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-5 py-2.5 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm cursor-pointer transition"
-            @click="acceptAndClose"
-          >
-            ยอมรับ
-          </button>
-          <button 
-            type="button" 
-            class="w-full inline-flex justify-center rounded-full border border-gray-300 shadow-sm px-5 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer transition"
-            @click="closeTermsModal"
-          >
-            ปิด
-          </button>
+
+          <!-- ปุ่มด้านล่าง: 'ปิด' (ซ้าย) และ 'ยอมรับ' (ขวา) -->
+          <div class="mt-6 grid grid-cols-2 gap-3">
+            <button 
+              type="button" 
+              class="w-full inline-flex justify-center items-center rounded-full border border-gray-300 shadow-xs px-5 py-2.5 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0D9488] cursor-pointer transition"
+              @click="closeTermsModal"
+            >
+              ปิด
+            </button>
+            <button 
+              type="button" 
+              class="w-full inline-flex justify-center items-center rounded-full border border-transparent shadow-sm px-5 py-2.5 bg-[#0D9488] hover:bg-[#045F54] text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0D9488] cursor-pointer transition"
+              @click="acceptAndClose"
+            >
+              ยอมรับ
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Transition>
 
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-[#21776A] to-[#349E8D] text-white py-10 text-sm">
@@ -343,10 +348,20 @@ const selectAvatar = (avatarId) => {
 }
 
 // ตัวแปรและฟังก์ชันสำหรับ Modal เงื่อนไขการใช้งาน
+const hasReadTerms = ref(false)
 const showTermsModal = ref(false)
 
 const openTermsModal = () => {
+  hasReadTerms.value = true
   showTermsModal.value = true
+}
+
+const handleTermsCheckboxClick = (event) => {
+  // หากยังไม่เคยเปิดอ่านเงื่อนไข ให้เด้ง Modal ขึ้นมาเพื่ออ่านและกดยอมรับก่อน
+  if (!hasReadTerms.value && !form.value.acceptTerms) {
+    event.preventDefault()
+    openTermsModal()
+  }
 }
 
 const closeTermsModal = () => {
@@ -354,7 +369,9 @@ const closeTermsModal = () => {
 }
 
 const acceptAndClose = () => {
-  form.value.acceptTerms = true // ติ๊กถูกในช่อง checkbox ให้อัตโนมัติเมื่อกด "ยอมรับ"
+  hasReadTerms.value = true
+  form.value.acceptTerms = true // ติ๊กถูกในช่อง Checkbox ให้อัตโนมัติเมื่อกดปุ่ม "ยอมรับ"
+  errorMessage.value = ''
   showTermsModal.value = false
 }
 
@@ -441,5 +458,15 @@ const handleRegister = async () => {
   color: #cbd5e1 !important;
   -webkit-text-fill-color: #cbd5e1 !important;
   opacity: 1 !important;
+}
+
+.terms-modal-enter-active,
+.terms-modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.terms-modal-enter-from,
+.terms-modal-leave-to {
+  opacity: 0;
 }
 </style>
