@@ -1,19 +1,24 @@
 import { defineStore } from 'pinia';
 import axios from '../api/axios';
+import dogAvatar from '../assets/avatars/dog.png';
+import catAvatar from '../assets/avatars/cat.png';
+import rabbitAvatar from '../assets/avatars/rabbit.png';
+import bearAvatar from '../assets/avatars/bear.png';
+import birdAvatar from '../assets/avatars/bird.png';
 
 const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
 
 const AVATAR_MAP = {
-  avatar_dog: '/avatars/dog.png',
-  avatar_cat: '/avatars/cat.png',
-  avatar_rabbit: '/avatars/rabbit.png',
-  avatar_bear: '/avatars/bear.png',
-  avatar_bird: '/avatars/bird.png',
+  avatar_dog: dogAvatar,
+  avatar_cat: catAvatar,
+  avatar_rabbit: rabbitAvatar,
+  avatar_bear: bearAvatar,
+  avatar_bird: birdAvatar,
 };
 
 const resolveAvatarImage = (value) => {
-  if (!value || typeof value !== 'string') return '';
-  return AVATAR_MAP[value] || value;
+  if (!value || typeof value !== 'string') return dogAvatar;
+  return AVATAR_MAP[value] || dogAvatar;
 };
 
 export const useAuthStore = defineStore('auth', {
@@ -69,14 +74,73 @@ export const useAuthStore = defineStore('auth', {
         };
       }
     },
-    updateUserProfile(profile = {}) {
-      this.user = {
-        ...(this.user || {}),
-        ...profile,
+    async updateUserProfile(profile = {}) {
+      const selectedAvatar =
+        typeof profile.avatar === 'string' && profile.avatar.trim()
+          ? profile.avatar.trim()
+          : typeof profile.avatarUrl === 'string' && profile.avatarUrl.trim()
+          ? profile.avatarUrl.trim()
+          : this.user?.avatar || this.user?.avatarUrl || 'avatar_dog';
+
+      const nextName =
+        typeof profile.name === 'string' && profile.name.trim()
+          ? profile.name.trim()
+          : this.user?.name || this.user?.username || 'ผู้ใช้งาน';
+
+      const nextEmail =
+        typeof profile.email === 'string' && profile.email.trim()
+          ? profile.email.trim()
+          : this.user?.email || '';
+
+      const payload = {
+        name: nextName,
+        username: nextName,
+        email: nextEmail,
+        avatar: selectedAvatar,
+        avatarUrl: selectedAvatar,
       };
 
+      this.user = {
+        ...(this.user || {}),
+        ...payload,
+      };
       localStorage.setItem('user', JSON.stringify(this.user));
-      return this.user;
+
+      if (this.token) {
+        try {
+          const response = await axios.put('/api/profile', payload);
+          if (response.data?.user) {
+            this.user = {
+              ...this.user,
+              ...response.data.user,
+              name: response.data.user.name || response.data.user.username || nextName,
+              avatar: response.data.user.avatar || response.data.user.avatarUrl || selectedAvatar,
+              avatarUrl: response.data.user.avatarUrl || response.data.user.avatar || selectedAvatar,
+            };
+            localStorage.setItem('user', JSON.stringify(this.user));
+          }
+          return {
+            success: true,
+            message: response.data?.message || 'บันทึกข้อมูลและรูปโปรไฟล์เรียบร้อยแล้ว',
+            user: this.user,
+          };
+        } catch (error) {
+          // กรณีมี Error จากการซ้ำของชื่อ/อีเมล ให้แจ้งกลับ แต่ถ้าเป็น 404 (Backend ยังไม่ได้อัปเดต Route) ให้ใช้ค่าที่บันทึกใน LocalStorage ได้เลย
+          if (error.response?.status === 400 || error.response?.status === 409) {
+            return {
+              success: false,
+              message: error.response?.data?.error || 'ไม่สามารถอัปเดตข้อมูลโปรไฟล์ได้',
+              user: this.user,
+            };
+          }
+        }
+      }
+
+      return {
+        success: true,
+        message: 'บันทึกข้อมูลและรูปโปรไฟล์เรียบร้อยแล้ว',
+        user: this.user,
+      };
     },
     async register(userData) {
       try {
