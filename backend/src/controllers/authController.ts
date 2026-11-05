@@ -191,10 +191,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       refreshToken,
       user: {
         id: user.id,
+        name: user.username,
         username: user.username,
+        email: user.email,
         role: user.role,
-        avatar: user.avatarUrl || null,
-        avatarUrl: user.avatarUrl || null
+        avatar: user.avatarUrl || "avatar_dog",
+        avatarUrl: user.avatarUrl || "avatar_dog"
       }
     });
   } catch (error) {
@@ -458,5 +460,78 @@ export const createTestResult = async (req: AuthRequest, res: Response): Promise
   } catch (error) {
     console.error("Error creating test result:", error);
     res.status(500).json({ error: "ไม่สามารถบันทึกผลการประเมินได้", details: error });
+  }
+};
+
+// ฟังก์ชันสำหรับอัปเดตข้อมูลโปรไฟล์และรูปอวตารของผู้ใช้งาน (เช่น avatar_dog, avatar_cat)
+export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่" });
+      return;
+    }
+
+    const { name, username = name, email, avatar, avatarUrl } = req.body || {};
+    const nextUsername = typeof username === "string" && username.trim() ? username.trim() : undefined;
+    const nextEmail = typeof email === "string" && email.trim() ? email.trim() : undefined;
+    const nextAvatar =
+      typeof avatar === "string" && avatar.trim()
+        ? avatar.trim()
+        : typeof avatarUrl === "string" && avatarUrl.trim()
+        ? avatarUrl.trim()
+        : undefined;
+
+    if (nextUsername || nextEmail) {
+      const duplicateConditions: Array<{ username?: string; email?: string }> = [];
+      if (nextUsername) duplicateConditions.push({ username: nextUsername });
+      if (nextEmail) duplicateConditions.push({ email: nextEmail });
+
+      const conflictUser = await prisma.user.findFirst({
+        where: {
+          AND: [
+            { id: { not: userId } },
+            { OR: duplicateConditions }
+          ]
+        }
+      });
+
+      if (conflictUser) {
+        res.status(400).json({ error: "ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว" });
+        return;
+      }
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(nextUsername ? { username: nextUsername } : {}),
+        ...(nextEmail ? { email: nextEmail } : {}),
+        ...(nextAvatar ? { avatarUrl: nextAvatar } : {})
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        avatarUrl: true
+      }
+    });
+
+    res.status(200).json({
+      message: "บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว",
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.username,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        avatar: updatedUser.avatarUrl || "avatar_dog",
+        avatarUrl: updatedUser.avatarUrl || "avatar_dog"
+      }
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "ไม่สามารถอัปเดตข้อมูลโปรไฟล์ได้", details: error });
   }
 };

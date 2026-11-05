@@ -123,13 +123,13 @@
             <p class="text-sm font-bold text-red-500">{{ errorMessage }}</p>
           </div>
 
-          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน (คลิกข้อความ "ฉันได้อ่านและยอมรับ..." เพื่อเปิด Modal) -->
+          <!-- 📍 Checkbox ยอมรับเงื่อนไขการใช้งาน (คลิกกล่องหรือข้อความเพื่อเปิด Modal เสมอ ยกเว้นติ๊กถูกอยู่แล้วจะกดเอาออกได้) -->
           <div class="flex items-center gap-2.5 mt-4">
             <input 
               type="checkbox" 
               id="terms" 
-              v-model="form.acceptTerms" 
-              @click="handleTermsCheckboxClick"
+              :checked="form.acceptTerms" 
+              @click.prevent="handleTermsCheckboxClick"
               class="h-4 w-4 accent-[#0D9488] text-teal-600 focus:ring-teal-500 border-gray-300 rounded transition-all cursor-pointer shrink-0"
             />
             <a
@@ -348,20 +348,28 @@ const selectAvatar = (avatarId) => {
 }
 
 // ตัวแปรและฟังก์ชันสำหรับ Modal เงื่อนไขการใช้งาน
-const hasReadTerms = ref(false)
 const showTermsModal = ref(false)
 
 const openTermsModal = () => {
-  hasReadTerms.value = true
   showTermsModal.value = true
 }
 
 const handleTermsCheckboxClick = (event) => {
-  // หากยังไม่เคยเปิดอ่านเงื่อนไข ให้เด้ง Modal ขึ้นมาเพื่ออ่านและกดยอมรับก่อน
-  if (!hasReadTerms.value && !form.value.acceptTerms) {
-    event.preventDefault()
-    openTermsModal()
+  // ข้อยกเว้น: หาก Checkbox ติ๊กถูกอยู่แล้ว ให้สามารถกดเอาเครื่องหมายถูกออก (Uncheck) ได้ตามปกติ
+  if (form.value.acceptTerms) {
+    form.value.acceptTerms = false
+    if (event?.target) {
+      event.target.checked = false
+    }
+    return
   }
+
+  // หากยังไม่ได้ติ๊กถูก ห้ามติ๊กถูกเองโดยเด็ดขาด และบังคับเปิด Modal เงื่อนไขการใช้งานขึ้นมาเสมอ
+  form.value.acceptTerms = false
+  if (event?.target) {
+    event.target.checked = false
+  }
+  openTermsModal()
 }
 
 const closeTermsModal = () => {
@@ -369,8 +377,7 @@ const closeTermsModal = () => {
 }
 
 const acceptAndClose = () => {
-  hasReadTerms.value = true
-  form.value.acceptTerms = true // ติ๊กถูกในช่อง Checkbox ให้อัตโนมัติเมื่อกดปุ่ม "ยอมรับ"
+  form.value.acceptTerms = true // วิธีเดียวที่ทำให้ Checkbox ติ๊กถูกได้ คือต้องกดปุ่ม "ยอมรับ" ใน Modal เท่านั้น
   errorMessage.value = ''
   showTermsModal.value = false
 }
