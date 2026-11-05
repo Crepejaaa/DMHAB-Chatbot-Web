@@ -14,7 +14,8 @@
     "copyright": "© 2026 PhuenJaiZone. All rights reserved.",
     "footerCheckin": "Daily Check-in",
     "footerActivity": "Activity Tracker",
-    "footerBlog": "Self-Care Blog"
+    "footerBlog": "Self-Care Blog",
+    "brand": "PhuenJaiZone"
   },
   "auth": {
     "defaultUser": "User",

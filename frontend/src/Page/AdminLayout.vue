@@ -9,7 +9,7 @@
           <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
         </div>
         <div>
-          <span class="text-lg font-bold tracking-wide block">PhuenJaiZone</span>
+          <span class="text-lg font-bold tracking-wide block">{{ $t('common.brand') }}</span>
           <span class="text-xs text-[#D1FAE5]/80">{{ $t('admin.layout.subtitle') }}</span>
         </div>
       </div>

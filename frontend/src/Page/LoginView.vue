@@ -29,7 +29,7 @@
         <!-- ฝั่งขวา: โลโก้ และ PhuenJaiZone -->
         <div class="flex items-center gap-2.5 cursor-default">
             <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-10 h-10 object-contain rounded-full" />
-            <span class="text-xl font-bold tracking-wide text-white">PhuenJaiZone</span>
+            <span class="text-xl font-bold tracking-wide text-white">{{ $t('common.brand') }}</span>
         </div>
       </div>
 
@@ -125,7 +125,7 @@
             <div class="w-10 h-10 flex items-center justify-center">
               <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
           <p class="text-white/70 text-xs leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>

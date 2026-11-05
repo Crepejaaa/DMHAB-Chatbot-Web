@@ -8,7 +8,7 @@
         <div class="w-12 h-12 flex items-center justify-center">
           <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
         </div>
-        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+        <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
@@ -242,7 +242,7 @@
             <div class="w-10 h-10 flex items-center justify-center">
               <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
           <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
