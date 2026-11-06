@@ -72,12 +72,12 @@
     </header>
 
     <main class="flex-1 max-w-4xl mx-auto w-full px-6 py-10">
-      <div class="bg-white rounded-[2rem] shadow-lg border border-gray-100 px-6 py-8 md:px-10 md:py-10">
+      <div :class="['rounded-[2rem] shadow-lg border px-6 py-8 md:px-10 md:py-10 transition-all duration-300', isDarkMode ? 'bg-[#1E293B] border-slate-700' : 'bg-white border-gray-100']">
         <!-- ส่วนแสดงผลอวตารหลัก (Profile Preview) และ Animal Avatar Selector 5 ตัว -->
         <div class="flex flex-col items-center mb-8">
           <!-- วงกลมใหญ่แสดงอวตารสัตว์ที่เลือก -->
           <div
-            class="h-28 w-28 sm:h-32 sm:w-32 rounded-full overflow-hidden border-4 border-[#0D9488]/30 shadow-md bg-[#F1F5F9] flex items-center justify-center transition-all duration-300"
+            :class="['h-28 w-28 sm:h-32 sm:w-32 rounded-full overflow-hidden border-4 border-[#0D9488]/30 shadow-md flex items-center justify-center transition-all duration-300', isDarkMode ? 'bg-[#0F172A]' : 'bg-[#F1F5F9]']"
             :title="selectedAvatarObj?.label || $t('profile.avatarTitle')"
           >
             <img
@@ -90,7 +90,7 @@
 
           <!-- Animal Avatar Selector (สุนัข, แมว, กระต่าย, หมี, นก) -->
           <div class="mt-5 text-center">
-            <p class="text-xs sm:text-sm font-semibold text-gray-500 mb-3">
+            <p :class="['text-xs sm:text-sm font-semibold mb-3', isDarkMode ? 'text-slate-300' : 'text-gray-500']">
               {{ $t('profile.avatarChoose', { label: selectedAvatarObj?.label }) }}
             </p>
             <div class="flex items-center justify-center gap-3 sm:gap-4">
@@ -105,7 +105,9 @@
                   'relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden transition-all duration-200 cursor-pointer focus:outline-none',
                   form.avatar === item.id
                     ? 'ring-4 ring-[#0D9488] ring-offset-2 scale-110 shadow-md'
-                    : 'opacity-75 hover:opacity-100 hover:scale-105 ring-1 ring-gray-200'
+                    : isDarkMode
+                      ? 'opacity-75 hover:opacity-100 hover:scale-105 ring-1 ring-slate-600 bg-[#0F172A]'
+                      : 'opacity-75 hover:opacity-100 hover:scale-105 ring-1 ring-gray-200 bg-white'
                 ]"
               >
                 <img :src="item.src" :alt="item.label" class="w-full h-full object-cover" />
@@ -115,22 +117,23 @@
         </div>
 
         <div class="space-y-5">
-          <div class="rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.nameLabel') }}</label>
-            <input v-model="form.name" class="w-full bg-transparent text-lg font-medium text-gray-800 outline-none" :placeholder="$t('profile.namePlaceholder')" />
+          <div :class="['rounded-xl border px-4 py-3 transition-colors', isDarkMode ? 'border-slate-700 bg-[#0F172A]' : 'border-gray-200 bg-[#F8FAFC]']">
+            <label :class="['block text-sm font-semibold mb-1', isDarkMode ? 'text-slate-300' : 'text-gray-700']">{{ $t('profile.nameLabel') }}</label>
+            <input v-model="form.name" :class="['w-full bg-transparent text-lg font-medium outline-none', isDarkMode ? 'text-white placeholder-slate-500' : 'text-gray-800 placeholder-gray-400']" :placeholder="$t('profile.namePlaceholder')" />
           </div>
 
-          <div class="rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.emailLabel') }}</label>
-            <input v-model="form.email" type="email" readonly disabled :title="$t('profile.emailReadonly')" class="w-full bg-transparent text-lg font-medium text-gray-500 outline-none cursor-not-allowed select-none" placeholder="name@example.com" />
+          <div :class="['rounded-xl border px-4 py-3 transition-colors', isDarkMode ? 'border-slate-700 bg-[#0F172A]/70' : 'border-gray-200 bg-[#F8FAFC]']">
+            <label :class="['block text-sm font-semibold mb-1', isDarkMode ? 'text-slate-300' : 'text-gray-700']">{{ $t('profile.emailLabel') }}</label>
+            <input v-model="form.email" type="email" readonly disabled :title="$t('profile.emailReadonly')" :class="['w-full bg-transparent text-lg font-medium outline-none cursor-not-allowed select-none', isDarkMode ? 'text-slate-400' : 'text-gray-500']" placeholder="name@example.com" />
           </div>
           <button
             type="button"
             @click="openPasswordModal"
-            class="w-full rounded-xl border border-[#2BB7A8] px-4 py-3 text-base font-bold text-[#2BB7A8] transition hover:bg-[#2BB7A8]/10 cursor-pointer"
+            :class="['w-full rounded-xl border px-4 py-3 text-base font-bold transition cursor-pointer', isDarkMode ? 'border-[#2BB7A8] text-[#2BB7A8] hover:bg-[#2BB7A8]/20' : 'border-[#2BB7A8] text-[#2BB7A8] hover:bg-[#2BB7A8]/10']"
           >
             {{ $t('profile.resetPassword') }}
-          </button>        </div>
+          </button>
+        </div>
 
         <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <button
@@ -185,26 +188,26 @@
       <div class="text-center text-xs text-[#A7F3D0] pt-6">{{ $t('common.copyright') }}</div>
     </footer>
     <!-- Modal เปลี่ยนรหัสผ่าน -->
-    <div v-if="showPasswordModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-4" @click.self="closePasswordModal">
-      <form @submit.prevent="changePassword" class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl space-y-4 text-[#1E293B]">
+    <div v-if="showPasswordModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 px-4" @click.self="closePasswordModal">
+      <form @submit.prevent="changePassword" :class="['w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 border', isDarkMode ? 'bg-[#1E293B] text-white border-slate-700' : 'bg-white text-[#1E293B] border-gray-100']">
         <h3 class="text-xl font-bold text-center">{{ $t('profile.resetTitle') }}</h3>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.oldPassword') }}</label>
-          <input v-model="passwordForm.oldPassword" type="password" autocomplete="current-password" :placeholder="$t('profile.oldPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <label :class="['block text-sm font-semibold mb-1', isDarkMode ? 'text-slate-300' : 'text-gray-700']">{{ $t('profile.oldPassword') }}</label>
+          <input v-model="passwordForm.oldPassword" type="password" autocomplete="current-password" :placeholder="$t('profile.oldPasswordPlaceholder')" :class="['w-full rounded-xl border px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]', isDarkMode ? 'bg-[#0F172A] border-slate-700 text-white placeholder-slate-500' : 'bg-[#F8FAFC] border-gray-200 text-gray-800']" />
           <div class="mt-1 text-right">
             <router-link to="/forgot-password" class="text-xs font-semibold text-[#0D9488] hover:underline">{{ $t('profile.forgotPassword') }}</router-link>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.newPassword') }}</label>
-          <input v-model="passwordForm.newPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.newPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <label :class="['block text-sm font-semibold mb-1', isDarkMode ? 'text-slate-300' : 'text-gray-700']">{{ $t('profile.newPassword') }}</label>
+          <input v-model="passwordForm.newPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.newPasswordPlaceholder')" :class="['w-full rounded-xl border px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]', isDarkMode ? 'bg-[#0F172A] border-slate-700 text-white placeholder-slate-500' : 'bg-[#F8FAFC] border-gray-200 text-gray-800']" />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.confirmPassword') }}</label>
-          <input v-model="passwordForm.confirmPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.confirmPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <label :class="['block text-sm font-semibold mb-1', isDarkMode ? 'text-slate-300' : 'text-gray-700']">{{ $t('profile.confirmPassword') }}</label>
+          <input v-model="passwordForm.confirmPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.confirmPasswordPlaceholder')" :class="['w-full rounded-xl border px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]', isDarkMode ? 'bg-[#0F172A] border-slate-700 text-white placeholder-slate-500' : 'bg-[#F8FAFC] border-gray-200 text-gray-800']" />
         </div>
 
         <p v-if="passwordError" class="text-sm text-red-500">{{ passwordError }}</p>
