@@ -190,7 +190,10 @@
 
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.oldPassword') }}</label>
-          <input v-model="passwordForm.oldPassword" type="password" autocomplete="current-password" :placeholder="$t('profile.oldPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <div class="relative">
+  
+  <button type="button" tabindex="-1" @click="showOld = !showOld" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"><svg v-if="!showOld" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg><svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg></button>
+</div>
           <div class="mt-1 text-right">
             <router-link to="/forgot-password" class="text-xs font-semibold text-[#0D9488] hover:underline">{{ $t('profile.forgotPassword') }}</router-link>
           </div>
@@ -198,12 +201,18 @@
 
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.newPassword') }}</label>
-          <input v-model="passwordForm.newPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.newPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <div class="relative">
+  
+  <button type="button" tabindex="-1" @click="showNew = !showNew" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"><svg v-if="!showNew" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg><svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg></button>
+</div>
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.confirmPassword') }}</label>
-          <input v-model="passwordForm.confirmPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.confirmPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <div class="relative">
+  
+  <button type="button" tabindex="-1" @click="showConfirm = !showConfirm" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"><svg v-if="!showConfirm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg><svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg></button>
+</div>
         </div>
 
         <p v-if="passwordError" class="text-sm text-red-500">{{ passwordError }}</p>
@@ -220,6 +229,7 @@
 import { inject, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/authStore'
 import axios from '../api/axios'
+import { useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
@@ -234,6 +244,7 @@ const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode')
 const authStore = useAuthStore()
+const router = useRouter()
 const isSaving = ref(false)
 
 // รายการอวตารสัตว์ 5 ตัว (เหมือนในหน้า RegisterView.vue)
@@ -302,11 +313,15 @@ const cancelEdit = () => {
 const showPasswordModal = ref(false)
 const isChangingPassword = ref(false)
 const passwordError = ref('')
+const showOld = ref(false)
+const showNew = ref(false)
+const showConfirm = ref(false)
 const passwordForm = ref({ oldPassword: '', newPassword: '', confirmPassword: '' })
 
 const openPasswordModal = () => {
   passwordForm.value = { oldPassword: '', newPassword: '', confirmPassword: '' }
   passwordError.value = ''
+  showOld.value = showNew.value = showConfirm.value = false
   showPasswordModal.value = true
 }
 
@@ -336,6 +351,8 @@ const changePassword = async () => {
     await axios.put('/api/change-password', { oldPassword, newPassword, confirmPassword })
     showPasswordModal.value = false
     alert(t('profile.passwordChanged'))
+    authStore.logout()
+    router.push('/login')
   } catch (error) {
     passwordError.value = error.response?.data?.error || t('profile.passwordChangeFailed')
   } finally {
