@@ -21,7 +21,7 @@
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
             <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+          <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
         </router-link>
       </div>
       
@@ -68,11 +68,11 @@
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              Blog
+              {{ $t('blog.title') }}
             </h1>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed italic">
-              "อ่านและเรียนรู้เรื่องราวที่ช่วยให้คุณเข้าใจตัวเองมากขึ้น"<br />
-              ค้นพบบทความแนวทางดูแลสุขภาพจิตและแรงบันดาลใจที่คุณอาจต้องการในแต่ละวัน
+              {{ $t('blog.subtitle1') }}<br />
+              {{ $t('blog.subtitle2') }}
             </p>
           </div>
         </div>
@@ -140,7 +140,7 @@
       </div>
       <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
       <div v-else-if="articles.length === 0" class="mt-10 rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
-        ยังไม่มีบทความ
+        {{ $t('blog.empty') }}
       </div>
 
       <div v-else :class="articleLayoutClass" class="mt-10">
@@ -165,7 +165,7 @@
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
                 <div class="mb-2 flex items-center justify-between gap-3">
-                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || $t('blog.defaultCategory') }}</span>
                   <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
                 </div>
                 <h3 class="font-bold text-lg mb-2 text-[#1E293B] hover:text-[#0D9488] transition-colors">
@@ -176,14 +176,14 @@
 
               <div>
                 <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                  <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
-                  <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+                  <span>{{ $t('blog.source', { name: article.sourceName || $t('common.brand') }) }}</span>
+                  <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">{{ $t('blog.viewOriginal') }}</a>
                 </div>
                 <router-link
                   :to="'/blog/' + (article.slug || article.id)"
                   class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
                 >
-                  อ่านเพิ่มเติม &rarr;
+                  {{ $t('blog.readMore') }} &rarr;
                 </router-link>
               </div>
             </div>
@@ -197,34 +197,34 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
-            <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('common.footerService1') }}</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('common.footerService2') }}</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li>📞 02-XXX-XXXX</li>
+            <li>📞 +123 456 789</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
   </div>
@@ -232,11 +232,13 @@
 
 <script setup>
 import { inject, ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 import AdminNavLink from '../components/AdminNavLink.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
+const { t, locale } = useI18n()
 const isDarkMode = inject('isDarkMode', ref(false))
 const articles = ref([])
 const loading = ref(true)
@@ -251,7 +253,8 @@ const articleLayoutClass = computed(() => {
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('th-TH', {
+  const loc = locale.value === 'en' ? 'en-US' : 'th-TH'
+  return new Date(dateString).toLocaleDateString(loc, {
     year: 'numeric', month: 'short', day: 'numeric'
   });
 };
@@ -264,7 +267,7 @@ const fetchArticles = async () => {
     articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    errorMessage.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
+    errorMessage.value = t('blog.loadError') || 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
   } finally {
     loading.value = false
   }
