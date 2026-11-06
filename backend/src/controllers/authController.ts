@@ -556,8 +556,8 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
       res.status(400).json({ error: "รหัสผ่านใหม่และการยืนยันไม่ตรงกัน" });
       return;
     }
-    if (newPassword.length < 6) {
-      res.status(400).json({ error: "รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร" });
+    if (newPassword.length < 8) {
+      res.status(400).json({ error: "รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร" });
       return;
     }
 

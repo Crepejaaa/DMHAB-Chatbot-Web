@@ -327,7 +327,7 @@ const changePassword = async () => {
     passwordError.value = t('profile.passwordRequired')
     return
   }
-  if (newPassword.length < 6) {
+  if (newPassword.length < 8) {
     passwordError.value = t('profile.passwordTooShort')
     return
   }
