@@ -7,7 +7,13 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import path from "path";
 
-if (!process.env.JWT_SECRET || !process.env.RECAPTCHA_SECRET_KEY || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+if (
+  !process.env.JWT_SECRET ||
+  !process.env.RECAPTCHA_SECRET_KEY ||
+  !process.env.GAS_WEBHOOK_URL ||
+  !process.env.EMAIL_USER ||
+  !process.env.EMAIL_PASS
+) {
   dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 }
 
@@ -647,18 +653,6 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       }
     });
 
-    const emailUser = (process.env.EMAIL_USER || "").trim().replace(/^["']|["']$/g, "");
-    const emailPass = (process.env.EMAIL_PASS || "").trim().replace(/^["']|["']$/g, "");
-
-    if (!emailUser || !emailPass) {
-      console.error("[ForgotPassword] Missing EMAIL_USER or EMAIL_PASS in environment variables");
-      res.status(500).json({
-        error: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า EMAIL_USER หรือ EMAIL_PASS บนเซิร์ฟเวอร์",
-        message: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า EMAIL_USER หรือ EMAIL_PASS บนเซิร์ฟเวอร์"
-      });
-      return;
-    }
-
     const resetBaseUrl = (
       process.env.RESET_PASSWORD_BASE_URL ||
       "https://dmhab-chatbot-web.vercel.app"
@@ -669,46 +663,94 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     const resetLink = `${resetBaseUrl}/reset-password?token=${resetToken}`;
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: emailUser,
-        pass: emailPass
-      }
-    });
-
-    await transporter.sendMail({
-      from: `"PhuenJaiZone Support" <${emailUser}>`,
-      to: email,
-      subject: "รีเซ็ตรหัสผ่านของคุณ - PhuenJaiZone",
-      text: `สวัสดีคุณ ${user.username || email},\n\nเราได้รับคำขอรีเซ็ตรหัสผ่านสำหรับบัญชี PhuenJaiZone ของคุณ\nกรุณาคลิกลิงก์ด้านล่างเพื่อตั้งรหัสผ่านใหม่ (ลิงก์มีอายุใช้งาน 1 ชั่วโมง):\n\n${resetLink}\n\nหากคุณไม่ได้เป็นผู้ร้องขอ กรุณาเพิกเฉยต่ออีเมลฉบับนี้`,
-      html: `
-        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
-          <div style="text-align: center; padding-bottom: 16px; border-bottom: 2px solid #ccfbf1;">
-            <h2 style="margin: 0; color: #0d9488;">PhuenJaiZone</h2>
-            <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">ระบบผู้ช่วยประเมินและดูแลสุขภาพจิตประจำวัน</p>
-          </div>
-          <div style="padding: 24px 0;">
-            <p style="margin: 0 0 12px; font-size: 15px;">สวัสดีคุณ <strong>${user.username || email}</strong>,</p>
-            <p style="margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #334155;">
-              เราได้รับคำขอสำหรับการตั้งรหัสผ่านใหม่ของบัญชีที่ผูกกับอีเมลนี้ กรุณากดปุ่มด้านล่างเพื่อไปยังหน้าตั้งรหัสผ่านใหม่ (ลิงก์นี้มีอายุใช้งาน <strong>1 ชั่วโมง</strong>):
-            </p>
-            <div style="text-align: center; margin: 28px 0;">
-              <a href="${resetLink}" style="display: inline-block; padding: 12px 28px; background-color: #0d9488; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 10px; font-size: 14px;">
-                ตั้งรหัสผ่านใหม่
-              </a>
-            </div>
-            <p style="margin: 0 0 8px; font-size: 12px; color: #64748b;">หรือคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ของคุณ:</p>
-            <p style="margin: 0 0 20px; font-size: 12px; word-break: break-all; color: #0f766e;">
-              <a href="${resetLink}" style="color: #0d9488;">${resetLink}</a>
-            </p>
-            <p style="margin: 0; font-size: 12px; color: #94a3b8;">
-              หากคุณไม่ได้เป็นผู้ร้องขอรีเซ็ตรหัสผ่าน คุณสามารถเพิกเฉยต่ออีเมลฉบับนี้ได้ทันที รหัสผ่านของคุณจะยังคงปลอดภัยเหมือนเดิม
-            </p>
-          </div>
+    const emailSubject = "รีเซ็ตรหัสผ่านของคุณ - PhuenJaiZone";
+    const emailText = `สวัสดีคุณ ${user.username || email},\n\nเราได้รับคำขอรีเซ็ตรหัสผ่านสำหรับบัญชี PhuenJaiZone ของคุณ\nกรุณาคลิกลิงก์ด้านล่างเพื่อตั้งรหัสผ่านใหม่ (ลิงก์มีอายุใช้งาน 1 ชั่วโมง):\n\n${resetLink}\n\nหากคุณไม่ได้เป็นผู้ร้องขอ กรุณาเพิกเฉยต่ออีเมลฉบับนี้`;
+    const emailHtml = `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+        <div style="text-align: center; padding-bottom: 16px; border-bottom: 2px solid #ccfbf1;">
+          <h2 style="margin: 0; color: #0d9488;">PhuenJaiZone</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">ระบบผู้ช่วยประเมินและดูแลสุขภาพจิตประจำวัน</p>
         </div>
-      `
-    });
+        <div style="padding: 24px 0;">
+          <p style="margin: 0 0 12px; font-size: 15px;">สวัสดีคุณ <strong>${user.username || email}</strong>,</p>
+          <p style="margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #334155;">
+            เราได้รับคำขอสำหรับการตั้งรหัสผ่านใหม่ของบัญชีที่ผูกกับอีเมลนี้ กรุณากดปุ่มด้านล่างเพื่อไปยังหน้าตั้งรหัสผ่านใหม่ (ลิงก์นี้มีอายุใช้งาน <strong>1 ชั่วโมง</strong>):
+          </p>
+          <div style="text-align: center; margin: 28px 0;">
+            <a href="${resetLink}" style="display: inline-block; padding: 12px 28px; background-color: #0d9488; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 10px; font-size: 14px;">
+              ตั้งรหัสผ่านใหม่
+            </a>
+          </div>
+          <p style="margin: 0 0 8px; font-size: 12px; color: #64748b;">หรือคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ของคุณ:</p>
+          <p style="margin: 0 0 20px; font-size: 12px; word-break: break-all; color: #0f766e;">
+            <a href="${resetLink}" style="color: #0d9488;">${resetLink}</a>
+          </p>
+          <p style="margin: 0; font-size: 12px; color: #94a3b8;">
+            หากคุณไม่ได้เป็นผู้ร้องขอรีเซ็ตรหัสผ่าน คุณสามารถเพิกเฉยต่ออีเมลฉบับนี้ได้ทันที รหัสผ่านของคุณจะยังคงปลอดภัยเหมือนเดิม
+          </p>
+        </div>
+      </div>
+    `;
+
+    const gasWebhookUrl = (process.env.GAS_WEBHOOK_URL || "").trim().replace(/^["']|["']$/g, "");
+    const emailUser = (process.env.EMAIL_USER || "").trim().replace(/^["']|["']$/g, "");
+    const emailPass = (process.env.EMAIL_PASS || "").trim().replace(/^["']|["']$/g, "");
+
+    // 1. ส่งอีเมลผ่าน Google Apps Script Web App (HTTPS พอร์ต 443) เป็นหลัก เพื่อเลี่ยงการบล็อกพอร์ต SMTP บน Render Free Tier
+    if (gasWebhookUrl) {
+      const recipientEmail = user.email || email;
+      const gasResponse = await fetch(gasWebhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          to: recipientEmail,
+          email: recipientEmail,
+          subject: emailSubject,
+          html: emailHtml,
+          htmlBody: emailHtml,
+          text: emailText,
+          body: emailText
+        }),
+        redirect: "follow"
+      });
+
+      const gasResultText = await gasResponse.text();
+      console.log("[ForgotPassword] GAS Webhook response:", {
+        status: gasResponse.status,
+        ok: gasResponse.ok,
+        bodyPreview: gasResultText.slice(0, 200)
+      });
+
+      if (!gasResponse.ok) {
+        throw new Error(`GAS Webhook returned HTTP ${gasResponse.status}: ${gasResultText.slice(0, 200)}`);
+      }
+    } else if (emailUser && emailPass) {
+      // 2. Fallback: ส่งผ่าน Nodemailer (Gmail SMTP) กรณีไม่ได้ตั้งค่า GAS_WEBHOOK_URL
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: emailUser,
+          pass: emailPass
+        }
+      });
+
+      await transporter.sendMail({
+        from: `"PhuenJaiZone Support" <${emailUser}>`,
+        to: user.email || email,
+        subject: emailSubject,
+        text: emailText,
+        html: emailHtml
+      });
+    } else {
+      console.error("[ForgotPassword] Missing GAS_WEBHOOK_URL (and EMAIL_USER/EMAIL_PASS) in environment variables");
+      res.status(500).json({
+        error: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า GAS_WEBHOOK_URL บนเซิร์ฟเวอร์",
+        message: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า GAS_WEBHOOK_URL บนเซิร์ฟเวอร์"
+      });
+      return;
+    }
 
     res.status(200).json({
       message: "ส่งลิงก์สำหรับรีเซ็ตรหัสผ่านไปยังอีเมลของคุณเรียบร้อยแล้ว กรุณาตรวจสอบกล่องจดหมาย"
