@@ -26,15 +26,18 @@
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
+        <AdminNavLink />
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -231,6 +234,8 @@
 import { inject, ref, computed, onMounted } from 'vue'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AdminNavLink from '../components/AdminNavLink.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const isDarkMode = inject('isDarkMode', ref(false))
 const articles = ref([])
