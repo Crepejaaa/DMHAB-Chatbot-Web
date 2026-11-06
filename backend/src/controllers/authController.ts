@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import path from "path";
 
-if (!process.env.JWT_SECRET || !process.env.RECAPTCHA_SECRET_KEY) {
+if (!process.env.JWT_SECRET || !process.env.RECAPTCHA_SECRET_KEY || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
   dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 }
 
@@ -713,11 +713,20 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     res.status(200).json({
       message: "ส่งลิงก์สำหรับรีเซ็ตรหัสผ่านไปยังอีเมลของคุณเรียบร้อยแล้ว กรุณาตรวจสอบกล่องจดหมาย"
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in forgotPassword:", error);
+    const isAuthError =
+      error?.code === "EAUTH" ||
+      String(error?.message || "").includes("535") ||
+      String(error?.response || "").includes("535");
+
+    const errorMessage = isAuthError
+      ? "ไม่สามารถส่งอีเมลได้ เนื่องจาก EMAIL_USER หรือ EMAIL_PASS (Google App Password 16 หลัก) ไม่ถูกต้อง"
+      : "ไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ กรุณาตรวจสอบการตั้งค่าอีเมลหรือลองใหม่อีกครั้ง";
+
     res.status(500).json({
-      error: "ไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ กรุณาตรวจสอบการตั้งค่าอีเมลหรือลองใหม่อีกครั้ง",
-      message: "ไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ กรุณาตรวจสอบการตั้งค่าอีเมลหรือลองใหม่อีกครั้ง"
+      error: errorMessage,
+      message: errorMessage
     });
   }
 };
