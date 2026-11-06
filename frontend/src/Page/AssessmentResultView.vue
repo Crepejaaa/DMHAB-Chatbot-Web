@@ -2,12 +2,15 @@
   <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" :class="{ 'dark-mode-page': isDarkMode }">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="px-6 py-8 sm:p-10">
+        <div class="flex justify-end mb-2">
+          <div class="bg-[#045F54] rounded-full"><LanguageSwitcher /></div>
+        </div>
         <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">{{ $t('assessmentResult.title') }}</h1>
         
         <div class="text-center mb-8">
           <div class="inline-flex flex-col items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
-            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}<span class="text-lg font-semibold text-white/80">/27</span></span>
-            <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.score9q') }}</span>
+            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}<span class="text-lg font-semibold text-white/80">/{{ totalMax }}</span></span>
+            <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.scoreTotal') }}</span>
           </div>
           <p class="text-xl font-bold text-gray-800 mb-3">{{ statusText }}</p>
           <h2 class="text-2xl font-semibold text-gray-800">{{ suggestionTitle }}</h2>
@@ -45,7 +48,7 @@
             @click="goBack"
             class="inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
-            ← {{ $t('common.back') }}
+            ← {{ $t('common.backHome') }}
           </button>
         </div>
       </div>
@@ -158,6 +161,7 @@ import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAssessmentStore } from '../stores/assessmentStore'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const { t } = useI18n()
 
@@ -174,7 +178,14 @@ const showEmergencyModal = ref(false)
 const showTermsModal = ref(false)
 const isAccepted = ref(false)
 
-const totalScore = computed(() => assessmentResult.value?.score ?? 0)
+// คะแนนรวมทั้ง 3 แบบ: 2Q (ข้อที่ตอบ "มี", เต็ม 2) + 9Q (เต็ม 27) + 8Q (เต็ม 52)
+// การแปลผลระดับยังอิงเกณฑ์ของแต่ละแบบ (ดูการ์ด 2Q/9Q/8Q ด้านล่าง)
+const totalMax = 2 + 27 + 52
+const totalScore = computed(() => {
+  const r = assessmentResult.value || {}
+  const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
+  return q2Yes + (r.q9Score ?? 0) + (r.q8Score ?? 0)
+})
 
 const scoreColorClass = computed(() => {
   if (assessmentResult.value.level === 'NORMAL') return 'bg-green-500'
@@ -213,8 +224,7 @@ const partResults = computed(() => {
 })
 
 const goBack = () => {
-  if (window.history.state?.back) router.back()
-  else router.push('/')
+  router.push('/')
 }
 
 const statusText = computed(() => {

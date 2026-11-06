@@ -418,7 +418,7 @@ export const getAdminStats = async (req: Request, res: Response): Promise<void> 
         { label: '0-6 คะแนน (ปกติ)', count: range0to6, description: 'สุขภาพจิตปกติ' },
         { label: '7-12 คะแนน (เครียดเล็กน้อย)', count: range7to12, description: 'เริ่มมีความเครียด' },
         { label: '13-18 คะแนน (เสี่ยงปานกลาง)', count: range13to18, description: 'ควรติดตามอาการ' },
-        { label: '19-21 คะแนน (เสี่ยงรุนแรง)', count: range19to21, description: 'ควรปรึกษาแพทย์' }
+        { label: '19-27 คะแนน (เสี่ยงรุนแรง)', count: range19to21, description: 'ควรปรึกษาแพทย์' }
       ]
     });
   } catch (error) {

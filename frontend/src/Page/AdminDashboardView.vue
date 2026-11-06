@@ -97,7 +97,7 @@
           </div>
         </div>
         <div class="flex items-baseline gap-2 mb-2">
-          <span class="text-3xl font-extrabold text-[#1E293B]">{{ stats.avgScore }} / 21</span>
+          <span class="text-3xl font-extrabold text-[#1E293B]">{{ stats.avgScore }} / 27</span>
           <span :class="avgScoreBadgeClass" class="text-xs font-semibold px-2 py-0.5 rounded-full border">
             {{ avgScoreText }}
           </span>
@@ -234,7 +234,7 @@
               <!-- Value tooltip on top of bar -->
               <div class="mb-2 text-center transition-transform group-hover:-translate-y-1 duration-200">
                 <span class="text-xs sm:text-sm font-extrabold text-amber-600 block">{{ stats.avgScore }}</span>
-                <span class="text-[10px] text-gray-400">{{ $t('admin.dashboard.outOf21') }}</span>
+                <span class="text-[10px] text-gray-400">{{ $t('admin.dashboard.outOf27') }}</span>
               </div>
               <!-- Bar pillar -->
               <div class="w-full bg-gray-100 rounded-t-2xl overflow-hidden flex items-end h-full">
@@ -266,8 +266,8 @@
           </div>
           <div class="bg-gray-50/70 p-3.5 rounded-xl border border-gray-150">
             <div class="text-[11px] text-gray-400 font-medium">{{ $t('admin.dashboard.avgLevelTitle') }}</div>
-            <div class="text-sm font-bold text-gray-800 mt-0.5">{{ $t('admin.dashboard.scoreOf21', { n: stats.avgScore }) }}</div>
-            <div class="text-[10px] text-amber-600 mt-1">{{ $t('admin.dashboard.inLevel', { level: avgScoreText, pct: scorePercentOf21 }) }}</div>
+            <div class="text-sm font-bold text-gray-800 mt-0.5">{{ $t('admin.dashboard.scoreOf27', { n: stats.avgScore }) }}</div>
+            <div class="text-[10px] text-amber-600 mt-1">{{ $t('admin.dashboard.inLevel', { level: avgScoreText, pct: scorePercentOf27 }) }}</div>
           </div>
         </div>
       </div>
@@ -406,7 +406,7 @@
           <div>
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">{{ $t('admin.dashboard.side3') }}</span>
-              <span class="text-xs text-gray-400">{{ $t('admin.dashboard.avgOf21', { n: stats.avgScore }) }}</span>
+              <span class="text-xs text-gray-400">{{ $t('admin.dashboard.avgOf27', { n: stats.avgScore }) }}</span>
             </div>
             <h3 class="text-base font-bold text-[#1E293B]">{{ $t('admin.dashboard.rangeChartTitle') }}</h3>
             <p class="text-xs text-gray-400 mb-6">{{ $t('admin.dashboard.rangeChartDesc') }}</p>
@@ -436,7 +436,7 @@
 
           <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500 bg-gray-50/60 p-3 rounded-xl flex items-center justify-between">
             <span>{{ $t('admin.dashboard.systemAvg') }}</span>
-            <span class="font-extrabold text-[#0D9488]">{{ $t('admin.dashboard.scoreOf21', { n: stats.avgScore }) }}</span>
+            <span class="font-extrabold text-[#0D9488]">{{ $t('admin.dashboard.scoreOf27', { n: stats.avgScore }) }}</span>
           </div>
         </div>
 
@@ -561,24 +561,24 @@ const avgTestsPerUser = computed(() => {
   return (stats.value.assessmentsCompleted / stats.value.totalUsers).toFixed(1)
 })
 
-const scorePercentOf21 = computed(() => {
-  return Math.round((stats.value.avgScore / 21) * 100)
+const scorePercentOf27 = computed(() => {
+  return Math.round((stats.value.avgScore / 27) * 100)
 })
 
 // Bar heights relative to the max value for the 3-metric overview
 const userBarHeight = computed(() => {
-  const max = Math.max(stats.value.totalUsers, stats.value.assessmentsCompleted, 21, 1)
+  const max = Math.max(stats.value.totalUsers, stats.value.assessmentsCompleted, 27, 1)
   return Math.min(100, Math.max(18, Math.round((stats.value.totalUsers / max) * 100)))
 })
 
 const assessmentBarHeight = computed(() => {
-  const max = Math.max(stats.value.totalUsers, stats.value.assessmentsCompleted, 21, 1)
+  const max = Math.max(stats.value.totalUsers, stats.value.assessmentsCompleted, 27, 1)
   return Math.min(100, Math.max(18, Math.round((stats.value.assessmentsCompleted / max) * 100)))
 })
 
 const scoreBarHeight = computed(() => {
-  // Score is out of 21, represented as scale percentage
-  return Math.min(100, Math.max(18, Math.round((stats.value.avgScore / 21) * 100)))
+  // คะแนน 9Q เต็ม 27
+  return Math.min(100, Math.max(18, Math.round((stats.value.avgScore / 27) * 100)))
 })
 
 const scoreDistPercent = (count) => {
@@ -586,18 +586,26 @@ const scoreDistPercent = (count) => {
   return Math.min(100, Math.max(8, Math.round((count / maxCount) * 100)))
 }
 
-// Average score badge and text in Thai
-const avgScoreText = computed(() => {
+// ระดับคะแนนเฉลี่ยตามเกณฑ์ 9Q กรมสุขภาพจิต (เต็ม 27): <7 ปกติ, 7-12 น้อย, 13-18 ปานกลาง, ≥19 รุนแรง
+const avgScoreBand = computed(() => {
   const score = Number(stats.value.avgScore) || 0
-  if (score < 7) return t('admin.dashboard.levelNormal')
-  if (score <= 18) return t('admin.dashboard.levelModerate')
-  return t('admin.dashboard.levelSevere')
+  if (score < 7) return 'normal'
+  if (score <= 12) return 'mild'
+  if (score <= 18) return 'moderate'
+  return 'severe'
 })
 
-const avgScoreBadgeClass = computed(() => {
-  const score = Number(stats.value.avgScore) || 0
-  if (score < 7) return 'text-emerald-700 bg-emerald-50 border-emerald-200'
-  if (score <= 18) return 'text-amber-700 bg-amber-50 border-amber-200'
-  return 'text-rose-700 bg-rose-50 border-rose-200'
-})
+const avgScoreText = computed(() => ({
+  normal: t('admin.dashboard.levelNormal'),
+  mild: t('admin.dashboard.levelMild'),
+  moderate: t('admin.dashboard.levelModerate'),
+  severe: t('admin.dashboard.levelSevere'),
+})[avgScoreBand.value])
+
+const avgScoreBadgeClass = computed(() => ({
+  normal: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+  mild: 'text-amber-700 bg-amber-50 border-amber-200',
+  moderate: 'text-orange-700 bg-orange-50 border-orange-200',
+  severe: 'text-rose-700 bg-rose-50 border-rose-200',
+})[avgScoreBand.value])
 </script>
