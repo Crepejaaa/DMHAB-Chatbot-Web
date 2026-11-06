@@ -86,7 +86,8 @@
             type="button"
             @click="layoutMode = 'grid'"
             :class="layoutMode === 'grid' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
-            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+            class="p-2 rounded-full transition"
+            title="Grid View"
           >
             {{ $t('blog.grid') }}
           </button>
@@ -94,7 +95,8 @@
             type="button"
             @click="layoutMode = 'list'"
             :class="layoutMode === 'list' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
-            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+            class="p-2 rounded-full transition"
+            title="List View"
           >
             {{ $t('blog.list') }}
           </button>

@@ -251,7 +251,7 @@
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >{{ score }}</button>
+                  ></button>
                 </td>
               </tr>
             </tbody>
@@ -313,24 +313,24 @@
                     type="button"
                     @click="q8Answers[q.id] = 0"
                     :class="[
-                      'w-9 h-9 rounded-full font-bold text-sm transition-all flex items-center justify-center mx-auto shadow-sm',
+                      'w-14 h-9 rounded-full font-bold text-xs transition-all flex items-center justify-center mx-auto shadow-sm',
                       q8Answers[q.id] === 0
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >0</button>
+                  >ไม่มี</button>
                 </td>
                 <td class="py-4 border border-gray-200 text-center">
                   <button
                     type="button"
                     @click="q8Answers[q.id] = q.score"
                     :class="[
-                      'w-9 h-9 rounded-full font-bold text-sm transition-all flex items-center justify-center mx-auto shadow-sm',
+                      'w-14 h-9 rounded-full font-bold text-xs transition-all flex items-center justify-center mx-auto shadow-sm',
                       q8Answers[q.id] === q.score
-                        ? 'bg-rose-500 text-white ring-2 ring-rose-400/40 scale-105'
+                        ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >{{ q.score }}</button>
+                  >มี</button>
                 </td>
               </tr>
             </tbody>
