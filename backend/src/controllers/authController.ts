@@ -535,3 +535,53 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
     res.status(500).json({ error: "ไม่สามารถอัปเดตข้อมูลโปรไฟล์ได้", details: error });
   }
 };
+
+// ฟังก์ชันเปลี่ยนรหัสผ่าน: ต้องยืนยันรหัสผ่านเดิมให้ถูกต้องก่อน แล้วบันทึกรหัสผ่านใหม่ (bcrypt hash) ลงฐานข้อมูล
+export const changePassword = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่" });
+      return;
+    }
+
+    const { oldPassword, newPassword, confirmPassword } = req.body || {};
+    if (typeof oldPassword !== "string" || typeof newPassword !== "string" || !oldPassword || !newPassword) {
+      res.status(400).json({ error: "กรุณากรอกรหัสผ่านเดิมและรหัสผ่านใหม่" });
+      return;
+    }
+    if (confirmPassword !== undefined && confirmPassword !== newPassword) {
+      res.status(400).json({ error: "รหัสผ่านใหม่และการยืนยันไม่ตรงกัน" });
+      return;
+    }
+    if (newPassword.length < 6) {
+      res.status(400).json({ error: "รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร" });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.passwordHash) {
+      res.status(404).json({ error: "ไม่พบผู้ใช้งานนี้" });
+      return;
+    }
+
+    const isValid = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!isValid) {
+      res.status(400).json({ error: "รหัสผ่านเดิมไม่ถูกต้อง" });
+      return;
+    }
+
+    if (oldPassword === newPassword) {
+      res.status(400).json({ error: "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม" });
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+
+    res.status(200).json({ message: "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ error: "ไม่สามารถเปลี่ยนรหัสผ่านได้" });
+  }
+};

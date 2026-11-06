@@ -121,9 +121,15 @@
 
           <div class="rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-3">
             <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.emailLabel') }}</label>
-            <input v-model="form.email" type="email" class="w-full bg-transparent text-lg font-medium text-gray-800 outline-none" placeholder="name@example.com" />
+            <input v-model="form.email" type="email" readonly disabled :title="$t('profile.emailReadonly')" class="w-full bg-transparent text-lg font-medium text-gray-500 outline-none cursor-not-allowed select-none" placeholder="name@example.com" />
           </div>
-        </div>
+          <button
+            type="button"
+            @click="openPasswordModal"
+            class="w-full rounded-xl border border-[#2BB7A8] px-4 py-3 text-base font-bold text-[#2BB7A8] transition hover:bg-[#2BB7A8]/10 cursor-pointer"
+          >
+            {{ $t('profile.resetPassword') }}
+          </button>        </div>
 
         <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <button
@@ -177,12 +183,43 @@
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">{{ $t('common.copyright') }}</div>
     </footer>
-  </div>
+    <!-- Modal เปลี่ยนรหัสผ่าน -->
+    <div v-if="showPasswordModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-4" @click.self="closePasswordModal">
+      <form @submit.prevent="changePassword" class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl space-y-4 text-[#1E293B]">
+        <h3 class="text-xl font-bold text-center">{{ $t('profile.resetTitle') }}</h3>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.oldPassword') }}</label>
+          <input v-model="passwordForm.oldPassword" type="password" autocomplete="current-password" :placeholder="$t('profile.oldPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+          <div class="mt-1 text-right">
+            <router-link to="/forgot-password" class="text-xs font-semibold text-[#0D9488] hover:underline">{{ $t('profile.forgotPassword') }}</router-link>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.newPassword') }}</label>
+          <input v-model="passwordForm.newPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.newPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $t('profile.confirmPassword') }}</label>
+          <input v-model="passwordForm.confirmPassword" type="password" autocomplete="new-password" :placeholder="$t('profile.confirmPasswordPlaceholder')" class="w-full rounded-xl border border-gray-200 bg-[#F8FAFC] px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#2BB7A8]" />
+        </div>
+
+        <p v-if="passwordError" class="text-sm text-red-500">{{ passwordError }}</p>
+
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button type="button" :disabled="isChangingPassword" @click="closePasswordModal" class="rounded-xl bg-[#F87171] px-4 py-2.5 font-bold text-white hover:bg-[#EF4444] cursor-pointer disabled:opacity-60">{{ $t('profile.cancel') }}</button>
+          <button type="submit" :disabled="isChangingPassword" class="rounded-xl bg-[#2BB7A8] px-4 py-2.5 font-bold text-white hover:bg-[#1FA79B] cursor-pointer disabled:opacity-60">{{ isChangingPassword ? $t('profile.saving') : $t('profile.confirmChange') }}</button>
+        </div>
+      </form>
+    </div>  </div>
 </template>
 
 <script setup>
 import { inject, ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/authStore'
+import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
@@ -261,6 +298,50 @@ const cancelEdit = () => {
   }
 }
 
+// ===== รีเซ็ต/เปลี่ยนรหัสผ่าน =====
+const showPasswordModal = ref(false)
+const isChangingPassword = ref(false)
+const passwordError = ref('')
+const passwordForm = ref({ oldPassword: '', newPassword: '', confirmPassword: '' })
+
+const openPasswordModal = () => {
+  passwordForm.value = { oldPassword: '', newPassword: '', confirmPassword: '' }
+  passwordError.value = ''
+  showPasswordModal.value = true
+}
+
+const closePasswordModal = () => {
+  if (isChangingPassword.value) return
+  showPasswordModal.value = false
+}
+
+const changePassword = async () => {
+  const { oldPassword, newPassword, confirmPassword } = passwordForm.value
+  passwordError.value = ''
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    passwordError.value = t('profile.passwordRequired')
+    return
+  }
+  if (newPassword.length < 6) {
+    passwordError.value = t('profile.passwordTooShort')
+    return
+  }
+  if (newPassword !== confirmPassword) {
+    passwordError.value = t('profile.passwordMismatch')
+    return
+  }
+
+  isChangingPassword.value = true
+  try {
+    await axios.put('/api/change-password', { oldPassword, newPassword, confirmPassword })
+    showPasswordModal.value = false
+    alert(t('profile.passwordChanged'))
+  } catch (error) {
+    passwordError.value = error.response?.data?.error || t('profile.passwordChangeFailed')
+  } finally {
+    isChangingPassword.value = false
+  }
+}
 onMounted(() => {
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
   const sourceUser = storedUser || authStore.user || {}

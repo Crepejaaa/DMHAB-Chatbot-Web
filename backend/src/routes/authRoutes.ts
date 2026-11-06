@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, refresh, getAllUsers, updateUserRole, deleteUser, getAdminStats, createTestResult, updateProfile } from "../controllers/authController";
+import { register, login, refresh, getAllUsers, updateUserRole, deleteUser, getAdminStats, createTestResult, updateProfile, changePassword } from "../controllers/authController";
 import { verifyAdmin, verifyToken } from "../middlewares/authMiddleware";
 import { authLimiter } from "../middlewares/rateLimitMiddleware";
 
@@ -11,6 +11,7 @@ router.post("/login", authLimiter, login);
 router.post("/refresh", refresh);
 router.put("/profile", verifyToken, updateProfile);
 router.patch("/profile", verifyToken, updateProfile);
+router.put("/change-password", verifyToken, authLimiter, changePassword);
 router.get("/admin/users", verifyToken, verifyAdmin, getAllUsers);
 router.patch("/admin/users/:id/role", verifyToken, verifyAdmin, updateUserRole);
 router.delete("/admin/users/:id", verifyToken, verifyAdmin, deleteUser);

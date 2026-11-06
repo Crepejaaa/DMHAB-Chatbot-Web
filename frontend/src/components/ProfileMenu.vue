@@ -36,13 +36,6 @@
         >
           <span>{{ $t('profileMenu.manageProfile') }}</span>
         </button>
-        <button
-          type="button"
-          @click="goToAccount"
-          class="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-[#F3F4F6]"
-        >
-          <span>{{ $t('profileMenu.manageData') }}</span>
-        </button>
 
         <div class="flex items-center justify-between border-t border-gray-100 px-4 py-3 text-sm text-gray-700">
           <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">{{ $t('nav.darkMode') }}</span>
@@ -179,14 +172,6 @@
           >
             <span>{{ $t('profileMenu.manageProfile') }}</span>
           </button>
-          <button
-            v-if="authStore.isAuthenticated"
-            type="button"
-            @click="goToAccount"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition" :class="itemCls"
-          >
-            <span>{{ $t('profileMenu.manageData') }}</span>
-          </button>
 
           <div class="flex items-center justify-between rounded-xl px-3 py-3 text-sm">
             <span class="text-[10px] font-medium uppercase tracking-[0.2em]" :class="mutedCls">{{ $t('nav.darkMode') }}</span>
@@ -259,11 +244,6 @@ const goToProfile = () => {
   router.push('/profile')
 }
 
-const goToAccount = () => {
-  showProfileMenu.value = false
-  mobileMenuOpen.value = false
-  router.push('/account-settings')
-}
 
 const handleLogout = () => {
   authStore.logout()
