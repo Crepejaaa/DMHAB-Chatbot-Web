@@ -6,21 +6,46 @@
         
         <div class="text-center mb-8">
           <div class="inline-flex flex-col items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
-            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}</span>
-            <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.score') }}</span>
+            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}<span class="text-lg font-semibold text-white/80">/27</span></span>
+            <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.score9q') }}</span>
           </div>
           <p class="text-xl font-bold text-gray-800 mb-3">{{ statusText }}</p>
           <h2 class="text-2xl font-semibold text-gray-800">{{ suggestionTitle }}</h2>
           <p class="mt-4 text-lg text-gray-600">{{ suggestionDetail }}</p>
         </div>
 
-        <div class="flex justify-center mt-8">
-          <!-- เปลี่ยนลิ้งก์ให้เรียกเปิด Terms Modal แทนการกดเข้าแชตตรงๆ เพื่อบังคับให้ยอมรับเงื่อนไขก่อน -->
-          <button 
-            @click="openTermsModal" 
+        <!-- ผลแยกตามแบบประเมิน 2Q / 9Q / 8Q (แต่ละแบบคิดคะแนนแยกกัน ไม่นำมารวมกัน) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div v-for="part in partResults" :key="part.id" class="rounded-xl border p-4 text-center" :class="part.boxClass">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ part.name }}</p>
+            <p class="mt-1 text-2xl font-extrabold text-gray-900">{{ part.score }}<span class="text-sm font-semibold text-gray-400">/{{ part.max }}</span></p>
+            <p class="mt-1 text-sm font-semibold" :class="part.textClass">{{ part.label }}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+          <!-- ระดับรุนแรง: ไม่เปิดให้คุยกับแชทบอท ให้โทรสายด่วนกรมสุขภาพจิตเท่านั้น -->
+          <a
+            v-if="isSevere"
+            href="tel:1323"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold rounded-full shadow-sm text-white bg-rose-600 hover:bg-rose-700 transition-colors duration-200"
+          >
+            📞 {{ $t('assessmentResult.callDmh') }}
+          </a>
+          <!-- ระดับปกติ/ปานกลาง: เปิด Terms Modal ก่อนเข้าแชต เพื่อบังคับให้ยอมรับเงื่อนไขก่อน -->
+          <button
+            v-else
+            @click="openTermsModal"
             class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
           >
             {{ $t('assessmentResult.talkToBot') }}
+          </button>
+          <button
+            type="button"
+            @click="goBack"
+            class="inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+          >
+            ← {{ $t('common.back') }}
           </button>
         </div>
       </div>
@@ -164,6 +189,33 @@ const scoreText = computed(() => {
   if (assessmentResult.value.level === 'SEVERE') return t('assessmentResult.levelSevere')
   return t('assessmentResult.levelUnknown')
 })
+
+const isSevere = computed(() => assessmentResult.value.level === 'SEVERE')
+
+// เกณฑ์ตามแบบประเมินกรมสุขภาพจิต: 2Q (คัดกรอง), 9Q (เต็ม 27), 8Q (เต็ม 52)
+const GREEN = { boxClass: 'border-emerald-200 bg-emerald-50', textClass: 'text-emerald-700' }
+const AMBER = { boxClass: 'border-amber-200 bg-amber-50', textClass: 'text-amber-700' }
+const ORANGE = { boxClass: 'border-orange-200 bg-orange-50', textClass: 'text-orange-700' }
+const RED = { boxClass: 'border-rose-200 bg-rose-50', textClass: 'text-rose-700' }
+
+const partResults = computed(() => {
+  const r = assessmentResult.value
+  const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
+  const q9 = r.q9Score ?? 0
+  const q8 = r.q8Score ?? 0
+  const q9Level = q9 < 7 ? ['q9none', GREEN] : q9 <= 12 ? ['q9mild', AMBER] : q9 <= 18 ? ['q9moderate', ORANGE] : ['q9severe', RED]
+  const q8Level = q8 === 0 ? ['q8none', GREEN] : q8 <= 8 ? ['q8mild', AMBER] : q8 <= 16 ? ['q8moderate', ORANGE] : ['q8severe', RED]
+  return [
+    { id: '2q', name: '2Q', score: q2Yes, max: 2, label: t(`assessmentResult.${q2Yes ? 'q2risk' : 'q2normal'}`), ...(q2Yes ? AMBER : GREEN) },
+    { id: '9q', name: '9Q', score: q9, max: 27, label: t(`assessmentResult.${q9Level[0]}`), ...q9Level[1] },
+    { id: '8q', name: '8Q', score: q8, max: 52, label: t(`assessmentResult.${q8Level[0]}`), ...q8Level[1] },
+  ]
+})
+
+const goBack = () => {
+  if (window.history.state?.back) router.back()
+  else router.push('/')
+}
 
 const statusText = computed(() => {
   return t('assessmentResult.status', { level: scoreText.value })

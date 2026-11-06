@@ -39,7 +39,19 @@
     "titleSevere": "You need care and counseling urgently",
     "detailNormal": "Keep a healthy balance in life and check in with your feelings regularly.",
     "detailModerate": "Try a relaxing activity, or share your feelings with Nong Muk to ease the stress.",
-    "detailSevere": "We recommend calling the 1323 hotline for professional advice, or talking with Nong Muk as a first step."
+    "detailSevere": "Please call the mental health hotline 1323 (Department of Mental Health), available 24 hours, to talk to a professional as soon as possible.",
+    "score9q": "9Q score",
+    "callDmh": "Call the DMH hotline 1323",
+    "q2normal": "No risk found",
+    "q2risk": "Possible depression",
+    "q9none": "None / minimal",
+    "q9mild": "Mild depression",
+    "q9moderate": "Moderate depression",
+    "q9severe": "Severe depression",
+    "q8none": "No self-harm tendency",
+    "q8mild": "Mild self-harm tendency",
+    "q8moderate": "Moderate self-harm tendency",
+    "q8severe": "Severe self-harm tendency"
   },
   "assessment": {
     "intro": "This assessment follows the standard criteria of the <b class=\"text-[#045F54]\">Department of Mental Health, Ministry of Public Health</b> to screen your mood, stress level and early signs of depression.",
