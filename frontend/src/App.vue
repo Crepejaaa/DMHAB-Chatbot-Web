@@ -65,12 +65,14 @@ body {
 
 .dark-mode-page [class*="bg-[#FAF9F5]"],
 .dark-mode-page [class*="bg-gray-50"],
+.dark-mode-page [class*="bg-[#F8FAFC]"],
 .dark-mode-page [class*="bg-white"] {
   background-color: #1e293b !important;
 }
 
 .dark-mode [class*="bg-[#FCFBF8]"],
 .dark-mode [class*="bg-gray-50"],
+.dark-mode [class*="bg-[#F8FAFC]"],
 .dark-mode [class*="bg-white"] {
   background-color: #1e293b !important;
 }
@@ -130,6 +132,7 @@ body {
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-white"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-[#FCFBF8]"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-[#F1F5F9]"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-[#F8FAFC]"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-gray-50"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-gray-100"] {
   background-color: #1e293b !important;
@@ -161,6 +164,14 @@ body {
   background-color: #334155 !important;
   border-color: #64748b !important;
   color: #f8fafc !important;
+}
+
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) input[class*="bg-transparent"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) textarea[class*="bg-transparent"],
+.dark-mode-page input.bg-transparent,
+.dark-mode input.bg-transparent {
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) input::placeholder,

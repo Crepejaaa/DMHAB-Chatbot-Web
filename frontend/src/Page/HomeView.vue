@@ -6,25 +6,28 @@
       <div class="flex items-center gap-1">
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
-          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+          <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
         </div>
-        <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+        <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
 
-        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Admin Dashboard</router-link>
+        <router-link v-if="isAdmin" to="/admin" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.admin') }}</router-link>
       </div>
 
       
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <!-- ปุ่มสลับภาษา TH | EN -->
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -45,21 +48,21 @@
     <section class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-8 items-center">
       <div class="scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
         <h1 class="text-4xl font-extrabold text-[#1E293B] leading-tight mb-4">
-          Daily Mental Health<br />Assessment Bot
+          {{ $t('home.heroTitle1') }}<br />{{ $t('home.heroTitle2') }}
         </h1>
         <p class="text-[#64748B] mb-8 text-base">
-          "แชทบอทอาจไม่มีหัวใจ แต่ถูกสร้างขึ้นมาเพื่อให้คุณกล้าเปิดใจในวันที่เหนื่อยล้าที่สุด"
-          "การกดบันทึกอารมณ์ในวันนี้ คือจุดเริ่มต้นของการรักตัวเองในวันพรุ่งนี้"
+          {{ $t('home.heroQuote1') }}
+          {{ $t('home.heroQuote2') }}
         </p>
-        <button @click="$router.push('/assessment')" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
-          เริ่มต้นใช้งาน
+        <button @click="startAssessment" class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transform active:scale-95 transition-all inline-flex items-center justify-center">
+          {{ $t('home.start') }}
         </button>
       </div>
       <div class="flex justify-center scroll-anim opacity-0 scale-95 transition-all duration-1000 delay-200 ease-out">
         <div class="w-80 h-64 overflow-hidden rounded-2xl bg-white/60 shadow-lg ring-1 ring-[#0D9488]/20">
           <img
             src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=85"
-            alt="คุณหมอผู้เชี่ยวชาญด้านการดูแลสุขภาพจิต"
+            :alt="$t('homeExtra.heroImageAlt')"
             class="h-full w-full object-cover"
           />
         </div>
@@ -69,31 +72,31 @@
     <!-- 3. Features Highlight Section -->
     <section class="max-w-6xl mx-auto px-6 py-12 text-center">
       <h2 class="text-xl md:text-2xl font-bold mb-10 text-[#1E293B] scroll-anim opacity-0 translate-y-10 transition-all duration-700 ease-out">
-        "ทำไมแชทบอทของเราถึงเป็นเพื่อนคู่คิดด้านสุขภาพจิตที่ดีที่สุดของคุณ"
+        {{ $t('home.featuresTitle') }}
       </h2>
       
       <div class="grid md:grid-cols-3 gap-6 items-stretch">
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-100 ease-out h-full">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center h-full hover:shadow-md transition">
             <div class="text-3xl mb-4">❤️</div>
-            <h3 class="font-bold text-lg mb-2">การดูแลแบบเฉพาะบุคคล</h3>
-            <p class="text-xs text-[#64748B]">แนวทางการบำบัดให้ตอบโจทย์ปัญหาและเป้าหมายของแต่ละบุคคล</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature1Title') }}</h3>
+            <p class="text-xs text-[#64748B]">{{ $t('home.feature1Desc') }}</p>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-300 ease-out h-full">
           <div class="bg-gradient-to-b from-[#0D9488] to-[#059669] text-white p-8 rounded-2xl shadow-lg transform md:-translate-y-2 flex flex-col items-center justify-center h-full">
             <div class="text-3xl mb-4">✨</div>
-            <h3 class="font-bold text-lg mb-2">พูดคุยได้ 24 ชั่วโมง</h3>
-            <p class="text-xs text-[#D1FAE5]">มีบริการให้คำปรึกษาออนไลน์ที่เลือกเวลาได้ตามสะดวก</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature2Title') }}</h3>
+            <p class="text-xs text-[#D1FAE5]">{{ $t('home.feature2Desc') }}</p>
           </div>
         </div>
 
         <div class="scroll-anim opacity-0 translate-y-16 transition-all duration-700 delay-500 ease-out h-full">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center h-full hover:shadow-md transition">
             <div class="text-3xl mb-4">🛡️</div>
-            <h3 class="font-bold text-lg mb-2">พื้นที่ปลอดภัย</h3>
-            <p class="text-xs text-[#64748B]">การันตีการเก็บรักษาความลับของคุณจะปลอดภัยในบรรยากาศที่สบายใจ</p>
+            <h3 class="font-bold text-lg mb-2">{{ $t('home.feature3Title') }}</h3>
+            <p class="text-xs text-[#64748B]">{{ $t('home.feature3Desc') }}</p>
           </div>
         </div>
       </div>
@@ -105,18 +108,18 @@
         <div class="w-72 h-72 overflow-hidden rounded-2xl bg-white/60 shadow-md ring-1 ring-[#0D9488]/20">
           <img
             src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=85"
-            alt="ผู้คนกำลังพูดคุยและรับฟังกันในพื้นที่ปลอดภัย"
+            :alt="$t('homeExtra.aboutImageAlt')"
             class="h-full w-full object-cover"
           />
         </div>
       </div>
       <div class="scroll-anim opacity-0 translate-x-16 transition-all duration-1000 delay-200 ease-out">
-        <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">About Us</span>
+        <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">{{ $t('home.aboutLabel') }}</span>
         <h2 class="text-2xl font-bold mt-2 mb-4 leading-snug">
-          "เราคือพื้นที่ปลอดภัยในรูปแบบแชทบอท ที่พร้อมรับฟังเช็คอินอารมณ์และช่วยคุณดูแลสุขภาพจิตในชีวิตประจำวันตลอด 24 ชั่วโมงเพราะเราเชื่อว่าทุกความรู้สึกของคุณมีความหมาย"
+          {{ $t('home.aboutText') }}
         </h2>
         <button class="px-6 py-2 bg-[#0D9488] hover:bg-[#045F54] text-white rounded-full font-medium text-sm transition shadow-sm mt-2">
-          อ่านต่อ
+          {{ $t('home.readMore') }}
         </button>
       </div>
     </section>
@@ -128,23 +131,23 @@
           <div class="w-48 h-80 overflow-hidden bg-white rounded-3xl shadow-sm ring-2 ring-[#0D9488]/30 hover:scale-105 transition duration-500">
             <img
               src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=700&q=85"
-              alt="หุ่นยนต์ AI สำหรับให้บริการและช่วยตอบคำถาม"
+              :alt="$t('homeExtra.bannerImageAlt')"
               class="h-full w-full object-cover"
             />
           </div>
         </div>
         <div class="p-8 md:p-12 flex flex-col justify-center">
           <h2 class="text-2xl font-bold mb-6 leading-relaxed text-[#1E293B]">
-            การใช้แชทบอทวิเคราะห์และประเมินสุขภาพจิต เพื่อยกระดับคุณภาพชีวิตในทุกๆ วัน
+            {{ $t('home.bannerTitle') }}
           </h2>
           <div class="space-y-4 text-sm">
             <div class="flex items-center gap-3 bg-[#FAF9F5] p-3 rounded-xl border border-gray-100 transition hover:bg-[#D1FAE5]/30">
               <span class="bg-[#0D9488]/10 p-2 rounded-lg text-[#0D9488]">🩺</span>
-              <span class="font-medium text-[#1E293B]">Professional Assessment</span>
+              <span class="font-medium text-[#1E293B]">{{ $t('homeExtra.professionalAssessment') }}</span>
             </div>
             <div class="flex items-center gap-3 bg-[#FAF9F5] p-3 rounded-xl border border-gray-100 transition hover:bg-[#D1FAE5]/30">
               <span class="bg-[#0D9488]/10 p-2 rounded-lg text-[#0D9488]">💡</span>
-              <span class="font-medium text-[#1E293B]">Real-time Guidance</span>
+              <span class="font-medium text-[#1E293B]">{{ $t('homeExtra.realTimeGuidance') }}</span>
             </div>
           </div>
         </div>
@@ -155,13 +158,13 @@
     <section class="max-w-6xl mx-auto px-6 py-12">
       <div class="flex justify-between items-end mb-8 scroll-anim opacity-0 translate-y-10 transition-all duration-700 ease-out">
         <div>
-          <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">Articles</span>
+          <span class="text-xs font-semibold text-[#0D9488] uppercase tracking-wider">{{ $t('home.articlesLabel') }}</span>
           <h2 class="text-2xl font-bold mt-2 text-[#1E293B]">
-            บทความที่น่ารู้เกี่ยวกับสภาวะจิตใจ
+            {{ $t('home.articlesTitle') }}
           </h2>
         </div>
         <router-link to="/blog" class="hidden md:block text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition">
-          ดูบทความทั้งหมด &rarr;
+          {{ $t('home.viewAllArticles') }} &rarr;
         </router-link>
       </div>
 
@@ -182,7 +185,7 @@
       </p>
 
       <p v-else-if="visibleArticles.length === 0" class="rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
-        ยังไม่มีบทความ
+        {{ $t('homeExtra.articlesEmpty') }}
       </p>
 
       <div v-else class="grid md:grid-cols-3 gap-6">
@@ -205,7 +208,7 @@
               </div>
               <div class="p-6">
                 <div class="mb-2 flex items-center justify-between gap-3">
-                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || $t('homeExtra.defaultCategory') }}</span>
                   <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
                 </div>
                 <h3 class="font-bold text-lg mb-2 text-[#1E293B] line-clamp-2">{{ article.title }}</h3>
@@ -214,10 +217,10 @@
             </div>
             <div class="px-6 pb-6 pt-0">
               <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
-                <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+                <span>{{ $t('homeExtra.source') }}: {{ article.sourceName || 'PhuenJaiZone' }}</span>
+                <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">{{ $t('homeExtra.viewOriginal') }}</a>
               </div>
-              <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">อ่านต่อ &rarr;</router-link>
+              <router-link :to="'/blog/' + (article.slug || article.id)" class="text-[#0D9488] font-medium text-sm hover:underline inline-block">{{ $t('homeExtra.readOn') }} &rarr;</router-link>
             </div>
           </div>
         </div>
@@ -225,7 +228,7 @@
       
       <div class="mt-8 text-center md:hidden">
         <router-link to="/blog" class="text-sm font-medium text-[#0D9488] hover:text-[#045F54] transition border border-[#0D9488] px-6 py-2 rounded-full inline-block">
-          ดูบทความทั้งหมด
+          {{ $t('home.viewAllArticles') }}
         </router-link>
       </div>
     </section>
@@ -237,34 +240,34 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService1') }}</a></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <router-link to="/contact" class="font-bold mb-3 block hover:underline">Contact</router-link>
+          <router-link to="/contact" class="font-bold mb-3 block hover:underline">{{ $t('common.footerContact') }}</router-link>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
 
@@ -272,11 +275,16 @@
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
 import { inject, onMounted, onUnmounted, ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { useAuthStore } from '../stores/authStore'
 import axios from '../api/axios'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const isDarkMode = inject('isDarkMode', false)
@@ -286,14 +294,23 @@ const mobileMenuOpen = ref(false)
 const authStore = useAuthStore()
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
 
+// ปุ่มเริ่มต้นใช้งาน: ถ้ายังไม่ล็อกอิน ให้ไปหน้า Login ก่อน (พร้อม redirect กลับมาหน้าแบบประเมิน)
+const startAssessment = () => {
+  if (authStore.isAuthenticated || localStorage.getItem('token')) {
+    router.push('/assessment')
+  } else {
+    router.push({ path: '/login', query: { redirect: '/assessment' } })
+  }
+}
+
 const articles = ref([])
 const articlesError = ref('')
 const visibleArticles = computed(() => articles.value.slice(0, 3))
 
 const formatDate = (dateValue) => {
-  if (!dateValue) return 'ไม่ระบุวันที่'
+  if (!dateValue) return t('homeExtra.noDate')
   const date = new Date(dateValue)
-  return new Intl.DateTimeFormat('th-TH', {
+  return new Intl.DateTimeFormat(dateLocale(), {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -319,7 +336,7 @@ const fetchArticles = async () => {
   } catch (error) {
     console.error('Failed to load articles:', error)
     articles.value = []
-    articlesError.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
+    articlesError.value = t('homeExtra.articlesError')
   } finally {
     loading.value = false
     nextTick(() => {

@@ -8,8 +8,8 @@
           type="button"
           @click="$router.push('/services/relaxation')"
           class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
-          title="ย้อนกลับ"
-          aria-label="ย้อนกลับ"
+          :title="$t('common.back')"
+          :aria-label="$t('common.back')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -17,22 +17,23 @@
         </button>
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+          <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
         </router-link>
       </div>
 
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" class="hover:text-[#D1FAE5] transition">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
+        <AdminNavLink />
       </div>
 
       <div class="flex gap-3 items-center text-sm">
         <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -44,6 +45,7 @@
             ></span>
           </button>
         </div>
+        <LanguageSwitcher />
         <ProfileMenu />
       </div>
     </nav>
@@ -68,11 +70,11 @@
             <div class="flex items-center gap-3 mb-3">
               <span class="text-4xl">🧘</span>
               <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                ติดตามกิจกรรมผ่อนคลาย
+                {{ $t('activity.title') }}
               </h1>
             </div>
             <p class="text-sm md:text-base text-[#D1FAE5] max-w-2xl leading-relaxed">
-              ทำกิจกรรมที่แนะนำ ติ๊กถูกเมื่อทำเสร็จ สะสมแต้มเพื่อดูแลสุขภาพจิตของคุณทุกวัน
+              {{ $t('activity.subtitle') }}
             </p>
           </div>
         </div>
@@ -95,8 +97,8 @@
                   {{ currentLevel.badge }}
                 </div>
                 <div>
-                  <p :class="['text-xs font-semibold uppercase tracking-wider', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">ระดับของคุณ</p>
-                  <p class="text-lg font-extrabold" :style="{ color: currentLevel.color }">{{ currentLevel.name }}</p>
+                  <p :class="['text-xs font-semibold uppercase tracking-wider', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('activity.yourLevel') }}</p>
+                  <p class="text-lg font-extrabold" :style="{ color: currentLevel.color }">{{ $t(currentLevel.name) }}</p>
                 </div>
               </div>
               <!-- Total Score -->
@@ -105,14 +107,14 @@
                 <span :class="['text-sm font-semibold', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">XP</span>
               </div>
               <p :class="['text-xs', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                อีก {{ nextLevelScore - totalScore }} XP จะขึ้นระดับถัดไป
+                {{ $t('activity.xpToNext', { n: nextLevelScore - totalScore }) }}
               </p>
             </div>
 
             <!-- Progress Bar -->
             <div class="flex flex-col gap-3">
               <div class="flex justify-between text-xs font-semibold" :class="isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'">
-                <span>ความก้าวหน้า</span>
+                <span>{{ $t('activity.progress') }}</span>
                 <span>{{ Math.round(levelProgress) }}%</span>
               </div>
               <div :class="['h-4 rounded-full overflow-hidden', isDarkMode ? 'bg-white/10' : 'bg-gray-100']">
@@ -122,8 +124,8 @@
                 ></div>
               </div>
               <div class="flex justify-between text-xs" :class="isDarkMode ? 'text-[#64748B]' : 'text-gray-400'">
-                <span>{{ currentLevel.name }}</span>
-                <span>{{ nextLevel.name }}</span>
+                <span>{{ $t(currentLevel.name) }}</span>
+                <span>{{ $t(nextLevel.name) }}</span>
               </div>
 
               <!-- Today stats -->
@@ -131,13 +133,13 @@
                 <div class="flex items-center gap-1.5">
                   <div class="w-2 h-2 rounded-full bg-[#0D9488]"></div>
                   <span :class="['text-xs font-semibold', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-                    {{ todayCompleted }}/{{ totalActivities }} กิจกรรมวันนี้
+                    {{ $t('activity.todayCount', { done: todayCompleted, total: totalActivities }) }}
                   </span>
                 </div>
                 <div class="flex items-center gap-1.5">
                   <div class="w-2 h-2 rounded-full bg-[#F59E0B]"></div>
                   <span :class="['text-xs font-semibold', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-                    🔥 Streak {{ streakDays }} วัน
+                    {{ $t('activity.streak', { n: streakDays }) }}
                   </span>
                 </div>
               </div>
@@ -145,15 +147,15 @@
 
             <!-- Daily Summary -->
             <div :class="['rounded-2xl p-4 text-center', isDarkMode ? 'bg-white/5' : 'bg-[#F0FDF9]']">
-              <p :class="['text-xs font-semibold uppercase tracking-wider mb-3', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">สรุปวันนี้</p>
+              <p :class="['text-xs font-semibold uppercase tracking-wider mb-3', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('activity.todaySummary') }}</p>
               <div class="grid grid-cols-2 gap-3">
                 <div :class="['rounded-xl p-3', isDarkMode ? 'bg-white/5' : 'bg-white']">
                   <p class="text-2xl font-black text-[#0D9488]">{{ todayScore }}</p>
-                  <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">XP วันนี้</p>
+                  <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('activity.xpToday') }}</p>
                 </div>
                 <div :class="['rounded-xl p-3', isDarkMode ? 'bg-white/5' : 'bg-white']">
                   <p class="text-2xl font-black text-[#059669]">{{ todayCompleted }}</p>
-                  <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">กิจกรรมสำเร็จ</p>
+                  <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t('activity.completedCount') }}</p>
                 </div>
               </div>
             </div>
@@ -165,13 +167,13 @@
       <section class="mb-8">
         <div class="flex items-center justify-between mb-5">
           <h2 :class="['text-xl md:text-2xl font-extrabold', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-            กิจกรรมแนะนำวันนี้
+            {{ $t('activity.suggestedToday') }}
           </h2>
           <button
             @click="resetToday"
             :class="['text-xs px-3 py-1.5 rounded-full border transition font-semibold', isDarkMode ? 'border-white/20 text-[#94A3B8] hover:bg-white/5' : 'border-gray-200 text-[#64748B] hover:bg-gray-50']"
           >
-            🔄 รีเซ็ตวันใหม่
+            {{ $t('activity.resetDay') }}
           </button>
         </div>
 
@@ -188,15 +190,15 @@
                 {{ category.icon }}
               </div>
               <div>
-                <h3 :class="['font-bold text-base', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ category.name }}</h3>
+                <h3 :class="['font-bold text-base', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t(category.name) }}</h3>
                 <p :class="['text-xs', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                  {{ category.activities.filter(a => completedIds.includes(a.id)).length }}/{{ category.activities.length }} สำเร็จ
+                  {{ $t('activity.catDone', { done: category.activities.filter(a => completedIds.includes(a.id)).length, total: category.activities.length }) }}
                 </p>
               </div>
               <!-- Category completion badge -->
               <div v-if="category.activities.every(a => completedIds.includes(a.id))"
                 class="ml-auto text-xs px-2.5 py-1 rounded-full bg-[#059669] text-white font-bold flex items-center gap-1">
-                ✅ ครบทุกข้อ!
+                {{ $t('activity.allDone') }}
               </div>
             </div>
 
@@ -244,10 +246,10 @@
                             ? 'text-[#059669] line-through opacity-70'
                             : isDarkMode ? 'text-white' : 'text-[#1E293B]'
                         ]">
-                          {{ activity.emoji }} {{ activity.name }}
+                          {{ activity.emoji }} {{ $t(activity.name) }}
                         </p>
                         <p :class="['text-xs mt-0.5 leading-relaxed', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                          {{ activity.description }}
+                          {{ $t(activity.description) }}
                         </p>
                       </div>
                       <!-- Score chip -->
@@ -264,10 +266,10 @@
                     <!-- Duration / Tips -->
                     <div class="flex items-center gap-3 mt-2">
                       <span :class="['text-xs flex items-center gap-1', isDarkMode ? 'text-[#94A3B8]' : 'text-gray-400']">
-                        ⏱️ {{ activity.duration }}
+                        ⏱️ {{ $t('activity.minutes', { n: activity.duration }) }}
                       </span>
                       <span :class="['text-xs flex items-center gap-1', isDarkMode ? 'text-[#94A3B8]' : 'text-gray-400']">
-                        📌 {{ activity.level }}
+                        📌 {{ $t(activity.level) }}
                       </span>
                     </div>
                   </div>
@@ -286,7 +288,7 @@
       <!-- ===== Today's Completed Timeline ===== -->
       <section v-if="todayHistory.length > 0" class="mb-8 animate-fade-up">
         <h2 :class="['text-xl font-extrabold mb-4', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-          📋 กิจกรรมที่ทำวันนี้
+          {{ $t('activity.doneToday') }}
         </h2>
         <div :class="['rounded-3xl border p-6', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
           <div class="relative">
@@ -301,7 +303,7 @@
                 <div :class="['flex-1 flex items-center justify-between rounded-xl px-4 py-2.5', isDarkMode ? 'bg-white/5' : 'bg-[#F0FDF9]']">
                   <div>
                     <p :class="['font-semibold text-sm', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-                      {{ item.emoji }} {{ item.name }}
+                      {{ item.emoji }} {{ $t(item.name) }}
                     </p>
                     <p :class="['text-xs', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ item.time }}</p>
                   </div>
@@ -322,14 +324,14 @@
             </svg>
           </div>
           <h2 :class="['text-lg font-extrabold mb-4', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-            💡 เคล็ดลับการดูแลสุขภาพจิต
+            {{ $t('activity.tipsTitle') }}
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div v-for="(tip, i) in tips" :key="i"
               :class="['rounded-2xl p-4', isDarkMode ? 'bg-white/5' : 'bg-[#F0FDF9]']">
               <p class="text-2xl mb-2">{{ tip.icon }}</p>
-              <p :class="['font-semibold text-sm mb-1', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ tip.title }}</p>
-              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ tip.desc }}</p>
+              <p :class="['font-semibold text-sm mb-1', isDarkMode ? 'text-white' : 'text-[#1E293B]']">{{ $t(tip.title) }}</p>
+              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ $t(tip.desc) }}</p>
             </div>
           </div>
         </div>
@@ -355,34 +357,34 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
-            <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('common.footerService1') }}</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('common.footerService2') }}</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
 
@@ -390,156 +392,161 @@
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
 import { ref, computed, onMounted, inject } from 'vue'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AdminNavLink from '../components/AdminNavLink.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/authStore'
 
 const isDarkMode = inject('isDarkMode')
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 // ==================== Activity Data ====================
 const activityCategories = [
   {
-    name: 'การผ่อนคลายร่างกายและจิตใจ',
+    name: 'activity.categories.c0',
     icon: '🧘',
     gradient: 'linear-gradient(135deg, #0D9488, #059669)',
     activities: [
       {
         id: 'deep-breathing',
         emoji: '🌬️',
-        name: 'หายใจลึก 4-7-8',
-        description: 'หายใจเข้า 4 วินาที กลั้น 7 วินาที หายใจออก 8 วินาที ทำ 4 รอบ',
-        duration: '5 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.deep-breathing.name',
+        description: 'activity.items.deep-breathing.description',
+        duration: 5,
+        level: 'activity.level.beginner',
         score: 10
       },
       {
         id: 'body-scan',
         emoji: '🌊',
-        name: 'Body Scan Meditation',
-        description: 'นอนหลับตา สแกนความรู้สึกในแต่ละส่วนของร่างกายตั้งแต่หัวจรดเท้า',
-        duration: '10 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.body-scan.name',
+        description: 'activity.items.body-scan.description',
+        duration: 10,
+        level: 'activity.level.beginner',
         score: 15
       },
       {
         id: 'mindfulness',
         emoji: '🕯️',
-        name: 'Mindfulness จดจ่อปัจจุบัน',
-        description: 'ฝึกสังเกตสิ่งรอบข้าง 5 สิ่งที่เห็น 4 เสียง 3 สัมผัส 2 กลิ่น 1 รส',
-        duration: '8 นาที',
-        level: 'ง่าย',
+        name: 'activity.items.mindfulness.name',
+        description: 'activity.items.mindfulness.description',
+        duration: 8,
+        level: 'activity.level.easy',
         score: 12
       },
       {
         id: 'progressive-muscle',
         emoji: '💪',
-        name: 'คลายกล้ามเนื้อ (PMR)',
-        description: 'เกร็งและคลายกล้ามเนื้อทีละส่วน เพื่อลดความตึงเครียดในร่างกาย',
-        duration: '15 นาที',
-        level: 'ง่าย',
+        name: 'activity.items.progressive-muscle.name',
+        description: 'activity.items.progressive-muscle.description',
+        duration: 15,
+        level: 'activity.level.easy',
         score: 20
       }
     ]
   },
   {
-    name: 'การบันทึกและสำรวจตนเอง',
+    name: 'activity.categories.c1',
     icon: '📝',
     gradient: 'linear-gradient(135deg, #8B5CF6, #6D28D9)',
     activities: [
       {
         id: 'gratitude-journal',
         emoji: '🙏',
-        name: 'บันทึกความขอบคุณ',
-        description: 'เขียนสิ่งที่รู้สึกขอบคุณ 3 อย่างในวันนี้ ช่วยเพิ่มความสุขในชีวิต',
-        duration: '5 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.gratitude-journal.name',
+        description: 'activity.items.gratitude-journal.description',
+        duration: 5,
+        level: 'activity.level.beginner',
         score: 10
       },
       {
         id: 'mood-diary',
         emoji: '📔',
-        name: 'ไดอารี่อารมณ์',
-        description: 'เขียนระบายความรู้สึกในวันนี้อย่างอิสระ ไม่ต้องกังวลเรื่องความถูกผิด',
-        duration: '10 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.mood-diary.name',
+        description: 'activity.items.mood-diary.description',
+        duration: 10,
+        level: 'activity.level.beginner',
         score: 15
       },
       {
         id: 'positive-affirmation',
         emoji: '⭐',
-        name: 'พูดประโยคบวกกับตัวเอง',
-        description: 'พูดหรือเขียนประโยคให้กำลังใจตัวเอง 5 ประโยค ช่วยเพิ่มความมั่นใจ',
-        duration: '5 นาที',
-        level: 'ง่าย',
+        name: 'activity.items.positive-affirmation.name',
+        description: 'activity.items.positive-affirmation.description',
+        duration: 5,
+        level: 'activity.level.easy',
         score: 10
       }
     ]
   },
   {
-    name: 'กิจกรรมเคลื่อนไหวร่างกาย',
+    name: 'activity.categories.c2',
     icon: '🏃',
     gradient: 'linear-gradient(135deg, #F59E0B, #D97706)',
     activities: [
       {
         id: 'morning-stretch',
         emoji: '🌅',
-        name: 'ยืดเส้นยามเช้า',
-        description: 'ยืดกล้ามเนื้อหลังตื่นนอน เพื่อเตรียมร่างกายและจิตใจให้พร้อมรับวันใหม่',
-        duration: '10 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.morning-stretch.name',
+        description: 'activity.items.morning-stretch.description',
+        duration: 10,
+        level: 'activity.level.beginner',
         score: 15
       },
       {
         id: 'light-walk',
         emoji: '🚶',
-        name: 'เดินสบายๆ 15 นาที',
-        description: 'เดินในที่ที่ชอบ โดยไม่ต้องรีบ สังเกตธรรมชาติรอบข้างระหว่างทาง',
-        duration: '15 นาที',
-        level: 'ง่าย',
+        name: 'activity.items.light-walk.name',
+        description: 'activity.items.light-walk.description',
+        duration: 15,
+        level: 'activity.level.easy',
         score: 20
       },
       {
         id: 'yoga',
         emoji: '🧎',
-        name: 'โยคะผ่อนคลาย',
-        description: 'ท่าโยคะพื้นฐานเพื่อยืดกล้ามเนื้อและลดความเครียด เหมาะสำหรับทุกคน',
-        duration: '20 นาที',
-        level: 'ปานกลาง',
+        name: 'activity.items.yoga.name',
+        description: 'activity.items.yoga.description',
+        duration: 20,
+        level: 'activity.level.medium',
         score: 25
       }
     ]
   },
   {
-    name: 'กิจกรรมธรรมชาติและสภาพแวดล้อม',
+    name: 'activity.categories.c3',
     icon: '🌿',
     gradient: 'linear-gradient(135deg, #059669, #047857)',
     activities: [
       {
         id: 'sunlight',
         emoji: '☀️',
-        name: 'รับแสงแดดยามเช้า',
-        description: 'ออกไปรับแสงแดดอ่อนๆ ช่วงเช้า ช่วยปรับนาฬิกาชีวภาพและเพิ่ม Serotonin',
-        duration: '10 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.sunlight.name',
+        description: 'activity.items.sunlight.description',
+        duration: 10,
+        level: 'activity.level.beginner',
         score: 12
       },
       {
         id: 'plant-care',
         emoji: '🌱',
-        name: 'ดูแลต้นไม้',
-        description: 'รดน้ำหรือดูแลต้นไม้ กิจกรรมเล็กๆ นี้ช่วยผ่อนคลายความเครียดได้ดีมาก',
-        duration: '10 นาที',
-        level: 'เริ่มต้น',
+        name: 'activity.items.plant-care.name',
+        description: 'activity.items.plant-care.description',
+        duration: 10,
+        level: 'activity.level.beginner',
         score: 10
       },
       {
         id: 'digital-detox',
         emoji: '📵',
-        name: 'Digital Detox 30 นาที',
-        description: 'วางโทรศัพท์ 30 นาที ทำกิจกรรมที่ชอบโดยไม่มีหน้าจอ ช่วยให้จิตใจสงบขึ้น',
-        duration: '30 นาที',
-        level: 'ท้าทาย',
+        name: 'activity.items.digital-detox.name',
+        description: 'activity.items.digital-detox.description',
+        duration: 30,
+        level: 'activity.level.challenging',
         score: 30
       }
     ]
@@ -548,11 +555,11 @@ const activityCategories = [
 
 // ==================== Levels ====================
 const levels = [
-  { name: 'มือใหม่', badge: '🌱', minScore: 0, color: '#64748B', gradient: 'linear-gradient(135deg, #94A3B8, #64748B)' },
-  { name: 'นักปฏิบัติ', badge: '🌿', minScore: 50, color: '#059669', gradient: 'linear-gradient(135deg, #34D399, #059669)' },
-  { name: 'นักดูแลใจ', badge: '🧘', minScore: 150, color: '#0D9488', gradient: 'linear-gradient(135deg, #2DD4BF, #0D9488)' },
-  { name: 'ผู้เชี่ยวชาญ', badge: '⭐', minScore: 300, color: '#F59E0B', gradient: 'linear-gradient(135deg, #FCD34D, #F59E0B)' },
-  { name: 'ปรมาจารย์', badge: '🏆', minScore: 500, color: '#8B5CF6', gradient: 'linear-gradient(135deg, #A78BFA, #8B5CF6)' }
+  { name: 'activity.rank.r0', badge: '🌱', minScore: 0, color: '#64748B', gradient: 'linear-gradient(135deg, #94A3B8, #64748B)' },
+  { name: 'activity.rank.r1', badge: '🌿', minScore: 50, color: '#059669', gradient: 'linear-gradient(135deg, #34D399, #059669)' },
+  { name: 'activity.rank.r2', badge: '🧘', minScore: 150, color: '#0D9488', gradient: 'linear-gradient(135deg, #2DD4BF, #0D9488)' },
+  { name: 'activity.rank.r3', badge: '⭐', minScore: 300, color: '#F59E0B', gradient: 'linear-gradient(135deg, #FCD34D, #F59E0B)' },
+  { name: 'activity.rank.r4', badge: '🏆', minScore: 500, color: '#8B5CF6', gradient: 'linear-gradient(135deg, #A78BFA, #8B5CF6)' }
 ]
 
 // ==================== State ====================
@@ -656,7 +663,7 @@ function toggleActivity(activity) {
     totalScore.value = Math.max(0, totalScore.value - activity.score)
     todayHistory.value = todayHistory.value.filter(h => h.id !== activity.id)
 
-    triggerToast('ยกเลิกกิจกรรม', `ลบ ${activity.name} ออกแล้ว (-${activity.score} XP)`, '↩️')
+    triggerToast(t('activity.toastUndoTitle'), t('activity.toastUndoMsg', { name: t(activity.name), xp: activity.score }), '↩️')
   } else {
     // ติ๊กถูก
     completedIds.value.push(activity.id)
@@ -668,7 +675,7 @@ function toggleActivity(activity) {
       emoji: activity.emoji,
       name: activity.name,
       score: activity.score,
-      time: now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+      time: now.toLocaleTimeString(dateLocale(), { hour: '2-digit', minute: '2-digit' })
     })
 
     // Sparkle animation
@@ -681,9 +688,9 @@ function toggleActivity(activity) {
 
     if (catAllDone) {
       totalScore.value += 15 // Bonus XP
-      triggerToast(`🎉 ครบ ${cat.name}!`, `+${activity.score} XP + โบนัส +15 XP!`, '🏅')
+      triggerToast(t('activity.toastCatTitle', { name: t(cat.name) }), t('activity.toastCatMsg', { xp: activity.score }), '🏅')
     } else {
-      triggerToast('สำเร็จ! 🎉', `+${activity.score} XP จาก "${activity.name}"`, '✅')
+      triggerToast(t('activity.toastDoneTitle'), t('activity.toastDoneMsg', { xp: activity.score, name: t(activity.name) }), '✅')
     }
   }
 
@@ -696,7 +703,7 @@ function resetToday() {
   completedIds.value = []
   todayHistory.value = []
   saveData()
-  triggerToast('รีเซ็ตแล้ว', 'พร้อมเริ่มใหม่สำหรับวันนี้!', '🔄')
+  triggerToast(t('activity.toastResetTitle'), t('activity.toastResetMsg'), '🔄')
 }
 
 function triggerToast(title, msg, emoji = '✨') {
@@ -735,18 +742,18 @@ function particleStyle(i) {
 const tips = [
   {
     icon: '🌙',
-    title: 'นอนหลับพักผ่อนให้เพียงพอ',
-    desc: 'การนอน 7-9 ชั่วโมงต่อคืน ช่วยให้สมองฟื้นฟูและจัดการความเครียดได้ดีขึ้น'
+    title: 'activity.tips.t0.title',
+    desc: 'activity.tips.t0.desc'
   },
   {
     icon: '🥗',
-    title: 'ทานอาหารมีประโยชน์',
-    desc: 'อาหารที่มี Omega-3 และวิตามิน B12 ช่วยเสริมสุขภาพจิตให้แข็งแกร่งขึ้น'
+    title: 'activity.tips.t1.title',
+    desc: 'activity.tips.t1.desc'
   },
   {
     icon: '🤝',
-    title: 'พูดคุยกับคนที่ไว้ใจได้',
-    desc: 'การแบ่งปันความรู้สึกกับคนที่เราไว้ใจช่วยลดความกดดันได้มากกว่าที่คิด'
+    title: 'activity.tips.t2.title',
+    desc: 'activity.tips.t2.desc'
   }
 ]
 

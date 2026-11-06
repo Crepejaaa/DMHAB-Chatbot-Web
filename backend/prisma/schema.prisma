@@ -28,14 +28,17 @@ enum Sender {
 
 // ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
 model User {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique
-  passwordHash String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
-  email        String?        @unique
-  avatarUrl    String?
-  role         Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id                   Int           @id @default(autoincrement())
+  username             String        @unique
+  passwordHash         String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
+  email                String?        @unique
+  phone                String?
+  avatarUrl            String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  role                 Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
   // ความสัมพันธ์ (Relationships)
   chatSessions ChatSession[] // ผู้ใช้ 1 คน มีรอบการคุยได้หลายครั้ง

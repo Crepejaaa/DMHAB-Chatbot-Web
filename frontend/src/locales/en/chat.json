@@ -1,0 +1,28 @@
+{
+  "chat": {
+    "botName": "Nong Muk",
+    "noRealName": "(Do not enter your real name)",
+    "online": "Online",
+    "readAloud": "Read aloud",
+    "completed": "The assessment is complete. Thank you for talking with us.",
+    "ended": "This conversation has ended",
+    "placeholder": "Type your message here...",
+    "speakToType": "Speak to type",
+    "send": "Send",
+    "highRiskTitle": "You may be at high risk",
+    "highRiskBody": "We hear how you feel and want you to know you are not alone. If you need urgent support, please contact a professional right away.",
+    "callHotline": "Call hotline 1323",
+    "closeWindow": "Close this window",
+    "chip1": "I'm really tired today",
+    "chip2": "I can't sleep well",
+    "chip3": "I feel a little stressed",
+    "chip4": "Nobody understands me",
+    "chip5": "I feel so sad",
+    "chip6": "I want someone to talk to",
+    "chip7": "I feel bored and fed up",
+    "noVoiceSupport": "Your browser does not support voice input",
+    "greeting": "Hi, I'm here to listen to you. How are you feeling today?",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "sendFailed": "Failed to send the message. Please try again."
+  }
+}

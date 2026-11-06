@@ -11,6 +11,7 @@ const articleRoutes = require('./src/routes/articleRoutes');
 // นำเข้า prisma client ที่ตั้งค่า adapter ไว้แล้ว
 const prisma = require('./src/prismaClient').default || require('./src/prismaClient');
 const { ensureArticleSchema } = require('./src/controllers/articleController');
+const { ensureUserResetSchema } = require('./src/controllers/authController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;  // แก้จาก 3000ปกติ  มีคำว่า [process.env. เข้ามา]
@@ -70,8 +71,9 @@ app.get('/', (req, res) => {
 // ==========================================
 // API Routes 
 // ==========================================
-// นำ route จาก authRoutes มาเชื่อมที่ path /api
+// นำ route จาก authRoutes มาเชื่อมที่ path /api และ /api/auth
 app.use('/api', authRoutes.default || authRoutes);
+app.use('/api/auth', authRoutes.default || authRoutes);
 
 // นำ route จาก chatRoutes มาเชื่อมที่ path /api/chat
 app.use('/api/chat', chatRoutes.default || chatRoutes);
@@ -97,6 +99,11 @@ app.listen(PORT, "0.0.0.0", () => {
   if (typeof ensureArticleSchema === 'function') {
     ensureArticleSchema().catch((err) => {
       console.warn('Article schema sync skipped during startup:', err?.message || err);
+    });
+  }
+  if (typeof ensureUserResetSchema === 'function') {
+    ensureUserResetSchema().catch((err) => {
+      console.warn('User reset schema sync skipped during startup:', err?.message || err);
     });
   }
 });

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from '../api/axios';
+import i18n from '../i18n';
 import dogAvatar from '../assets/avatars/dog.png';
 import catAvatar from '../assets/avatars/cat.png';
 import rabbitAvatar from '../assets/avatars/rabbit.png';
@@ -7,6 +8,8 @@ import bearAvatar from '../assets/avatars/bear.png';
 import birdAvatar from '../assets/avatars/bird.png';
 
 const baseURL = import.meta.env.VITE_API_URL || 'https://phuenjaizone-chatbot-web.onrender.com';
+
+const t = (key) => i18n.global.t(key);
 
 const AVATAR_MAP = {
   avatar_dog: dogAvatar,
@@ -34,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
-    displayName: (state) => state.user?.name || state.user?.username || state.user?.email?.split('@')[0] || 'ผู้ใช้งาน',
+    displayName: (state) => state.user?.name || state.user?.username || state.user?.email?.split('@')[0] || t('auth.defaultUser'),
     userEmail: (state) => state.user?.email || 'example@gmail.com',
     profileImage: (state) => resolveAvatarImage(state.user?.avatar || state.user?.avatarUrl || state.user?.profileImage || ''),
   },
@@ -65,12 +68,12 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('userRole', response.data.user.role);
         }
         
-        return { success: true, message: response.data.message || 'เข้าสู่ระบบสำเร็จ' };
+        return { success: true, message: response.data.message || t('auth.loginSuccess') };
       } catch (error) {
         // ดักจับฟิลด์ 'error' ที่ส่งมาจาก authController (เช่น error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
         return { 
           success: false, 
-          message: error.response?.data?.error || error.response?.data?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' 
+          message: error.response?.data?.error || error.response?.data?.message || t('auth.loginFailed') 
         };
       }
     },
@@ -85,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
       const nextName =
         typeof profile.name === 'string' && profile.name.trim()
           ? profile.name.trim()
-          : this.user?.name || this.user?.username || 'ผู้ใช้งาน';
+          : this.user?.name || this.user?.username || t('auth.defaultUser');
 
       const nextEmail =
         typeof profile.email === 'string' && profile.email.trim()
@@ -121,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
           }
           return {
             success: true,
-            message: response.data?.message || 'บันทึกข้อมูลและรูปโปรไฟล์เรียบร้อยแล้ว',
+            message: response.data?.message || t('auth.profileSaved'),
             user: this.user,
           };
         } catch (error) {
@@ -129,7 +132,7 @@ export const useAuthStore = defineStore('auth', {
           if (error.response?.status === 400 || error.response?.status === 409) {
             return {
               success: false,
-              message: error.response?.data?.error || 'ไม่สามารถอัปเดตข้อมูลโปรไฟล์ได้',
+              message: error.response?.data?.error || t('auth.profileUpdateFailed'),
               user: this.user,
             };
           }
@@ -138,7 +141,7 @@ export const useAuthStore = defineStore('auth', {
 
       return {
         success: true,
-        message: 'บันทึกข้อมูลและรูปโปรไฟล์เรียบร้อยแล้ว',
+        message: t('auth.profileSaved'),
         user: this.user,
       };
     },
@@ -155,11 +158,11 @@ export const useAuthStore = defineStore('auth', {
           recaptchaToken: userData?.recaptchaToken,
         };
         const response = await axios.post('/api/register', payload);
-        return { success: true, message: response.data.message || 'สมัครสมาชิกสำเร็จ' };
+        return { success: true, message: response.data.message || t('auth.registerSuccess') };
       } catch (error) {
         return { 
           success: false, 
-          message: error.response?.data?.error || error.response?.data?.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก' 
+          message: error.response?.data?.error || error.response?.data?.message || t('auth.registerFailed') 
         };
       }
     },

@@ -2,25 +2,53 @@
   <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" :class="{ 'dark-mode-page': isDarkMode }">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="px-6 py-8 sm:p-10">
-        <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">ผลการประเมินของคุณ</h1>
+        <div class="flex justify-end mb-2">
+          <div class="bg-[#045F54] rounded-full"><LanguageSwitcher /></div>
+        </div>
+        <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">{{ $t('assessmentResult.title') }}</h1>
         
         <div class="text-center mb-8">
           <div class="inline-flex flex-col items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
-            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}</span>
-            <span class="text-xs font-medium text-white/90 mt-1">คะแนน</span>
+            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}<span class="text-lg font-semibold text-white/80">/{{ totalMax }}</span></span>
+            <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.scoreTotal') }}</span>
           </div>
           <p class="text-xl font-bold text-gray-800 mb-3">{{ statusText }}</p>
           <h2 class="text-2xl font-semibold text-gray-800">{{ suggestionTitle }}</h2>
           <p class="mt-4 text-lg text-gray-600">{{ suggestionDetail }}</p>
         </div>
 
-        <div class="flex justify-center mt-8">
-          <!-- เปลี่ยนลิ้งก์ให้เรียกเปิด Terms Modal แทนการกดเข้าแชตตรงๆ เพื่อบังคับให้ยอมรับเงื่อนไขก่อน -->
-          <button 
-            @click="openTermsModal" 
+        <!-- ผลแยกตามแบบประเมิน 2Q / 9Q / 8Q (แต่ละแบบคิดคะแนนแยกกัน ไม่นำมารวมกัน) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div v-for="part in partResults" :key="part.id" class="rounded-xl border p-4 text-center" :class="part.boxClass">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ part.name }}</p>
+            <p class="mt-1 text-2xl font-extrabold text-gray-900">{{ part.score }}<span class="text-sm font-semibold text-gray-400">/{{ part.max }}</span></p>
+            <p class="mt-1 text-sm font-semibold" :class="part.textClass">{{ part.label }}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+          <!-- ระดับรุนแรง: ไม่เปิดให้คุยกับแชทบอท ให้โทรสายด่วนกรมสุขภาพจิตเท่านั้น -->
+          <a
+            v-if="isSevere"
+            href="tel:1323"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold rounded-full shadow-sm text-white bg-rose-600 hover:bg-rose-700 transition-colors duration-200"
+          >
+            📞 {{ $t('assessmentResult.callDmh') }}
+          </a>
+          <!-- ระดับปกติ/ปานกลาง: เปิด Terms Modal ก่อนเข้าแชต เพื่อบังคับให้ยอมรับเงื่อนไขก่อน -->
+          <button
+            v-else
+            @click="openTermsModal"
             class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
           >
-            พูดคุยกับน้องมุกห่วงใย
+            {{ $t('assessmentResult.talkToBot') }}
+          </button>
+          <button
+            type="button"
+            @click="goBack"
+            class="inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+          >
+            ← {{ $t('common.backHome') }}
           </button>
         </div>
       </div>
@@ -39,21 +67,20 @@
               </svg>
             </div>
             <div class="mt-3 text-center sm:mt-5">
-              <h3 class="text-lg leading-6 font-medium text-rose-800" id="modal-title">คำเตือนฉุกเฉิน</h3>
+              <h3 class="text-lg leading-6 font-medium text-rose-800" id="modal-title">{{ $t('assessmentResult.emergencyTitle') }}</h3>
               <div class="mt-2">
                 <p class="text-sm text-rose-700">
-                  ระบบพบว่าท่านอาจกำลังอยู่ในสภาวะที่มีความเครียดสูงหรือต้องการความช่วยเหลืออย่างเร่งด่วน 
-                  กรุณาติดต่อสายด่วนสุขภาพจิต 1323 เพื่อรับคำปรึกษาจากผู้เชี่ยวชาญทันที
+                  {{ $t('assessmentResult.emergencyBody') }}
                 </p>
               </div>
             </div>
           </div>
           <div class="mt-5 sm:mt-6 flex flex-col gap-3">
             <a href="tel:1323" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-rose-600 text-base font-medium text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 sm:text-sm">
-              โทร 1323 ตอนนี้
+              {{ $t('assessmentResult.callNow') }}
             </a>
             <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm" @click="closeModal">
-              รับทราบ
+              {{ $t('assessmentResult.acknowledge') }}
             </button>
           </div>
         </div>
@@ -74,17 +101,17 @@
             </div>
             <div class="mt-3 text-center sm:mt-5">
               <h3 class="text-xl font-bold text-gray-900" id="terms-modal-title">
-                ข้อตกลงและเงื่อนไขการใช้งาน
+                {{ $t('assessmentResult.termsTitle') }}
               </h3>
               
               <!-- ข้อความนโยบายความเป็นส่วนตัวและคำเตือนสำคัญ -->
               <div class="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded-xl text-left border border-gray-200 max-h-48 overflow-y-auto space-y-2">
-                <p class="font-semibold text-gray-800">นโยบายความเป็นส่วนตัวและการให้ยินยอม:</p>
-                <p>1. ระบบ PhuenJaiZone ให้ความสำคัญกับความเป็นส่วนตัว ข้อมูลการประเมินและการพูดคุยจะถูกเก็บรักษาเป็นความลับ</p>
+                <p class="font-semibold text-gray-800">{{ $t('assessmentResult.privacyHeading') }}</p>
+                <p>{{ $t('assessmentResult.term1') }}</p>
                 <p class="font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-200">
-                  ⚠️ เงื่อนไขสำคัญ: ระบบแชทบอทนี้มีจุดประสงค์เพื่อการคัดกรองและประเมินสภาวะอารมณ์เบื้องต้นเท่านั้น **ไม่ใช้สำหรับการวินิจฉัยทางการแพทย์ โรคทางจิตเวช และไม่มีการจ่ายยาเด็ดขาด**
+                  {{ $t('assessmentResult.termImportant') }}
                 </p>
-                <p>2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที</p>
+                <p>{{ $t('assessmentResult.term2') }}</p>
               </div>
 
               <!-- Checkbox ยอมรับเงื่อนไข -->
@@ -96,7 +123,7 @@
                   class="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
                 />
                 <label for="accept-terms" class="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                  ยอมรับเงื่อนไขและนโยบายความเป็นส่วนตัว
+                  {{ $t('assessmentResult.accept') }}
                 </label>
               </div>
             </div>
@@ -113,14 +140,14 @@
               ]"
               @click="proceedToChat"
             >
-              เข้าสู่หน้าพูดคุย
+              {{ $t('assessmentResult.enterChat') }}
             </button>
             <button 
               type="button" 
               class="w-full inline-flex justify-center rounded-full border border-gray-300 shadow-sm px-5 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm cursor-pointer"
               @click="closeTermsModal"
             >
-              ยกเลิก
+              {{ $t('assessmentResult.cancel') }}
             </button>
           </div>
         </div>
@@ -133,6 +160,10 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAssessmentStore } from '../stores/assessmentStore'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const isDarkMode = inject('isDarkMode', ref(false))
@@ -147,7 +178,14 @@ const showEmergencyModal = ref(false)
 const showTermsModal = ref(false)
 const isAccepted = ref(false)
 
-const totalScore = computed(() => assessmentResult.value?.score ?? 0)
+// คะแนนรวมทั้ง 3 แบบ: 2Q (ข้อที่ตอบ "มี", เต็ม 2) + 9Q (เต็ม 27) + 8Q (เต็ม 52)
+// การแปลผลระดับยังอิงเกณฑ์ของแต่ละแบบ (ดูการ์ด 2Q/9Q/8Q ด้านล่าง)
+const totalMax = 2 + 27 + 52
+const totalScore = computed(() => {
+  const r = assessmentResult.value || {}
+  const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
+  return q2Yes + (r.q9Score ?? 0) + (r.q8Score ?? 0)
+})
 
 const scoreColorClass = computed(() => {
   if (assessmentResult.value.level === 'NORMAL') return 'bg-green-500'
@@ -157,27 +195,53 @@ const scoreColorClass = computed(() => {
 })
 
 const scoreText = computed(() => {
-  if (assessmentResult.value.level === 'NORMAL') return 'ปกติ'
-  if (assessmentResult.value.level === 'MODERATE') return 'ปานกลาง'
-  if (assessmentResult.value.level === 'SEVERE') return 'รุนแรง'
-  return 'ไม่ทราบผล'
+  if (assessmentResult.value.level === 'NORMAL') return t('assessmentResult.levelNormal')
+  if (assessmentResult.value.level === 'MODERATE') return t('assessmentResult.levelModerate')
+  if (assessmentResult.value.level === 'SEVERE') return t('assessmentResult.levelSevere')
+  return t('assessmentResult.levelUnknown')
 })
 
+const isSevere = computed(() => assessmentResult.value.level === 'SEVERE')
+
+// เกณฑ์ตามแบบประเมินกรมสุขภาพจิต: 2Q (คัดกรอง), 9Q (เต็ม 27), 8Q (เต็ม 52)
+const GREEN = { boxClass: 'border-emerald-200 bg-emerald-50', textClass: 'text-emerald-700' }
+const AMBER = { boxClass: 'border-amber-200 bg-amber-50', textClass: 'text-amber-700' }
+const ORANGE = { boxClass: 'border-orange-200 bg-orange-50', textClass: 'text-orange-700' }
+const RED = { boxClass: 'border-rose-200 bg-rose-50', textClass: 'text-rose-700' }
+
+const partResults = computed(() => {
+  const r = assessmentResult.value
+  const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
+  const q9 = r.q9Score ?? 0
+  const q8 = r.q8Score ?? 0
+  const q9Level = q9 < 7 ? ['q9none', GREEN] : q9 <= 12 ? ['q9mild', AMBER] : q9 <= 18 ? ['q9moderate', ORANGE] : ['q9severe', RED]
+  const q8Level = q8 === 0 ? ['q8none', GREEN] : q8 <= 8 ? ['q8mild', AMBER] : q8 <= 16 ? ['q8moderate', ORANGE] : ['q8severe', RED]
+  return [
+    { id: '2q', name: '2Q', score: q2Yes, max: 2, label: t(`assessmentResult.${q2Yes ? 'q2risk' : 'q2normal'}`), ...(q2Yes ? AMBER : GREEN) },
+    { id: '9q', name: '9Q', score: q9, max: 27, label: t(`assessmentResult.${q9Level[0]}`), ...q9Level[1] },
+    { id: '8q', name: '8Q', score: q8, max: 52, label: t(`assessmentResult.${q8Level[0]}`), ...q8Level[1] },
+  ]
+})
+
+const goBack = () => {
+  router.push('/')
+}
+
 const statusText = computed(() => {
-  return `สถานะอยู่ในระดับ${scoreText.value}`
+  return t('assessmentResult.status', { level: scoreText.value })
 })
 
 const suggestionTitle = computed(() => {
-  if (assessmentResult.value.level === 'NORMAL') return 'คุณมีสุขภาพจิตอยู่ในเกณฑ์ที่ดี'
-  if (assessmentResult.value.level === 'MODERATE') return 'คุณอาจมีความเครียดสะสม ควรหาเวลาพักผ่อน'
-  if (assessmentResult.value.level === 'SEVERE') return 'คุณต้องการการดูแลและคำปรึกษาโดยด่วน'
+  if (assessmentResult.value.level === 'NORMAL') return t('assessmentResult.titleNormal')
+  if (assessmentResult.value.level === 'MODERATE') return t('assessmentResult.titleModerate')
+  if (assessmentResult.value.level === 'SEVERE') return t('assessmentResult.titleSevere')
   return ''
 })
 
 const suggestionDetail = computed(() => {
-  if (assessmentResult.value.level === 'NORMAL') return 'พยายามรักษาสมดุลในการใช้ชีวิตและหมั่นสำรวจอารมณ์ตนเองอย่างสม่ำเสมอ'
-  if (assessmentResult.value.level === 'MODERATE') return 'ลองหากิจกรรมผ่อนคลายทำ หรือพูดคุยระบายความรู้สึกกับน้องมุกห่วงใยเพื่อลดความเครียด'
-  if (assessmentResult.value.level === 'SEVERE') return 'ระบบแนะนำให้คุณติดต่อสายด่วน 1323 เพื่อรับคำแนะนำจากผู้เชี่ยวชาญ หรือพูดคุยกับน้องมุกห่วงใยในเบื้องต้น'
+  if (assessmentResult.value.level === 'NORMAL') return t('assessmentResult.detailNormal')
+  if (assessmentResult.value.level === 'MODERATE') return t('assessmentResult.detailModerate')
+  if (assessmentResult.value.level === 'SEVERE') return t('assessmentResult.detailSevere')
   return ''
 })
 

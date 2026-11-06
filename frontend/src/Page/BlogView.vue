@@ -8,8 +8,8 @@
           type="button"
           @click="$router.options.history.state?.back ? $router.back() : $router.push('/')"
           class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
-          title="ย้อนกลับ"
-          aria-label="ย้อนกลับ"
+          :title="$t('common.back')"
+          :aria-label="$t('common.back')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -19,22 +19,25 @@
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <!-- โลโก้ Navbar -->
           <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+          <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
         </router-link>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">About</router-link>
-        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Services</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">Blog</router-link>
+        <router-link to="/" exact class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition" active-class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.blog') }}</router-link>
+        <AdminNavLink />
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -65,11 +68,11 @@
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
-              Blog
+              {{ $t('blog.title') }}
             </h1>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed italic">
-              "อ่านและเรียนรู้เรื่องราวที่ช่วยให้คุณเข้าใจตัวเองมากขึ้น"<br />
-              ค้นพบบทความแนวทางดูแลสุขภาพจิตและแรงบันดาลใจที่คุณอาจต้องการในแต่ละวัน
+              {{ $t('blog.subtitle1') }}<br />
+              {{ $t('blog.subtitle2') }}
             </p>
           </div>
         </div>
@@ -86,13 +89,7 @@
             class="p-2 rounded-full transition"
             title="Grid View"
           >
-            <!-- Grid icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
+            {{ $t('blog.grid') }}
           </button>
           <button
             type="button"
@@ -101,15 +98,7 @@
             class="p-2 rounded-full transition"
             title="List View"
           >
-            <!-- List icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <line x1="8" y1="6" x2="21" y2="6" stroke-linecap="round"/>
-              <line x1="8" y1="12" x2="21" y2="12" stroke-linecap="round"/>
-              <line x1="8" y1="18" x2="21" y2="18" stroke-linecap="round"/>
-              <circle cx="3.5" cy="6" r="1" fill="currentColor"/>
-              <circle cx="3.5" cy="12" r="1" fill="currentColor"/>
-              <circle cx="3.5" cy="18" r="1" fill="currentColor"/>
-            </svg>
+            {{ $t('blog.list') }}
           </button>
         </div>
       </div>
@@ -135,7 +124,7 @@
       </div>
       <div v-else-if="errorMessage" class="mt-10 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ errorMessage }}</div>
       <div v-else-if="articles.length === 0" class="mt-10 rounded-2xl border border-gray-100 bg-white p-10 text-center text-sm text-[#64748B] shadow-sm">
-        ยังไม่มีบทความ
+        {{ $t('blog.empty') }}
       </div>
 
       <div v-else :class="articleLayoutClass" class="mt-10">
@@ -160,7 +149,7 @@
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
                 <div class="mb-2 flex items-center justify-between gap-3">
-                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || 'บทความ' }}</span>
+                  <span class="inline-flex rounded-full bg-[#0D9488]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0D9488]">{{ article.category || $t('blog.defaultCategory') }}</span>
                   <span class="text-[10px] text-[#64748B]">{{ formatDate(article.createdAt) }}</span>
                 </div>
                 <h3 class="font-bold text-lg mb-2 text-[#1E293B] hover:text-[#0D9488] transition-colors">
@@ -171,14 +160,14 @@
 
               <div>
                 <div class="mb-3 flex items-center justify-between gap-2 text-[10px] text-[#64748B]">
-                  <span>แหล่ง: {{ article.sourceName || 'PhuenJaiZone' }}</span>
-                  <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">ดูต้นฉบับ</a>
+                  <span>{{ $t('blog.source', { name: article.sourceName || 'PhuenJaiZone' }) }}</span>
+                  <a v-if="article.sourceUrl" :href="article.sourceUrl" target="_blank" rel="noreferrer" class="text-[#0D9488] hover:underline">{{ $t('blog.viewOriginal') }}</a>
                 </div>
                 <router-link
                   :to="'/blog/' + (article.slug || article.id)"
                   class="text-[#0D9488] font-semibold text-sm hover:underline inline-flex items-center gap-1"
                 >
-                  อ่านเพิ่มเติม &rarr;
+                  {{ $t('blog.readMore') }} &rarr;
                 </router-link>
               </div>
             </div>
@@ -192,43 +181,49 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('blog.footer.tagline') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('blog.footer.services') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><router-link to="/services" class="hover:underline">Daily Chatbot</router-link></li>
-            <li><router-link to="/services" class="hover:underline">Personalized Feedback</router-link></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('blog.footer.dailyChatbot') }}</router-link></li>
+            <li><router-link to="/services" class="hover:underline">{{ $t('blog.footer.personalizedFeedback') }}</router-link></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('blog.footer.library') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('blog.footer.contact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('blog.footer.hotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('blog.footer.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('blog.footer.rights') }}
       </div>
     </footer>
   </div>
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
 import { inject, ref, computed, onMounted } from 'vue'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AdminNavLink from '../components/AdminNavLink.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode', ref(false))
 const articles = ref([])
@@ -244,7 +239,7 @@ const articleLayoutClass = computed(() => {
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('th-TH', {
+  return new Date(dateString).toLocaleDateString(dateLocale(), {
     year: 'numeric', month: 'short', day: 'numeric'
   });
 };
@@ -257,7 +252,7 @@ const fetchArticles = async () => {
     articles.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to load articles:', error)
-    errorMessage.value = 'ไม่สามารถโหลดบทความได้ กรุณาลองใหม่ภายหลัง'
+    errorMessage.value = t('blog.loadError')
   } finally {
     loading.value = false
   }

@@ -4,11 +4,11 @@
     <!-- Top Bar -->
     <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gray-200 pb-5">
       <div>
-        <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">จัดการบทความ</h1>
-        <p class="text-sm text-gray-500">สร้างหรือเผยแพร่บทความให้คำแนะนำ, แนวทางการดูแลตนเอง</p>
+        <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">{{ $t('admin.articles.title') }}</h1>
+        <p class="text-sm text-gray-500">{{ $t('admin.articles.subtitle') }}</p>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-xs text-gray-400 font-mono">วันที่: {{ currentDate }}</span>
+        <span class="text-xs text-gray-400 font-mono">{{ $t('admin.articles.date', { date: currentDate }) }}</span>
       </div>
     </header>
 
@@ -16,8 +16,8 @@
     <section class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 class="text-xl font-extrabold text-[#1E293B]">บทความและแหล่งข้อมูล</h2>
-          <p class="text-xs text-gray-500">สร้างหรือเผยแพร่บทความให้คำแนะนำและแนวทางการดูแลตนเอง</p>
+          <h2 class="text-xl font-extrabold text-[#1E293B]">{{ $t('admin.articles.sectionTitle') }}</h2>
+          <p class="text-xs text-gray-500">{{ $t('admin.articles.sectionDesc') }}</p>
         </div>
         <!-- Write New Article Button -->
         <button
@@ -28,7 +28,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
           </svg>
-          สร้างบทความใหม่
+          {{ $t('admin.articles.createNew') }}
         </button>
       </div>
 
@@ -41,8 +41,8 @@
         <svg class="w-12 h-12 mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        <p class="text-sm font-semibold">ยังไม่มีบทความ</p>
-        <p class="text-xs mt-1">คลิก "+ สร้างบทความใหม่" เพื่อสร้างบทความแรก</p>
+        <p class="text-sm font-semibold">{{ $t('admin.articles.emptyTitle') }}</p>
+        <p class="text-xs mt-1">{{ $t('admin.articles.emptyHint') }}</p>
       </div>
 
       <!-- Article Cards Grid -->
@@ -66,10 +66,10 @@
             <p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed">{{ article.excerpt || article.content }}</p>
           </div>
           <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-            <span class="text-[10px] text-gray-400">โดย แอดมิน #{{ article.createdById }}</span>
+            <span class="text-[10px] text-gray-400">{{ $t('admin.articles.byAdmin', { id: article.createdById }) }}</span>
             <div class="flex gap-2">
-              <button type="button" @click.stop="openArticleEditor(article)" class="text-xs text-[#0D9488] font-bold hover:underline cursor-pointer">แก้ไข</button>
-              <button type="button" @click.stop="deleteArticle(article.id)" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer">ลบ</button>
+              <button type="button" @click.stop="openArticleEditor(article)" class="text-xs text-[#0D9488] font-bold hover:underline cursor-pointer">{{ $t('admin.articles.edit') }}</button>
+              <button type="button" @click.stop="deleteArticle(article.id)" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer">{{ $t('admin.articles.delete') }}</button>
             </div>
           </div>
         </div>
@@ -89,9 +89,9 @@
           <div class="bg-gradient-to-r from-[#045F54] to-[#0D9488] px-6 py-5 flex items-center justify-between">
             <div>
               <h3 class="text-lg font-extrabold text-white">
-                {{ editingArticle?.id ? '✏️ แก้ไขบทความ' : '📝 สร้างบทความใหม่' }}
+                {{ editingArticle?.id ? $t('admin.articles.modalEdit') : $t('admin.articles.modalCreate') }}
               </h3>
-              <p class="text-xs text-[#D1FAE5] mt-0.5">กรอกข้อมูลบทความที่ต้องการเผยแพร่</p>
+              <p class="text-xs text-[#D1FAE5] mt-0.5">{{ $t('admin.articles.modalSubtitle') }}</p>
             </div>
             <button @click="closeArticleEditor" class="text-white/70 hover:text-white p-2 rounded-xl hover:bg-white/10 transition cursor-pointer">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,11 +105,11 @@
 
             <!-- Title -->
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">ชื่อบทความ <span class="text-rose-500">*</span></label>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldTitle') }} <span class="text-rose-500">*</span></label>
               <input
                 v-model="articleForm.title"
                 type="text"
-                placeholder="ใส่หัวข้อบทความ..."
+                :placeholder="$t('admin.articles.titlePlaceholder')"
                 class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition"
               />
               <p v-if="formErrors.title" class="text-xs text-rose-500 mt-1">{{ formErrors.title }}</p>
@@ -118,27 +118,27 @@
             <!-- Category + Source row -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">หมวดหมู่ <span class="text-rose-500">*</span></label>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldCategory') }} <span class="text-rose-500">*</span></label>
                 <select
                   v-model="articleForm.category"
                   class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition bg-white"
                 >
-                  <option value="">-- เลือกหมวดหมู่ --</option>
-                  <option value="STRESS">ความเครียด</option>
-                  <option value="DEPRESSION">ภาวะซึมเศร้า</option>
-                  <option value="ANXIETY">ความวิตกกังวล</option>
-                  <option value="SELF-CARE">การดูแลตนเอง</option>
-                  <option value="EMERGENCY">เหตุฉุกเฉิน</option>
-                  <option value="MINDFULNESS">สติและสมาธิ</option>
+                  <option value="">{{ $t('admin.articles.selectCategory') }}</option>
+                  <option value="STRESS">{{ $t('admin.articles.catStress') }}</option>
+                  <option value="DEPRESSION">{{ $t('admin.articles.catDepression') }}</option>
+                  <option value="ANXIETY">{{ $t('admin.articles.catAnxiety') }}</option>
+                  <option value="SELF-CARE">{{ $t('admin.articles.catSelfCare') }}</option>
+                  <option value="EMERGENCY">{{ $t('admin.articles.catEmergency') }}</option>
+                  <option value="MINDFULNESS">{{ $t('admin.articles.catMindfulness') }}</option>
                 </select>
                 <p v-if="formErrors.category" class="text-xs text-rose-500 mt-1">{{ formErrors.category }}</p>
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">แหล่งที่มา (ถ้ามี)</label>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldSource') }}</label>
                 <input
                   v-model="articleForm.sourceName"
                   type="text"
-                  placeholder="เช่น กรมสุขภาพจิต"
+                  :placeholder="$t('admin.articles.sourcePlaceholder')"
                   class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition"
                 />
               </div>
@@ -146,22 +146,22 @@
 
             <!-- Excerpt -->
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">บทคัดย่อ / ตัวอย่าง</label>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldExcerpt') }}</label>
               <textarea
                 v-model="articleForm.excerpt"
                 rows="2"
-                placeholder="ใส่ข้อความสั้นๆ ที่จะแสดงในหน้ารายการบทความ..."
+                :placeholder="$t('admin.articles.excerptPlaceholder')"
                 class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition resize-none"
               ></textarea>
             </div>
 
             <!-- Content -->
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">เนื้อหาบทความ <span class="text-rose-500">*</span></label>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldContent') }} <span class="text-rose-500">*</span></label>
               <textarea
                 v-model="articleForm.content"
                 rows="8"
-                placeholder="เขียนเนื้อหาบทความที่นี่..."
+                :placeholder="$t('admin.articles.contentPlaceholder')"
                 class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition resize-y"
               ></textarea>
               <p v-if="formErrors.content" class="text-xs text-rose-500 mt-1">{{ formErrors.content }}</p>
@@ -169,14 +169,14 @@
 
            <!-- Cover Image Upload (เลือกรูปจากเครื่อง) -->
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">รูปปกบทความ (ถ้ามี)</label>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldCover') }}</label>
               <div class="flex items-center gap-4">
                 <!-- ปุ่มเลือกไฟล์ (ซ่อน input file แท้ไว้ด้านใน) -->
                 <label class="cursor-pointer inline-flex items-center px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600 font-medium hover:bg-gray-100 hover:border-[#0D9488] hover:text-[#0D9488] transition-all">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
-                  เลือกรูปภาพจากเครื่อง
+                  {{ $t('admin.articles.chooseImage') }}
                   <input
                     type="file"
                     accept="image/*"
@@ -187,18 +187,18 @@
                 
                 <!-- แสดงพรีวิวรูปภาพที่เลือก -->
                 <div v-if="articleForm.coverImageUrl" class="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                  <img :src="articleForm.coverImageUrl" class="w-full h-full object-cover" alt="Cover Preview" />
+                  <img :src="articleForm.coverImageUrl" class="w-full h-full object-cover" :alt="$t('admin.articles.coverPreview')" />
                   <!-- ปุ่มกากบาทสำหรับลบรูป -->
-                  <button type="button" @click="articleForm.coverImageUrl = ''" class="absolute top-0 right-0 bg-rose-500 text-white w-4 h-4 flex items-center justify-center rounded-bl cursor-pointer hover:bg-rose-600 transition" title="ลบรูป">
+                  <button type="button" @click="articleForm.coverImageUrl = ''" class="absolute top-0 right-0 bg-rose-500 text-white w-4 h-4 flex items-center justify-center rounded-bl cursor-pointer hover:bg-rose-600 transition" :title="$t('admin.articles.removeImage')">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
                   </button>
                 </div>
-                <span v-else class="text-xs text-gray-400">ยังไม่ได้เลือกไฟล์</span>
+                <span v-else class="text-xs text-gray-400">{{ $t('admin.articles.noFile') }}</span>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">URL แหล่งที่มา (ถ้ามี)</label>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ $t('admin.articles.fieldSourceUrl') }}</label>
               <input
                 v-model="articleForm.sourceUrl"
                 type="url"
@@ -209,7 +209,7 @@
 
             <!-- Preview card -->
             <div v-if="articleForm.title || articleForm.content" class="border border-dashed border-[#0D9488]/30 rounded-2xl p-4 bg-[#F0FDF9]">
-              <p class="text-xs font-bold text-[#0D9488] mb-2 uppercase tracking-wider">👁 ตัวอย่างการ์ด</p>
+              <p class="text-xs font-bold text-[#0D9488] mb-2 uppercase tracking-wider">{{ $t('admin.articles.previewLabel') }}</p>
               <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
                 <div class="flex items-center gap-2 mb-2">
                   <span v-if="articleForm.category" :class="categoryColor(articleForm.category)" class="px-2 py-0.5 rounded-full text-[10px] font-bold border">
@@ -217,8 +217,8 @@
                   </span>
                   <span class="text-[10px] text-gray-400">{{ todayDateFormatted }}</span>
                 </div>
-                <p class="font-bold text-sm text-gray-800 line-clamp-2">{{ articleForm.title || 'ชื่อบทความ...' }}</p>
-                <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ articleForm.excerpt || articleForm.content || 'เนื้อหาบทความ...' }}</p>
+                <p class="font-bold text-sm text-gray-800 line-clamp-2">{{ articleForm.title || $t('admin.articles.previewTitle') }}</p>
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ articleForm.excerpt || articleForm.content || $t('admin.articles.previewContent') }}</p>
               </div>
             </div>
 
@@ -226,13 +226,13 @@
 
           <!-- Modal Footer -->
           <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
-            <p class="text-xs text-gray-400">⚠️ ข้อมูลที่มีเครื่องหมาย <span class="text-rose-500 font-bold">*</span> ต้องกรอก</p>
+            <p class="text-xs text-gray-400">{{ $t('admin.articles.requiredNoteBefore') }} <span class="text-rose-500 font-bold">*</span> {{ $t('admin.articles.requiredNoteAfter') }}</p>
             <div class="flex gap-3">
               <button
                 @click="closeArticleEditor"
                 class="px-5 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-100 transition cursor-pointer"
               >
-                ยกเลิก
+                {{ $t('admin.users.cancel') }}
               </button>
               <button
                 @click="saveArticle"
@@ -241,7 +241,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                {{ editingArticle?.id ? 'บันทึกการแก้ไข' : 'เผยแพร่บทความ' }}
+                {{ editingArticle?.id ? $t('admin.articles.saveEdit') : $t('admin.articles.publish') }}
               </button>
             </div>
           </div>
@@ -259,14 +259,14 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการลบบทความ?</h3>
-          <p class="text-sm text-gray-500 mb-6">การลบบทความนี้ไม่สามารถย้อนกลับได้ คุณแน่ใจหรือไม่?</p>
+          <h3 class="text-lg font-extrabold text-gray-800 mb-2">{{ $t('admin.articles.deleteConfirmTitle') }}</h3>
+          <p class="text-sm text-gray-500 mb-6">{{ $t('admin.articles.deleteConfirmDesc') }}</p>
           <div class="flex gap-3">
             <button @click="isDeleteConfirmOpen = false" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-              ยกเลิก
+              {{ $t('admin.users.cancel') }}
             </button>
             <button @click="executeDeleteArticle" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer">
-              ยืนยันการลบ
+              {{ $t('admin.articles.deleteConfirm') }}
             </button>
           </div>
         </div>
@@ -277,7 +277,11 @@
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
 import { ref, computed, inject, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const triggerSuccessToast = inject('triggerSuccessToast')
 
@@ -286,11 +290,11 @@ const API_URL = import.meta.env.DEV ? '' : (import.meta.env.VITE_API_URL || 'htt
 // Formatting date
 const currentDate = computed(() => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' }
-  return new Date().toLocaleDateString('th-TH', options)
+  return new Date().toLocaleDateString(dateLocale(), options)
 })
 
 const todayDateFormatted = computed(() => {
-  return new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date().toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' })
 })
 
 // Articles management (เชื่อมต่อฐานข้อมูลจริงด้วย fetch API)
@@ -298,8 +302,8 @@ const mockArticles = ref([])
 const articlesLoadError = ref('')
 
 function formatArticleDate(dateValue) {
-  if (!dateValue) return 'ไม่ระบุวันที่'
-  return new Date(dateValue).toLocaleDateString('th-TH', {
+  if (!dateValue) return t('admin.articles.noDate')
+  return new Date(dateValue).toLocaleDateString(dateLocale(), {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
@@ -319,7 +323,7 @@ const fetchAdminArticles = async () => {
     mockArticles.value = Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Error loading articles:', error);
-    articlesLoadError.value = error.message || 'ไม่สามารถโหลดบทความจากฐานข้อมูลได้';
+    articlesLoadError.value = error.message || t('admin.articles.errLoad');
   }
 };
 
@@ -365,9 +369,9 @@ function closeArticleEditor() {
 
 function validateArticleForm() {
   const errors = {}
-  if (!articleForm.value.title.trim()) errors.title = 'กรุณาใส่ชื่อบทความ'
-  if (!articleForm.value.category) errors.category = 'กรุณาเลือกหมวดหมู่'
-  if (!articleForm.value.content.trim()) errors.content = 'กรุณาใส่เนื้อหาบทความ'
+  if (!articleForm.value.title.trim()) errors.title = t('admin.articles.errTitle')
+  if (!articleForm.value.category) errors.category = t('admin.articles.errCategory')
+  if (!articleForm.value.content.trim()) errors.content = t('admin.articles.errContent')
   formErrors.value = errors
   return Object.keys(errors).length === 0
 }
@@ -409,11 +413,11 @@ async function saveArticle() {
     }
 
     closeArticleEditor();
-    triggerSuccessToast(isEdit ? 'แก้ไขบทความสำเร็จ' : 'สร้างบทความใหม่สำเร็จ');
+    triggerSuccessToast(isEdit ? t('admin.articles.toastEdited') : t('admin.articles.toastCreated'));
     await fetchAdminArticles();
   } catch (error) {
     console.error("Error saving article:", error);
-    alert(error.message || "เกิดข้อผิดพลาดในการบันทึกบทความ");
+    alert(error.message || t('admin.articles.errSave'));
   }
 }
 
@@ -440,11 +444,11 @@ async function executeDeleteArticle() {
 
     isDeleteConfirmOpen.value = false
     articleToDeleteId.value = null
-    triggerSuccessToast('ลบบทความสำเร็จ')
+    triggerSuccessToast(t('admin.articles.toastDeleted'))
     await fetchAdminArticles();
   } catch (error) {
     console.error("Error deleting article:", error);
-    alert(error.message || "เกิดข้อผิดพลาดในการลบบทความ");
+    alert(error.message || t('admin.articles.errDelete'));
   }
 }
 
@@ -467,12 +471,12 @@ function categoryColor(cat) {
 // Category label Thai helper
 function categoryLabel(cat) {
   const map = {
-    STRESS: 'ความเครียด',
-    DEPRESSION: 'ภาวะซึมเศร้า',
-    ANXIETY: 'ความวิตกกังวล',
-    'SELF-CARE': 'การดูแลตนเอง',
-    EMERGENCY: 'เหตุฉุกเฉิน',
-    MINDFULNESS: 'สติและสมาธิ',
+    STRESS: t('admin.articles.catStress'),
+    DEPRESSION: t('admin.articles.catDepression'),
+    ANXIETY: t('admin.articles.catAnxiety'),
+    'SELF-CARE': t('admin.articles.catSelfCare'),
+    EMERGENCY: t('admin.articles.catEmergency'),
+    MINDFULNESS: t('admin.articles.catMindfulness'),
   }
   return map[cat] || cat
 }

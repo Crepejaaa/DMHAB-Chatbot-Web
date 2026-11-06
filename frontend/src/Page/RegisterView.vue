@@ -18,7 +18,7 @@
           <button 
             @click="$router.back()" 
             class="hover:bg-white/20 p-2 rounded-full transition text-white" 
-            title="ย้อนกลับ"
+            :title="$t('register.back')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -29,8 +29,8 @@
 
         <!-- ฝั่งขวา: โลโก้ และ PhuenJaiZone -->
         <div class="flex items-center gap-2.5 cursor-default">
-          <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-10 h-10 object-contain rounded-full" />
-          <span class="text-xl font-bold tracking-wide text-white">PhuenJaiZone</span>
+          <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-10 h-10 object-contain rounded-full" />
+          <span class="text-xl font-bold tracking-wide text-white">{{ $t('common.brand') }}</span>
         </div>
 
       </div>
@@ -38,8 +38,8 @@
       <!-- Hero Title -->
       <div class="container mx-auto px-10 pt-10 pb-28 relative z-10">
         <div class="border-l-4 border-white pl-4">
-          <h1 class="text-3xl font-bold mb-2">Register</h1>
-          <p class="text-sm text-white/80 italic">"เริ่มต้นดูแลตัวเองในแบบที่เป็นคุณ... เพราะคุณมีแค่คนเดียวในโลก"</p>
+          <h1 class="text-3xl font-bold mb-2">{{ $t('register.title') }}</h1>
+          <p class="text-sm text-white/80 italic">{{ $t('register.subtitle') }}</p>
         </div>
       </div>
     </div>
@@ -51,7 +51,7 @@
         <!-- วงกลมใหญ่ด้านบนสุด แสดงอวตารสัตว์ที่เลือก (แทนไอคอนกล้องเดิม) -->
         <div
           class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-[#F1F5F9] rounded-full border-4 border-white shadow-md flex items-center justify-center overflow-hidden transition-all duration-300"
-          :title="selectedAvatarObj?.label || 'อวตารของคุณ'"
+          :title="selectedAvatarObj?.label || $t('register.yourAvatar')"
         >
           <img
             v-if="selectedAvatarObj"
@@ -61,12 +61,12 @@
           />
         </div>
 
-        <h2 class="text-center text-xl font-bold text-gray-800 mb-3">Register</h2>
+        <h2 class="text-center text-xl font-bold text-gray-800 mb-3">{{ $t('register.title') }}</h2>
 
         <!-- พื้นที่เลือก Avatar สัตว์น่ารัก 5 ตัว (Animal Avatar Selector) -->
         <div class="mb-6">
           <p class="text-center text-xs font-semibold text-gray-500 mb-3">
-            เลือกอวตารประจำตัวของคุณ ({{ selectedAvatarObj?.label }})
+            {{ $t('register.avatarPrompt', { label: selectedAvatarObj?.label }) }}
           </p>
           <div class="flex items-center justify-center gap-3 sm:gap-4">
             <button
@@ -91,30 +91,30 @@
         <form @submit.prevent="handleRegister" class="space-y-4">
           <!-- Name -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Name</label>
-            <input v-model="form.name" type="text" placeholder="Your Name, e.g : John Doe (ห้ามใส่ชื่อ-นามสกุลจริง)" required
+            <label class="block text-sm font-bold text-gray-700 mb-1">{{ $t('register.name') }}</label>
+            <input v-model="form.name" type="text" :placeholder="$t('register.namePlaceholder')" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Email -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
-            <input v-model="form.email" type="email" placeholder="Your email, e.g : johndoe@gmail.com" required
+            <label class="block text-sm font-bold text-gray-700 mb-1">{{ $t('register.email') }}</label>
+            <input v-model="form.email" type="email" :placeholder="$t('register.emailPlaceholder')" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Password -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
-            <input v-model="form.password" type="password" placeholder="Your password, at least 8 character." required
+            <label class="block text-sm font-bold text-gray-700 mb-1">{{ $t('register.password') }}</label>
+            <input v-model="form.password" type="password" :placeholder="$t('register.passwordPlaceholder')" required
               minlength="8"
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
           <!-- Confirm Password -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Confirm Password</label>
-            <input v-model="form.confirmPassword" type="password" placeholder="Re-type your password" required
+            <label class="block text-sm font-bold text-gray-700 mb-1">{{ $t('register.confirmPassword') }}</label>
+            <input v-model="form.confirmPassword" type="password" :placeholder="$t('register.confirmPlaceholder')" required
               class="login-field register-field w-full rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#349E8D] outline-none placeholder-gray-400" />
           </div>
 
@@ -137,7 +137,7 @@
               @click.prevent="openTermsModal"
               class="text-sm text-[#21776A] hover:text-[#045F54] underline underline-offset-4 decoration-[#349E8D] cursor-pointer font-semibold select-none transition-colors"
             >
-              ฉันได้อ่านและยอมรับเงื่อนไขการใช้งาน
+              {{ $t('register.acceptTerms') }}
             </a>
           </div>
 
@@ -165,8 +165,8 @@
                   : 'bg-[#29CBAE] hover:bg-[#25B89D] text-white active:scale-95 cursor-pointer'
               ]"
             >
-              <span v-if="isLoading">กำลังสมัครสมาชิก...</span>
-              <span v-else>สมัครสมาชิก</span>
+              <span v-if="isLoading">{{ $t('register.registering') }}</span>
+              <span v-else>{{ $t('register.title') }}</span>
             </button>
           </div>
         </form>
@@ -194,23 +194,23 @@
           <!-- หัวข้อ Modal -->
           <div class="mt-4 text-center">
             <h3 class="text-xl font-extrabold text-[#1E293B]" id="modal-title">
-              เงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
+              {{ $t('register.modal.title') }}
             </h3>
 
             <!-- กล่องเนื้อหาเงื่อนไข (Scrollable) -->
             <div class="mt-4 text-sm text-gray-600 bg-[#F8FAFC] p-4 rounded-2xl text-left border border-gray-200 max-h-64 overflow-y-auto space-y-3 leading-relaxed">
-              <p class="font-bold text-[#1E293B]">เงื่อนไขและข้อตกลงในการใช้งานระบบ PhuenJaiZone:</p>
-              <p class="font-medium text-gray-700">1. การคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy):</p>
+              <p class="font-bold text-[#1E293B]">{{ $t('register.modal.intro') }}</p>
+              <p class="font-medium text-gray-700">{{ $t('register.modal.privacyHeading') }}</p>
               <ul class="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-gray-600 pl-1">
-                <li>ระบบจัดเก็บข้อมูล (ชื่อนามแฝง, อีเมล, รูปอวตาร, ผลประเมิน) ไว้เป็นความลับอย่างปลอดภัยผ่านการเข้ารหัส HTTPS/SSL</li>
-                <li>ข้อมูลทั้งหมดจะถูกนำไปใช้วิเคราะห์เพื่อติดตามสภาวะอารมณ์ของคุณเท่านั้น โดยไม่มีการเปิดเผยต่อบุคคลภายนอก</li>
-                <li>คุณมีสิทธิในการเข้าถึง แก้ไข หรือร้องขอให้ลบข้อมูลส่วนตัวของคุณได้ตลอดเวลาผ่านส่วนตั้งค่าบัญชี</li>
+                <li>{{ $t('register.modal.privacy1') }}</li>
+                <li>{{ $t('register.modal.privacy2') }}</li>
+                <li>{{ $t('register.modal.privacy3') }}</li>
               </ul>
               <p class="font-bold text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 text-xs sm:text-sm leading-relaxed">
-                ข้อชี้แจงสำคัญ: ระบบแชทบอท PhuenJaiZone เป็นเพียงเครื่องมือประเมินและคัดกรองสภาวะอารมณ์เบื้องต้นเท่านั้น **ไม่ใช้สำหรับการวินิจฉัยโรคทางจิตเวชและไม่มีการจ่ายยาเด็ดขาด**
+                {{ $t('register.modal.disclaimer') }}
               </p>
               <p class="text-xs sm:text-sm text-gray-700">
-                2. หากท่านมีภาวะเครียดรุนแรงหรือมีความคิดทำร้ายตนเอง กรุณาติดต่อสายด่วนสุขภาพจิต 1323 หรือพบแพทย์ผู้เชี่ยวชาญทันที
+                {{ $t('register.modal.emergency') }}
               </p>
             </div>
           </div>
@@ -222,14 +222,14 @@
               class="w-full inline-flex justify-center items-center rounded-full border border-gray-300 shadow-xs px-5 py-2.5 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0D9488] cursor-pointer transition"
               @click="closeTermsModal"
             >
-              ปิด
+              {{ $t('register.modal.close') }}
             </button>
             <button 
               type="button" 
               class="w-full inline-flex justify-center items-center rounded-full border border-transparent shadow-sm px-5 py-2.5 bg-[#0D9488] hover:bg-[#045F54] text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0D9488] cursor-pointer transition"
               @click="acceptAndClose"
             >
-              ยอมรับ
+              {{ $t('register.modal.accept') }}
             </button>
           </div>
         </div>
@@ -243,34 +243,34 @@
           <!-- โลโก้ Footer -->
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-white/70 text-xs leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-white/70 text-xs leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-4">Services</h4>
+          <h4 class="font-bold mb-4">{{ $t('common.footerServices') }}</h4>
           <ul class="space-y-2 text-white/80 text-xs">
-            <li><a href="#" class="hover:text-white">Daily Check-in</a></li>
-            <li><a href="#" class="hover:text-white">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:text-white">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:text-white">{{ $t('common.footerCheckin') }}</a></li>
+            <li><a href="#" class="hover:text-white">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:text-white">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-4">Contact</h4>
+          <h4 class="font-bold mb-4">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-white/80 text-xs">
             <li class="flex items-center gap-2">📞 +66 234 567</li>
             <li class="flex items-center gap-2">✉️ PhuenJaiZone@gmail.com</li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-4">Hotline</h4>
-          <p class="text-white/80 text-xs">1323 (สายด่วนสุขภาพจิต)</p>
+          <h4 class="font-bold mb-4">{{ $t('common.footerHotline') }}</h4>
+          <p class="text-white/80 text-xs">{{ $t('blog.footer.hotlineLine') }}</p>
         </div>
       </div>
       <div class="container mx-auto px-6 mt-8 pt-6 border-t border-white/20 text-center text-white/60 text-xs">
-        <p>© PhuenJaiZone 2024. All rights reserved.</p>
+        <p>{{ $t('blog.footer.rightsAuth') }}</p>
       </div>
     </footer>
   </div>
@@ -287,6 +287,9 @@ import catAvatar from '../assets/avatars/cat.png'
 import rabbitAvatar from '../assets/avatars/rabbit.png'
 import bearAvatar from '../assets/avatars/bear.png'
 import birdAvatar from '../assets/avatars/bird.png'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -294,13 +297,13 @@ const isDarkMode = inject('isDarkMode', ref(false))
 const isLoading = ref(false)
 
 // รายการอวตารสัตว์ 5 ตัว
-const avatarOptions = [
-  { id: 'avatar_dog', label: 'สุนัข', src: dogAvatar },
-  { id: 'avatar_cat', label: 'แมว', src: catAvatar },
-  { id: 'avatar_rabbit', label: 'กระต่าย', src: rabbitAvatar },
-  { id: 'avatar_bear', label: 'หมี', src: bearAvatar },
-  { id: 'avatar_bird', label: 'นก', src: birdAvatar },
-]
+const avatarOptions = computed(() => ([
+  { id: 'avatar_dog', label: t('register.avatars.dog'), src: dogAvatar },
+  { id: 'avatar_cat', label: t('register.avatars.cat'), src: catAvatar },
+  { id: 'avatar_rabbit', label: t('register.avatars.rabbit'), src: rabbitAvatar },
+  { id: 'avatar_bear', label: t('register.avatars.bear'), src: bearAvatar },
+  { id: 'avatar_bird', label: t('register.avatars.bird'), src: birdAvatar },
+]))
 
 // ตัวแปรและฟังก์ชันสำหรับ Google reCAPTCHA v2 (ดึงจาก Environment Variable เท่านั้น ไม่ใช้ Hardcode Fallback)
 const siteKey = (import.meta.env.VITE_RECAPTCHA_SITE_KEY || '')
@@ -326,7 +329,7 @@ const onRecaptchaExpired = () => {
 
 const onRecaptchaError = () => {
   recaptchaToken.value = ''
-  errorMessage.value = 'ไม่สามารถโหลดหรือยืนยัน reCAPTCHA ได้ กรุณาลองใหม่อีกครั้ง'
+  errorMessage.value = t('register.errors.recaptcha')
 }
 
 const form = ref({
@@ -340,7 +343,7 @@ const form = ref({
 const errorMessage = ref('')
 
 const selectedAvatarObj = computed(() => {
-  return avatarOptions.find((item) => item.id === form.value.avatar) || avatarOptions[0]
+  return avatarOptions.value.find((item) => item.id === form.value.avatar) || avatarOptions.value[0]
 })
 
 const selectAvatar = (avatarId) => {
@@ -388,20 +391,20 @@ const handleRegister = async () => {
   
   // เช็กว่าผู้ใช้ยอมรับเงื่อนไขแล้วหรือยัง
   if (!form.value.acceptTerms) {
-    errorMessage.value = "กรุณายอมรับเงื่อนไขการใช้งานก่อนทำการสมัครสมาชิก"
+    errorMessage.value = t('register.errors.acceptTerms')
     return
   }
 
   // เช็กว่าผู้ใช้ติ๊ก reCAPTCHA หรือยัง
   const token = recaptchaToken.value?.trim()
   if (!token) {
-    errorMessage.value = "กรุณายืนยันตัวตนผ่าน reCAPTCHA ก่อนทำการสมัครสมาชิก"
+    errorMessage.value = t('register.errors.needRecaptcha')
     return
   }
 
   // เช็กรหัสผ่าน
   if (form.value.password !== form.value.confirmPassword) {
-    errorMessage.value = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน!"
+    errorMessage.value = t('register.errors.passwordMismatch')
     return
   }
 

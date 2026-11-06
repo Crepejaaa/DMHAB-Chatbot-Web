@@ -4,29 +4,32 @@
     <!-- 1. Navbar (เหมือน HomeView) -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
       <div class="flex items-center gap-3">
-        <router-link to="/services" class="hover:bg-white/20 p-2 rounded-full transition" title="กลับหน้า Services">
+        <router-link to="/services" class="hover:bg-white/20 p-2 rounded-full transition" :title="$t('serviceDetail.backToServices')">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </router-link>
         <router-link to="/" class="flex items-center gap-1">
           <div class="w-12 h-12 flex items-center justify-center">
-            <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+            <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
           </div>
-          <span class="text-xl font-bold tracking-wide">PhuenJaiZone</span>
+          <span class="text-xl font-bold tracking-wide">{{ $t('common.brand') }}</span>
         </router-link>
       </div>
       
       <div class="hidden md:flex gap-8 items-center text-sm font-medium">
-        <router-link to="/" class="hover:text-[#D1FAE5] transition">Home</router-link>
-        <router-link to="/about" class="hover:text-[#D1FAE5] transition">About</router-link>
-        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">Service</router-link>
-        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">Blog</router-link>
+        <router-link to="/" class="hover:text-[#D1FAE5] transition">{{ $t('nav.home') }}</router-link>
+        <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
+        <router-link to="/services" class="text-white font-bold underline decoration-2 underline-offset-4">{{ $t('nav.services') }}</router-link>
+        <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
+        <AdminNavLink />
       </div>
       
       <div class="flex gap-3 items-center text-sm">
-        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" title="โหมดขาวดำสำหรับผู้ตาบอดสี">
-          <span class="text-xs font-semibold text-white">Dark Mode</span>
+        <LanguageSwitcher />
+
+        <div class="hidden md:flex items-center gap-2 mr-2 bg-black/10 px-3 py-1.5 rounded-full border border-white/20 shadow-sm" :title="$t('nav.darkModeTitle')">
+          <span class="text-xs font-semibold text-white">{{ $t('nav.darkMode') }}</span>
           <button
             @click="isDarkMode = !isDarkMode"
             :class="isDarkMode ? 'bg-white' : 'bg-[#045F54]'"
@@ -78,7 +81,7 @@
 
       <!-- Overview Section -->
       <section class="mb-16 scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">ภาพรวมบริการ</h2>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">{{ $t('serviceDetail.overviewTitle') }}</h2>
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10">
           <p class="text-[#64748B] leading-relaxed text-base whitespace-pre-line">{{ currentService.overview }}</p>
         </div>
@@ -86,7 +89,7 @@
 
       <!-- Features Section -->
       <section class="mb-16 scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">คุณสมบัติเด่น</h2>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">{{ $t('serviceDetail.featuresTitle') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div 
             v-for="(feature, index) in currentService.features" 
@@ -108,7 +111,7 @@
 
       <!-- How It Works Section -->
       <section class="mb-16 scroll-anim opacity-0 translate-y-10 transition-all duration-1000 ease-out">
-        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">วิธีการใช้งาน</h2>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-6">{{ $t('serviceDetail.stepsTitle') }}</h2>
         <div class="relative">
           <!-- Vertical line -->
           <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#0D9488] to-[#059669] hidden md:block"></div>
@@ -141,8 +144,8 @@
             </svg>
           </div>
           <div class="relative z-10">
-            <h2 class="text-2xl md:text-3xl font-extrabold mb-4">พร้อมเริ่มต้นดูแลสุขภาพจิตแล้วหรือยัง?</h2>
-            <p class="text-[#D1FAE5] mb-8 max-w-xl mx-auto">เริ่มใช้งานบริการของเราวันนี้ เพื่อสุขภาพจิตที่ดีขึ้นในทุกๆ วัน</p>
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-4">{{ $t('serviceDetail.ctaTitle') }}</h2>
+            <p class="text-[#D1FAE5] mb-8 max-w-xl mx-auto">{{ $t('serviceDetail.ctaText') }}</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <!-- ปุ่มสำหรับ daily-checkin -->
               <button
@@ -150,7 +153,7 @@
                 @click="$router.push('/daily-checkin')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
               >
-                📝 เริ่มต้นใช้งาน
+                {{ $t('serviceDetail.btnCheckin') }}
               </button>
 
               <!-- ปุ่มพิเศษสำหรับ relaxation service -->
@@ -159,7 +162,7 @@
                 @click="$router.push('/activity-tracker')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
               >
-                🧘 เริ่มติดตามกิจกรรม
+                {{ $t('serviceDetail.btnRelaxation') }}
               </button>
 
               <!-- ปุ่มสำหรับ listening-space -->
@@ -168,7 +171,7 @@
                 @click="$router.push('/chat')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md flex items-center gap-2 justify-center"
               >
-                💬 เริ่มต้นพูดคุย
+                {{ $t('serviceDetail.btnListening') }}
               </button>
 
               <!-- ปุ่มเริ่มต้นใช้งานสำหรับ assessment และอื่นๆ -->
@@ -177,14 +180,14 @@
                 @click="$router.push('/assessment')"
                 class="bg-white text-[#0D9488] px-8 py-3 rounded-full font-bold text-sm hover:bg-[#D1FAE5] transition shadow-md"
               >
-                เริ่มต้นใช้งาน
+                {{ $t('serviceDetail.btnStart') }}
               </button>
 
               <router-link
                 to="/services"
                 class="border-2 border-white/60 text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition"
               >
-                ดูบริการทั้งหมด
+                {{ $t('serviceDetail.viewAll') }}
               </router-link>
             </div>
           </div>
@@ -200,34 +203,34 @@
         <div>
           <div class="flex items-center gap-1 mb-3">
             <div class="w-10 h-10 flex items-center justify-center">
-              <img src="/phuenjaizone-logo.jpg" alt="PhuenJaiZone Logo" class="w-full h-full object-contain rounded-full" />
+              <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
             </div>
-            <span class="font-bold text-lg">PhuenJaiZone</span>
+            <span class="font-bold text-lg">{{ $t('common.brand') }}</span>
           </div>
-          <p class="text-xs text-[#D1FAE5] leading-relaxed">ผู้ช่วยประเมินสุขภาพจิตประจำวัน ให้คุณอุ่นใจได้เสมอ</p>
+          <p class="text-xs text-[#D1FAE5] leading-relaxed">{{ $t('common.footerDesc') }}</p>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Services</h4>
+          <h4 class="font-bold mb-3">{{ $t('services.title') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li><a href="#" class="hover:underline">Daily Chatbot</a></li>
-            <li><a href="#" class="hover:underline">Personalized Feedback</a></li>
-            <li><router-link to="/blog" class="hover:underline">Self-Care Resource Library</router-link></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService1') }}</a></li>
+            <li><a href="#" class="hover:underline">{{ $t('common.footerService2') }}</a></li>
+            <li><router-link to="/blog" class="hover:underline">{{ $t('common.footerService3') }}</router-link></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-3">Contact</h4>
+          <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
             <li>📞 02-XXX-XXXX</li>
             <li>✉️ PhuenJaiZone@Domain.com</li>
           </ul>
         </div>
         <div>
-          <router-link to="/admin" class="font-bold mb-3 block hover:underline">Hotline</router-link>
-          <p class="text-xs text-[#D1FAE5]">สายด่วนสุขภาพจิต 1323</p>
+          <router-link to="/admin" class="font-bold mb-3 block hover:underline">{{ $t('common.footerHotline') }}</router-link>
+          <p class="text-xs text-[#D1FAE5]">{{ $t('common.hotlineText') }}</p>
         </div>
       </div>
       <div class="text-center text-xs text-[#A7F3D0] pt-6">
-        © 2026 PhuenJaiZone. All rights reserved.
+        {{ $t('common.copyright') }}
       </div>
     </footer>
 
@@ -238,87 +241,92 @@
 import { inject, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AdminNavLink from '../components/AdminNavLink.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const isDarkMode = inject('isDarkMode')
 const route = useRoute()
 const router = useRouter()
 
 // ข้อมูลรายละเอียดบริการทั้งหมด (keyed by id ที่ตรงกับ servicesList ใน ServicesView)
-const servicesData = {
+const servicesData = computed(() => ({
   'daily-checkin': {
-    title: 'เช็คอินสุขภาพจิตรายวัน',
-    subtitle: 'ระบบบันทึกและติดตามความรู้สึกประจำวัน เพื่อให้คุณรู้จักตัวเองมากขึ้นในทุกๆ วัน',
-    overview: 'บริการเช็คอินสุขภาพจิตรายวัน ช่วยให้คุณสามารถบันทึกอารมณ์ ความรู้สึก และระดับความเครียดในแต่ละวันได้อย่างง่ายดาย ระบบจะวิเคราะห์ข้อมูลของคุณและแสดงแนวโน้มสุขภาพจิตในรูปแบบกราฟที่เข้าใจง่าย ช่วยให้คุณเห็นภาพรวมของสุขภาพจิตตัวเองและสามารถปรับปรุงพฤติกรรมได้ตรงจุด',
+    title: t('serviceDetail.data.dailyCheckin.title'),
+    subtitle: t('serviceDetail.data.dailyCheckin.subtitle'),
+    overview: t('serviceDetail.data.dailyCheckin.overview'),
     features: [
-      { icon: '📝', title: 'บันทึกอารมณ์ง่ายๆ', description: 'เลือกอิโมจิและเขียนบันทึกสั้นๆ เพียงไม่กี่วินาทีต่อวัน' },
-      { icon: '📊', title: 'กราฟแนวโน้มสุขภาพจิต', description: 'ดูกราฟสรุปอารมณ์รายสัปดาห์และรายเดือนของคุณ' },
-      { icon: '🔔', title: 'แจ้งเตือนประจำวัน', description: 'ตั้งเวลาแจ้งเตือนเพื่อไม่ลืมเช็คอินทุกวัน' },
-      { icon: '🔒', title: 'ข้อมูลเป็นความลับ', description: 'ข้อมูลทั้งหมดถูกเข้ารหัสและเก็บรักษาอย่างปลอดภัย' }
+      { icon: '📝', title: t('serviceDetail.data.dailyCheckin.f1Title'), description: t('serviceDetail.data.dailyCheckin.f1Desc') },
+      { icon: '📊', title: t('serviceDetail.data.dailyCheckin.f2Title'), description: t('serviceDetail.data.dailyCheckin.f2Desc') },
+      { icon: '🔔', title: t('serviceDetail.data.dailyCheckin.f3Title'), description: t('serviceDetail.data.dailyCheckin.f3Desc') },
+      { icon: '🔒', title: t('serviceDetail.data.dailyCheckin.f4Title'), description: t('serviceDetail.data.dailyCheckin.f4Desc') }
     ],
     steps: [
-      { title: 'สมัครสมาชิก', description: 'สร้างบัญชีผู้ใช้งานฟรี ใช้เวลาเพียงไม่กี่นาที' },
-      { title: 'เลือกอารมณ์ประจำวัน', description: 'เลือกอิโมจิที่ตรงกับความรู้สึกของคุณในวันนั้น พร้อมเขียนบันทึกสั้นๆ ถ้าต้องการ' },
-      { title: 'ติดตามแนวโน้ม', description: 'ดูกราฟและสถิติอารมณ์ของคุณย้อนหลัง เพื่อทำความเข้าใจตัวเองมากขึ้น' },
-      { title: 'รับคำแนะนำ', description: 'ระบบจะแนะนำกิจกรรมและบทความที่เหมาะสมกับสภาวะจิตใจของคุณ' }
+      { title: t('serviceDetail.data.dailyCheckin.s1Title'), description: t('serviceDetail.data.dailyCheckin.s1Desc') },
+      { title: t('serviceDetail.data.dailyCheckin.s2Title'), description: t('serviceDetail.data.dailyCheckin.s2Desc') },
+      { title: t('serviceDetail.data.dailyCheckin.s3Title'), description: t('serviceDetail.data.dailyCheckin.s3Desc') },
+      { title: t('serviceDetail.data.dailyCheckin.s4Title'), description: t('serviceDetail.data.dailyCheckin.s4Desc') }
     ]
   },
   'assessment': {
-    title: 'ประเมินสุขภาพจิตเบื้องต้น',
-    subtitle: 'แบบทดสอบความเครียด/ซึมเศร้าที่เป็นมาตรฐาน ช่วยให้คุณรู้สถานะสุขภาพจิตของตัวเอง',
-    overview: 'บริการประเมินสุขภาพจิตเบื้องต้นใช้แบบทดสอบมาตรฐานที่ได้รับการรับรองทางวิชาการ เช่น PHQ-9 สำหรับภาวะซึมเศร้า และ GAD-7 สำหรับความวิตกกังวล เพื่อช่วยให้คุณเข้าใจสถานะสุขภาพจิตของตัวเองในปัจจุบัน ผลประเมินจะมาพร้อมคำแนะนำเบื้องต้นและแนวทางในการดูแลตัวเอง',
+    title: t('serviceDetail.data.assessment.title'),
+    subtitle: t('serviceDetail.data.assessment.subtitle'),
+    overview: t('serviceDetail.data.assessment.overview'),
     features: [
-      { icon: '📄', title: 'แบบทดสอบมาตรฐาน', description: 'ใช้เครื่องมือประเมินที่ได้รับการยอมรับจากองค์กรสุขภาพจิตระดับสากล' },
-      { icon: '⚡', title: 'ผลลัพธ์ทันที', description: 'ทำแบบทดสอบเสร็จแล้วเห็นผลทันที พร้อมคำอธิบายที่เข้าใจง่าย' },
-      { icon: '📈', title: 'ติดตามพัฒนาการ', description: 'เปรียบเทียบผลการประเมินแต่ละครั้ง เพื่อดูพัฒนาการสุขภาพจิต' },
-      { icon: '💡', title: 'คำแนะนำส่วนตัว', description: 'รับคำแนะนำที่ปรับให้เหมาะกับผลการประเมินของคุณโดยเฉพาะ' }
+      { icon: '📄', title: t('serviceDetail.data.assessment.f1Title'), description: t('serviceDetail.data.assessment.f1Desc') },
+      { icon: '⚡', title: t('serviceDetail.data.assessment.f2Title'), description: t('serviceDetail.data.assessment.f2Desc') },
+      { icon: '📈', title: t('serviceDetail.data.assessment.f3Title'), description: t('serviceDetail.data.assessment.f3Desc') },
+      { icon: '💡', title: t('serviceDetail.data.assessment.f4Title'), description: t('serviceDetail.data.assessment.f4Desc') }
     ],
     steps: [
-      { title: 'เลือกแบบทดสอบ', description: 'เลือกแบบทดสอบที่ต้องการ เช่น ความเครียด ภาวะซึมเศร้า หรือความวิตกกังวล' },
-      { title: 'ตอบคำถาม', description: 'ตอบคำถามตามความจริง ใช้เวลาประมาณ 5-10 นาที' },
-      { title: 'ดูผลประเมิน', description: 'ระบบจะแสดงผลคะแนนพร้อมการแปลผลที่เข้าใจง่าย' },
-      { title: 'รับคำแนะนำ', description: 'อ่านคำแนะนำและแนวทางดูแลตัวเองที่ปรับให้เหมาะกับคุณ' }
+      { title: t('serviceDetail.data.assessment.s1Title'), description: t('serviceDetail.data.assessment.s1Desc') },
+      { title: t('serviceDetail.data.assessment.s2Title'), description: t('serviceDetail.data.assessment.s2Desc') },
+      { title: t('serviceDetail.data.assessment.s3Title'), description: t('serviceDetail.data.assessment.s3Desc') },
+      { title: t('serviceDetail.data.assessment.s4Title'), description: t('serviceDetail.data.assessment.s4Desc') }
     ]
   },
   'listening-space': {
-    title: 'พื้นที่รับฟัง 24 ชั่วโมง',
-    subtitle: 'แชทพูดคุยระบายความรู้สึกแบบส่วนตัว ไม่ต้องกลัวถูกตัดสิน',
-    overview: 'บริการพื้นที่รับฟังตลอด 24 ชั่วโมง เป็นแชทบอทที่ออกแบบมาเพื่อเป็นเพื่อนคู่คิดในยามที่คุณต้องการคนรับฟัง ไม่ว่าจะเป็นเวลากลางคืนหรือช่วงวันหยุด แชทบอทพร้อมรับฟังคุณเสมอ โดยใช้เทคโนโลยี AI ในการตอบสนองอย่างเห็นอกเห็นใจ ปลอดภัย และเป็นความลับ',
+    title: t('serviceDetail.data.listeningSpace.title'),
+    subtitle: t('serviceDetail.data.listeningSpace.subtitle'),
+    overview: t('serviceDetail.data.listeningSpace.overview'),
     features: [
-      { icon: '🕐', title: 'พร้อมรับฟัง 24/7', description: 'ไม่ว่าจะเวลาไหน แชทบอทพร้อมรับฟังคุณเสมอ ไม่มีวันหยุด' },
-      { icon: '🤗', title: 'ตอบสนองด้วยความเข้าใจ', description: 'AI ถูกออกแบบให้ตอบสนองด้วยความเห็นอกเห็นใจ ไม่ตัดสิน' },
-      { icon: '🔐', title: 'เป็นความลับ 100%', description: 'ทุกบทสนทนาถูกเก็บเป็นความลับอย่างเคร่งครัด' },
-      { icon: '🆘', title: 'เชื่อมต่อความช่วยเหลือ', description: 'หากพบสถานการณ์ฉุกเฉิน ระบบจะแนะนำช่องทางช่วยเหลือทันที' }
+      { icon: '🕐', title: t('serviceDetail.data.listeningSpace.f1Title'), description: t('serviceDetail.data.listeningSpace.f1Desc') },
+      { icon: '🤗', title: t('serviceDetail.data.listeningSpace.f2Title'), description: t('serviceDetail.data.listeningSpace.f2Desc') },
+      { icon: '🔐', title: t('serviceDetail.data.listeningSpace.f3Title'), description: t('serviceDetail.data.listeningSpace.f3Desc') },
+      { icon: '🆘', title: t('serviceDetail.data.listeningSpace.f4Title'), description: t('serviceDetail.data.listeningSpace.f4Desc') }
     ],
     steps: [
-      { title: 'เริ่มแชท', description: 'คลิกเปิดหน้าต่างแชทแล้วเริ่มพิมพ์ข้อความได้เลย' },
-      { title: 'พูดคุยอย่างเป็นธรรมชาติ', description: 'เล่าเรื่องที่อยากระบาย แชทบอทจะรับฟังและตอบกลับอย่างเข้าใจ' },
-      { title: 'รับกำลังใจ', description: 'แชทบอทจะให้กำลังใจและแนะนำแนวทางจัดการกับความรู้สึก' },
-      { title: 'รับการส่งต่อ (ถ้าต้องการ)', description: 'หากต้องการความช่วยเหลือเพิ่มเติม ระบบจะแนะนำผู้เชี่ยวชาญหรือสายด่วน' }
+      { title: t('serviceDetail.data.listeningSpace.s1Title'), description: t('serviceDetail.data.listeningSpace.s1Desc') },
+      { title: t('serviceDetail.data.listeningSpace.s2Title'), description: t('serviceDetail.data.listeningSpace.s2Desc') },
+      { title: t('serviceDetail.data.listeningSpace.s3Title'), description: t('serviceDetail.data.listeningSpace.s3Desc') },
+      { title: t('serviceDetail.data.listeningSpace.s4Title'), description: t('serviceDetail.data.listeningSpace.s4Desc') }
     ]
   },
   'relaxation': {
-    title: 'แนะนำกิจกรรมผ่อนคลาย',
-    subtitle: 'แนะนำกิจกรรมและบทความที่เหมาะสมกับคุณ เพื่อชีวิตที่สมดุลขึ้น',
-    overview: 'บริการแนะนำกิจกรรมผ่อนคลาย จะช่วยคัดสรรกิจกรรมและเนื้อหาที่เหมาะสมกับสภาวะจิตใจของคุณ ไม่ว่าจะเป็นเทคนิคการหายใจ การทำสมาธิ การเขียนไดอารี่ หรือกิจกรรมเสริมสุขภาพจิตอื่นๆ ทั้งหมดถูกออกแบบมาจากหลักจิตวิทยาเชิงบวก',
+    title: t('serviceDetail.data.relaxation.title'),
+    subtitle: t('serviceDetail.data.relaxation.subtitle'),
+    overview: t('serviceDetail.data.relaxation.overview'),
     features: [
-      { icon: '🎯', title: 'แนะนำตามสภาวะจิตใจ', description: 'ระบบเลือกกิจกรรมที่เหมาะสมจากผลเช็คอินและประเมินของคุณ' },
-      { icon: '🧘', title: 'เทคนิคการผ่อนคลาย', description: 'รวมเทคนิคหายใจ ทำสมาธิ และ Mindfulness ที่ปฏิบัติได้ง่าย' },
-      { icon: '📚', title: 'คลังบทความ Self-Care', description: 'บทความดูแลสุขภาพจิตที่อัปเดตใหม่ทุกสัปดาห์' },
-      { icon: '🏆', title: 'ระบบรางวัล', description: 'สะสมแต้มจากการทำกิจกรรมเพื่อสร้างแรงจูงใจในการดูแลตัวเอง' }
+      { icon: '🎯', title: t('serviceDetail.data.relaxation.f1Title'), description: t('serviceDetail.data.relaxation.f1Desc') },
+      { icon: '🧘', title: t('serviceDetail.data.relaxation.f2Title'), description: t('serviceDetail.data.relaxation.f2Desc') },
+      { icon: '📚', title: t('serviceDetail.data.relaxation.f3Title'), description: t('serviceDetail.data.relaxation.f3Desc') },
+      { icon: '🏆', title: t('serviceDetail.data.relaxation.f4Title'), description: t('serviceDetail.data.relaxation.f4Desc') }
     ],
     steps: [
-      { title: 'ทำแบบประเมิน', description: 'ทำแบบเช็คอินอารมณ์หรือแบบประเมินสุขภาพจิตก่อน เพื่อให้ระบบรู้จักคุณ' },
-      { title: 'รับคำแนะนำ', description: 'ระบบจะแนะนำกิจกรรมและบทความที่เหมาะกับสภาวะจิตใจของคุณ' },
-      { title: 'ลงมือทำกิจกรรม', description: 'เลือกกิจกรรมที่สนใจแล้วทำตามขั้นตอนที่แนะนำ' },
-      { title: 'บันทึกผลลัพธ์', description: 'บันทึกความรู้สึกหลังทำกิจกรรม เพื่อให้ระบบปรับปรุงคำแนะนำให้ดียิ่งขึ้น' }
+      { title: t('serviceDetail.data.relaxation.s1Title'), description: t('serviceDetail.data.relaxation.s1Desc') },
+      { title: t('serviceDetail.data.relaxation.s2Title'), description: t('serviceDetail.data.relaxation.s2Desc') },
+      { title: t('serviceDetail.data.relaxation.s3Title'), description: t('serviceDetail.data.relaxation.s3Desc') },
+      { title: t('serviceDetail.data.relaxation.s4Title'), description: t('serviceDetail.data.relaxation.s4Desc') }
     ]
   }
-}
+}))
 
 // หา service ปัจจุบันจาก route param
 const currentService = computed(() => {
   const id = route.params.id
-  const data = servicesData[id] || servicesData['daily-checkin']
+  const data = servicesData.value[id] || servicesData.value['daily-checkin']
   return { ...data, id: id || 'daily-checkin' }
 })
 

@@ -4,8 +4,8 @@
     <!-- Top Bar -->
     <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gray-200 pb-5">
       <div>
-        <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">จัดการผู้ใช้งาน</h1>
-        <p class="text-sm text-gray-500">จัดการบัญชีผู้ใช้ที่ลงทะเบียนและปรับเปลี่ยนบทบาทในระบบ</p>
+        <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">{{ $t('admin.layout.users') }}</h1>
+        <p class="text-sm text-gray-500">{{ $t('admin.users.subtitle') }}</p>
       </div>
       <div class="flex items-center gap-3">
         <button
@@ -13,9 +13,9 @@
           :disabled="isLoading"
           class="px-3.5 py-1.5 bg-white border border-gray-200 text-gray-700 hover:text-[#0D9488] hover:border-[#0D9488] rounded-xl text-xs font-semibold shadow-sm transition disabled:opacity-50"
         >
-          {{ isLoading ? 'กำลังโหลด...' : 'รีเฟรชข้อมูล' }}
+          {{ isLoading ? $t('admin.users.loading') : $t('admin.dashboard.refresh') }}
         </button>
-        <span class="text-xs text-gray-400 font-mono">วันที่: {{ currentDate }}</span>
+        <span class="text-xs text-gray-400 font-mono">{{ $t('admin.users.date', { date: currentDate }) }}</span>
       </div>
     </header>
 
@@ -27,8 +27,8 @@
     <section class="bg-white rounded-3xl border border-gray-150 shadow-sm p-6 flex flex-col space-y-6">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 class="text-xl font-extrabold text-[#1E293B]">รายชื่อผู้ใช้งาน</h2>
-          <p class="text-xs text-gray-500">ค้นหาและจัดการบัญชีผู้ใช้ทั้งหมดในระบบ</p>
+          <h2 class="text-xl font-extrabold text-[#1E293B]">{{ $t('admin.users.listTitle') }}</h2>
+          <p class="text-xs text-gray-500">{{ $t('admin.users.listDesc') }}</p>
         </div>
         <!-- Search bar -->
         <div class="relative w-full sm:w-64">
@@ -40,7 +40,7 @@
           <input 
             v-model="searchQuery" 
             type="text" 
-            placeholder="ค้นหาชื่อ, อีเมล..." 
+            :placeholder="$t('admin.users.searchPlaceholder')" 
             class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition"
           />
         </div>
@@ -51,10 +51,10 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
-              <th class="pb-3 pr-4">ผู้ใช้งาน</th>
-              <th class="pb-3 px-4">สิทธิ์</th>
-              <th class="pb-3 px-4">วันที่สมัคร</th>
-              <th class="pb-3 pl-4 text-right">การจัดการ</th>
+              <th class="pb-3 pr-4">{{ $t('admin.users.colUser') }}</th>
+              <th class="pb-3 px-4">{{ $t('admin.users.colRole') }}</th>
+              <th class="pb-3 px-4">{{ $t('admin.users.colJoined') }}</th>
+              <th class="pb-3 pl-4 text-right">{{ $t('admin.users.colActions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 text-sm">
@@ -75,7 +75,7 @@
                   :class="user.role === 'ADMIN' ? 'bg-[#0D9488]/10 text-[#0D9488]' : 'bg-gray-100 text-gray-600'" 
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold inline-block border border-transparent"
                 >
-                  {{ user.role === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน' }}
+                  {{ user.role === 'ADMIN' ? $t('admin.users.roleAdmin') : $t('admin.users.colUser') }}
                 </span>
               </td>
               <td class="py-4 px-4 text-xs text-gray-500">{{ user.joined }}</td>
@@ -86,30 +86,30 @@
                     :disabled="isUpdatingRole || user.id === currentUserId"
                     class="px-3 py-1 bg-[#FAF9F5] border border-gray-200 hover:border-[#0D9488]/30 hover:bg-[#0D9488]/5 rounded-lg text-xs font-medium text-gray-700 hover:text-[#0D9488] transition cursor-pointer"
                     :class="{ 'opacity-50 cursor-not-allowed': isUpdatingRole || user.id === currentUserId }"
-                    :title="user.id === currentUserId ? 'ไม่สามารถเปลี่ยนสิทธิ์บัญชีของตนเองได้' : 'เปลี่ยนสิทธิ์ผู้ใช้'"
+                    :title="user.id === currentUserId ? $t('admin.users.cannotChangeOwnRole') : $t('admin.users.changeRoleTitle')"
                   >
-                    {{ isUpdatingRole && userToChangeRole?.id === user.id ? 'กำลังบันทึก...' : 'เปลี่ยนสิทธิ์' }}
+                    {{ isUpdatingRole && userToChangeRole?.id === user.id ? $t('admin.users.saving') : $t('admin.users.changeRole') }}
                   </button>
                   <button
                     @click="confirmDeleteUser(user)"
                     :disabled="isDeletingUser || user.id === currentUserId"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 hover:bg-rose-600 hover:border-rose-600 text-rose-700 hover:text-white rounded-lg text-xs font-bold transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    :title="user.id === currentUserId ? 'ไม่สามารถลบบัญชีของตนเองได้' : 'ลบบัญชีออกจากฐานข้อมูล'"
+                    :title="user.id === currentUserId ? $t('admin.users.cannotDeleteOwn') : $t('admin.users.deleteTitle')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                     </svg>
-                    {{ isDeletingUser && userToDelete?.id === user.id ? 'กำลังลบ...' : 'ลบบัญชี' }}
+                    {{ isDeletingUser && userToDelete?.id === user.id ? $t('admin.users.deleting') : $t('admin.users.delete') }}
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="isLoading && users.length === 0">
-              <td colspan="4" class="py-8 text-center text-gray-400 text-sm">กำลังโหลดรายชื่อผู้ใช้งาน...</td>
+              <td colspan="4" class="py-8 text-center text-gray-400 text-sm">{{ $t('admin.users.loadingList') }}</td>
             </tr>
             <tr v-if="filteredUsers.length === 0">
               <td colspan="4" class="py-8 text-center text-gray-400 text-sm">
-                {{ isLoading ? '' : errorMessage ? 'ยังไม่สามารถโหลดรายชื่อผู้ใช้งานได้' : 'ไม่พบผู้ใช้งานที่ตรงกับคำค้นหา' }}
+                {{ isLoading ? '' : errorMessage ? $t('admin.users.emptyLoadFailed') : $t('admin.users.emptyNoMatch') }}
               </td>
             </tr>
           </tbody>
@@ -127,17 +127,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
-          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการเปลี่ยนสิทธิ์?</h3>
+          <h3 class="text-lg font-extrabold text-gray-800 mb-2">{{ $t('admin.users.confirmRoleTitle') }}</h3>
           <p v-if="userToChangeRole" class="text-sm text-gray-500 mb-6">
-            คุณต้องการเปลี่ยนสิทธิ์ของ <strong>{{ userToChangeRole.username }}</strong><br/>
-            จาก <span class="font-bold">{{ userToChangeRole.role === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน' }}</span> เป็น <span class="font-bold text-[#0D9488]">{{ userToChangeRole.role === 'ADMIN' ? 'ผู้ใช้งาน' : 'แอดมิน' }}</span> ใช่หรือไม่?
+            {{ $t('admin.users.confirmRoleBefore') }} <strong>{{ userToChangeRole.username }}</strong><br/>
+            {{ $t('admin.users.confirmRoleFrom') }} <span class="font-bold">{{ userToChangeRole.role === 'ADMIN' ? $t('admin.users.roleAdmin') : $t('admin.users.colUser') }}</span> {{ $t('admin.users.confirmRoleTo') }} <span class="font-bold text-[#0D9488]">{{ userToChangeRole.role === 'ADMIN' ? $t('admin.users.colUser') : $t('admin.users.roleAdmin') }}</span> {{ $t('admin.users.confirmRoleAfter') }}
           </p>
           <div class="flex gap-3">
             <button @click="closeRoleConfirmation" :disabled="isUpdatingRole" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer disabled:opacity-50">
-              ยกเลิก
+              {{ $t('admin.users.cancel') }}
             </button>
             <button @click="executeChangeRole" :disabled="isUpdatingRole" class="flex-1 py-2.5 bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:opacity-90 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer disabled:opacity-50">
-              {{ isUpdatingRole ? 'กำลังบันทึก...' : 'ยืนยัน' }}
+              {{ isUpdatingRole ? $t('admin.users.saving') : $t('admin.users.confirm') }}
             </button>
           </div>
         </div>
@@ -154,17 +154,16 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-extrabold text-gray-800 mb-2">ยืนยันการลบบัญชี?</h3>
+          <h3 class="text-lg font-extrabold text-gray-800 mb-2">{{ $t('admin.users.confirmDeleteTitle') }}</h3>
           <p v-if="userToDelete" class="text-sm text-gray-500 mb-6">
-            ต้องการลบบัญชี <strong>{{ userToDelete.username }}</strong> ใช่หรือไม่?
-            การลบไม่สามารถย้อนกลับได้ และประวัติแชทกับผลประเมินของบัญชีนี้จะถูกลบด้วย
+            {{ $t('admin.users.confirmDeleteBefore') }} <strong>{{ userToDelete.username }}</strong> {{ $t('admin.users.confirmDeleteAfter') }}
           </p>
           <div class="flex gap-3">
             <button @click="closeDeleteConfirmation" :disabled="isDeletingUser" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition cursor-pointer disabled:opacity-50">
-              ยกเลิก
+              {{ $t('admin.users.cancel') }}
             </button>
             <button @click="executeDeleteUser" :disabled="isDeletingUser" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold transition shadow-md cursor-pointer disabled:opacity-50">
-              {{ isDeletingUser ? 'กำลังลบ...' : 'ยืนยันลบบัญชี' }}
+              {{ isDeletingUser ? $t('admin.users.deleting') : $t('admin.users.confirmDelete') }}
             </button>
           </div>
         </div>
@@ -175,9 +174,13 @@
 </template>
 
 <script setup>
+import { dateLocale } from '../i18n'
 import { ref, computed, inject, onMounted } from 'vue'
 import axios from '../api/axios'
 import { useAuthStore } from '../stores/authStore'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const triggerSuccessToast = inject('triggerSuccessToast')
 const authStore = useAuthStore()
@@ -186,7 +189,7 @@ const currentUserId = Number(authStore.user?.id)
 // Formatting date
 const currentDate = computed(() => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' }
-  return new Date().toLocaleDateString('th-TH', options)
+  return new Date().toLocaleDateString(dateLocale(), options)
 })
 
 // Change Role confirm
@@ -210,18 +213,18 @@ const fetchUsers = async () => {
   try {
     const res = await axios.get('/api/admin/users')
     if (!Array.isArray(res.data)) {
-      throw new Error('รูปแบบรายชื่อผู้ใช้จากเซิร์ฟเวอร์ไม่ถูกต้อง')
+      throw new Error(t('admin.users.errInvalidList'))
     }
     users.value = res.data.map(u => ({
         id: u.id,
-        username: u.username || `ผู้ใช้ #${u.id}`,
-        email: u.email || 'ไม่มีอีเมล',
+        username: u.username || t('admin.users.fallbackUsername', { id: u.id }),
+        email: u.email || t('admin.users.fallbackEmail'),
         role: u.role,
-        joined: u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : 'ไม่ระบุ'
+        joined: u.createdAt ? new Date(u.createdAt).toLocaleDateString(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) : t('admin.users.fallbackJoined')
       }))
   } catch (err) {
     console.error('Could not fetch users from the backend:', err)
-    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถโหลดรายชื่อผู้ใช้งานได้'
+    errorMessage.value = err.response?.data?.error || err.message || t('admin.users.errLoad')
   } finally {
     isLoading.value = false
   }
@@ -266,14 +269,14 @@ const executeChangeRole = async () => {
     const res = await axios.patch(`/api/admin/users/${user.id}/role`, { role: newRole })
     const updatedUser = users.value.find(item => item.id === res.data.id)
     if (!updatedUser || res.data.role !== newRole) {
-      throw new Error('เซิร์ฟเวอร์ส่งผลการเปลี่ยนสิทธิ์กลับมาไม่ถูกต้อง')
+      throw new Error(t('admin.users.errInvalidRoleResponse'))
     }
     updatedUser.role = res.data.role
-    triggerSuccessToast?.(`เปลี่ยนสิทธิ์เป็น ${newRole === 'ADMIN' ? 'แอดมิน' : 'ผู้ใช้งาน'} สำเร็จ`)
+    triggerSuccessToast?.(t('admin.users.toastRoleChanged', { role: newRole === 'ADMIN' ? t('admin.users.roleAdmin') : t('admin.users.roleUser') }))
     closeRoleConfirmation()
   } catch (err) {
     console.error('Could not update user role:', err)
-    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถเปลี่ยนสิทธิ์ผู้ใช้งานได้'
+    errorMessage.value = err.response?.data?.error || err.message || t('admin.users.errChangeRole')
   } finally {
     isUpdatingRole.value = false
   }
@@ -300,11 +303,11 @@ const executeDeleteUser = async () => {
   try {
     await axios.delete(`/api/admin/users/${user.id}`)
     users.value = users.value.filter(item => item.id !== user.id)
-    triggerSuccessToast?.(`ลบบัญชี ${user.username} จากฐานข้อมูลแล้ว`)
+    triggerSuccessToast?.(t('admin.users.toastDeleted', { name: user.username }))
     closeDeleteConfirmation()
   } catch (err) {
     console.error('Could not delete user:', err)
-    errorMessage.value = err.response?.data?.error || err.message || 'ไม่สามารถลบบัญชีผู้ใช้งานได้'
+    errorMessage.value = err.response?.data?.error || err.message || t('admin.users.errDelete')
   } finally {
     isDeletingUser.value = false
   }
