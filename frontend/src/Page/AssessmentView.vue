@@ -76,15 +76,12 @@
                   <!-- Steps of Assessment -->
                   <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
                     <div class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-                       ขั้นตอนการทำแบบประเมิน (4 ขั้นตอน):
+                       ขั้นตอนการทำแบบประเมิน (3 ขั้นตอน):
                     </div>
                     <ol class="space-y-1.5 pl-1 leading-relaxed">
                       <li><b>ขั้นที่ 1:</b> อ่านข้อคำถามในแต่ละส่วนอย่างละเอียดตามลำดับ (ส่วน 2Q, 9Q และ 8Q)</li>
                       <li><b>ขั้นที่ 2:</b> เลือกคำตอบตามความเป็นจริงและความรู้สึกตรงๆ ในช่วงเวลาที่ระบุ (2 สัปดาห์ หรือ 1 เดือน)</li>
-                      <li class="text-amber-800 font-semibold bg-amber-50/80 p-1.5 rounded-lg border border-amber-200/60">
-                        <b>ขั้นที่ 3 (เงื่อนไขสำคัญ):</b> <u>ต้องตอบคำถามให้ครบทุกข้อ ทุกส่วน (รวม 19 ข้อ)</u> หากตอบไม่ครบ ปุ่มส่งแบบประเมินจะไม่เปิดใช้งาน
-                      </li>
-                      <li><b>ขั้นที่ 4:</b> เมื่อตอบครบทุกข้อแล้ว กดปุ่ม <b>"ส่งแบบประเมิน"</b> ด้านล่างสุดเพื่อดูผลวิเคราะห์และแนวทางช่วยเหลือ</li>
+                      <li><b>ขั้นที่ 3:</b> เมื่อตอบครบทุกข้อแล้ว กดปุ่ม <b>"ส่งแบบประเมิน"</b> ด้านล่างสุดเพื่อดูผลวิเคราะห์และแนวทางช่วยเหลือ</li>
                     </ol>
                   </div>
 
@@ -106,8 +103,7 @@
               </AssessmentHelpTooltip>
             </div>
             <p class="text-xs md:text-sm text-[#D1FAE5] max-w-2xl leading-relaxed">
-              เพื่อนคู่คิดดิจิทัล เพื่อชีวิตที่ดีของคุณ<br />
-              เช็กอารมณ์และความเครียดสั้นๆ ผ่านบทสนทนาที่เป็นมิตร สะท้อนสภาวะจิตใจประจำวัน
+              เช็กอารมณ์และความเครียดสั้นๆ
             </p>
           </div>
         </div>
@@ -122,25 +118,6 @@
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
             <h2 class="text-lg font-bold text-[#1E293B]">โปรดตอบคำถามต่อไปนี้ตามความเป็นจริงในช่วง 2 สัปดาห์ที่ผ่านมา</h2>
-            <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบคัดกรอง 2Q"
-              variant="section"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความรู้สึกของตนเองในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
-                  <p>2. กดเลือกคำตอบ <b>"มี"</b> หรือ <b>"ไม่มี"</b> ให้ครบทั้ง 2 ข้อ</p>
-                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 2 ข้อ</u> ร่วมกับส่วนอื่นๆ จึงจะส่งแบบประเมินได้</p>
-                </div>
-
-                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์ข้อกำหนด:</span>
-                  หากตอบ <b>"มี"</b> ข้อใดข้อหนึ่ง (แม้เพียง 1 ข้อ) แสดงว่ามีแนวโน้มภาวะซึมเศร้า ระบบจะนำผลไปประมวลร่วมกับแบบประเมิน 9Q ต่อไป
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
           </div>
         </div>
 
@@ -191,35 +168,6 @@
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-2 flex-wrap">
             <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 2 สัปดาห์ที่ผ่านมา ท่านมีอาการต่อไปนี้บ่อยแค่ไหน</h2>
-            <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบประเมิน 9Q"
-              variant="section"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความถี่ของอาการที่เกิดขึ้นในช่วง <b>2 สัปดาห์ที่ผ่านมา</b></p>
-                  <p>2. กดเลือกระดับคะแนน <b>0 ถึง 3</b> ในแต่ละข้อตามความถี่จริง</p>
-                  <ul class="list-disc list-inside space-y-0.5 pl-2 text-slate-600">
-                    <li><b>0:</b> ไม่มีเลย</li>
-                    <li><b>1:</b> เป็นบางวัน (1 - 7 วัน)</li>
-                    <li><b>2:</b> เป็นบ่อย (> 7 วัน)</li>
-                    <li><b>3:</b> เป็นทุกวัน</li>
-                  </ul>
-                  <p class="text-amber-800 font-semibold pt-1">3. <u>ต้องตอบให้ครบทั้ง 9 ข้อ</u> เพื่อคำนวณคะแนนรวมและปลดล็อกการส่ง</p>
-                </div>
-
-                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 27):</span>
-                  • คะแนน &lt; 7: ปกติ/ไม่มีอาการหรือมีน้อยมาก<br>
-                  • คะแนน 7 - 12: ภาวะซึมเศร้าระดับน้อย<br>
-                  • คะแนน 13 - 18: ภาวะซึมเศร้าระดับปานกลาง<br>
-                  • คะแนน &ge; 19: ภาวะซึมเศร้าระดับรุนแรง<br>
-                  <span class="text-emerald-800 font-semibold mt-1 block">*หากคะแนนรวมตั้งแต่ 7 คะแนนขึ้นไป แนะนำให้ประเมินส่วน 8Q ต่อ</span>
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
           </div>
 
           <!-- Score Legend -->
@@ -252,16 +200,10 @@
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >{{ score }}</button>
+                  ></button>
                 </td>
               </tr>
             </tbody>
-            <tfoot>
-              <tr class="bg-[#F0FDF4]">
-                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">คะแนนรวมทั้งหมด</td>
-                <td class="py-3 border border-gray-200 text-center font-bold text-[#0D9488]" colspan="4">{{ q9TotalScore }}</td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </section>
@@ -271,36 +213,13 @@
         <div class="px-8 pt-8 pb-4">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
             <h2 class="text-lg font-bold text-[#1E293B]">ในช่วง 1 เดือนที่ผ่านมา มีเหตุการณ์ต่อไปนี้เกิดขึ้นหรือไม่</h2>
-            <AssessmentHelpTooltip
-              title="วิธีทำและข้อกำหนดแบบประเมิน 8Q"
-              variant="danger"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">ขั้นตอนและวิธีทำ:</div>
-                  <p>1. สำรวจความคิด ความรู้สึก หรือพฤติกรรมในช่วง <b>1 เดือนที่ผ่านมา</b></p>
-                  <p>2. กดเลือก <b>"ไม่มี" (0 คะแนน)</b> หรือ <b>"มี" (รับคะแนนความเสี่ยงตามน้ำหนักข้อนั้น)</b></p>
-                  <p class="text-amber-800 font-semibold">3. <u>ต้องตอบให้ครบทั้ง 8 ข้อ</u> เพื่อให้ผลการประเมินมีความถูกต้องและครบถ้วน</p>
-                </div>
-
-                <div class="bg-rose-50/80 p-3 rounded-2xl border border-rose-200/90 text-xs leading-relaxed text-rose-950">
-                  <span class="font-bold text-rose-800 block mb-1">เกณฑ์แปลผลคะแนนรวม (เต็ม 52):</span>
-                  • 0 คะแนน: ไม่มีแนวโน้มทำร้ายตนเองในปัจจุบัน<br>
-                  • 1 - 8 คะแนน: มีแนวโน้มระดับน้อย<br>
-                  • 9 - 16 คะแนน: มีแนวโน้มระดับปานกลาง<br>
-                  • &ge; 17 คะแนน: มีแนวโน้มระดับรุนแรง<br>
-                  <span class="text-rose-700 font-semibold mt-1 block">หากได้คะแนน &ge; 9 คะแนน มีความเสี่ยงสูง ควรปรึกษาจิตแพทย์หรือติดต่อสายด่วน 1323 ทันที</span>
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
           </div>
         </div>
 
         <div class="overflow-x-auto px-8 pb-8">
           <table class="w-full text-sm border-collapse">
             <thead>
-              <tr class="bg-[#FFF1F2]">
+              <tr class="bg-[#F0FDF4]">
                 <th class="text-left py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 rounded-tl-lg" style="width:65%">คำถาม</th>
                 <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center">ไม่มี</th>
                 <th class="py-3 px-4 font-semibold text-[#1E293B] border border-gray-200 text-center rounded-tr-lg">มี</th>
@@ -317,33 +236,28 @@
                     type="button"
                     @click="q8Answers[q.id] = 0"
                     :class="[
-                      'w-9 h-9 rounded-full font-bold text-sm transition-all flex items-center justify-center mx-auto shadow-sm',
+                      'w-14 h-9 rounded-full font-bold text-xs transition-all flex items-center justify-center mx-auto shadow-sm',
                       q8Answers[q.id] === 0
                         ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >0</button>
+                  >ไม่มี</button>
                 </td>
                 <td class="py-4 border border-gray-200 text-center">
                   <button
                     type="button"
                     @click="q8Answers[q.id] = q.score"
                     :class="[
-                      'w-9 h-9 rounded-full font-bold text-sm transition-all flex items-center justify-center mx-auto shadow-sm',
+                      'w-14 h-9 rounded-full font-bold text-xs transition-all flex items-center justify-center mx-auto shadow-sm',
                       q8Answers[q.id] === q.score
-                        ? 'bg-rose-500 text-white ring-2 ring-rose-400/40 scale-105'
+                        ? 'bg-[#0D9488] text-white ring-2 ring-[#0D9488]/40 scale-105'
                         : 'bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0]'
                     ]"
-                  >{{ q.score }}</button>
+                  >มี</button>
                 </td>
               </tr>
             </tbody>
-            <tfoot>
-              <tr class="bg-[#FFF1F2]">
-                <td class="py-3 px-4 border border-gray-200 font-semibold text-right text-[#1E293B]" colspan="1">คะแนนรวมทั้งหมด</td>
-                <td class="py-3 border border-gray-200 text-center font-bold text-rose-600" colspan="2">{{ q8TotalScore }}</td>
-              </tr>
-            </tfoot>
+
           </table>
         </div>
       </section>

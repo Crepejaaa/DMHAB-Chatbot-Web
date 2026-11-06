@@ -45,17 +45,21 @@
             <circle cx="460" cy="420" r="100" fill="currentColor"/>
           </svg>
         </div>
-        <!-- floating mood emojis -->
-        <div v-for="(e, i) in floatingEmojis" :key="i"
-          class="absolute text-2xl select-none pointer-events-none opacity-20 animate-float"
-          :style="e.style">{{ e.emoji }}</div>
+        <!-- floating mood icons (SVG) -->
+        <div v-for="(e, i) in floatingIcons" :key="i"
+          class="absolute select-none pointer-events-none opacity-20 animate-float"
+          :style="e.style" v-html="e.svg"></div>
       </div>
       <div class="container mx-auto max-w-5xl relative z-10">
         <div class="flex gap-4 items-stretch">
           <div class="w-1.5 bg-white/80 rounded-full"></div>
           <div>
             <div class="flex items-center gap-3 mb-3">
-              <span class="text-4xl">📝</span>
+              <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
+                <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
               <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">เช็คอินสุขภาพจิตรายวัน</h1>
             </div>
             <p class="text-sm md:text-base text-[#D1FAE5] max-w-2xl leading-relaxed">
@@ -79,12 +83,13 @@
               <p class="text-[#D1FAE5] text-xs font-semibold uppercase tracking-wider mb-0.5">วันนี้</p>
               <h2 class="text-white font-extrabold text-lg">{{ todayFullDate }}</h2>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 mb-0.5">
+              <svg class="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               <span v-if="todayCheckin" class="flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                ✅ เช็คอินแล้ว
+                เช็คอินแล้ว
               </span>
               <span v-else class="flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
-                ⏳ ยังไม่ได้เช็คอิน
+                ยังไม่ได้เช็คอิน
               </span>
             </div>
           </div>
@@ -92,8 +97,9 @@
           <div class="p-6 md:p-8">
             <!-- Mood Picker -->
             <div class="mb-8">
-              <p :class="['text-sm font-bold mb-4', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                😊 วันนี้คุณรู้สึกอย่างไร?
+              <p :class="['text-sm font-bold mb-4 flex items-center gap-2', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3" stroke-linecap="round"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3" stroke-linecap="round"/></svg>
+                วันนี้คุณรู้สึกอย่างไร?
               </p>
               <div class="grid grid-cols-5 gap-2 md:gap-4">
                 <button
@@ -103,16 +109,18 @@
                   :class="[
                     'flex flex-col items-center gap-2 p-3 md:p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer group',
                     selectedMood?.id === mood.id
-                      ? 'border-[#0D9488] shadow-lg scale-105 ' + (isDarkMode ? 'bg-[#0D9488]/30 text-white' : mood.bgSelected)
+                      ? 'border-[#0D9488] shadow-lg scale-105 ' + (isDarkMode ? 'bg-[#0D9488]/30' : mood.bgSelected)
                       : isDarkMode
                         ? 'border-white/10 bg-white/5 text-gray-300 hover:border-[#0D9488]/50'
                         : 'border-gray-100 bg-gray-50/50 hover:border-[#0D9488]/40 hover:shadow-md'
                   ]"
                 >
-                  <span class="text-3xl md:text-4xl transition-transform duration-300 group-hover:scale-110"
-                    :class="selectedMood?.id === mood.id ? 'scale-125' : ''">
-                    {{ mood.emoji }}
-                  </span>
+                  <!-- SVG Mood Icon -->
+                  <span class="transition-transform duration-300 group-hover:scale-110"
+                    :class="selectedMood?.id === mood.id ? 'scale-125' : ''"
+                    :style="{ color: mood.color }"
+                    v-html="mood.svg"
+                  ></span>
                   <span :class="['text-[10px] md:text-xs font-bold text-center leading-tight', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
                     {{ mood.label }}
                   </span>
@@ -123,12 +131,15 @@
             <!-- Mood Detail Sliders (appears after mood selection) -->
             <Transition name="slide-fade">
               <div v-if="selectedMood" class="mb-8 space-y-5">
-                <p :class="['text-sm font-bold', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">📊 บอกรายละเอียดเพิ่มเติม</p>
+                <p :class="['text-sm font-bold flex items-center gap-2', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                  บอกรายละเอียดเพิ่มเติม
+                </p>
 
                 <div v-for="metric in moodMetrics" :key="metric.id" class="space-y-2">
                   <div class="flex justify-between items-center">
                     <label :class="['text-xs font-semibold flex items-center gap-1.5', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
-                      {{ metric.icon }} {{ metric.label }}
+                      <span v-html="metric.svg"></span> {{ metric.label }}
                     </label>
                     <span class="text-xs font-bold text-[#0D9488]">{{ metric.value }}/10</span>
                   </div>
@@ -152,8 +163,9 @@
 
             <!-- Note / Journal -->
             <div class="mb-6">
-              <label :class="['text-sm font-bold mb-2 block', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
-                📓 บันทึกสั้นๆ (ไม่บังคับ)
+              <label :class="['text-sm font-bold mb-2 block flex items-center gap-2', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                บันทึกสั้นๆ (ไม่บังคับ)
               </label>
               <textarea
                 v-model="noteText"
@@ -168,7 +180,10 @@
 
             <!-- Tags / Activities -->
             <div class="mb-8">
-              <p :class="['text-sm font-bold mb-3', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">🏷️ กิจกรรมที่ทำวันนี้</p>
+              <p :class="['text-sm font-bold mb-3 flex items-center gap-2', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                กิจกรรมที่ทำวันนี้
+              </p>
               <div class="flex flex-wrap gap-2">
                 <button
                   v-for="tag in activityTags"
@@ -192,12 +207,12 @@
             <button
               type="button"
               @click="saveCheckin"
-              class="w-full py-4 rounded-2xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white hover:opacity-90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              class="w-full py-4 rounded-2xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white hover:opacity-95 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
               </svg>
-              {{ todayCheckin ? 'อัปเดตการเช็คอินวันนี้' : 'บันทึกการเช็คอิน ✨' }}
+              {{ todayCheckin ? 'อัปเดตการเช็คอินวันนี้' : 'บันทึกการเช็คอิน' }}
             </button>
           </div>
         </div>
@@ -207,7 +222,7 @@
       <section class="grid grid-cols-2 md:grid-cols-4 gap-4 anim-fade-up" style="animation-delay:.1s">
         <div v-for="stat in summaryStats" :key="stat.label"
           :class="['rounded-2xl p-5 border text-center transition-all hover:scale-105 duration-300', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
-          <div class="text-3xl mb-1">{{ stat.icon }}</div>
+          <div class="flex justify-center mb-1" v-html="stat.svg" :style="{ color: stat.color }"></div>
           <div class="text-2xl font-black" :style="{ color: stat.color }">{{ stat.value }}</div>
           <div :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">{{ stat.label }}</div>
         </div>
@@ -218,8 +233,13 @@
         <div :class="['rounded-3xl border p-6 md:p-8', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h2 :class="['font-extrabold text-lg', isDarkMode ? 'text-white' : 'text-[#1E293B]']">📈 แนวโน้มอารมณ์ 7 วัน</h2>
-              <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">ติดตามสภาวะจิตใจของคุณย้อนหลัง 1 สัปดาห์</p>
+              <h2 :class="['font-extrabold text-lg flex items-center gap-2', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
+                <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                แนวโน้มอารมณ์ {{ selectedPeriod }}
+              </h2>
+              <p :class="['text-xs mt-0.5', isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]']">ติดตามสภาวะจิตใจของคุณย้อนหลัง</p>
             </div>
             <div class="flex gap-2">
               <button v-for="period in ['7 วัน','14 วัน','30 วัน']" :key="period"
@@ -238,16 +258,20 @@
           <div class="flex items-end gap-2 md:gap-3 h-32 mb-3">
             <div v-for="(day, i) in chartData" :key="i" class="flex-1 flex flex-col items-center gap-1 group">
               <span class="text-xs font-bold text-[#0D9488] opacity-0 group-hover:opacity-100 transition-opacity">
-                {{ day.score }}
+                {{ day.score > 0 ? day.score : '-' }}
               </span>
               <div class="w-full rounded-t-xl relative overflow-hidden transition-all duration-500 cursor-pointer"
-                :style="{ height: (day.score / 5 * 100) + '%', minHeight: '8px', background: moodBarColor(day.score) }"
+                :style="{ height: (day.score / 5 * 100) + '%', minHeight: '6px', background: day.score > 0 ? moodBarColor(day.score) : '#E2E8F0' }"
                 @mouseenter="hoveredBar = i"
                 @mouseleave="hoveredBar = null"
               >
                 <div v-if="hoveredBar === i" class="absolute inset-0 bg-white/20"></div>
               </div>
-              <span class="text-emoji text-lg">{{ day.emoji }}</span>
+              <!-- Mood Indicator Dot/Icon -->
+              <div class="w-4 h-4 flex items-center justify-center my-0.5">
+                <div v-if="day.score > 0" class="w-2.5 h-2.5 rounded-full ring-2 ring-white shadow-sm" :style="{ background: moodBarColor(day.score) }"></div>
+                <div v-else class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+              </div>
               <span :class="['text-[10px] font-semibold', isDarkMode ? 'text-[#64748B]' : 'text-gray-400']">{{ day.label }}</span>
             </div>
           </div>
@@ -265,11 +289,16 @@
       <!-- ===== STEP 4 : History Log ===== -->
       <section class="anim-fade-up" style="animation-delay:.3s">
         <div :class="['rounded-3xl border p-6 md:p-8', isDarkMode ? 'bg-[#1E293B] border-white/10' : 'bg-white border-gray-100 shadow-sm']">
-          <h2 :class="['font-extrabold text-lg mb-5', isDarkMode ? 'text-white' : 'text-[#1E293B]']">📋 ประวัติการเช็คอิน</h2>
+          <h2 :class="['font-extrabold text-lg mb-5 flex items-center gap-2', isDarkMode ? 'text-white' : 'text-[#1E293B]']">
+            <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            ประวัติการเช็คอิน
+          </h2>
 
           <!-- Empty state -->
           <div v-if="checkinHistory.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
-            <span class="text-5xl mb-3">📭</span>
+            <svg class="w-14 h-14 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
             <p class="text-sm font-semibold">ยังไม่มีประวัติ</p>
             <p class="text-xs mt-1">เริ่มเช็คอินวันแรกของคุณด้านบน</p>
           </div>
@@ -282,10 +311,11 @@
                 isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-[#F8FFFE] border-gray-100 hover:border-[#0D9488]/20'
               ]"
             >
-              <!-- Emoji -->
-              <div :class="['w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0', entry.mood.bgSelected]">
-                {{ entry.mood.emoji }}
-              </div>
+              <!-- Mood Icon (SVG) -->
+              <div :class="['w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0', entry.mood.bgSelected]"
+                :style="{ color: entry.mood.color }"
+                v-html="entry.mood.svg"
+              ></div>
               <!-- Info -->
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2">
@@ -408,19 +438,28 @@ const authStore = useAuthStore()
 const storageKey = computed(() => `dailyCheckin_${authStore.user?.email || 'guest'}`)
 
 // ==================== Mood Options ====================
+// SVG icons แทน emoji — ไม่ใช้ AI generated
+const moodSVGs = {
+  great: `<svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 13s1.5 3 4 3 4-3 4-3"/><path stroke-linecap="round" stroke-width="2.5" d="M9 9h.01M15 9h.01"/><path stroke-linecap="round" d="M9 7.5c.6-.8 1.4-1 2-1M15 7.5c-.6-.8-1.4-1-2-1"/></svg>`,
+  good:  `<svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-linecap="round" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-linecap="round" stroke-width="2.5"/></svg>`,
+  okay:  `<svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-linecap="round" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-linecap="round" stroke-width="2.5"/></svg>`,
+  bad:   `<svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 16s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-linecap="round" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-linecap="round" stroke-width="2.5"/></svg>`,
+  worst: `<svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 17s1.5-3 4-3 4 3 4 3"/><path stroke-linecap="round" d="M9 10c-.6.8-1 .9-1.5.9M15 10c.6.8 1 .9 1.5.9"/><line x1="9" y1="8.5" x2="9.01" y2="8.5" stroke-linecap="round" stroke-width="2.5"/><line x1="15" y1="8.5" x2="15.01" y2="8.5" stroke-linecap="round" stroke-width="2.5"/></svg>`,
+}
+
 const moodOptions = [
-  { id: 5, emoji: '😄', label: 'ดีมาก', score: 5, color: '#059669', bgSelected: 'bg-emerald-100' },
-  { id: 4, emoji: '🙂', label: 'ดี',    score: 4, color: '#0D9488', bgSelected: 'bg-teal-100' },
-  { id: 3, emoji: '😐', label: 'ปานกลาง', score: 3, color: '#F59E0B', bgSelected: 'bg-amber-100' },
-  { id: 2, emoji: '😔', label: 'ไม่ค่อยดี', score: 2, color: '#F97316', bgSelected: 'bg-orange-100' },
-  { id: 1, emoji: '😢', label: 'แย่', score: 1, color: '#E11D48', bgSelected: 'bg-rose-100' },
+  { id: 5, svg: moodSVGs.great, label: 'ดีมาก',    score: 5, color: '#059669', bgSelected: 'bg-emerald-100' },
+  { id: 4, svg: moodSVGs.good,  label: 'ดี',        score: 4, color: '#0D9488', bgSelected: 'bg-teal-100'   },
+  { id: 3, svg: moodSVGs.okay,  label: 'ปานกลาง',  score: 3, color: '#F59E0B', bgSelected: 'bg-amber-100'  },
+  { id: 2, svg: moodSVGs.bad,   label: 'ไม่ค่อยดี', score: 2, color: '#F97316', bgSelected: 'bg-orange-100' },
+  { id: 1, svg: moodSVGs.worst, label: 'แย่',       score: 1, color: '#E11D48', bgSelected: 'bg-rose-100'   },
 ]
 
 // ==================== Metric Sliders ====================
 const moodMetrics = ref([
-  { id: 'energy',  icon: '⚡', label: 'ระดับพลังงาน', value: 5, lowLabel: 'หมดแรง', highLabel: 'เต็มพลัง' },
-  { id: 'stress',  icon: '😤', label: 'ระดับความเครียด', value: 5, lowLabel: 'ผ่อนคลาย', highLabel: 'เครียดมาก' },
-  { id: 'social',  icon: '👥', label: 'อยากพบปะผู้คน', value: 5, lowLabel: 'อยากอยู่คนเดียว', highLabel: 'อยากพบเพื่อน' },
+  { id: 'energy', svg: `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`, label: 'ระดับพลังงาน',    value: 5, lowLabel: 'หมดแรง',         highLabel: 'เต็มพลัง' },
+  { id: 'stress', svg: `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`, label: 'ระดับความเครียด', value: 5, lowLabel: 'ผ่อนคลาย',       highLabel: 'เครียดมาก' },
+  { id: 'social', svg: `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`, label: 'อยากพบปะผู้คน',   value: 5, lowLabel: 'อยากอยู่คนเดียว', highLabel: 'อยากพบเพื่อน' },
 ])
 
 // ==================== Activity Tags ====================
@@ -455,17 +494,30 @@ const todayFullDate = computed(() => {
 })
 
 // ==================== Computed Stats ====================
+const statSVGs = {
+  streak: `<svg class="w-7 h-7 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>`,
+  calendar:`<svg class="w-7 h-7 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path stroke-linecap="round" d="M16 2v4M8 2v4M3 10h18"/><path stroke-linecap="round" d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>`,
+  chart:   `<svg class="w-7 h-7 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`,
+  star:    `<svg class="w-7 h-7 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>`,
+}
+
 const summaryStats = computed(() => {
   const streak = computeStreak()
   const avgScore = checkinHistory.value.length
     ? (checkinHistory.value.reduce((s, e) => s + e.score, 0) / checkinHistory.value.length).toFixed(1)
     : '—'
-  const best = checkinHistory.value.reduce((b, e) => e.score > (b?.score || 0) ? e : b, null)
+  const topMood = (() => {
+    if (!checkinHistory.value.length) return null
+    const count = {}
+    checkinHistory.value.forEach(e => { count[e.mood.id] = (count[e.mood.id] || 0) + 1 })
+    const topId = Number(Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0])
+    return moodOptions.find(m => m.id === topId) || null
+  })()
   return [
-    { icon: '🔥', value: streak, label: 'วัน Streak', color: '#F59E0B' },
-    { icon: '📅', value: checkinHistory.value.length, label: 'เช็คอินทั้งหมด', color: '#0D9488' },
-    { icon: '📊', value: avgScore, label: 'คะแนนเฉลี่ย', color: '#8B5CF6' },
-    { icon: '😊', value: best?.mood?.emoji || '—', label: 'อารมณ์ยอดนิยม', color: '#059669' },
+    { svg: statSVGs.streak,   value: streak,                    label: 'วัน Streak',        color: '#F59E0B' },
+    { svg: statSVGs.calendar, value: checkinHistory.value.length, label: 'เช็คอินทั้งหมด', color: '#0D9488' },
+    { svg: statSVGs.chart,    value: avgScore,                  label: 'คะแนนเฉลี่ย',       color: '#8B5CF6' },
+    { svg: statSVGs.star,     value: topMood ? topMood.label : '—', label: 'อารมณ์ยอดนิยม', color: '#059669' },
   ]
 })
 

@@ -83,17 +83,33 @@
             type="button"
             @click="layoutMode = 'grid'"
             :class="layoutMode === 'grid' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
-            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+            class="p-2 rounded-full transition"
+            title="Grid View"
           >
-            Grid
+            <!-- Grid icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
           </button>
           <button
             type="button"
             @click="layoutMode = 'list'"
             :class="layoutMode === 'list' ? 'bg-[#0D9488] text-white' : 'text-[#64748B] hover:text-[#0D9488]'"
-            class="px-4 py-2 rounded-full text-xs font-semibold transition"
+            class="p-2 rounded-full transition"
+            title="List View"
           >
-            List
+            <!-- List icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6" stroke-linecap="round"/>
+              <line x1="8" y1="12" x2="21" y2="12" stroke-linecap="round"/>
+              <line x1="8" y1="18" x2="21" y2="18" stroke-linecap="round"/>
+              <circle cx="3.5" cy="6" r="1" fill="currentColor"/>
+              <circle cx="3.5" cy="12" r="1" fill="currentColor"/>
+              <circle cx="3.5" cy="18" r="1" fill="currentColor"/>
+            </svg>
           </button>
         </div>
       </div>
