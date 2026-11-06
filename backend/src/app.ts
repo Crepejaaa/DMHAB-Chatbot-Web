@@ -9,6 +9,7 @@ import chatRoutes from "./routes/chatRoutes";
 import authRoutes from "./routes/authRoutes";
 import articleRoutes from "./routes/articleRoutes";
 import { ensureArticleSchema } from "./controllers/articleController";
+import { ensureUserResetSchema } from "./controllers/authController";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" })); // อ่าน�
 
 // 2. ป้ายบอกทาง API (Routes)
 app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/articles", articleRoutes);
 
@@ -72,5 +74,8 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
   ensureArticleSchema().catch((err) => {
     console.warn("Article schema sync skipped during startup:", err?.message || err);
+  });
+  ensureUserResetSchema().catch((err) => {
+    console.warn("User reset schema sync skipped during startup:", err?.message || err);
   });
 });

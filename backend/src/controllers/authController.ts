@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import axios from "axios";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -583,5 +585,215 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
   } catch (error) {
     console.error("Error changing password:", error);
     res.status(500).json({ error: "ไม่สามารถเปลี่ยนรหัสผ่านได้" });
+  }
+};
+
+let userResetSchemaSynced = false;
+
+export const ensureUserResetSchema = async (): Promise<void> => {
+  if (userResetSchemaSynced) return;
+  try {
+    await prisma.$executeRawUnsafe(`
+      UPDATE "User" SET "username" = COALESCE("email", 'user_' || "id"::text) WHERE "username" IS NULL;
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "resetPasswordToken" TEXT,
+      ADD COLUMN IF NOT EXISTS "resetPasswordExpires" TIMESTAMP(3);
+    `);
+    userResetSchemaSynced = true;
+  } catch (error) {
+    console.warn("ensureUserResetSchema warning:", error);
+  }
+};
+
+// ฟังก์ชันลืมรหัสผ่าน (POST /api/auth/forgot-password): สร้าง Reset Token บันทึกลง DB และส่งอีเมลผ่าน Gmail (Nodemailer)
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await ensureUserResetSchema();
+
+    const rawEmail = req.body?.email;
+    const email = typeof rawEmail === "string" ? rawEmail.trim() : "";
+
+    if (!email) {
+      res.status(400).json({
+        error: "กรุณาระบุอีเมลที่ต้องการรีเซ็ตรหัสผ่าน",
+        message: "กรุณาระบุอีเมลที่ต้องการรีเซ็ตรหัสผ่าน"
+      });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      res.status(404).json({
+        error: "ไม่พบอีเมลนี้ในระบบ กรุณาตรวจสอบอีเมลอีกครั้ง",
+        message: "ไม่พบอีเมลนี้ในระบบ กรุณาตรวจสอบอีเมลอีกครั้ง"
+      });
+      return;
+    }
+
+    // สร้าง Token แบบสุ่มด้วย crypto และกำหนดเวลาหมดอายุ 1 ชั่วโมง
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 ชั่วโมง
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: resetToken,
+        resetPasswordExpires: resetExpires
+      }
+    });
+
+    const emailUser = (process.env.EMAIL_USER || "").trim().replace(/^["']|["']$/g, "");
+    const emailPass = (process.env.EMAIL_PASS || "").trim().replace(/^["']|["']$/g, "");
+
+    if (!emailUser || !emailPass) {
+      console.error("[ForgotPassword] Missing EMAIL_USER or EMAIL_PASS in environment variables");
+      res.status(500).json({
+        error: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า EMAIL_USER หรือ EMAIL_PASS บนเซิร์ฟเวอร์",
+        message: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า EMAIL_USER หรือ EMAIL_PASS บนเซิร์ฟเวอร์"
+      });
+      return;
+    }
+
+    const resetBaseUrl = (
+      process.env.RESET_PASSWORD_BASE_URL ||
+      "https://dmhab-chatbot-web.vercel.app"
+    )
+      .split(",")[0]
+      .trim()
+      .replace(/\/$/, "");
+
+    const resetLink = `${resetBaseUrl}/reset-password?token=${resetToken}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailUser,
+        pass: emailPass
+      }
+    });
+
+    await transporter.sendMail({
+      from: `"PhuenJaiZone Support" <${emailUser}>`,
+      to: email,
+      subject: "รีเซ็ตรหัสผ่านของคุณ - PhuenJaiZone",
+      text: `สวัสดีคุณ ${user.username || email},\n\nเราได้รับคำขอรีเซ็ตรหัสผ่านสำหรับบัญชี PhuenJaiZone ของคุณ\nกรุณาคลิกลิงก์ด้านล่างเพื่อตั้งรหัสผ่านใหม่ (ลิงก์มีอายุใช้งาน 1 ชั่วโมง):\n\n${resetLink}\n\nหากคุณไม่ได้เป็นผู้ร้องขอ กรุณาเพิกเฉยต่ออีเมลฉบับนี้`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+          <div style="text-align: center; padding-bottom: 16px; border-bottom: 2px solid #ccfbf1;">
+            <h2 style="margin: 0; color: #0d9488;">PhuenJaiZone</h2>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">ระบบผู้ช่วยประเมินและดูแลสุขภาพจิตประจำวัน</p>
+          </div>
+          <div style="padding: 24px 0;">
+            <p style="margin: 0 0 12px; font-size: 15px;">สวัสดีคุณ <strong>${user.username || email}</strong>,</p>
+            <p style="margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #334155;">
+              เราได้รับคำขอสำหรับการตั้งรหัสผ่านใหม่ของบัญชีที่ผูกกับอีเมลนี้ กรุณากดปุ่มด้านล่างเพื่อไปยังหน้าตั้งรหัสผ่านใหม่ (ลิงก์นี้มีอายุใช้งาน <strong>1 ชั่วโมง</strong>):
+            </p>
+            <div style="text-align: center; margin: 28px 0;">
+              <a href="${resetLink}" style="display: inline-block; padding: 12px 28px; background-color: #0d9488; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 10px; font-size: 14px;">
+                ตั้งรหัสผ่านใหม่
+              </a>
+            </div>
+            <p style="margin: 0 0 8px; font-size: 12px; color: #64748b;">หรือคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ของคุณ:</p>
+            <p style="margin: 0 0 20px; font-size: 12px; word-break: break-all; color: #0f766e;">
+              <a href="${resetLink}" style="color: #0d9488;">${resetLink}</a>
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #94a3b8;">
+              หากคุณไม่ได้เป็นผู้ร้องขอรีเซ็ตรหัสผ่าน คุณสามารถเพิกเฉยต่ออีเมลฉบับนี้ได้ทันที รหัสผ่านของคุณจะยังคงปลอดภัยเหมือนเดิม
+            </p>
+          </div>
+        </div>
+      `
+    });
+
+    res.status(200).json({
+      message: "ส่งลิงก์สำหรับรีเซ็ตรหัสผ่านไปยังอีเมลของคุณเรียบร้อยแล้ว กรุณาตรวจสอบกล่องจดหมาย"
+    });
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
+    res.status(500).json({
+      error: "ไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ กรุณาตรวจสอบการตั้งค่าอีเมลหรือลองใหม่อีกครั้ง",
+      message: "ไม่สามารถส่งอีเมลรีเซ็ตรหัสผ่านได้ กรุณาตรวจสอบการตั้งค่าอีเมลหรือลองใหม่อีกครั้ง"
+    });
+  }
+};
+
+// ฟังก์ชันตั้งรหัสผ่านใหม่ (POST /api/auth/reset-password): ตรวจสอบ Token + วันหมดอายุ, เข้ารหัส bcrypt และล้างค่า Token
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await ensureUserResetSchema();
+
+    const rawToken = req.body?.token;
+    const rawNewPassword = req.body?.newPassword ?? req.body?.password;
+    const rawConfirmPassword = req.body?.confirmPassword;
+
+    const token = typeof rawToken === "string" ? rawToken.trim() : "";
+    const newPassword = typeof rawNewPassword === "string" ? rawNewPassword : "";
+
+    if (!token || !newPassword) {
+      res.status(400).json({
+        error: "กรุณาระบุ Token และรหัสผ่านใหม่ให้ครบถ้วน",
+        message: "กรุณาระบุ Token และรหัสผ่านใหม่ให้ครบถ้วน"
+      });
+      return;
+    }
+
+    if (rawConfirmPassword !== undefined && rawConfirmPassword !== newPassword) {
+      res.status(400).json({
+        error: "รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน",
+        message: "รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน"
+      });
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      res.status(400).json({
+        error: "รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 8 ตัวอักษร",
+        message: "รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 8 ตัวอักษร"
+      });
+      return;
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: {
+          gt: new Date()
+        }
+      }
+    });
+
+    if (!user) {
+      res.status(400).json({
+        error: "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุแล้ว กรุณาขอรีเซ็ตรหัสผ่านใหม่อีกครั้ง",
+        message: "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุแล้ว กรุณาขอรีเซ็ตรหัสผ่านใหม่อีกครั้ง"
+      });
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        resetPasswordToken: null,
+        resetPasswordExpires: null
+      }
+    });
+
+    res.status(200).json({
+      message: "ตั้งรหัสผ่านใหม่สำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่ของคุณ"
+    });
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    res.status(500).json({
+      error: "เกิดข้อผิดพลาดในการตั้งรหัสผ่านใหม่ กรุณาลองใหม่อีกครั้ง",
+      message: "เกิดข้อผิดพลาดในการตั้งรหัสผ่านใหม่ กรุณาลองใหม่อีกครั้ง"
+    });
   }
 };
