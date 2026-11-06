@@ -22,6 +22,7 @@
         <router-link to="/about" class="hover:text-[#D1FAE5] transition">{{ $t('nav.about') }}</router-link>
         <router-link to="/services" class="hover:text-[#D1FAE5] transition">{{ $t('nav.services') }}</router-link>
         <router-link to="/blog" class="hover:text-[#D1FAE5] transition">{{ $t('nav.blog') }}</router-link>
+        <AdminNavLink />
       </div>
 
       <div class="flex gap-3 items-center text-sm">
@@ -425,6 +426,7 @@ import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useAssessmentStore } from '../stores/assessmentStore'
 import ProfileMenu from '../components/ProfileMenu.vue'
+import AdminNavLink from '../components/AdminNavLink.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import AssessmentHelpTooltip from '../components/AssessmentHelpTooltip.vue'
 import { useI18n } from 'vue-i18n'
