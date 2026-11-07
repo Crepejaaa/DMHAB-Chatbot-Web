@@ -910,62 +910,94 @@ const toggleRecording = () => {
   }
 }
 
-// Web Speech API - Text to Speech
+// Text-to-Speech: ใช้ Google Translate TTS ฟรี (ไม่เป็นทางการ) เป็นหลัก เพราะมีเสียงไทยชัดเจนทุกเครื่อง
+// fallback ไปใช้ Web Speech API ของเบราว์เซอร์ถ้า Google TTS ใช้ไม่ได้
 const playingMessageIndex = ref(null)
 const synth = window.speechSynthesis
 const availableVoices = ref([])
+let currentAudio = null
 
 const loadVoices = () => {
-  if (synth) {
-    availableVoices.value = synth.getVoices()
-  }
+  if (synth) availableVoices.value = synth.getVoices()
 }
-
 if (synth) {
   loadVoices()
-  if (synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = loadVoices
+  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices
+}
+
+// แบ่งข้อความเป็นช่วงไม่เกิน ~190 ตัวอักษร (ข้อจำกัดของ Google Translate TTS endpoint)
+const splitTextForTTS = (text, maxLen = 190) => {
+  const chunks = []
+  let remaining = text.trim()
+  while (remaining.length > maxLen) {
+    let cut = remaining.lastIndexOf(' ', maxLen)
+    if (cut <= 0) cut = maxLen
+    chunks.push(remaining.slice(0, cut))
+    remaining = remaining.slice(cut).trim()
   }
+  if (remaining) chunks.push(remaining)
+  return chunks
+}
+
+const speakWithBrowserVoice = (text, index) => {
+  if (!synth) { playingMessageIndex.value = null; return }
+  synth.cancel()
+  const utterance = new SpeechSynthesisUtterance(text)
+  const thaiVoice = availableVoices.value.find(
+    (voice) =>
+      (voice.lang && voice.lang.includes('th')) ||
+      (voice.name && (voice.name.includes('Thai') || voice.name.includes('ไทย')))
+  )
+  if (thaiVoice && /[\u0E00-\u0E7F]/.test(text)) {
+    utterance.voice = thaiVoice
+    utterance.lang = 'th-TH'
+  }
+  utterance.onend = () => { playingMessageIndex.value = null }
+  utterance.onerror = () => { playingMessageIndex.value = null }
+  playingMessageIndex.value = index
+  setTimeout(() => synth.speak(utterance), 100)
+}
+
+const playGoogleTTS = (text, lang, index) => {
+  const chunks = splitTextForTTS(text)
+  let i = 0
+  const playNext = () => {
+    if (i >= chunks.length) {
+      playingMessageIndex.value = null
+      currentAudio = null
+      return
+    }
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(chunks[i])}`
+    currentAudio = new Audio(url)
+    i++
+    currentAudio.onended = playNext
+    currentAudio.onerror = () => {
+      currentAudio = null
+      speakWithBrowserVoice(text, index)
+    }
+    currentAudio.play().catch(() => {
+      currentAudio = null
+      speakWithBrowserVoice(text, index)
+    })
+  }
+  playNext()
 }
 
 const toggleSpeak = (text, index) => {
-  if (!synth) return
-
-  if (synth.speaking && playingMessageIndex.value === index) {
-    synth.cancel()
+  if (playingMessageIndex.value === index) {
+    if (currentAudio) { currentAudio.pause(); currentAudio = null }
+    if (synth) synth.cancel()
     playingMessageIndex.value = null
     return
   }
 
-  synth.cancel()
+  if (currentAudio) { currentAudio.pause(); currentAudio = null }
+  if (synth) synth.cancel()
+  if (!text) return
 
-  if (text) {
-    const utterance = new SpeechSynthesisUtterance(text)
-    const thaiVoice = availableVoices.value.find(
-      (voice) =>
-        (voice.lang && voice.lang.includes('th')) ||
-        (voice.name && (voice.name.includes('Thai') || voice.name.includes('ไทย')))
-    )
-
-    if (thaiVoice && /[\u0E00-\u0E7F]/.test(text)) {
-      utterance.voice = thaiVoice
-      utterance.lang = 'th-TH'
-    }
-
-    utterance.onend = () => {
-      playingMessageIndex.value = null
-    }
-
-    utterance.onerror = (e) => {
-      console.error('Speech synthesis error:', e)
-      playingMessageIndex.value = null
-    }
-
-    playingMessageIndex.value = index
-    setTimeout(() => {
-      synth.speak(utterance)
-    }, 100)
-  }
+  playingMessageIndex.value = index
+  const isThai = /[\u0E00-\u0E7F]/.test(text)
+  playGoogleTTS(text, isThai ? 'th' : 'en', index)
 }
 
 onUnmounted(() => {
