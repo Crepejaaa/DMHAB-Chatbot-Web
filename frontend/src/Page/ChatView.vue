@@ -1136,37 +1136,29 @@ const speakWithBrowserVoice = (text, index) => {
 const playGoogleTTS = (text, lang, index) => {
   const chunks = splitTextForTTS(text)
   let i = 0
-  const hosts = ['https://translate.googleapis.com/translate_tts', 'https://translate.google.com/translate_tts']
-  const playNext = (hostIndex = 0) => {
+  const apiBase = (axios.defaults.baseURL || '').replace(/\/$/, '')
+  const playNext = () => {
     if (i >= chunks.length) {
       playingMessageIndex.value = null
       currentAudio = null
       return
     }
-    const url = `${hosts[hostIndex]}?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(chunks[i])}`
+    const url = `${apiBase}/api/tts?text=${encodeURIComponent(chunks[i])}&lang=${lang}`
     currentAudio = new Audio(url)
     currentAudio.onended = () => {
       i++
-      playNext(0)
+      playNext()
     }
     currentAudio.onerror = () => {
       currentAudio = null
-      if (hostIndex < hosts.length - 1) {
-        playNext(hostIndex + 1) // ลอง host สำรองก่อน ไม่เพิ่งเพิ่ม i
-      } else {
-        speakWithBrowserVoice(text, index)
-      }
+      speakWithBrowserVoice(text, index)
     }
     currentAudio.play().catch(() => {
       currentAudio = null
-      if (hostIndex < hosts.length - 1) {
-        playNext(hostIndex + 1)
-      } else {
-        speakWithBrowserVoice(text, index)
-      }
+      speakWithBrowserVoice(text, index)
     })
   }
-  playNext(0)
+  playNext()
 }
 
 const toggleSpeak = (text, index) => {

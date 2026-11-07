@@ -10,11 +10,15 @@ import {
   deleteChatSession,
   sendMessage,
 } from "../controllers/chatController";
+import { getTTSAudio } from "../controllers/ttsController";
 import { verifyToken } from "../middlewares/authMiddleware";
-import { chatLimiter } from "../middlewares/rateLimitMiddleware";
+import { chatLimiter, ttsLimiter } from "../middlewares/rateLimitMiddleware";
 
 const router = Router();
 const authenticate = verifyToken;
+
+// Proxy เสียงอ่าน TTS (ไม่ต้องใช้ auth เพราะไม่มีข้อมูลส่วนบุคคลของผู้ใช้)
+router.get("/tts", ttsLimiter, getTTSAudio);
 
 // ดึงเซสชันปัจจุบัน (คงไว้เพื่อความเข้ากันได้เดิม)
 router.get("/sessions", verifyToken, getUserChatSessions);

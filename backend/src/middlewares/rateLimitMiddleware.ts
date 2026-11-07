@@ -25,3 +25,15 @@ export const chatLimiter = rateLimit({
   },
   statusCode: 429
 });
+
+// 3. Rate limiter สำหรับ TTS Proxy (ผ่อนปรนสำหรับข้อความยาวที่แบ่งหลาย chunk)
+export const ttsLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 นาที
+  max: 60, // จำกัด 60 requests ต่อนาทีต่อ IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: "เรียกใช้งานเสียงอ่านถี่เกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง"
+  },
+  statusCode: 429
+});
