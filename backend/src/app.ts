@@ -8,6 +8,8 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import chatRoutes from "./routes/chatRoutes";
 import authRoutes from "./routes/authRoutes";
 import articleRoutes from "./routes/articleRoutes";
+import { getTTSAudio } from "./controllers/ttsController";
+import { ttsLimiter } from "./middlewares/rateLimitMiddleware";
 import { ensureArticleSchema } from "./controllers/articleController";
 import { ensureUserResetSchema } from "./controllers/authController";
 
@@ -59,6 +61,7 @@ app.use(express.json({ limit: "10mb" })); // อนุญาตให้เซ�
 app.use(express.urlencoded({ extended: true, limit: "10mb" })); // อ่านข้อมูลจาก Form
 
 // 2. ป้ายบอกทาง API (Routes)
+app.get("/api/tts", ttsLimiter, getTTSAudio);
 app.use("/api", authRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
