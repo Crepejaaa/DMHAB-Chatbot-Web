@@ -1,9 +1,388 @@
 import { Response } from "express";
 import prisma from "../prismaClient";
-import { generateChatResponse, AIResponse } from "../services/groqService";
+import {
+  generateChatResponse,
+  generateSessionSummary,
+  getTopicConfig,
+  hasCrisisSignal,
+  isValidTopic,
+  AIResponse,
+  SessionSummaryResult,
+} from "../services/groqService";
 import { AuthRequest } from "../middlewares/authMiddleware";
 
-// ดึงประวัติการสนทนาของ Session ปัจจุบัน
+const QUESTION_TRANSITIONS: Record<number, string> = {
+  2: "ขอบคุณที่เล่าให้น้องมุกห่วงใยฟังนะคะ ค่อย ๆ ไปต่อกันอีกนิดนะคะ",
+  3: "รับรู้ถึงความรู้สึกของคุณเลยค่ะ ขอชวนสำรวจต่อในข้อถัดไปนะคะ",
+  4: "ขอบคุณที่เปิดใจแบ่งปันนะคะ เรื่องที่คุณเจอไม่เล็กเลยค่ะ",
+  5: "มาถึงคำถามเริ่มต้นข้อสุดท้ายแล้วนะคะ ขอบคุณที่ค่อย ๆ เล่ามาด้วยกันค่ะ",
+};
+
+const LEGACY_SUMMARY_LABELS: Record<string, string> = {
+  STRESS: "พูดคุยสำรวจความเครียดสะสมและการดูแลใจเบื้องต้น",
+  SLEEP: "พูดคุยสำรวจเรื่องการนอนหลับและการพักผ่อน",
+  BURNOUT: "พูดคุยสำรวจความเหนื่อยล้าทางอารมณ์และภาระสะสม",
+  NONE: "พูดคุยรับฟังความรู้สึกและดูแลใจประจำวัน",
+};
+
+const parseStoredSummary = (
+  rawSummary: string | null | undefined,
+  topic?: string | null
+): { summaryText: string | null; summaryDetail: SessionSummaryResult | null } => {
+  if (!rawSummary) {
+    return { summaryText: null, summaryDetail: null };
+  }
+
+  try {
+    const parsed = JSON.parse(rawSummary) as Partial<SessionSummaryResult>;
+    if (parsed && typeof parsed.overview === "string") {
+      const detail: SessionSummaryResult = {
+        overview: parsed.overview,
+        actionable_steps: Array.isArray(parsed.actionable_steps) ? parsed.actionable_steps : [],
+        encouragement:
+          typeof parsed.encouragement === "string"
+            ? parsed.encouragement
+            : "ขอบคุณที่แวะมาพักใจกับน้องมุกห่วงใยนะคะ",
+        severity_level:
+          parsed.severity_level === "SEVERE" ||
+          parsed.severity_level === "MODERATE" ||
+          parsed.severity_level === "MILD"
+            ? parsed.severity_level
+            : "MILD",
+      };
+      return { summaryText: detail.overview, summaryDetail: detail };
+    }
+  } catch {
+    // กรณีเป็นข้อความธรรมดาจากข้อมูลเก่าก่อนอัปเกรด
+  }
+
+  const readable =
+    LEGACY_SUMMARY_LABELS[rawSummary] ||
+    rawSummary ||
+    `สรุปการพูดคุยเรื่อง${getTopicConfig(topic).labelTh}`;
+
+  return {
+    summaryText: readable,
+    summaryDetail: {
+      overview: readable,
+      actionable_steps: [
+        {
+          title: "หยุดพักหายใจและสังเกตความรู้สึกตัวเอง",
+          description: "ให้เวลาตัวเองได้พักสั้น ๆ โดยไม่ต้องเร่งรัดหรือตำหนิความรู้สึกที่เกิดขึ้นค่ะ",
+        },
+      ],
+      encouragement: "น้องมุกห่วงใยพร้อมเป็นพื้นที่ปลอดภัยรับฟังคุณเสมอนะคะ",
+      severity_level: "MILD",
+    },
+  };
+};
+
+// POST /api/chat/sessions — เริ่ม session ใหม่พร้อม topic และคืนคำถามข้อแรกจาก 5 ข้อ
+export const startChatSession = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const { topic } = req.body;
+    if (!isValidTopic(topic)) {
+      res.status(400).json({
+        error: "กรุณาเลือกหัวข้อการสนทนาที่ถูกต้อง (love, study, work, family, money, friends, self, sleep)",
+      });
+      return;
+    }
+
+    const topicConfig = getTopicConfig(topic);
+    const firstQuestion = topicConfig.questions[0];
+
+    const session = await prisma.chatSession.create({
+      data: {
+        userId,
+        topic,
+      },
+    });
+
+    const initialBotText = `${topicConfig.greetingTh}\n\nคำถามข้อที่ 1/5: ${firstQuestion.questionText}`;
+
+    const botMessage = await prisma.chatMessage.create({
+      data: {
+        sessionId: session.id,
+        sender: "BOT",
+        message: initialBotText,
+      },
+    });
+
+    res.status(201).json({
+      session: {
+        id: session.id,
+        topic: session.topic,
+        status: "IN_PROGRESS",
+        createdAt: session.createdAt,
+      },
+      phase: "QUESTIONS",
+      currentQuestionNo: 1,
+      totalQuestions: 5,
+      question: firstQuestion,
+      messages: [
+        {
+          id: botMessage.id,
+          sender: botMessage.sender,
+          text: botMessage.message,
+          timestamp: botMessage.createdAt,
+        },
+      ],
+    });
+  } catch (error) {
+    console.error("Error in startChatSession:", error);
+    res.status(500).json({ error: "ไม่สามารถเริ่มต้นเซสชันการสนทนาได้" });
+  }
+};
+
+// GET /api/chat/sessions/history — คืนลิสต์ session ทั้งหมดของ user สำหรับหน้าประวัติ
+export const getChatSessionsHistory = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const sessions = await prisma.chatSession.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: { messages: true, answers: true },
+        },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+      },
+    });
+
+    const formatted = sessions.map((s: any) => {
+      const { summaryText, summaryDetail } = parseStoredSummary(s.summary, s.topic);
+      const lastMsg = s.messages?.[0]?.message || "";
+      return {
+        id: s.id,
+        topic: s.topic || null,
+        status: s.summary ? "COMPLETED" : "IN_PROGRESS",
+        createdAt: s.createdAt,
+        overallMood: s.overallMood || null,
+        summary: summaryText,
+        summaryDetail,
+        lastMessage: lastMsg,
+        messageCount: s._count?.messages ?? 0,
+        answerCount: s._count?.answers ?? 0,
+      };
+    });
+
+    res.status(200).json({ sessions: formatted });
+  } catch (error) {
+    console.error("Error in getChatSessionsHistory:", error);
+    res.status(500).json({ error: "ไม่สามารถดึงประวัติการสนทนาได้" });
+  }
+};
+
+// GET /api/chat/sessions/:id — คืนข้อความ + คำตอบ 5 ข้อของ session นั้น
+export const getChatSessionById = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+
+    const session = await prisma.chatSession.findFirst({
+      where: { id: sessionId, userId },
+      include: {
+        messages: { orderBy: { createdAt: "asc" } },
+        answers: { orderBy: { questionNo: "asc" } },
+      },
+    });
+
+    if (!session) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+
+    const isCompleted = Boolean(session.summary);
+    const { summaryText, summaryDetail } = parseStoredSummary(session.summary, session.topic);
+    const answeredCount = session.answers.length;
+
+    let currentQuestion = null;
+    if (!isCompleted && session.topic && isValidTopic(session.topic) && answeredCount < 5) {
+      const topicConfig = getTopicConfig(session.topic);
+      currentQuestion = topicConfig.questions[answeredCount] || null;
+    }
+
+    const formattedMessages = session.messages.map((msg: any) => ({
+      id: msg.id,
+      sender: msg.sender,
+      text: msg.message,
+      timestamp: msg.createdAt,
+    }));
+
+    const formattedAnswers = session.answers.map((ans: any) => ({
+      id: ans.id,
+      questionNo: ans.questionNo,
+      questionText: ans.questionText,
+      answerText: ans.answerText,
+      score: ans.score,
+      createdAt: ans.createdAt,
+    }));
+
+    res.status(200).json({
+      session: {
+        id: session.id,
+        topic: session.topic,
+        status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
+        createdAt: session.createdAt,
+        overallMood: session.overallMood,
+        summary: summaryText,
+        summaryDetail,
+      },
+      phase: currentQuestion ? "QUESTIONS" : "FREE_CHAT",
+      currentQuestionNo: currentQuestion ? currentQuestion.questionNo : null,
+      totalQuestions: 5,
+      currentQuestion,
+      answers: formattedAnswers,
+      messages: formattedMessages,
+    });
+  } catch (error) {
+    console.error("Error in getChatSessionById:", error);
+    res.status(500).json({ error: "ไม่สามารถดึงข้อมูลเซสชันได้" });
+  }
+};
+
+// POST /api/chat/sessions/:id/end — จบ session ให้ Groq สรุป+ให้คำแนะนำตามหัวข้อ บันทึกลง summary
+export const endChatSession = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+
+    const session = await prisma.chatSession.findFirst({
+      where: { id: sessionId, userId },
+      include: {
+        messages: { orderBy: { createdAt: "asc" } },
+        answers: { orderBy: { questionNo: "asc" } },
+      },
+    });
+
+    if (!session) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+
+    // หากเคยสรุปเป็น JSON ไว้แล้ว คืนค่าเดิมได้ทันที
+    if (session.summary) {
+      const existing = parseStoredSummary(session.summary, session.topic);
+      if (existing.summaryDetail && session.summary.trim().startsWith("{")) {
+        res.status(200).json({
+          sessionId: session.id,
+          topic: session.topic,
+          status: "COMPLETED",
+          summary: existing.summaryText,
+          summaryDetail: existing.summaryDetail,
+        });
+        return;
+      }
+    }
+
+    const summaryResult = await generateSessionSummary(
+      session.topic,
+      session.answers.map((a: any) => ({
+        questionNo: a.questionNo,
+        questionText: a.questionText,
+        answerText: a.answerText,
+      })),
+      session.messages.map((m: any) => ({
+        sender: String(m.sender),
+        message: m.message,
+      }))
+    );
+
+    const finalMood =
+      session.overallMood === "SEVERE" ? "SEVERE" : summaryResult.severity_level;
+
+    await prisma.chatSession.update({
+      where: { id: session.id },
+      data: {
+        summary: JSON.stringify(summaryResult),
+        overallMood: finalMood,
+      },
+    });
+
+    res.status(200).json({
+      sessionId: session.id,
+      topic: session.topic,
+      status: "COMPLETED",
+      summary: summaryResult.overview,
+      summaryDetail: summaryResult,
+    });
+  } catch (error) {
+    console.error("Error in endChatSession:", error);
+    res.status(500).json({ error: "ไม่สามารถจบและสรุปการสนทนาได้" });
+  }
+};
+
+// DELETE /api/chat/sessions/:id — ลบ session (cascade ลบ ChatMessage และ ChatAnswer)
+export const deleteChatSession = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+
+    const existing = await prisma.chatSession.findFirst({
+      where: { id: sessionId, userId },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+
+    await prisma.chatSession.delete({
+      where: { id: sessionId },
+    });
+
+    res.status(200).json({
+      message: "ลบประวัติการสนทนาเรียบร้อยแล้ว",
+      id: sessionId,
+    });
+  } catch (error) {
+    console.error("Error in deleteChatSession:", error);
+    res.status(500).json({ error: "ไม่สามารถลบประวัติการสนทนาได้" });
+  }
+};
+
+// GET /api/chat/sessions — ดึงประวัติการสนทนาของ Session ล่าสุดที่ยังดำเนินการอยู่ (คงไว้เพื่อความเข้ากันได้)
 export const getUserChatSessions = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = Number(req.user?.userId);
@@ -12,9 +391,8 @@ export const getUserChatSessions = async (req: AuthRequest, res: Response): Prom
       return;
     }
 
-    // หา Session ล่าสุดที่ยังไม่เสร็จ (summary เป็น null)
     const activeSession = await prisma.chatSession.findFirst({
-      where: { userId: userId, summary: null },
+      where: { userId, summary: null },
       orderBy: { createdAt: "desc" },
     });
 
@@ -23,79 +401,227 @@ export const getUserChatSessions = async (req: AuthRequest, res: Response): Prom
       return;
     }
 
-    // ดึงข้อความใน Session นั้น
     const dbMessages = await prisma.chatMessage.findMany({
       where: { sessionId: activeSession.id },
       orderBy: { createdAt: "asc" },
     });
 
-    // แมปกลับไปให้อยู่ในรูปแบบที่ Frontend ต้องการ
-    const formattedMessages = dbMessages.map((msg: { sender: any; message: any; createdAt: any; }) => ({
+    const formattedMessages = dbMessages.map((msg: { sender: any; message: any; createdAt: any }) => ({
       sender: msg.sender,
       text: msg.message,
       timestamp: msg.createdAt,
     }));
 
-    res.status(200).json({ messages: formattedMessages });
+    res.status(200).json({
+      sessionId: activeSession.id,
+      topic: activeSession.topic,
+      messages: formattedMessages,
+    });
   } catch (error) {
     console.error("Error in getUserChatSessions:", error);
     res.status(500).json({ error: "ไม่สามารถดึงข้อมูลแชทได้" });
   }
 };
 
-// ส่งข้อความและโต้ตอบกับ บอท
+// POST /api/chat — ส่งข้อความ (รองรับทั้งช่วงตอบ 5 คำถามแรก และช่วงคุยอิสระกับ Groq ตามหัวข้อ)
 export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = Number(req.user?.userId);
-    const { message } = req.body;
+    const { message, sessionId: rawSessionId, topic: rawTopic, score: rawScore } = req.body;
 
     if (!Number.isInteger(userId) || userId <= 0) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    if (!message) {
+
+    const trimmedMessage = typeof message === "string" ? message.trim() : "";
+    if (!trimmedMessage) {
       res.status(400).json({ error: "กรุณาระบุข้อความ" });
       return;
     }
 
-    // 1. หาหรือสร้าง ChatSession ประจำวัน
-    let session = await prisma.chatSession.findFirst({
-      where: { userId: userId, summary: null },
-      orderBy: { createdAt: "desc" },
-    });
+    let session: any = null;
 
-    if (!session) {
-      session = await prisma.chatSession.create({
-        data: { userId: userId },
+    if (rawSessionId !== undefined && rawSessionId !== null) {
+      const parsedId = Number(rawSessionId);
+      if (!Number.isInteger(parsedId) || parsedId <= 0) {
+        res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+        return;
+      }
+      session = await prisma.chatSession.findFirst({
+        where: { id: parsedId, userId },
+        include: { answers: { orderBy: { questionNo: "asc" } } },
       });
+      if (!session) {
+        res.status(404).json({ error: "ไม่พบเซสชันการสนทนา" });
+        return;
+      }
+    } else {
+      session = await prisma.chatSession.findFirst({
+        where: { userId, summary: null },
+        orderBy: { createdAt: "desc" },
+        include: { answers: { orderBy: { questionNo: "asc" } } },
+      });
+
+      if (!session) {
+        session = await prisma.chatSession.create({
+          data: {
+            userId,
+            topic: isValidTopic(rawTopic) ? rawTopic : null,
+          },
+          include: { answers: { orderBy: { questionNo: "asc" } } },
+        });
+      }
     }
 
-    // 2. บันทึกข้อความของผู้ใช้ลง DB
+    if (session.summary) {
+      res.status(400).json({ error: "การสนทนานี้สิ้นสุดลงแล้ว กรุณาเริ่มบทสนทนาใหม่" });
+      return;
+    }
+
+    // บันทึกข้อความของ USER ลง ChatMessage
     await prisma.chatMessage.create({
       data: {
         sessionId: session.id,
         sender: "USER",
-        message: message,
+        message: trimmedMessage,
       },
     });
 
-    // 3. ดึงประวัติแชทของ Session เพื่อใช้เป็น Context ให้ AI
+    const crisisDetected = hasCrisisSignal(trimmedMessage);
+    const existingAnswers: any[] = Array.isArray(session.answers) ? session.answers : [];
+    const answeredCount = existingAnswers.length;
+
+    // ช่วงที่ 1: บันทึกคำตอบของ 5 คำถามแรก หาก session มี topic และยังตอบไม่ครบ 5 ข้อ
+    if (session.topic && isValidTopic(session.topic) && answeredCount < 5) {
+      const topicConfig = getTopicConfig(session.topic);
+      const currentQ = topicConfig.questions[answeredCount];
+
+      let resolvedScore: number | null = null;
+      if (typeof rawScore === "number" && Number.isInteger(rawScore)) {
+        resolvedScore = rawScore;
+      } else {
+        const matchedOpt = currentQ.options.find((opt) => opt.label === trimmedMessage);
+        if (matchedOpt) {
+          resolvedScore = matchedOpt.score;
+        }
+      }
+
+      await prisma.chatAnswer.upsert({
+        where: {
+          sessionId_questionNo: {
+            sessionId: session.id,
+            questionNo: currentQ.questionNo,
+          },
+        },
+        update: {
+          questionText: currentQ.questionText,
+          answerText: trimmedMessage,
+          score: resolvedScore,
+        },
+        create: {
+          sessionId: session.id,
+          questionNo: currentQ.questionNo,
+          questionText: currentQ.questionText,
+          answerText: trimmedMessage,
+          score: resolvedScore,
+        },
+      });
+
+      const newAnsweredCount = answeredCount + 1;
+
+      // หากไม่พบสัญญาณวิกฤต และยังตอบไม่ครบ 5 ข้อ -> ส่งคำถามข้อถัดไปทันที
+      if (!crisisDetected && newAnsweredCount < 5) {
+        const nextQ = topicConfig.questions[newAnsweredCount];
+        const transitionText =
+          QUESTION_TRANSITIONS[nextQ.questionNo] ||
+          "ขอบคุณที่แบ่งปันให้น้องมุกห่วงใยฟังนะคะ";
+        const nextBotMessageText = `${transitionText}\n\nคำถามข้อที่ ${nextQ.questionNo}/5: ${nextQ.questionText}`;
+
+        await prisma.chatMessage.create({
+          data: {
+            sessionId: session.id,
+            sender: "BOT",
+            message: nextBotMessageText,
+          },
+        });
+
+        res.status(200).json({
+          reply: nextBotMessageText,
+          sessionId: session.id,
+          phase: "QUESTIONS",
+          currentQuestionNo: nextQ.questionNo,
+          totalQuestions: 5,
+          nextQuestion: nextQ,
+          assessment_status: "IN_PROGRESS",
+          severity_level: "PENDING",
+        });
+        return;
+      }
+    }
+
+    // ช่วงที่ 2: ตอบครบ 5 ข้อแล้ว (หรือพบสัญญาณวิกฤต / เซสชันคุยอิสระ) -> ส่งให้ Groq ประมวลผลตาม topic
+    const allAnswers = await prisma.chatAnswer.findMany({
+      where: { sessionId: session.id },
+      orderBy: { questionNo: "asc" },
+    });
+
     const chatHistory = await prisma.chatMessage.findMany({
       where: { sessionId: session.id },
       orderBy: { createdAt: "desc" },
-      take: 20, // จำกัดไม่ให้ยาวเกินไป
+      take: 20,
     });
 
-    const aiMessages = chatHistory.reverse().map((msg: { sender: any; message: any; }) => ({
-      role: String(msg.sender) === "USER" ? "user" : "assistant",
-      content: msg.message,
-    }));
+    const aiMessages: { role: "system" | "user" | "assistant"; content: string }[] = [];
 
+    if (session.topic && isValidTopic(session.topic) && allAnswers.length > 0) {
+      const topicConfig = getTopicConfig(session.topic);
+      const contextLines = allAnswers
+        .map((a: any) => `ข้อ ${a.questionNo} (${a.questionText}): ${a.answerText}`)
+        .join("\n");
+      aiMessages.push({
+        role: "user",
+        content: `[บริบทเริ่มต้นของผู้ใช้ — หัวข้อ: ${topicConfig.labelTh}]\n${contextLines}\n\nกรุณารับฟัง สะท้อนความรู้สึกอย่างอบอุ่นตามหัวข้อนี้ และชวนพูดคุยต่ออย่างเป็นธรรมชาติ`,
+      });
+      aiMessages.push({
+        role: "assistant",
+        content: JSON.stringify({
+          reply_message: "รับทราบค่ะ น้องมุกห่วงใยพร้อมรับฟังและสะท้อนความรู้สึกอย่างอบอุ่นค่ะ",
+          assessment_status: "IN_PROGRESS",
+          severity_level: "PENDING",
+          suggested_category: "NONE",
+        }),
+      });
+    }
 
-    // 4. ส่งไปให้ Ollama ประมวลผล
-    const aiResponse: AIResponse = await generateChatResponse(aiMessages);
+    for (const msg of chatHistory.reverse()) {
+      aiMessages.push({
+        role: String(msg.sender) === "USER" ? "user" : "assistant",
+        content: msg.message,
+      });
+    }
 
-    // 5. บันทึกข้อความตอบกลับของบอท
+    let aiResponse: AIResponse;
+    try {
+      aiResponse = await generateChatResponse(aiMessages, session.topic);
+    } catch (groqErr) {
+      if (crisisDetected) {
+        aiResponse = {
+          reply_message:
+            "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
+          assessment_status: "IN_PROGRESS",
+          severity_level: "SEVERE",
+          suggested_category: "STRESS",
+        };
+      } else {
+        throw groqErr;
+      }
+    }
+
+    if (crisisDetected) {
+      aiResponse.severity_level = "SEVERE";
+    }
+
     await prisma.chatMessage.create({
       data: {
         sessionId: session.id,
@@ -104,29 +630,27 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
       },
     });
 
-    // 6. ตรวจสอบสถานะและอัปเดต Session หากจำเป็น
-    if (
-      aiResponse.assessment_status === "COMPLETED" ||
-      aiResponse.severity_level === "SEVERE"
-    ) {
+    if (aiResponse.severity_level && aiResponse.severity_level !== "PENDING") {
       await prisma.chatSession.update({
         where: { id: session.id },
         data: {
           overallMood: aiResponse.severity_level,
-          summary: aiResponse.suggested_category, // ใช้หมวดหมู่เป็น summary คร่าวๆ
         },
       });
     }
 
-    // 7. ส่งตอบกลับไปยัง Frontend
     res.status(200).json({
       reply: aiResponse.reply_message,
-      assessment_status: aiResponse.assessment_status,
+      sessionId: session.id,
+      phase: "FREE_CHAT",
+      currentQuestionNo: null,
+      totalQuestions: 5,
+      nextQuestion: null,
+      assessment_status: "IN_PROGRESS",
       severity_level: aiResponse.severity_level,
     });
   } catch (error) {
     console.error("Chat API Error Details:", error);
-    console.error("Error in sendMessage:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการเชื่อมต่อแชทบอท" });
   }
 };

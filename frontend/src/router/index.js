@@ -93,6 +93,11 @@ const router = createRouter({
       component: () => import('../Page/AssessmentResultView.vue')
     },
     {
+      path: '/chat/topics',
+      name: 'topic-picker',
+      component: () => import('../Page/TopicPickerView.vue')
+    },
+    {
       path: '/chat',
       name: 'chat',
       component: () => import('../Page/ChatView.vue')
