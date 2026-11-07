@@ -77,16 +77,24 @@
       "questionPrefix": "Q{no}"
     },
     "endChat": {
-      "cloudBtn": "สิ้นสุดการสนทนา",
-      "cloudSub": "End Conversation",
-      "confirmTitle": "ต้องการจบการสนทนาหรือไม่?",
+      "cloudBtn": "End Conversation",
+      "cloudSub": "Finish & Summarize",
+      "confirmTitle": "Would you like to end the conversation?",
       "confirmBody": "Nong Mook will summarize what you shared today and suggest gentle, context-tailored steps you can try.",
-      "confirmBtn": "ยืนยันการจบสนทนา",
-      "cancelBtn": "กลับไปสนทนาต่อ",
+      "confirmBtn": "Confirm End Conversation",
+      "cancelBtn": "Continue Chatting",
       "summarizing": "Summarizing conversation...",
       "thankYouTitle": "Thank you for trusting Nong Mook today",
       "thankYouBody": "Your feelings matter. Preparing your personalized reflection and gentle suggestions...",
       "viewAdviceNow": "View Suggestions"
+    },
+    "loading": {
+      "history": "Loading conversation history...",
+      "initializing": "Preparing your safe space with Nong Mook..."
+    },
+    "darkMode": {
+      "toLight": "Switch to Light Mode",
+      "toDark": "Switch to Dark Mode"
     },
     "advice": {
       "badge": "Session Summary & Gentle Guidance",

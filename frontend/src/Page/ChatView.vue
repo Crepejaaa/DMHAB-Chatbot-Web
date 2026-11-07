@@ -59,7 +59,7 @@
           v-if="isLoadingHistory"
           class="py-10 text-center text-xs text-slate-400"
         >
-          กำลังโหลดประวัติการสนทนา...
+          {{ $t('chat.loading.history') }}
         </div>
 
         <div
@@ -444,7 +444,7 @@
           v-if="isInitializingSession"
           class="py-16 text-center text-sm text-slate-400"
         >
-          กำลังเตรียมพื้นที่พูดคุยกับน้องมุกห่วงใย...
+          {{ $t('chat.loading.initializing') }}
         </div>
 
         <template v-else>
@@ -675,7 +675,7 @@
         </div>
 
         <h3 class="text-lg sm:text-xl font-extrabold text-[#1E293B] mb-2">
-          ต้องการจบการสนทนาหรือไม่?
+          {{ $t('chat.endChat.confirmTitle') }}
         </h3>
         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
           {{ $t('chat.endChat.confirmBody') }}
@@ -688,7 +688,7 @@
             @click="showEndConfirmModal = false"
             class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors disabled:opacity-50"
           >
-            กลับไปสนทนาต่อ
+            {{ $t('chat.endChat.cancelBtn') }}
           </button>
           <button
             type="button"
@@ -696,7 +696,7 @@
             @click="confirmEndConversation"
             class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:from-[#0D9488] hover:to-[#059669] text-white text-sm font-semibold shadow-md transition-all disabled:opacity-60"
           >
-            {{ isEndingSession ? $t('chat.endChat.summarizing') : 'ยืนยันการจบสนทนา' }}
+            {{ isEndingSession ? $t('chat.endChat.summarizing') : $t('chat.endChat.confirmBtn') }}
           </button>
         </div>
       </div>
@@ -899,9 +899,37 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   }
 }
 
-watch(locale, (newLocale) => {
+watch(locale, async (newLocale) => {
   if (recognition) {
     recognition.lang = newLocale === 'en' ? 'en-US' : 'th-TH'
+  }
+  if (!currentSessionId.value) return
+
+  // หากเซสชันจบแล้วและสลับภาษา ให้ขอสรุปและคำแนะนำในภาษาที่เลือกทันที
+  if (isCompleted.value) {
+    try {
+      const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
+        locale: newLocale
+      })
+      if (res.data?.summaryDetail) {
+        summaryDetail.value = res.data.summaryDetail
+      }
+      await fetchHistoryList()
+    } catch (err) {
+      console.error('Failed to refresh summary for new locale:', err)
+    }
+  } else if (currentPhase.value === 'QUESTIONS') {
+    // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
+    try {
+      const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+        params: { locale: newLocale }
+      })
+      if (res.data?.currentQuestion) {
+        currentQuestion.value = res.data.currentQuestion
+      }
+    } catch (err) {
+      console.error('Failed to refresh guided question for new locale:', err)
+    }
   }
 })
 
@@ -1068,7 +1096,9 @@ const loadSessionById = async (sessionId) => {
   showAdviceScreen.value = false
   showAnswersDrawer.value = false
   try {
-    const res = await axios.get(`/api/chat/sessions/${sessionId}`)
+    const res = await axios.get(`/api/chat/sessions/${sessionId}`, {
+      params: { locale: locale.value }
+    })
     const data = res.data
     currentSessionId.value = data.session.id
     currentTopic.value = data.session.topic
@@ -1079,6 +1109,24 @@ const loadSessionById = async (sessionId) => {
     totalQuestions.value = data.totalQuestions || 5
     sessionAnswers.value = data.answers || []
     messages.value = data.messages || []
+
+    // หากเซสชันจบแล้วแต่ภาษาของสรุปที่บันทึกไว้ไม่ตรงกับ locale ปัจจุบัน ให้ดึงสรุปตามภาษาที่เลือก
+    if (isCompleted.value && summaryDetail.value?.overview) {
+      const isSummaryThai = /[\u0E00-\u0E7F]/.test(summaryDetail.value.overview)
+      const wantsThai = locale.value === 'th'
+      if (isSummaryThai !== wantsThai) {
+        try {
+          const endRes = await axios.post(`/api/chat/sessions/${sessionId}/end`, {
+            locale: locale.value
+          })
+          if (endRes.data?.summaryDetail) {
+            summaryDetail.value = endRes.data.summaryDetail
+          }
+        } catch (e) {
+          console.error('Failed to localize completed session summary:', e)
+        }
+      }
+    }
 
     await scrollToBottom()
   } catch (error) {
@@ -1097,7 +1145,10 @@ const createNewSessionWithTopic = async (topicKey) => {
   showAdviceScreen.value = false
   showAnswersDrawer.value = false
   try {
-    const res = await axios.post('/api/chat/sessions', { topic: topicKey })
+    const res = await axios.post('/api/chat/sessions', {
+      topic: topicKey,
+      locale: locale.value
+    })
     const data = res.data
     currentSessionId.value = data.session.id
     currentTopic.value = data.session.topic
@@ -1412,7 +1463,7 @@ watch(
   transform: translateY(-1px);
 }
 
-/* Dark Mode Overrides ให้เข้ากันได้กับ App.vue */
+/* Dark Mode Overrides ให้เข้ากันได้กับ App.vue (ค่าคอนทราสต์ >= 4.5:1 ทุกส่วน) */
 header button[title*="โหมด"] {
   background-color: #045F54;
 }
@@ -1421,126 +1472,137 @@ header button[title*="โหมด"]:hover {
   background-color: #03473f;
 }
 
-.dark-mode-page header button[title*="โหมด"] {
-  background-color: #134e4a;
-  border: 1px solid #14b8a6;
-  color: #ccfbf1;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) header button[title*="โหมด"] {
+  background-color: #134e4a !important;
+  border: 1px solid #14b8a6 !important;
+  color: #ccfbf1 !important;
 }
 
-.dark-mode-page header button[title*="โหมด"]:hover {
-  background-color: #0f766e;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) header button[title*="โหมด"]:hover {
+  background-color: #0f766e !important;
 }
 
-.dark-mode-page .history-sidebar,
-.dark-mode-page .guided-panel,
-.dark-mode-page .modal-surface,
-.dark-mode-page .advice-card {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-sidebar,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card {
   background-color: #1e293b !important;
   border-color: #334155 !important;
   color: #f8fafc !important;
 }
 
-.dark-mode-page .history-item {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item {
   background-color: #0f172a !important;
   border-color: #334155 !important;
 }
 
-.dark-mode-page .history-item:hover {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item:hover {
   border-color: #14b8a6 !important;
   background-color: #134e4a !important;
 }
 
-.dark-mode-page .history-item-active {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item-active {
   background-color: #134e4a !important;
   border-color: #14b8a6 !important;
 }
 
-.dark-mode-page .history-topic-icon,
-.dark-mode-page .bot-avatar-circle,
-.dark-mode-page .topic-header-pill {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-topic-icon,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .bot-avatar-circle,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .topic-header-pill {
   background-color: #134e4a !important;
   background-image: none !important;
-  border-color: #0d9488 !important;
+  border-color: #14b8a6 !important;
   color: #5eead4 !important;
 }
 
-.dark-mode-page .status-pill-completed {
-  background-color: rgba(6, 95, 70, 0.65) !important;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .status-pill-completed {
+  background-color: rgba(6, 95, 70, 0.75) !important;
   color: #a7f3d0 !important;
 }
 
-.dark-mode-page .status-pill-active {
-  background-color: rgba(120, 53, 15, 0.65) !important;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .status-pill-active {
+  background-color: rgba(120, 53, 15, 0.75) !important;
   color: #fde68a !important;
 }
 
-.dark-mode-page .bot-bubble,
-.dark-mode-page .advice-step-card,
-.dark-mode-page .answer-summary-card {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .bot-bubble,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-step-card,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card {
   background-color: #0f172a !important;
   border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-option-btn,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chip-btn {
+  background-color: #0f172a !important;
+  border-color: #14b8a6 !important;
   color: #f1f5f9 !important;
 }
 
-.dark-mode-page .guided-option-btn,
-.dark-mode-page .chip-btn {
-  background-color: #0f172a !important;
-  border-color: #0d9488 !important;
-  color: #e2e8f0 !important;
-}
-
-.dark-mode-page .guided-option-btn:hover,
-.dark-mode-page .chip-btn:hover {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-option-btn:hover,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chip-btn:hover {
   background-color: #0d9488 !important;
   color: #ffffff !important;
 }
 
-.dark-mode-page .answers-bar,
-.dark-mode-page .advice-overview-box,
-.dark-mode-page .advice-encouragement-box {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answers-bar,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-overview-box,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-encouragement-box {
   background-color: #134e4a !important;
-  background-image: linear-gradient(135deg, rgba(19, 78, 74, 0.92), rgba(15, 118, 110, 0.82)) !important;
+  background-image: linear-gradient(135deg, #134e4a 0%, #115e59 100%) !important;
   border-color: #14b8a6 !important;
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
 }
 
-.dark-mode-page .answers-bar [class*="text-[#045F54]"],
-.dark-mode-page .advice-card [class*="text-[#045F54]"],
-.dark-mode-page .answer-summary-card [class*="text-[#045F54]"] {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answers-bar [class*="text-[#045F54]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-[#045F54]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card [class*="text-[#045F54]"] {
   color: #5eead4 !important;
 }
 
-.dark-mode-page .advice-card [class*="text-slate-700"],
-.dark-mode-page .advice-card [class*="text-slate-600"],
-.dark-mode-page .modal-surface [class*="text-slate-700"],
-.dark-mode-page .modal-surface [class*="text-slate-600"],
-.dark-mode-page .answer-summary-card [class*="text-slate-600"] {
-  color: #e2e8f0 !important;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-700"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-600"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface [class*="text-slate-700"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface [class*="text-slate-600"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card [class*="text-slate-600"] {
+  color: #f1f5f9 !important;
 }
 
-.dark-mode-page .advice-card [class*="text-slate-500"],
-.dark-mode-page .advice-card [class*="text-slate-400"] {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-500"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-400"] {
   color: #cbd5e1 !important;
 }
 
-.dark-mode-page .chat-input {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface button[class~="bg-white"] {
+  background-color: #334155 !important;
+  border-color: #64748b !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface button[class~="bg-white"]:hover {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chat-input {
   background-color: #0f172a !important;
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
   border-color: #334155 !important;
 }
 
-.dark-mode-page .cloud-end-btn {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn {
   background: linear-gradient(180deg, #134e4a 0%, #115e59 100%) !important;
   border-color: #14b8a6 !important;
   color: #ccfbf1 !important;
 }
 
-.dark-mode-page .cloud-end-btn svg {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn svg {
   color: #5eead4 !important;
 }
 
-.dark-mode-page .cloud-end-btn::before,
-.dark-mode-page .cloud-end-btn::after {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn::before,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn::after {
   background: #134e4a !important;
   border-top-color: #14b8a6 !important;
 }

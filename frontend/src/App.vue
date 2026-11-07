@@ -261,49 +261,61 @@ body {
 }
 
 /* ChatView (PhuenJaiZone) Advice Card, Summary, History & Crisis Modal Dark Mode Overrides */
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-slate-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-slate-100"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-slate-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-slate-100"] {
   background-color: #334155 !important;
   color: #f8fafc !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="hover:bg-slate-200"]:hover,
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="hover:bg-slate-50"]:hover {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="hover:bg-slate-200"]:hover,
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="hover:bg-slate-50"]:hover {
   background-color: #475569 !important;
   color: #ffffff !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-teal-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-teal-100"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-emerald-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-emerald-100"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-50/50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-50/70"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-50/90"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-100"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-teal-100/80"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-emerald-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-emerald-50/60"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-emerald-100"] {
   background-color: #134e4a !important;
-  color: #e2e8f0 !important;
+  color: #f1f5f9 !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="from-emerald-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="to-teal-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="from-teal-100"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="to-emerald-100"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="hover:bg-teal-50"]:hover,
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="hover:bg-teal-50/40"]:hover,
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="hover:bg-teal-100"]:hover {
+  background-color: #115e59 !important;
+  color: #f8fafc !important;
+}
+
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="from-emerald-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="to-teal-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="from-teal-100"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="to-emerald-100"] {
   background-color: #134e4a !important;
   background-image: linear-gradient(135deg, #134e4a 0%, #115e59 100%) !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-rose-50"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-rose-100"] {
-  background-color: rgba(136, 19, 55, 0.45) !important;
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-rose-50"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-rose-100"] {
+  background-color: rgba(136, 19, 55, 0.55) !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-rose-600"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-rose-500"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-rose-600"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-rose-500"] {
   color: #fda4af !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="bg-amber-100"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="bg-amber-100"] {
   background-color: rgba(120, 53, 15, 0.65) !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-amber-800"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-amber-800"] {
   color: #fde68a !important;
 }
 
@@ -312,7 +324,7 @@ body {
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="border-teal-300"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="border-emerald-100"],
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="border-emerald-200"] {
-  border-color: #0d9488 !important;
+  border-color: #14b8a6 !important;
 }
 
 .dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="border-slate-100"],
@@ -321,27 +333,38 @@ body {
   border-color: #475569 !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-900"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-800"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-700"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-900"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-800"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-700"] {
   color: #f8fafc !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-600"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-500"],
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-slate-400"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-600"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-500"],
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-slate-400"] {
   color: #cbd5e1 !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-[#045F54]"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-[#045F54]"] {
   color: #5eead4 !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-[#0D9488]"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-[#0D9488]"] {
   color: #2dd4bf !important;
 }
 
-.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class*="text-[#059669]"] {
+.dark-mode :is(.page-dark-surface, .dark-mode-page):not(.admin-page):not(.assessment-page) [class~="text-[#059669]"] {
   color: #34d399 !important;
+}
+
+/* Preserve LanguageSwitcher pill contrast inside dark-mode pages */
+.dark-mode :is(.page-dark-surface, .dark-mode-page) [class~="bg-[#045F54]"] button[class~="bg-white"] {
+  background-color: #ffffff !important;
+  color: #045F54 !important;
+}
+
+.dark-mode :is(.page-dark-surface, .dark-mode-page) [class~="bg-[#045F54]"] button[class~="hover:bg-white/10"] {
+  background-color: transparent !important;
+  color: #ffffff !important;
 }
 </style>
