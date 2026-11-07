@@ -3,6 +3,8 @@ import prisma from "../prismaClient";
 import {
   generateChatResponse,
   generateSessionSummary,
+  getLocalizedGreeting,
+  getLocalizedTopicQuestions,
   getTopicConfig,
   hasCrisisSignal,
   isValidTopic,
@@ -16,6 +18,13 @@ const QUESTION_TRANSITIONS: Record<number, string> = {
   3: "รับรู้ถึงความรู้สึกของคุณเลยค่ะ ขอชวนสำรวจต่อในข้อถัดไปนะคะ",
   4: "ขอบคุณที่เปิดใจแบ่งปันนะคะ เรื่องที่คุณเจอไม่เล็กเลยค่ะ",
   5: "มาถึงคำถามเริ่มต้นข้อสุดท้ายแล้วนะคะ ขอบคุณที่ค่อย ๆ เล่ามาด้วยกันค่ะ",
+};
+
+const QUESTION_TRANSITIONS_EN: Record<number, string> = {
+  2: "Thank you for sharing with Nong Mook Huang Yai. Let's gently continue to the next question.",
+  3: "I hear how you're feeling. Let's explore a little further together.",
+  4: "Thank you for opening up—what you're going through truly matters.",
+  5: "We've reached the last starter question. Thank you for walking through this with me.",
 };
 
 const LEGACY_SUMMARY_LABELS: Record<string, string> = {
@@ -86,7 +95,8 @@ export const startChatSession = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const { topic } = req.body;
+    const { topic, locale: rawLocale } = req.body;
+    const locale: "th" | "en" = rawLocale === "en" ? "en" : "th";
     if (!isValidTopic(topic)) {
       res.status(400).json({
         error: "กรุณาเลือกหัวข้อการสนทนาที่ถูกต้อง (love, study, work, family, money, friends, self, sleep)",
@@ -94,8 +104,9 @@ export const startChatSession = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const topicConfig = getTopicConfig(topic);
-    const firstQuestion = topicConfig.questions[0];
+    const localizedQuestions = getLocalizedTopicQuestions(topic, locale);
+    const firstQuestion = localizedQuestions[0];
+    const greetingText = getLocalizedGreeting(topic, locale);
 
     const session = await prisma.chatSession.create({
       data: {
@@ -104,7 +115,10 @@ export const startChatSession = async (req: AuthRequest, res: Response): Promise
       },
     });
 
-    const initialBotText = `${topicConfig.greetingTh}\n\nคำถามข้อที่ 1/5: ${firstQuestion.questionText}`;
+    const initialBotText =
+      locale === "en"
+        ? `${greetingText}\n\nQuestion 1/5: ${firstQuestion.questionText}`
+        : `${greetingText}\n\nคำถามข้อที่ 1/5: ${firstQuestion.questionText}`;
 
     const botMessage = await prisma.chatMessage.create({
       data: {
@@ -215,14 +229,15 @@ export const getChatSessionById = async (req: AuthRequest, res: Response): Promi
       return;
     }
 
+    const locale: "th" | "en" = req.query?.locale === "en" ? "en" : "th";
     const isCompleted = Boolean(session.summary);
     const { summaryText, summaryDetail } = parseStoredSummary(session.summary, session.topic);
     const answeredCount = session.answers.length;
 
     let currentQuestion = null;
     if (!isCompleted && session.topic && isValidTopic(session.topic) && answeredCount < 5) {
-      const topicConfig = getTopicConfig(session.topic);
-      currentQuestion = topicConfig.questions[answeredCount] || null;
+      const localizedQuestions = getLocalizedTopicQuestions(session.topic, locale);
+      currentQuestion = localizedQuestions[answeredCount] || null;
     }
 
     const formattedMessages = session.messages.map((msg: any) => ({
@@ -250,6 +265,8 @@ export const getChatSessionById = async (req: AuthRequest, res: Response): Promi
         overallMood: session.overallMood,
         summary: summaryText,
         summaryDetail,
+        feedbackRating: session.feedbackRating ?? null,
+        feedbackAt: session.feedbackAt ?? null,
       },
       phase: currentQuestion ? "QUESTIONS" : "FREE_CHAT",
       currentQuestionNo: currentQuestion ? currentQuestion.questionNo : null,
@@ -292,18 +309,24 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    // หากเคยสรุปเป็น JSON ไว้แล้ว คืนค่าเดิมได้ทันที
+    const locale: "th" | "en" = req.body?.locale === "en" ? "en" : "th";
+
+    // หากเคยสรุปเป็น JSON ไว้แล้ว และภาษาตรงกับ locale ที่ร้องขอ คืนค่าเดิมได้ทันที
     if (session.summary) {
       const existing = parseStoredSummary(session.summary, session.topic);
       if (existing.summaryDetail && session.summary.trim().startsWith("{")) {
-        res.status(200).json({
-          sessionId: session.id,
-          topic: session.topic,
-          status: "COMPLETED",
-          summary: existing.summaryText,
-          summaryDetail: existing.summaryDetail,
-        });
-        return;
+        const isStoredThai = /[\u0E00-\u0E7F]/.test(existing.summaryDetail.overview);
+        const wantsThai = locale === "th";
+        if (isStoredThai === wantsThai) {
+          res.status(200).json({
+            sessionId: session.id,
+            topic: session.topic,
+            status: "COMPLETED",
+            summary: existing.summaryText,
+            summaryDetail: existing.summaryDetail,
+          });
+          return;
+        }
       }
     }
 
@@ -317,7 +340,8 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       session.messages.map((m: any) => ({
         sender: String(m.sender),
         message: m.message,
-      }))
+      })),
+      locale
     );
 
     const finalMood =
@@ -337,10 +361,46 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       status: "COMPLETED",
       summary: summaryResult.overview,
       summaryDetail: summaryResult,
+      feedbackRating: session.feedbackRating ?? null,
     });
   } catch (error) {
     console.error("Error in endChatSession:", error);
     res.status(500).json({ error: "ไม่สามารถจบและสรุปการสนทนาได้" });
+  }
+};
+
+// PATCH /api/chat/sessions/:id/feedback — บันทึกคะแนนความพึงพอใจหลังจบเซสชัน (HELPFUL | SOMEWHAT | NOT_HELPFUL)
+export const submitSessionFeedback = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+    const { rating } = req.body as { rating?: string };
+    const allowed = ["HELPFUL", "SOMEWHAT", "NOT_HELPFUL"];
+    if (!rating || !allowed.includes(rating)) {
+      res.status(400).json({ error: "ค่า rating ไม่ถูกต้อง" });
+      return;
+    }
+    const session = await prisma.chatSession.findFirst({ where: { id: sessionId, userId } });
+    if (!session) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+    await prisma.chatSession.update({
+      where: { id: sessionId },
+      data: { feedbackRating: rating, feedbackAt: new Date() },
+    });
+    res.status(200).json({ sessionId, feedbackRating: rating });
+  } catch (error) {
+    console.error("Error in submitSessionFeedback:", error);
+    res.status(500).json({ error: "ไม่สามารถบันทึกความคิดเห็นได้" });
   }
 };
 
@@ -427,7 +487,14 @@ export const getUserChatSessions = async (req: AuthRequest, res: Response): Prom
 export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = Number(req.user?.userId);
-    const { message, sessionId: rawSessionId, topic: rawTopic, score: rawScore } = req.body;
+    const {
+      message,
+      sessionId: rawSessionId,
+      topic: rawTopic,
+      score: rawScore,
+      locale: rawLocale,
+    } = req.body;
+    const locale: "th" | "en" = rawLocale === "en" ? "en" : "th";
 
     if (!Number.isInteger(userId) || userId <= 0) {
       res.status(401).json({ error: "Unauthorized" });
@@ -495,13 +562,16 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
     // ช่วงที่ 1: บันทึกคำตอบของ 5 คำถามแรก หาก session มี topic และยังตอบไม่ครบ 5 ข้อ
     if (session.topic && isValidTopic(session.topic) && answeredCount < 5) {
       const topicConfig = getTopicConfig(session.topic);
-      const currentQ = topicConfig.questions[answeredCount];
+      const localizedQuestions = getLocalizedTopicQuestions(session.topic, locale);
+      const currentQ = localizedQuestions[answeredCount] || topicConfig.questions[answeredCount];
 
       let resolvedScore: number | null = null;
       if (typeof rawScore === "number" && Number.isInteger(rawScore)) {
         resolvedScore = rawScore;
       } else {
-        const matchedOpt = currentQ.options.find((opt) => opt.label === trimmedMessage);
+        const matchedOpt =
+          currentQ.options.find((opt) => opt.label === trimmedMessage) ||
+          topicConfig.questions[answeredCount]?.options.find((opt) => opt.label === trimmedMessage);
         if (matchedOpt) {
           resolvedScore = matchedOpt.score;
         }
@@ -532,11 +602,17 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
       // หากไม่พบสัญญาณวิกฤต และยังตอบไม่ครบ 5 ข้อ -> ส่งคำถามข้อถัดไปทันที
       if (!crisisDetected && newAnsweredCount < 5) {
-        const nextQ = topicConfig.questions[newAnsweredCount];
+        const nextQ = localizedQuestions[newAnsweredCount] || topicConfig.questions[newAnsweredCount];
         const transitionText =
-          QUESTION_TRANSITIONS[nextQ.questionNo] ||
-          "ขอบคุณที่แบ่งปันให้น้องมุกห่วงใยฟังนะคะ";
-        const nextBotMessageText = `${transitionText}\n\nคำถามข้อที่ ${nextQ.questionNo}/5: ${nextQ.questionText}`;
+          locale === "en"
+            ? QUESTION_TRANSITIONS_EN[nextQ.questionNo] ||
+              "Thank you for sharing with Nong Mook Huang Yai."
+            : QUESTION_TRANSITIONS[nextQ.questionNo] ||
+              "ขอบคุณที่แบ่งปันให้น้องมุกห่วงใยฟังนะคะ";
+        const nextBotMessageText =
+          locale === "en"
+            ? `${transitionText}\n\nQuestion ${nextQ.questionNo}/5: ${nextQ.questionText}`
+            : `${transitionText}\n\nคำถามข้อที่ ${nextQ.questionNo}/5: ${nextQ.questionText}`;
 
         await prisma.chatMessage.create({
           data: {
@@ -577,16 +653,26 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
     if (session.topic && isValidTopic(session.topic) && allAnswers.length > 0) {
       const topicConfig = getTopicConfig(session.topic);
       const contextLines = allAnswers
-        .map((a: any) => `ข้อ ${a.questionNo} (${a.questionText}): ${a.answerText}`)
+        .map((a: any) =>
+          locale === "en"
+            ? `Q${a.questionNo} (${a.questionText}): ${a.answerText}`
+            : `ข้อ ${a.questionNo} (${a.questionText}): ${a.answerText}`
+        )
         .join("\n");
       aiMessages.push({
         role: "user",
-        content: `[บริบทเริ่มต้นของผู้ใช้ — หัวข้อ: ${topicConfig.labelTh}]\n${contextLines}\n\nกรุณารับฟัง สะท้อนความรู้สึกอย่างอบอุ่นตามหัวข้อนี้ และชวนพูดคุยต่ออย่างเป็นธรรมชาติ`,
+        content:
+          locale === "en"
+            ? `[User Initial Context — Topic: ${topicConfig.key}]\n${contextLines}\n\nPlease listen empathetically, reflect the user's feelings warmly on this topic, and continue the conversation naturally in English only.`
+            : `[บริบทเริ่มต้นของผู้ใช้ — หัวข้อ: ${topicConfig.labelTh}]\n${contextLines}\n\nกรุณารับฟัง สะท้อนความรู้สึกอย่างอบอุ่นตามหัวข้อนี้ และชวนพูดคุยต่ออย่างเป็นธรรมชาติ`,
       });
       aiMessages.push({
         role: "assistant",
         content: JSON.stringify({
-          reply_message: "รับทราบค่ะ น้องมุกห่วงใยพร้อมรับฟังและสะท้อนความรู้สึกอย่างอบอุ่นค่ะ",
+          reply_message:
+            locale === "en"
+              ? "Understood. Nong Mook Huang Yai is ready to listen and reflect your feelings warmly in English."
+              : "รับทราบค่ะ น้องมุกห่วงใยพร้อมรับฟังและสะท้อนความรู้สึกอย่างอบอุ่นค่ะ",
           assessment_status: "IN_PROGRESS",
           severity_level: "PENDING",
           suggested_category: "NONE",
@@ -603,12 +689,14 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     let aiResponse: AIResponse;
     try {
-      aiResponse = await generateChatResponse(aiMessages, session.topic);
+      aiResponse = await generateChatResponse(aiMessages, session.topic, locale);
     } catch (groqErr) {
       if (crisisDetected) {
         aiResponse = {
           reply_message:
-            "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
+            locale === "en"
+              ? "I can hear how heavy and painful things feel for you right now, and I don't want you to go through this alone. Please reach out to a mental health professional via the Mental Health Hotline at 1323, available 24/7."
+              : "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
           assessment_status: "IN_PROGRESS",
           severity_level: "SEVERE",
           suggested_category: "STRESS",

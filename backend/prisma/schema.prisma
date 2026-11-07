@@ -49,17 +49,19 @@ model User {
 
 // ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง
 model ChatSession {
-  id          Int           @id @default(autoincrement())
-  userId      Int
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topic       String?       // หัวข้อที่เลือก เช่น love/study/work/family/money/friends/self/sleep
-  summary     String?       @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
-  overallMood String?       // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
-  createdAt   DateTime      @default(now())
+  id             Int           @id @default(autoincrement())
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic          String?       // หัวข้อที่เลือก เช่น love/study/work/family/money/friends/self/sleep
+  summary        String?       @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
+  overallMood    String?       // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
+  feedbackRating String?       // ค่าที่เป็นไปได้: "HELPFUL" | "SOMEWHAT" | "NOT_HELPFUL"
+  feedbackAt     DateTime?
+  createdAt      DateTime      @default(now())
 
   // ความสัมพันธ์
-  messages    ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
-  answers     ChatAnswer[]  // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
+  messages       ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
+  answers        ChatAnswer[]  // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
 }
 
 // ตารางเก็บคำตอบ 5 ข้อแรกของแต่ละรอบการสนทนา

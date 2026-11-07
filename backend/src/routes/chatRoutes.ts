@@ -5,6 +5,7 @@ import {
   getChatSessionsHistory,
   getChatSessionById,
   endChatSession,
+  submitSessionFeedback,
   deleteChatSession,
   sendMessage,
 } from "../controllers/chatController";
@@ -12,6 +13,7 @@ import { verifyToken } from "../middlewares/authMiddleware";
 import { chatLimiter } from "../middlewares/rateLimitMiddleware";
 
 const router = Router();
+const authenticate = verifyToken;
 
 // ดึงเซสชันปัจจุบัน (คงไว้เพื่อความเข้ากันได้เดิม)
 router.get("/sessions", verifyToken, getUserChatSessions);
@@ -27,6 +29,9 @@ router.get("/sessions/:id", verifyToken, getChatSessionById);
 
 // จบเซสชันและให้ Groq สรุป + ให้คำแนะนำเบื้องต้นตามหัวข้อ
 router.post("/sessions/:id/end", chatLimiter, verifyToken, endChatSession);
+
+// บันทึก Feedback 3 ระดับหลังจบเซสชัน
+router.patch("/sessions/:id/feedback", authenticate, submitSessionFeedback);
 
 // ลบเซสชัน (cascade ลบ ChatMessage และ ChatAnswer)
 router.delete("/sessions/:id", verifyToken, deleteChatSession);

@@ -59,7 +59,7 @@
           v-if="isLoadingHistory"
           class="py-10 text-center text-xs text-slate-400"
         >
-          กำลังโหลดประวัติการสนทนา...
+          {{ $t('chat.loading.history') }}
         </div>
 
         <div
@@ -251,6 +251,20 @@
             <span class="hidden sm:inline">{{ $t('chat.advice.viewSummaryBtn') }}</span>
           </button>
 
+          <button
+            type="button"
+            @click="isDarkMode = !isDarkMode"
+            class="p-2 rounded-full bg-black/10 hover:bg-black/20 text-white transition-colors"
+            :title="isDarkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'"
+          >
+            <svg v-if="!isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
           <div class="bg-[#045F54] rounded-full">
             <LanguageSwitcher />
           </div>
@@ -391,6 +405,64 @@
                 {{ $t('chat.advice.helplineNote') }}
               </p>
 
+              <!-- บล็อกเก็บ Feedback 3 ระดับหลังจบสนทนา -->
+              <div v-if="!feedbackSubmitted" class="bg-white/60 border border-teal-100 rounded-2xl p-4 mb-4 text-center feedback-box">
+                <p class="text-sm font-medium text-[#045F54] mb-3">{{ t('chat.summary.feedbackQuestion') }}</p>
+                <div class="flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('HELPFUL')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.264 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-7m-2 10H5a2 2 0 01-2-2v-6a2 2 0 012-2h2v10z" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackHelpful') }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('SOMEWHAT')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="9" />
+                      <path stroke-linecap="round" d="M8 15h8M9 9h.01M15 9h.01" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackSomewhat') }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('NOT_HELPFUL')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h7m2-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2V4z" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackNotHelpful') }}</span>
+                  </button>
+                </div>
+                <button type="button" @click="skipFeedback" class="mt-2 text-xs text-gray-400 underline hover:text-slate-600">
+                  {{ t('chat.summary.feedbackSkip') }}
+                </button>
+              </div>
+
+              <div v-else-if="feedbackRating === 'NOT_HELPFUL'" class="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-4 text-center feedback-crisis-box">
+                <p class="text-sm text-rose-700 mb-2 feedback-crisis-text">{{ t('chat.summary.feedbackCrisisPrompt') }}</p>
+                <a href="tel:1323" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  {{ t('chat.summary.feedbackCrisisButton') }}
+                </a>
+              </div>
+
+              <div v-else class="text-center text-sm text-[#045F54]/70 mb-4 feedback-thanks-text">
+                {{ t('chat.summary.feedbackThanks') }}
+              </div>
+
               <!-- ปุ่มดำเนินการต่อ -->
               <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <button
@@ -430,7 +502,7 @@
           v-if="isInitializingSession"
           class="py-16 text-center text-sm text-slate-400"
         >
-          กำลังเตรียมพื้นที่พูดคุยกับน้องมุกห่วงใย...
+          {{ $t('chat.loading.initializing') }}
         </div>
 
         <template v-else>
@@ -661,7 +733,7 @@
         </div>
 
         <h3 class="text-lg sm:text-xl font-extrabold text-[#1E293B] mb-2">
-          ต้องการจบการสนทนาหรือไม่?
+          {{ $t('chat.endChat.confirmTitle') }}
         </h3>
         <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
           {{ $t('chat.endChat.confirmBody') }}
@@ -674,7 +746,7 @@
             @click="showEndConfirmModal = false"
             class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors disabled:opacity-50"
           >
-            กลับไปสนทนาต่อ
+            {{ $t('chat.endChat.cancelBtn') }}
           </button>
           <button
             type="button"
@@ -682,7 +754,7 @@
             @click="confirmEndConversation"
             class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:from-[#0D9488] hover:to-[#059669] text-white text-sm font-semibold shadow-md transition-all disabled:opacity-60"
           >
-            {{ isEndingSession ? $t('chat.endChat.summarizing') : 'ยืนยันการจบสนทนา' }}
+            {{ isEndingSession ? $t('chat.endChat.summarizing') : $t('chat.endChat.confirmBtn') }}
           </button>
         </div>
       </div>
@@ -841,6 +913,28 @@ const showAdviceScreen = ref(false)
 const summaryDetail = ref(null)
 let thankYouTimer = null
 
+// Feedback State (3 ระดับหลังจบสนทนา)
+const feedbackRating = ref(null) // 'HELPFUL' | 'SOMEWHAT' | 'NOT_HELPFUL'
+const feedbackSubmitted = ref(false)
+const feedbackSubmitting = ref(false)
+
+const submitFeedback = async (rating) => {
+  if (feedbackSubmitting.value || feedbackSubmitted.value || !currentSessionId.value) return
+  feedbackRating.value = rating
+  feedbackSubmitting.value = true
+  try {
+    await axios.patch(`/api/chat/sessions/${currentSessionId.value}/feedback`, { rating })
+    feedbackSubmitted.value = true
+  } catch (e) {
+    console.error('submitFeedback failed', e)
+  } finally {
+    feedbackSubmitting.value = false
+  }
+}
+const skipFeedback = () => {
+  feedbackSubmitted.value = true
+}
+
 // Quick Chips for Free Chat
 const suggestedChips = computed(() => [
   t('chat.chip1'),
@@ -885,9 +979,37 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   }
 }
 
-watch(locale, (newLocale) => {
+watch(locale, async (newLocale) => {
   if (recognition) {
     recognition.lang = newLocale === 'en' ? 'en-US' : 'th-TH'
+  }
+  if (!currentSessionId.value) return
+
+  // หากเซสชันจบแล้วและสลับภาษา ให้ขอสรุปและคำแนะนำในภาษาที่เลือกทันที
+  if (isCompleted.value) {
+    try {
+      const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
+        locale: newLocale
+      })
+      if (res.data?.summaryDetail) {
+        summaryDetail.value = res.data.summaryDetail
+      }
+      await fetchHistoryList()
+    } catch (err) {
+      console.error('Failed to refresh summary for new locale:', err)
+    }
+  } else if (currentPhase.value === 'QUESTIONS') {
+    // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
+    try {
+      const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+        params: { locale: newLocale }
+      })
+      if (res.data?.currentQuestion) {
+        currentQuestion.value = res.data.currentQuestion
+      }
+    } catch (err) {
+      console.error('Failed to refresh guided question for new locale:', err)
+    }
   }
 })
 
@@ -1054,17 +1176,39 @@ const loadSessionById = async (sessionId) => {
   showAdviceScreen.value = false
   showAnswersDrawer.value = false
   try {
-    const res = await axios.get(`/api/chat/sessions/${sessionId}`)
+    const res = await axios.get(`/api/chat/sessions/${sessionId}`, {
+      params: { locale: locale.value }
+    })
     const data = res.data
     currentSessionId.value = data.session.id
     currentTopic.value = data.session.topic
     isCompleted.value = data.session.status === 'COMPLETED'
     summaryDetail.value = data.session.summaryDetail || null
+    feedbackRating.value = data.session.feedbackRating || null
+    feedbackSubmitted.value = Boolean(data.session.feedbackRating)
     currentPhase.value = data.phase || 'FREE_CHAT'
     currentQuestion.value = data.currentQuestion || null
     totalQuestions.value = data.totalQuestions || 5
     sessionAnswers.value = data.answers || []
     messages.value = data.messages || []
+
+    // หากเซสชันจบแล้วแต่ภาษาของสรุปที่บันทึกไว้ไม่ตรงกับ locale ปัจจุบัน ให้ดึงสรุปตามภาษาที่เลือก
+    if (isCompleted.value && summaryDetail.value?.overview) {
+      const isSummaryThai = /[\u0E00-\u0E7F]/.test(summaryDetail.value.overview)
+      const wantsThai = locale.value === 'th'
+      if (isSummaryThai !== wantsThai) {
+        try {
+          const endRes = await axios.post(`/api/chat/sessions/${sessionId}/end`, {
+            locale: locale.value
+          })
+          if (endRes.data?.summaryDetail) {
+            summaryDetail.value = endRes.data.summaryDetail
+          }
+        } catch (e) {
+          console.error('Failed to localize completed session summary:', e)
+        }
+      }
+    }
 
     await scrollToBottom()
   } catch (error) {
@@ -1083,12 +1227,17 @@ const createNewSessionWithTopic = async (topicKey) => {
   showAdviceScreen.value = false
   showAnswersDrawer.value = false
   try {
-    const res = await axios.post('/api/chat/sessions', { topic: topicKey })
+    const res = await axios.post('/api/chat/sessions', {
+      topic: topicKey,
+      locale: locale.value
+    })
     const data = res.data
     currentSessionId.value = data.session.id
     currentTopic.value = data.session.topic
     isCompleted.value = false
     summaryDetail.value = null
+    feedbackRating.value = null
+    feedbackSubmitted.value = false
     currentPhase.value = data.phase || 'QUESTIONS'
     currentQuestion.value = data.question || null
     totalQuestions.value = data.totalQuestions || 5
@@ -1159,7 +1308,8 @@ const sendMessage = async (overrideText = null, optionScore = null) => {
     const payload = {
       sessionId: currentSessionId.value,
       topic: currentTopic.value,
-      message: userText
+      message: userText,
+      locale: locale.value
     }
     if (optionScore !== null && optionScore !== undefined) {
       payload.score = optionScore
@@ -1241,8 +1391,12 @@ const confirmEndConversation = async () => {
   if (!currentSessionId.value || isEndingSession.value) return
   isEndingSession.value = true
   try {
-    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`)
+    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
+      locale: locale.value
+    })
     summaryDetail.value = res.data?.summaryDetail || null
+    feedbackRating.value = res.data?.feedbackRating || null
+    feedbackSubmitted.value = Boolean(res.data?.feedbackRating)
     isCompleted.value = true
     currentQuestion.value = null
     currentPhase.value = 'FREE_CHAT'
@@ -1395,66 +1549,170 @@ watch(
   transform: translateY(-1px);
 }
 
-/* Dark Mode Overrides ให้เข้ากันได้กับ App.vue */
-.dark-mode-page .history-sidebar,
-.dark-mode-page .guided-panel,
-.dark-mode-page .modal-surface,
-.dark-mode-page .advice-card {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+/* Dark Mode Overrides ให้เข้ากันได้กับ App.vue (ค่าคอนทราสต์ >= 4.5:1 ทุกส่วน) */
+header button[title*="โหมด"] {
+  background-color: #045F54;
 }
 
-.dark-mode-page .history-item {
+header button[title*="โหมด"]:hover {
+  background-color: #03473f;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) header button[title*="โหมด"] {
+  background-color: #134e4a !important;
+  border: 1px solid #14b8a6 !important;
+  color: #ccfbf1 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) header button[title*="โหมด"]:hover {
+  background-color: #0f766e !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-sidebar,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item {
   background-color: #0f172a !important;
   border-color: #334155 !important;
 }
 
-.dark-mode-page .history-item-active {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item:hover {
+  border-color: #14b8a6 !important;
+  background-color: #134e4a !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item-active {
   background-color: #134e4a !important;
   border-color: #14b8a6 !important;
 }
 
-.dark-mode-page .bot-bubble,
-.dark-mode-page .advice-step-card,
-.dark-mode-page .answer-summary-card {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-topic-icon,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .bot-avatar-circle,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .topic-header-pill {
+  background-color: #134e4a !important;
+  background-image: none !important;
+  border-color: #14b8a6 !important;
+  color: #5eead4 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .status-pill-completed {
+  background-color: rgba(6, 95, 70, 0.75) !important;
+  color: #a7f3d0 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .status-pill-active {
+  background-color: rgba(120, 53, 15, 0.75) !important;
+  color: #fde68a !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .bot-bubble,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-step-card,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card {
   background-color: #0f172a !important;
   border-color: #334155 !important;
-  color: #e2e8f0 !important;
+  color: #f8fafc !important;
 }
 
-.dark-mode-page .guided-option-btn {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-option-btn,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chip-btn {
   background-color: #0f172a !important;
-  border-color: #0f766e !important;
-  color: #e2e8f0 !important;
+  border-color: #14b8a6 !important;
+  color: #f1f5f9 !important;
 }
 
-.dark-mode-page .guided-option-btn:hover {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-option-btn:hover,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chip-btn:hover {
   background-color: #0d9488 !important;
   color: #ffffff !important;
 }
 
-.dark-mode-page .answers-bar,
-.dark-mode-page .advice-overview-box,
-.dark-mode-page .advice-encouragement-box {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answers-bar,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-overview-box,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-encouragement-box {
   background-color: #134e4a !important;
-  border-color: #0f766e !important;
+  background-image: linear-gradient(135deg, #134e4a 0%, #115e59 100%) !important;
+  border-color: #14b8a6 !important;
+  color: #f8fafc !important;
 }
 
-.dark-mode-page .chat-input {
-  background-color: #0f172a !important;
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answers-bar [class*="text-[#045F54]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-[#045F54]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card [class*="text-[#045F54]"] {
+  color: #5eead4 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-700"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-600"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface [class*="text-slate-700"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface [class*="text-slate-600"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card [class*="text-slate-600"] {
   color: #f1f5f9 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-500"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-400"] {
+  color: #cbd5e1 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface button[class~="bg-white"] {
+  background-color: #334155 !important;
+  border-color: #64748b !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface button[class~="bg-white"]:hover {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .chat-input {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
   border-color: #334155 !important;
 }
 
-.dark-mode-page .cloud-end-btn {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn {
   background: linear-gradient(180deg, #134e4a 0%, #115e59 100%) !important;
   border-color: #14b8a6 !important;
   color: #ccfbf1 !important;
 }
 
-.dark-mode-page .cloud-end-btn::before,
-.dark-mode-page .cloud-end-btn::after {
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn svg {
+  color: #5eead4 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn::before,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn::after {
   background: #134e4a !important;
   border-top-color: #14b8a6 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-box {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-choice-btn:hover {
+  background-color: #134e4a !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-crisis-box {
+  background-color: rgba(136, 19, 55, 0.55) !important;
+  border-color: #fb7185 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-crisis-text {
+  color: #ffe4e6 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-thanks-text {
+  color: #5eead4 !important;
 }
 </style>

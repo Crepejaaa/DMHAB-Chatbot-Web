@@ -553,6 +553,494 @@ export const getTopicConfig = (topic?: string | null): TopicConfig => {
   return CHAT_TOPICS.self;
 };
 
+export const CHAT_TOPICS_EN: Record<
+  ChatTopicKey,
+  {
+    labelEn: string;
+    greetingEn: string;
+    questionsEn: TopicQuestion[];
+  }
+> = {
+  love: {
+    labelEn: "Love & Relationships",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. I'm here as a safe space to listen to your feelings about love and relationships. Before we dive into a deeper conversation, let's gently explore how you're feeling through 5 short questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "What aspect of your relationship has been weighing on your mind the most lately?",
+        options: [
+          { label: "Just a few small things on my mind, we still understand each other", score: 0 },
+          { label: "Starting to feel some distance or miscommunication", score: 1 },
+          { label: "Frequent arguments or tension that leave me feeling drained", score: 2 },
+          { label: "Deep heartbreak, pain, or feeling very lonely in the relationship", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "Over the past 1–2 weeks, how often has this been on your mind?",
+        options: [
+          { label: "Only occasionally when something triggers it", score: 0 },
+          { label: "From time to time on certain days", score: 1 },
+          { label: "Almost every day, making it hard to focus on other things", score: 2 },
+          { label: "Nearly all the time until I feel emotionally exhausted", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "Has relationship stress affected your sleep, appetite, or daily routine?",
+        options: [
+          { label: "I can still eat, rest, and go about my day normally", score: 0 },
+          { label: "A bit tired or having trouble falling asleep on some nights", score: 1 },
+          { label: "Trouble sleeping, loss of appetite, or losing motivation", score: 2 },
+          { label: "Heavily impacting my daily life, crying or feeling exhausted almost daily", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Do you currently have a safe space or someone you trust to talk to about this?",
+        options: [
+          { label: "Yes, I have someone I trust and can talk to anytime", score: 0 },
+          { label: "A little, but I don't feel comfortable sharing everything", score: 1 },
+          { label: "Hardly anyone I can talk to about this", score: 2 },
+          { label: "Keeping it all to myself and feeling like no one understands", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "For our conversation today, how would you like Nong Mook Huang Yai to support you most?",
+        options: [
+          { label: "Listen quietly and reflect my feelings with empathy", score: 0 },
+          { label: "Help me gently organize my thoughts and needs", score: 1 },
+          { label: "Share gentle perspectives on caring for my heart right now", score: 2 },
+          { label: "Let me vent what's bottled up inside so I can feel lighter", score: 3 },
+        ],
+      },
+    ],
+  },
+  study: {
+    labelEn: "Studies & Exams",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone, ready to listen to the academic pressure and study challenges you're facing. Let's start by gently exploring how you feel through 5 short questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "Which part of your studies is making you feel the most stressed right now?",
+        options: [
+          { label: "A lot of coursework, but I can still manage it", score: 0 },
+          { label: "Worried about upcoming exams, grades, or deadlines", score: 1 },
+          { label: "Feeling behind, exhausted, or pressured by high expectations", score: 2 },
+          { label: "Feeling stuck, burned out, or so afraid of failing that I can't start", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "When you think about your studies lately, how do your body and mind respond?",
+        options: [
+          { label: "A little alert, but I can still rest normally", score: 0 },
+          { label: "Feeling tense or tired when I have to study or work on assignments", score: 1 },
+          { label: "Racing heart, built-up stress, or feeling guilty whenever I take a break", score: 2 },
+          { label: "Severe stress causing headaches, insomnia, or deep discouragement", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How often does academic pressure make you blame or criticize yourself?",
+        options: [
+          { label: "Rarely—I can still encourage myself", score: 0 },
+          { label: "Sometimes I compare myself to classmates", score: 1 },
+          { label: "I often feel like I'm not trying hard enough", score: 2 },
+          { label: "I feel inadequate or worthless whenever I fall short of my goals", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Do you get time each day to rest your mind or enjoy hobbies without feeling guilty?",
+        options: [
+          { label: "Yes, I have a fairly balanced routine with time to rest", score: 0 },
+          { label: "Short breaks, though my mind still worries about unfinished work", score: 1 },
+          { label: "Hardly any rest because tasks feel piled up all the time", score: 2 },
+          { label: "Too exhausted or afraid to rest—I can't focus on studying or relaxing", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to support you with your studies today?",
+        options: [
+          { label: "Listen to my study fatigue without judgment", score: 0 },
+          { label: "Help break down my worries into small, manageable steps", score: 1 },
+          { label: "Help me ease the pressure before getting back on track", score: 2 },
+          { label: "Keep me company and comfort me on an overwhelming day", score: 3 },
+        ],
+      },
+    ],
+  },
+  work: {
+    labelEn: "Work & Workload",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. Welcome to a safe space where you can set down your work fatigue for a while. Let's start with 5 short questions to understand what you've been going through.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "What aspect of work has been draining your energy the most lately?",
+        options: [
+          { label: "Busy periods from time to time, but still manageable", score: 0 },
+          { label: "Continuous urgent deadlines or juggling many responsibilities", score: 1 },
+          { label: "Workplace atmosphere, colleagues, or heavy expectations", score: 2 },
+          { label: "Chronic burnout and exhaustion—I dread waking up for work", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "After work hours or on days off, are you able to disconnect from work thoughts?",
+        options: [
+          { label: "Yes, I can disconnect and rest well", score: 0 },
+          { label: "I still check messages or think about work occasionally", score: 1 },
+          { label: "My mind keeps spinning with work even after hours", score: 2 },
+          { label: "I barely get any mental rest—worrying about work from bedtime until morning", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How has work stress been affecting your body and emotions recently?",
+        options: [
+          { label: "Normal tiredness that improves after resting", score: 0 },
+          { label: "Neck/shoulder tension or feeling slightly more irritable", score: 1 },
+          { label: "Restless sleep, accumulated fatigue, or frequent mood swings", score: 2 },
+          { label: "Deep physical and emotional exhaustion, feeling empty or tearful often", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Do you have supportive colleagues or people around you who understand and help share the load?",
+        options: [
+          { label: "Yes, I have a supportive team or people around me", score: 0 },
+          { label: "I can discuss some things, but mostly handle it on my own", score: 1 },
+          { label: "I feel like I'm carrying almost all expectations alone", score: 2 },
+          { label: "I feel isolated and unsafe expressing how I truly feel to anyone", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to care for your heart after work today?",
+        options: [
+          { label: "Be an empathetic listener while I vent about work today", score: 0 },
+          { label: "Help separate what I can control from what I can set down", score: 1 },
+          { label: "Explore short mental rest practices to recharge my energy", score: 2 },
+          { label: "Keep me warm company without rushing to find solutions", score: 3 },
+        ],
+      },
+    ],
+  },
+  family: {
+    labelEn: "Family & Home Life",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone, ready to listen to your feelings about family and home life with warmth and without judgment. Let's gently begin with 5 short questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "What kind of family situation is affecting your feelings the most right now?",
+        options: [
+          { label: "Small everyday disagreements at home", score: 0 },
+          { label: "Family expectations or words that make me feel pressured", score: 1 },
+          { label: "Frequent emotional clashes, tension, or misunderstandings", score: 2 },
+          { label: "Feeling that home isn't an emotionally safe space and having nowhere to rest", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "When misunderstandings happen at home, how do you usually cope with your feelings?",
+        options: [
+          { label: "Talk it out or let it go after a short while", score: 0 },
+          { label: "Step away to a quiet space until emotions cool down", score: 1 },
+          { label: "Bottle up my feelings inside for fear of making things worse", score: 2 },
+          { label: "Ruminate, feel guilty or hurt, and cry alone frequently", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How much is family tension affecting your daily emotional energy?",
+        options: [
+          { label: "Only slightly—I can still do other activities normally", score: 0 },
+          { label: "Feels draining at times when heading home or talking with family", score: 1 },
+          { label: "Causes built-up stress, trouble sleeping, or wanting to withdraw", score: 2 },
+          { label: "Heavily drains me until I feel emotionally exhausted all the time", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Do you have a quiet personal corner or activity that gives your heart a break from home tension?",
+        options: [
+          { label: "Yes, I have personal space and ways to recharge", score: 0 },
+          { label: "I get some private time during parts of the day", score: 1 },
+          { label: "Personal space is hard to find; I often feel watched or interrupted", score: 2 },
+          { label: "No safe space to rest at all—I feel tense around the clock", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to walk alongside you regarding family today?",
+        options: [
+          { label: "Listen to my family story without judging anyone", score: 0 },
+          { label: "Help reflect and validate the feelings I've been holding inside", score: 1 },
+          { label: "Brainstorm gentle boundaries and small pockets of peace for myself", score: 2 },
+          { label: "Be a safe space where I can let out this heaviness comfortably", score: 3 },
+        ],
+      },
+    ],
+  },
+  money: {
+    labelEn: "Finances & Expenses",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. I truly understand how overwhelming financial stress and expenses can feel. Let's gently walk through 5 short questions in this judgment-free space.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "What aspect of your finances has been worrying you the most lately?",
+        options: [
+          { label: "Wanting to plan my income and expenses more carefully", score: 0 },
+          { label: "Tighter budget lately, needing to be extra cautious with spending", score: 1 },
+          { label: "Ongoing bills or debt obligations causing stress every month", score: 2 },
+          { label: "Feeling completely overwhelmed by financial worry to the point of losing sleep or appetite", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "How often do financial worries interrupt your peace of mind or focus each day?",
+        options: [
+          { label: "Only when paying bills or planning my budget", score: 0 },
+          { label: "Worrying on and off several days a week", score: 1 },
+          { label: "Anxious most of the day; seeing balances or expenses makes my heart sink", score: 2 },
+          { label: "Constant rumination causing panic, exhaustion, or heavy self-blame", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "Has financial stress been affecting your physical health, rest, or relationships?",
+        options: [
+          { label: "Not affecting my daily routine or rest yet", score: 0 },
+          { label: "Avoiding social outings or cutting back until I feel tense", score: 1 },
+          { label: "Trouble sleeping, accumulated stress, or tension with loved ones over money", score: 2 },
+          { label: "Heavily impacting my sleep, health, and making me feel too ashamed to tell anyone", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "When financial stress hits, do you have someone who listens or helps you stay grounded?",
+        options: [
+          { label: "Yes, family or someone I trust whom I can consult", score: 0 },
+          { label: "I share a little, but hesitate because I don't want others to worry", score: 1 },
+          { label: "Afraid to tell anyone for fear of being judged or blamed", score: 2 },
+          { label: "Carrying the entire burden alone until it feels too heavy", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "For our chat today, how can Nong Mook Huang Yai best support your heart around finances?",
+        options: [
+          { label: "Listen empathetically to my financial stress without judgment", score: 0 },
+          { label: "Help me calm my mind and organize what's right in front of me step by step", score: 1 },
+          { label: "Help me care for my emotions so I don't blame myself too harshly", score: 2 },
+          { label: "Let me vent the heavy burden I've been holding for so long", score: 3 },
+        ],
+      },
+    ],
+  },
+  friends: {
+    labelEn: "Friends & Social Life",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. I'm glad to listen to your thoughts about friends and social life—whether you're feeling lonely, socially drained, or troubled. Let's start with 5 short questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "How have friendships or social interactions been making you feel lately?",
+        options: [
+          { label: "A small misunderstanding or slight distance", score: 0 },
+          { label: "Tired from trying to fit in or worrying too much about pleasing friends", score: 1 },
+          { label: "Feeling left out, overlooked, or having a conflict with a close friend", score: 2 },
+          { label: "Feeling deeply lonely, hurt by others' words, or wanting to withdraw completely", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "When you're around people or scrolling through social media, how do you usually feel?",
+        options: [
+          { label: "Comfortable and at ease as usual", score: 0 },
+          { label: "Occasionally comparing myself or feeling drained after socializing", score: 1 },
+          { label: "Worrying so much about what others think that I can't be myself", score: 2 },
+          { label: "Feeling intensely lonely and disconnected even when surrounded by people", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How much do friendship or social issues affect your confidence and daily mood?",
+        options: [
+          { label: "Only slightly—I still feel confident in my daily life", score: 0 },
+          { label: "Replaying others' words or reactions in my head on some days", score: 1 },
+          { label: "Overthinking repeatedly, blaming myself, or dreading school/work", score: 2 },
+          { label: "Deeply shaken, feeling sad, unable to sleep, or isolating myself", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Right now, do you have a friend or someone around whom you can comfortably be yourself?",
+        options: [
+          { label: "Yes, I have friends who listen and make me feel comfortable", score: 0 },
+          { label: "A few, though everyone has been too busy to talk lately", score: 1 },
+          { label: "Only surface-level chats—I don't feel safe opening up deeply", score: 2 },
+          { label: "I feel like there is no one I can safely open my heart to", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to be a friend to you today?",
+        options: [
+          { label: "Listen warmly and non-judgmentally to what I've been experiencing", score: 0 },
+          { label: "Help me reflect on my feelings and healthy boundaries in friendships", score: 1 },
+          { label: "Help rebuild my confidence and care for my heart when comparing myself", score: 2 },
+          { label: "Keep me company to ease the loneliness and heaviness right now", score: 3 },
+        ],
+      },
+    ],
+  },
+  self: {
+    labelEn: "Self & Self-Worth",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. I'm glad you stopped by to rest your heart and listen to your inner voice. Let's gently explore how you feel about yourself through 5 caring questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "When you look inward at yourself lately, what feeling stands out the most?",
+        options: [
+          { label: "Wanting to understand myself and care for my heart better", score: 0 },
+          { label: "Feeling uncertain or lost about my goals and life direction", score: 1 },
+          { label: "Feeling like I'm never good enough or tired of having to be strong all the time", score: 2 },
+          { label: "Deeply disappointed in myself, feeling worthless or exhausted with life", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "When mistakes happen or things don't go as planned, how do you usually speak to yourself?",
+        options: [
+          { label: "I can console myself and see it as a learning experience", score: 0 },
+          { label: "A bit frustrated at first, then I gradually let it go", score: 1 },
+          { label: "I tend to criticize myself harshly and replay my mistakes", score: 2 },
+          { label: "I blame myself completely and feel like I'm a failure at everything", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How much joy or fulfillment have you been feeling in your daily life recently?",
+        options: [
+          { label: "Still finding small moments of joy in everyday things", score: 0 },
+          { label: "Still okay at times, but getting tired more easily than before", score: 1 },
+          { label: "Starting to feel numb or uninterested even in things I used to enjoy", score: 2 },
+          { label: "Hardly feeling joy in anything at all—every day feels heavy", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "Have you allowed yourself to rest or be vulnerable without having to be perfect?",
+        options: [
+          { label: "Yes, I allow myself to rest and accept my vulnerability", score: 0 },
+          { label: "I try to, though sometimes I still force myself to stay strong", score: 1 },
+          { label: "I rarely let myself be vulnerable—I feel I must always look fine to others", score: 2 },
+          { label: "I force myself to carry everything until I'm exhausted, unable to set it down", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to be by your side today?",
+        options: [
+          { label: "Gently explore my inner feelings together", score: 0 },
+          { label: "Help me practice being kinder to myself on exhausting days", score: 1 },
+          { label: "Listen to my confusion without rushing to conclusions or judgment", score: 2 },
+          { label: "Be a safe space where I can take off my armor of strength for a while", score: 3 },
+        ],
+      },
+    ],
+  },
+  sleep: {
+    labelEn: "Sleep & Rest",
+    greetingEn:
+      "Hello! I'm Nong Mook Huang Yai from PhuenJaiZone. I'm here for a calm, gentle chat about your sleep and rest. Let's explore your recent rest patterns through 5 short questions.",
+    questionsEn: [
+      {
+        questionNo: 1,
+        questionText: "What kind of sleep or rest difficulty have you been experiencing most often lately?",
+        options: [
+          { label: "Staying up late on some nights and wanting a better sleep routine", score: 0 },
+          { label: "Taking a long time to fall asleep because my mind keeps racing", score: 1 },
+          { label: "Waking up frequently during the night, vivid dreams, or waking up exhausted", score: 2 },
+          { label: "Barely sleeping through the night for days, leaving body and mind exhausted", score: 3 },
+        ],
+      },
+      {
+        questionNo: 2,
+        questionText: "Right before bedtime, what usually runs through your mind?",
+        options: [
+          { label: "Not much worry—just scrolling on my phone a bit too long", score: 0 },
+          { label: "Reviewing tomorrow's tasks until my brain feels too alert", score: 1 },
+          { label: "Ruminating over stressful events or past worries that are hard to switch off", score: 2 },
+          { label: "Feeling anxious, sad, or dreading bedtime because I know I won't sleep", score: 3 },
+        ],
+      },
+      {
+        questionNo: 3,
+        questionText: "How much is poor rest affecting your daytime mood and energy?",
+        options: [
+          { label: "Slightly sleepy in the afternoon, but still functioning normally", score: 0 },
+          { label: "Feeling fatigued, shorter attention span, or more easily irritable", score: 1 },
+          { label: "Brain fog and accumulated exhaustion making daily tasks difficult", score: 2 },
+          { label: "Drained all day, low mood, and heavily impacting my daily life", score: 3 },
+        ],
+      },
+      {
+        questionNo: 4,
+        questionText: "In the 30–60 minutes before bed, what is your wind-down environment like?",
+        options: [
+          { label: "Quiet, calm room where I can gradually unwind before sleep", score: 0 },
+          { label: "Still on my phone or finishing work right up until bedtime", score: 1 },
+          { label: "Uncomfortable environment for rest, or a very irregular sleep schedule", score: 2 },
+          { label: "Both my body and mind feel too tense and restless to relax at all", score: 3 },
+        ],
+      },
+      {
+        questionNo: 5,
+        questionText: "How would you like Nong Mook Huang Yai to support your rest today?",
+        options: [
+          { label: "Listen to the worries that keep my mind from resting", score: 0 },
+          { label: "Help design a gentle, relaxing wind-down routine before bed", score: 1 },
+          { label: "Help ease the frustration when I can't fall asleep", score: 2 },
+          { label: "Keep me calm, warm company so my heart can slowly unwind", score: 3 },
+        ],
+      },
+    ],
+  },
+};
+
+export const getLocalizedGreeting = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): string => {
+  const config = getTopicConfig(topic);
+  if (locale === "en") {
+    return CHAT_TOPICS_EN[config.key]?.greetingEn || CHAT_TOPICS_EN.self.greetingEn;
+  }
+  return config.greetingTh;
+};
+
+export const getLocalizedTopicQuestions = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): TopicQuestion[] => {
+  const config = getTopicConfig(topic);
+  if (locale === "en") {
+    return CHAT_TOPICS_EN[config.key]?.questionsEn || CHAT_TOPICS_EN.self.questionsEn;
+  }
+  return config.questions;
+};
+
 const BASE_SYSTEM_PROMPT = `
 # ROLE AND PERSONA
 คุณคือ "น้องมุกห่วงใย" ผู้ช่วยรับฟัง (Empathetic Listener) บนแพลตฟอร์มดูแลสุขภาพจิตออนไลน์ 'PhuenJaiZone'
@@ -585,12 +1073,25 @@ Introduce yourself as a chatbot from 'PhuenJaiZone', a safe space ready to liste
  * สร้าง System Prompt โดยคง STRICT MEDICAL GUARDRAILS และ CRISIS TRIGGER เดิมไว้ทั้งหมด
  * และต่อท้ายขอบเขตเฉพาะตามหัวข้อ (topic) ที่ผู้ใช้เลือก
  */
-export const SYSTEM_PROMPT = (topic?: string | null): string => {
+export const SYSTEM_PROMPT = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): string => {
+  const basePrompt =
+    locale === "en"
+      ? BASE_SYSTEM_PROMPT.replace(
+          "4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษหรือภาษาอื่นปะปนโดยเด็ดขาด",
+          "4. LANGUAGE: Respond in English only. Do not mix Thai."
+        ).replace(
+          '"reply_message": "ข้อความตอบกลับผู้ใช้ (ภาษาไทย)"',
+          '"reply_message": "Your empathetic response to the user (in English only)"'
+        )
+      : BASE_SYSTEM_PROMPT;
   if (!topic || !isValidTopic(topic)) {
-    return BASE_SYSTEM_PROMPT;
+    return basePrompt;
   }
   const config = CHAT_TOPICS[topic];
-  return `${BASE_SYSTEM_PROMPT}\n${config.guardrailPrompt}\n`;
+  return `${basePrompt}\n${config.guardrailPrompt}\n`;
 };
 
 export interface AIResponse {
@@ -612,7 +1113,7 @@ export interface SessionSummaryResult {
   severity_level: "MILD" | "MODERATE" | "SEVERE";
 }
 
-// ตรวจสอบคำสัญญาณวิกฤตเบื้องต้น (เสริมความปลอดภัยระหว่างช่วงคำถาม 5 ข้อแรก)
+// ตรวจสอบคำสัญญาณวิกฤตเบื้องต้น (เสริมความปลอดภัยระหว่างช่วงคำถาม 5 ข้อแรก ทั้งภาษาไทยและภาษาอังกฤษ)
 const CRISIS_PATTERNS = [
   "ฆ่าตัวตาย",
   "ทำร้ายตัวเอง",
@@ -623,12 +1124,20 @@ const CRISIS_PATTERNS = [
   "ผูกคอ",
   "กระโดดตึก",
   "กินยาเกินขนาด",
+  "suicide",
+  "kill myself",
+  "hurt myself",
+  "self-harm",
+  "self harm",
+  "want to die",
+  "end my life",
+  "overdose",
 ];
 
 export const hasCrisisSignal = (text: string): boolean => {
   if (!text) return false;
-  const normalized = text.trim();
-  return CRISIS_PATTERNS.some((keyword) => normalized.includes(keyword));
+  const normalized = text.trim().toLowerCase();
+  return CRISIS_PATTERNS.some((keyword) => normalized.includes(keyword.toLowerCase()));
 };
 
 // ตรวจสอบตัวแปร Environment
@@ -647,13 +1156,18 @@ const extractJsonString = (content: string): string => {
     .replace(/\s*```$/i, "");
 };
 
-const parseAIResponse = (content: string): AIResponse => {
+const parseAIResponse = (
+  content: string,
+  locale: "th" | "en" = "th"
+): AIResponse => {
   const parsed = JSON.parse(extractJsonString(content)) as Partial<AIResponse>;
   return {
     reply_message:
       typeof parsed.reply_message === "string" && parsed.reply_message.trim()
         ? parsed.reply_message.trim()
-        : "น้องมุกห่วงใยรับฟังอยู่นะคะ เล่าเพิ่มเติมตามจังหวะที่คุณสบายใจได้เลยค่ะ",
+        : locale === "en"
+          ? "I'm here listening with care. Feel free to share more at your own pace."
+          : "น้องมุกห่วงใยรับฟังอยู่นะคะ เล่าเพิ่มเติมตามจังหวะที่คุณสบายใจได้เลยค่ะ",
     assessment_status:
       parsed.assessment_status === "COMPLETED" ? "COMPLETED" : "IN_PROGRESS",
     severity_level:
@@ -673,11 +1187,12 @@ const parseAIResponse = (content: string): AIResponse => {
 
 export const generateChatResponse = async (
   messagesArray: { role: "system" | "user" | "assistant"; content: string }[],
-  topic?: string | null
+  topic?: string | null,
+  locale: "th" | "en" = "th"
 ): Promise<AIResponse> => {
   try {
     const formattedMessages: any[] = [
-      { role: "system", content: SYSTEM_PROMPT(topic) },
+      { role: "system", content: SYSTEM_PROMPT(topic, locale) },
       ...messagesArray,
     ];
 
@@ -689,15 +1204,57 @@ export const generateChatResponse = async (
     });
 
     const aiMessageContent = chatCompletion.choices[0]?.message?.content || "{}";
-    return parseAIResponse(aiMessageContent);
+    return parseAIResponse(aiMessageContent, locale);
   } catch (error) {
     console.error("Error communicating with Groq API:", error);
     throw new Error("AI API Error");
   }
 };
 
-const buildFallbackSummary = (topic?: string | null): SessionSummaryResult => {
+const TOPIC_LABELS_EN: Record<ChatTopicKey, string> = {
+  love: "love and relationships",
+  study: "studies and exams",
+  work: "work and workload",
+  family: "family and home life",
+  money: "finances and expenses",
+  friends: "friends and social life",
+  self: "self-worth and personal growth",
+  sleep: "sleep and rest",
+};
+
+const buildFallbackSummary = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): SessionSummaryResult => {
   const topicConfig = getTopicConfig(topic);
+
+  if (locale === "en") {
+    const topicLabelEn = TOPIC_LABELS_EN[topicConfig.key] || "personal well-being";
+    return {
+      overview: `Today, you took a meaningful step by using this safe space to talk and explore your feelings around ${topicLabelEn}. Pausing to reflect and acknowledging your emotional fatigue is an important part of caring for your own heart and mind.`,
+      actionable_steps: [
+        {
+          title: "Slow down your breathing to release physical tension",
+          description:
+            "Try inhaling gently for a count of 1 to 4, then exhaling slowly for a count of 1 to 6 for 3–5 cycles. This helps signal to your body and mind that it is safe to rest right now.",
+        },
+        {
+          title: "Separate what you can handle today from what can wait until tomorrow",
+          description:
+            "Pick just one small, manageable thing you can do without pushing yourself too hard, and give yourself permission to set aside everything else for now.",
+        },
+        {
+          title: "Give yourself a short, guilt-free break",
+          description:
+            "Sip some warm water, listen to calming music, or gently stretch for 10 minutes while reminding yourself that you have done the best you could with the energy you had today.",
+        },
+      ],
+      encouragement:
+        "Thank you for trusting Nong Mook Huang Yai to keep you company today. Whenever things feel heavy, you are always welcome back here to rest your mind—or if you need professional support, you can reach the Mental Health Hotline at 1323 anytime, 24/7.",
+      severity_level: "MILD",
+    };
+  }
+
   return {
     overview: `วันนี้คุณได้ใช้พื้นที่ปลอดภัยพูดคุยและสำรวจความรู้สึกเกี่ยวกับเรื่อง${topicConfig.labelTh} การได้หยุดทบทวนและยอมรับความเหนื่อยล้าที่เกิดขึ้นถือเป็นก้าวสำคัญของการดูแลใจตัวเองค่ะ`,
     actionable_steps: [
@@ -726,21 +1283,32 @@ const buildFallbackSummary = (topic?: string | null): SessionSummaryResult => {
 export const generateSessionSummary = async (
   topic: string | null | undefined,
   answers: { questionNo: number; questionText: string; answerText: string }[],
-  messages: { sender: string; message: string }[]
+  messages: { sender: string; message: string }[],
+  locale: "th" | "en" = "th"
 ): Promise<SessionSummaryResult> => {
   const topicConfig = getTopicConfig(topic);
+  const languageRule =
+    locale === "en"
+      ? "4. LANGUAGE: Respond in English only. Do not mix Thai."
+      : "4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษปะปน";
 
-  const summarySystemPrompt = `
-คุณคือ "น้องมุกห่วงใย" ผู้ช่วยรับฟังจาก PhuenJaiZone ทำหน้าที่สรุปบทสนทนาและให้คำแนะนำการดูแลใจเบื้องต้นหลังจบการสนทนาในหัวข้อ "${topicConfig.labelTh}"
-
-# STRICT MEDICAL GUARDRAILS (กฎเหล็ก)
-1. ห้ามวินิจฉัยโรค (NO DIAGNOSIS): ห้ามระบุชื่อโรคจิตเวชใดๆ ให้ใช้คำว่า "ความเครียดสะสม" หรือ "ความเหนื่อยล้าทางอารมณ์"
-2. ห้ามสั่งยา (NO MEDICATION): ห้ามแนะนำให้รับประทานยา สมุนไพร หรืออาหารเสริมใดๆ โดยเด็ดขาด
-3. NO RAW SCORES: ห้ามแสดงตัวเลขคะแนนดิบ คะแนนรวม หรือเกณฑ์ตัวเลขใดๆ ในข้อความเด็ดขาด
-4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษปะปน
-${topicConfig.guardrailPrompt}
-
-# OUTPUT FORMAT (JSON ONLY)
+  const outputFormatBlock =
+    locale === "en"
+      ? `# OUTPUT FORMAT (JSON ONLY)
+Return ONLY valid JSON matching this exact structure (all text fields MUST be written in natural, empathetic English only—do NOT use any Thai characters):
+{
+  "overview": "Warm, empathetic, non-judgmental 2-3 sentence summary in English of what the user shared and how they are feeling (no numeric scores)",
+  "actionable_steps": [
+    {
+      "title": "Short, clear step title in English",
+      "description": "Practical, gentle self-care action tailored to what the user shared, written in English"
+    }
+  ],
+  "encouragement": "Warm, comforting closing encouragement in English (1-2 sentences)",
+  "severity_level": "MILD" or "MODERATE" or "SEVERE"
+}
+Provide exactly 3 actionable_steps tailored to the user's conversation.`
+      : `# OUTPUT FORMAT (JSON ONLY)
 ตอบกลับเป็น JSON เท่านั้นตามโครงสร้างนี้:
 {
   "overview": "สรุปภาพรวมความรู้สึกและประเด็นที่ผู้ใช้เล่าด้วยความอบอุ่น เข้าใจ ไม่ตัดสิน ความยาว 2-3 ประโยค (ห้ามมีตัวเลขคะแนน)",
@@ -753,7 +1321,19 @@ ${topicConfig.guardrailPrompt}
   "encouragement": "ข้อความให้กำลังใจส่งท้ายอย่างอบอุ่นและอ่อนโยน 1-2 ประโยค",
   "severity_level": "MILD" หรือ "MODERATE" หรือ "SEVERE"
 }
-โดยให้มี actionable_steps จำนวน 3 ข้อ ที่สอดคล้องกับเรื่องราวที่ผู้ใช้เล่าจริง ๆ
+โดยให้มี actionable_steps จำนวน 3 ข้อ ที่สอดคล้องกับเรื่องราวที่ผู้ใช้เล่าจริง ๆ`;
+
+  const summarySystemPrompt = `
+คุณคือ "น้องมุกห่วงใย" ผู้ช่วยรับฟังจาก PhuenJaiZone ทำหน้าที่สรุปบทสนทนาและให้คำแนะนำการดูแลใจเบื้องต้นหลังจบการสนทนาในหัวข้อ "${topicConfig.labelTh}"
+
+# STRICT MEDICAL GUARDRAILS (กฎเหล็ก)
+1. ห้ามวินิจฉัยโรค (NO DIAGNOSIS): ห้ามระบุชื่อโรคจิตเวชใดๆ ให้ใช้คำว่า "ความเครียดสะสม" หรือ "ความเหนื่อยล้าทางอารมณ์"
+2. ห้ามสั่งยา (NO MEDICATION): ห้ามแนะนำให้รับประทานยา สมุนไพร หรืออาหารเสริมใดๆ โดยเด็ดขาด
+3. NO RAW SCORES: ห้ามแสดงตัวเลขคะแนนดิบ คะแนนรวม หรือเกณฑ์ตัวเลขใดๆ ในข้อความเด็ดขาด
+${languageRule}
+${topicConfig.guardrailPrompt}
+
+${outputFormatBlock}
 `;
 
   const answersSummary =
@@ -784,7 +1364,7 @@ ${topicConfig.guardrailPrompt}
 
     const raw = completion.choices[0]?.message?.content || "{}";
     const parsed = JSON.parse(extractJsonString(raw)) as Partial<SessionSummaryResult>;
-    const fallback = buildFallbackSummary(topic);
+    const fallback = buildFallbackSummary(topic, locale);
 
     const steps = Array.isArray(parsed.actionable_steps)
       ? parsed.actionable_steps
@@ -814,6 +1394,6 @@ ${topicConfig.guardrailPrompt}
     };
   } catch (error) {
     console.error("Error generating session summary with Groq:", error);
-    return buildFallbackSummary(topic);
+    return buildFallbackSummary(topic, locale);
   }
 };
