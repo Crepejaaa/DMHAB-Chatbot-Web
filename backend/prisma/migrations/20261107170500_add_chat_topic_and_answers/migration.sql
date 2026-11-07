@@ -22,3 +22,4 @@ CREATE UNIQUE INDEX "ChatAnswer_sessionId_questionNo_key" ON "ChatAnswer"("sessi
 
 -- AddForeignKey
 ALTER TABLE "ChatAnswer" ADD CONSTRAINT "ChatAnswer_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "ChatSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
