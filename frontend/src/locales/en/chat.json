@@ -23,6 +23,7 @@
     "chip6": "I want someone to talk to",
     "chip7": "I feel bored and fed up",
     "noVoiceSupport": "Your browser does not support voice input",
+    "ttsUnavailable": "This device doesn't have a Thai voice installed. Try enabling Thai text-to-speech in your browser/device settings.",
     "greeting": "Hi, Nong Mook is here to listen to you. How are you feeling today?",
     "sessionExpired": "Your session has expired. Please log in again.",
     "sendFailed": "Failed to send the message. Please try again.",
