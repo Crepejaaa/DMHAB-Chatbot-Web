@@ -265,7 +265,22 @@
             </svg>
           </button>
 
-          <div class="bg-[#045F54] rounded-full">
+          <div
+            :class="[
+              'bg-[#045F54] rounded-full flex items-center gap-1',
+              isTranslatingMessages ? 'opacity-70 pointer-events-none' : ''
+            ]"
+          >
+            <svg
+              v-if="isTranslatingMessages"
+              class="animate-spin h-3.5 w-3.5 text-emerald-200 ml-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
             <LanguageSwitcher />
           </div>
         </div>
@@ -895,6 +910,8 @@ const newMessage = ref('')
 const messages = ref([])
 const isInitializingSession = ref(false)
 const isSending = ref(false)
+const isTranslatingMessages = ref(false)
+let translateRequestSeq = 0
 
 // History Sidebar State
 const historySessions = ref([])
@@ -983,32 +1000,68 @@ watch(locale, async (newLocale) => {
   if (recognition) {
     recognition.lang = newLocale === 'en' ? 'en-US' : 'th-TH'
   }
+  if (currentAudio) {
+    currentAudio.pause()
+    currentAudio = null
+  }
+  if (synth) synth.cancel()
+  playingMessageIndex.value = null
+
   if (!currentSessionId.value) return
 
-  // หากเซสชันจบแล้วและสลับภาษา ให้ขอสรุปและคำแนะนำในภาษาที่เลือกทันที
-  if (isCompleted.value) {
-    try {
-      const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
-        locale: newLocale
-      })
-      if (res.data?.summaryDetail) {
-        summaryDetail.value = res.data.summaryDetail
+  const reqSeq = ++translateRequestSeq
+  isTranslatingMessages.value = true
+
+  try {
+    // แปลข้อความแชทที่มีอยู่แล้วให้ตรงกับภาษาที่เลือกใหม่ (แก้บั๊ก: สลับภาษาแล้วบับเบิลเก่าไม่เปลี่ยนตาม)
+    if (messages.value.length > 0) {
+      try {
+        const msgRes = await axios.get(`/api/chat/sessions/${currentSessionId.value}/messages`, {
+          params: { locale: newLocale }
+        })
+        if (reqSeq === translateRequestSeq && Array.isArray(msgRes.data?.messages)) {
+          messages.value = msgRes.data.messages.map((m, idx) => ({
+            ...(messages.value.find((old) => old.id && old.id === m.id) || messages.value[idx] || {}),
+            id: m.id,
+            sender: m.sender,
+            text: m.text,
+            timestamp: m.timestamp,
+          }))
+        }
+      } catch (err) {
+        console.error('Failed to translate existing chat messages:', err)
       }
-      await fetchHistoryList()
-    } catch (err) {
-      console.error('Failed to refresh summary for new locale:', err)
     }
-  } else if (currentPhase.value === 'QUESTIONS') {
-    // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
-    try {
-      const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
-        params: { locale: newLocale }
-      })
-      if (res.data?.currentQuestion) {
-        currentQuestion.value = res.data.currentQuestion
+
+    // หากเซสชันจบแล้วและสลับภาษา ให้ขอสรุปและคำแนะนำในภาษาที่เลือกทันที
+    if (isCompleted.value) {
+      try {
+        const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
+          locale: newLocale
+        })
+        if (reqSeq === translateRequestSeq && res.data?.summaryDetail) {
+          summaryDetail.value = res.data.summaryDetail
+        }
+        await fetchHistoryList()
+      } catch (err) {
+        console.error('Failed to refresh summary for new locale:', err)
       }
-    } catch (err) {
-      console.error('Failed to refresh guided question for new locale:', err)
+    } else if (currentPhase.value === 'QUESTIONS') {
+      // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
+      try {
+        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+          params: { locale: newLocale }
+        })
+        if (reqSeq === translateRequestSeq && res.data?.currentQuestion) {
+          currentQuestion.value = res.data.currentQuestion
+        }
+      } catch (err) {
+        console.error('Failed to refresh guided question for new locale:', err)
+      }
+    }
+  } finally {
+    if (reqSeq === translateRequestSeq) {
+      isTranslatingMessages.value = false
     }
   }
 })
@@ -1083,26 +1136,37 @@ const speakWithBrowserVoice = (text, index) => {
 const playGoogleTTS = (text, lang, index) => {
   const chunks = splitTextForTTS(text)
   let i = 0
-  const playNext = () => {
+  const hosts = ['https://translate.googleapis.com/translate_tts', 'https://translate.google.com/translate_tts']
+  const playNext = (hostIndex = 0) => {
     if (i >= chunks.length) {
       playingMessageIndex.value = null
       currentAudio = null
       return
     }
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(chunks[i])}`
+    const url = `${hosts[hostIndex]}?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(chunks[i])}`
     currentAudio = new Audio(url)
-    i++
-    currentAudio.onended = playNext
+    currentAudio.onended = () => {
+      i++
+      playNext(0)
+    }
     currentAudio.onerror = () => {
       currentAudio = null
-      speakWithBrowserVoice(text, index)
+      if (hostIndex < hosts.length - 1) {
+        playNext(hostIndex + 1) // ลอง host สำรองก่อน ไม่เพิ่งเพิ่ม i
+      } else {
+        speakWithBrowserVoice(text, index)
+      }
     }
     currentAudio.play().catch(() => {
       currentAudio = null
-      speakWithBrowserVoice(text, index)
+      if (hostIndex < hosts.length - 1) {
+        playNext(hostIndex + 1)
+      } else {
+        speakWithBrowserVoice(text, index)
+      }
     })
   }
-  playNext()
+  playNext(0)
 }
 
 const toggleSpeak = (text, index) => {
@@ -1191,6 +1255,29 @@ const loadSessionById = async (sessionId) => {
     totalQuestions.value = data.totalQuestions || 5
     sessionAnswers.value = data.answers || []
     messages.value = data.messages || []
+
+    // หากข้อความในเซสชันมีภาษาไม่ตรงกับ locale ปัจจุบัน ให้แปลข้อความให้ตรงกับภาษาที่เลือก
+    if (messages.value.length > 0) {
+      const hasThaiMsg = messages.value.some((m) => /[\u0E00-\u0E7F]/.test(m.text || ''))
+      const wantsThai = locale.value === 'th'
+      if (hasThaiMsg !== wantsThai) {
+        try {
+          const msgRes = await axios.get(`/api/chat/sessions/${sessionId}/messages`, {
+            params: { locale: locale.value }
+          })
+          if (Array.isArray(msgRes.data?.messages)) {
+            messages.value = msgRes.data.messages.map((m) => ({
+              id: m.id,
+              sender: m.sender,
+              text: m.text,
+              timestamp: m.timestamp
+            }))
+          }
+        } catch (e) {
+          console.error('Failed to localize session messages on load:', e)
+        }
+      }
+    }
 
     // หากเซสชันจบแล้วแต่ภาษาของสรุปที่บันทึกไว้ไม่ตรงกับ locale ปัจจุบัน ให้ดึงสรุปตามภาษาที่เลือก
     if (isCompleted.value && summaryDetail.value?.overview) {
@@ -1286,11 +1373,12 @@ const sendMessage = async (overrideText = null, optionScore = null) => {
       ? { ...currentQuestion.value }
       : null
 
-  messages.value.push({
+  const userMsgEntry = {
     sender: 'USER',
     text: userText,
     timestamp: new Date().toISOString()
-  })
+  }
+  messages.value.push(userMsgEntry)
 
   if (overrideText === null) {
     newMessage.value = ''
@@ -1340,8 +1428,13 @@ const sendMessage = async (overrideText = null, optionScore = null) => {
         currentSessionId.value = data.sessionId
       }
 
+      if (data.userMessageId) {
+        userMsgEntry.id = data.userMessageId
+      }
+
       if (data.reply) {
         messages.value.push({
+          id: data.botMessageId || undefined,
           sender: 'BOT',
           text: data.reply,
           timestamp: new Date().toISOString()
