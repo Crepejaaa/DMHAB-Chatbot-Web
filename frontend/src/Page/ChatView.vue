@@ -251,6 +251,20 @@
             <span class="hidden sm:inline">{{ $t('chat.advice.viewSummaryBtn') }}</span>
           </button>
 
+          <button
+            type="button"
+            @click="isDarkMode = !isDarkMode"
+            class="p-2 rounded-full bg-black/10 hover:bg-black/20 text-white transition-colors"
+            :title="isDarkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'"
+          >
+            <svg v-if="!isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
           <div class="bg-[#045F54] rounded-full">
             <LanguageSwitcher />
           </div>
@@ -1159,7 +1173,8 @@ const sendMessage = async (overrideText = null, optionScore = null) => {
     const payload = {
       sessionId: currentSessionId.value,
       topic: currentTopic.value,
-      message: userText
+      message: userText,
+      locale: locale.value
     }
     if (optionScore !== null && optionScore !== undefined) {
       payload.score = optionScore
@@ -1241,7 +1256,9 @@ const confirmEndConversation = async () => {
   if (!currentSessionId.value || isEndingSession.value) return
   isEndingSession.value = true
   try {
-    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`)
+    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
+      locale: locale.value
+    })
     summaryDetail.value = res.data?.summaryDetail || null
     isCompleted.value = true
     currentQuestion.value = null
@@ -1396,12 +1413,31 @@ watch(
 }
 
 /* Dark Mode Overrides ให้เข้ากันได้กับ App.vue */
+header button[title*="โหมด"] {
+  background-color: #045F54;
+}
+
+header button[title*="โหมด"]:hover {
+  background-color: #03473f;
+}
+
+.dark-mode-page header button[title*="โหมด"] {
+  background-color: #134e4a;
+  border: 1px solid #14b8a6;
+  color: #ccfbf1;
+}
+
+.dark-mode-page header button[title*="โหมด"]:hover {
+  background-color: #0f766e;
+}
+
 .dark-mode-page .history-sidebar,
 .dark-mode-page .guided-panel,
 .dark-mode-page .modal-surface,
 .dark-mode-page .advice-card {
   background-color: #1e293b !important;
   border-color: #334155 !important;
+  color: #f8fafc !important;
 }
 
 .dark-mode-page .history-item {
@@ -1409,9 +1445,33 @@ watch(
   border-color: #334155 !important;
 }
 
+.dark-mode-page .history-item:hover {
+  border-color: #14b8a6 !important;
+  background-color: #134e4a !important;
+}
+
 .dark-mode-page .history-item-active {
   background-color: #134e4a !important;
   border-color: #14b8a6 !important;
+}
+
+.dark-mode-page .history-topic-icon,
+.dark-mode-page .bot-avatar-circle,
+.dark-mode-page .topic-header-pill {
+  background-color: #134e4a !important;
+  background-image: none !important;
+  border-color: #0d9488 !important;
+  color: #5eead4 !important;
+}
+
+.dark-mode-page .status-pill-completed {
+  background-color: rgba(6, 95, 70, 0.65) !important;
+  color: #a7f3d0 !important;
+}
+
+.dark-mode-page .status-pill-active {
+  background-color: rgba(120, 53, 15, 0.65) !important;
+  color: #fde68a !important;
 }
 
 .dark-mode-page .bot-bubble,
@@ -1419,16 +1479,18 @@ watch(
 .dark-mode-page .answer-summary-card {
   background-color: #0f172a !important;
   border-color: #334155 !important;
-  color: #e2e8f0 !important;
+  color: #f1f5f9 !important;
 }
 
-.dark-mode-page .guided-option-btn {
+.dark-mode-page .guided-option-btn,
+.dark-mode-page .chip-btn {
   background-color: #0f172a !important;
-  border-color: #0f766e !important;
+  border-color: #0d9488 !important;
   color: #e2e8f0 !important;
 }
 
-.dark-mode-page .guided-option-btn:hover {
+.dark-mode-page .guided-option-btn:hover,
+.dark-mode-page .chip-btn:hover {
   background-color: #0d9488 !important;
   color: #ffffff !important;
 }
@@ -1437,7 +1499,28 @@ watch(
 .dark-mode-page .advice-overview-box,
 .dark-mode-page .advice-encouragement-box {
   background-color: #134e4a !important;
-  border-color: #0f766e !important;
+  background-image: linear-gradient(135deg, rgba(19, 78, 74, 0.92), rgba(15, 118, 110, 0.82)) !important;
+  border-color: #14b8a6 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark-mode-page .answers-bar [class*="text-[#045F54]"],
+.dark-mode-page .advice-card [class*="text-[#045F54]"],
+.dark-mode-page .answer-summary-card [class*="text-[#045F54]"] {
+  color: #5eead4 !important;
+}
+
+.dark-mode-page .advice-card [class*="text-slate-700"],
+.dark-mode-page .advice-card [class*="text-slate-600"],
+.dark-mode-page .modal-surface [class*="text-slate-700"],
+.dark-mode-page .modal-surface [class*="text-slate-600"],
+.dark-mode-page .answer-summary-card [class*="text-slate-600"] {
+  color: #e2e8f0 !important;
+}
+
+.dark-mode-page .advice-card [class*="text-slate-500"],
+.dark-mode-page .advice-card [class*="text-slate-400"] {
+  color: #cbd5e1 !important;
 }
 
 .dark-mode-page .chat-input {
@@ -1450,6 +1533,10 @@ watch(
   background: linear-gradient(180deg, #134e4a 0%, #115e59 100%) !important;
   border-color: #14b8a6 !important;
   color: #ccfbf1 !important;
+}
+
+.dark-mode-page .cloud-end-btn svg {
+  color: #5eead4 !important;
 }
 
 .dark-mode-page .cloud-end-btn::before,

@@ -307,6 +307,8 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       }
     }
 
+    const locale: "th" | "en" = req.body?.locale === "en" ? "en" : "th";
+
     const summaryResult = await generateSessionSummary(
       session.topic,
       session.answers.map((a: any) => ({
@@ -317,7 +319,8 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       session.messages.map((m: any) => ({
         sender: String(m.sender),
         message: m.message,
-      }))
+      })),
+      locale
     );
 
     const finalMood =
@@ -427,7 +430,14 @@ export const getUserChatSessions = async (req: AuthRequest, res: Response): Prom
 export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = Number(req.user?.userId);
-    const { message, sessionId: rawSessionId, topic: rawTopic, score: rawScore } = req.body;
+    const {
+      message,
+      sessionId: rawSessionId,
+      topic: rawTopic,
+      score: rawScore,
+      locale: rawLocale,
+    } = req.body;
+    const locale: "th" | "en" = rawLocale === "en" ? "en" : "th";
 
     if (!Number.isInteger(userId) || userId <= 0) {
       res.status(401).json({ error: "Unauthorized" });
@@ -586,7 +596,10 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
       aiMessages.push({
         role: "assistant",
         content: JSON.stringify({
-          reply_message: "รับทราบค่ะ น้องมุกห่วงใยพร้อมรับฟังและสะท้อนความรู้สึกอย่างอบอุ่นค่ะ",
+          reply_message:
+            locale === "en"
+              ? "Understood. Nong Mook Huang Yai is ready to listen and reflect your feelings warmly in English."
+              : "รับทราบค่ะ น้องมุกห่วงใยพร้อมรับฟังและสะท้อนความรู้สึกอย่างอบอุ่นค่ะ",
           assessment_status: "IN_PROGRESS",
           severity_level: "PENDING",
           suggested_category: "NONE",
@@ -603,12 +616,14 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     let aiResponse: AIResponse;
     try {
-      aiResponse = await generateChatResponse(aiMessages, session.topic);
+      aiResponse = await generateChatResponse(aiMessages, session.topic, locale);
     } catch (groqErr) {
       if (crisisDetected) {
         aiResponse = {
           reply_message:
-            "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
+            locale === "en"
+              ? "I can hear how heavy and painful things feel for you right now, and I don't want you to go through this alone. Please reach out to a mental health professional via the Mental Health Hotline at 1323, available 24/7."
+              : "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
           assessment_status: "IN_PROGRESS",
           severity_level: "SEVERE",
           suggested_category: "STRESS",

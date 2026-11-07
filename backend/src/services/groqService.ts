@@ -585,12 +585,22 @@ Introduce yourself as a chatbot from 'PhuenJaiZone', a safe space ready to liste
  * สร้าง System Prompt โดยคง STRICT MEDICAL GUARDRAILS และ CRISIS TRIGGER เดิมไว้ทั้งหมด
  * และต่อท้ายขอบเขตเฉพาะตามหัวข้อ (topic) ที่ผู้ใช้เลือก
  */
-export const SYSTEM_PROMPT = (topic?: string | null): string => {
+export const SYSTEM_PROMPT = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): string => {
+  const basePrompt =
+    locale === "en"
+      ? BASE_SYSTEM_PROMPT.replace(
+          "4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษหรือภาษาอื่นปะปนโดยเด็ดขาด",
+          "4. LANGUAGE: Respond in English only. Do not mix Thai."
+        )
+      : BASE_SYSTEM_PROMPT;
   if (!topic || !isValidTopic(topic)) {
-    return BASE_SYSTEM_PROMPT;
+    return basePrompt;
   }
   const config = CHAT_TOPICS[topic];
-  return `${BASE_SYSTEM_PROMPT}\n${config.guardrailPrompt}\n`;
+  return `${basePrompt}\n${config.guardrailPrompt}\n`;
 };
 
 export interface AIResponse {
@@ -647,13 +657,18 @@ const extractJsonString = (content: string): string => {
     .replace(/\s*```$/i, "");
 };
 
-const parseAIResponse = (content: string): AIResponse => {
+const parseAIResponse = (
+  content: string,
+  locale: "th" | "en" = "th"
+): AIResponse => {
   const parsed = JSON.parse(extractJsonString(content)) as Partial<AIResponse>;
   return {
     reply_message:
       typeof parsed.reply_message === "string" && parsed.reply_message.trim()
         ? parsed.reply_message.trim()
-        : "น้องมุกห่วงใยรับฟังอยู่นะคะ เล่าเพิ่มเติมตามจังหวะที่คุณสบายใจได้เลยค่ะ",
+        : locale === "en"
+          ? "I'm here listening with care. Feel free to share more at your own pace."
+          : "น้องมุกห่วงใยรับฟังอยู่นะคะ เล่าเพิ่มเติมตามจังหวะที่คุณสบายใจได้เลยค่ะ",
     assessment_status:
       parsed.assessment_status === "COMPLETED" ? "COMPLETED" : "IN_PROGRESS",
     severity_level:
@@ -673,11 +688,12 @@ const parseAIResponse = (content: string): AIResponse => {
 
 export const generateChatResponse = async (
   messagesArray: { role: "system" | "user" | "assistant"; content: string }[],
-  topic?: string | null
+  topic?: string | null,
+  locale: "th" | "en" = "th"
 ): Promise<AIResponse> => {
   try {
     const formattedMessages: any[] = [
-      { role: "system", content: SYSTEM_PROMPT(topic) },
+      { role: "system", content: SYSTEM_PROMPT(topic, locale) },
       ...messagesArray,
     ];
 
@@ -689,15 +705,57 @@ export const generateChatResponse = async (
     });
 
     const aiMessageContent = chatCompletion.choices[0]?.message?.content || "{}";
-    return parseAIResponse(aiMessageContent);
+    return parseAIResponse(aiMessageContent, locale);
   } catch (error) {
     console.error("Error communicating with Groq API:", error);
     throw new Error("AI API Error");
   }
 };
 
-const buildFallbackSummary = (topic?: string | null): SessionSummaryResult => {
+const TOPIC_LABELS_EN: Record<ChatTopicKey, string> = {
+  love: "love and relationships",
+  study: "studies and exams",
+  work: "work and workload",
+  family: "family and home life",
+  money: "finances and expenses",
+  friends: "friends and social life",
+  self: "self-worth and personal growth",
+  sleep: "sleep and rest",
+};
+
+const buildFallbackSummary = (
+  topic?: string | null,
+  locale: "th" | "en" = "th"
+): SessionSummaryResult => {
   const topicConfig = getTopicConfig(topic);
+
+  if (locale === "en") {
+    const topicLabelEn = TOPIC_LABELS_EN[topicConfig.key] || "personal well-being";
+    return {
+      overview: `Today, you took a meaningful step by using this safe space to talk and explore your feelings around ${topicLabelEn}. Pausing to reflect and acknowledging your emotional fatigue is an important part of caring for your own heart and mind.`,
+      actionable_steps: [
+        {
+          title: "Slow down your breathing to release physical tension",
+          description:
+            "Try inhaling gently for a count of 1 to 4, then exhaling slowly for a count of 1 to 6 for 3–5 cycles. This helps signal to your body and mind that it is safe to rest right now.",
+        },
+        {
+          title: "Separate what you can handle today from what can wait until tomorrow",
+          description:
+            "Pick just one small, manageable thing you can do without pushing yourself too hard, and give yourself permission to set aside everything else for now.",
+        },
+        {
+          title: "Give yourself a short, guilt-free break",
+          description:
+            "Sip some warm water, listen to calming music, or gently stretch for 10 minutes while reminding yourself that you have done the best you could with the energy you had today.",
+        },
+      ],
+      encouragement:
+        "Thank you for trusting Nong Mook Huang Yai to keep you company today. Whenever things feel heavy, you are always welcome back here to rest your mind—or if you need professional support, you can reach the Mental Health Hotline at 1323 anytime, 24/7.",
+      severity_level: "MILD",
+    };
+  }
+
   return {
     overview: `วันนี้คุณได้ใช้พื้นที่ปลอดภัยพูดคุยและสำรวจความรู้สึกเกี่ยวกับเรื่อง${topicConfig.labelTh} การได้หยุดทบทวนและยอมรับความเหนื่อยล้าที่เกิดขึ้นถือเป็นก้าวสำคัญของการดูแลใจตัวเองค่ะ`,
     actionable_steps: [
@@ -726,9 +784,14 @@ const buildFallbackSummary = (topic?: string | null): SessionSummaryResult => {
 export const generateSessionSummary = async (
   topic: string | null | undefined,
   answers: { questionNo: number; questionText: string; answerText: string }[],
-  messages: { sender: string; message: string }[]
+  messages: { sender: string; message: string }[],
+  locale: "th" | "en" = "th"
 ): Promise<SessionSummaryResult> => {
   const topicConfig = getTopicConfig(topic);
+  const languageRule =
+    locale === "en"
+      ? "4. LANGUAGE: Respond in English only. Do not mix Thai."
+      : "4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษปะปน";
 
   const summarySystemPrompt = `
 คุณคือ "น้องมุกห่วงใย" ผู้ช่วยรับฟังจาก PhuenJaiZone ทำหน้าที่สรุปบทสนทนาและให้คำแนะนำการดูแลใจเบื้องต้นหลังจบการสนทนาในหัวข้อ "${topicConfig.labelTh}"
@@ -737,7 +800,7 @@ export const generateSessionSummary = async (
 1. ห้ามวินิจฉัยโรค (NO DIAGNOSIS): ห้ามระบุชื่อโรคจิตเวชใดๆ ให้ใช้คำว่า "ความเครียดสะสม" หรือ "ความเหนื่อยล้าทางอารมณ์"
 2. ห้ามสั่งยา (NO MEDICATION): ห้ามแนะนำให้รับประทานยา สมุนไพร หรืออาหารเสริมใดๆ โดยเด็ดขาด
 3. NO RAW SCORES: ห้ามแสดงตัวเลขคะแนนดิบ คะแนนรวม หรือเกณฑ์ตัวเลขใดๆ ในข้อความเด็ดขาด
-4. LANGUAGE: ตอบกลับเป็นภาษาไทยเท่านั้น ห้ามใช้ภาษาอังกฤษปะปน
+${languageRule}
 ${topicConfig.guardrailPrompt}
 
 # OUTPUT FORMAT (JSON ONLY)
@@ -784,7 +847,7 @@ ${topicConfig.guardrailPrompt}
 
     const raw = completion.choices[0]?.message?.content || "{}";
     const parsed = JSON.parse(extractJsonString(raw)) as Partial<SessionSummaryResult>;
-    const fallback = buildFallbackSummary(topic);
+    const fallback = buildFallbackSummary(topic, locale);
 
     const steps = Array.isArray(parsed.actionable_steps)
       ? parsed.actionable_steps
@@ -814,6 +877,6 @@ ${topicConfig.guardrailPrompt}
     };
   } catch (error) {
     console.error("Error generating session summary with Groq:", error);
-    return buildFallbackSummary(topic);
+    return buildFallbackSummary(topic, locale);
   }
 };
