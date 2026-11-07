@@ -29,7 +29,22 @@ try {
       findFirst: async () => null,
       create: async (data: any) => ({ id: 1, ...data })
     },
-    chatSession: { findMany: async () => [] },
+    chatSession: {
+      findMany: async () => [],
+      findFirst: async () => null,
+      create: async (args: any) => ({ id: 1, createdAt: new Date(), ...(args?.data || {}) }),
+      update: async (args: any) => ({ id: args?.where?.id || 1, ...(args?.data || {}) }),
+      delete: async () => ({}),
+    },
+    chatMessage: {
+      findMany: async () => [],
+      create: async (args: any) => ({ id: 1, createdAt: new Date(), ...(args?.data || {}) }),
+    },
+    chatAnswer: {
+      findMany: async () => [],
+      upsert: async (args: any) => ({ id: 1, createdAt: new Date(), ...(args?.create || {}) }),
+      create: async (args: any) => ({ id: 1, createdAt: new Date(), ...(args?.data || {}) }),
+    },
     testResult: { findMany: async () => [] },
     systemLog: { create: async () => ({}) }
   };
