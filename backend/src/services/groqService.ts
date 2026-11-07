@@ -1397,3 +1397,41 @@ ${outputFormatBlock}
     return buildFallbackSummary(topic, locale);
   }
 };
+
+export const translateChatMessages = async (
+  messages: { id: number; sender: string; text: string }[],
+  targetLocale: "th" | "en"
+): Promise<{ id: number; text: string }[]> => {
+  if (messages.length === 0) return [];
+  const targetLangName = targetLocale === "en" ? "English" : "Thai";
+  const prompt = `Translate each message's "text" field into ${targetLangName}. Keep the same meaning, tone, and supportive counseling style (this is a mental-health support chatbot conversation; the bot's Thai name is "น้องมุกห่วงใย" and English name is "Nong Mook Huang Yai"). Do NOT translate if a message is already in ${targetLangName} — return it unchanged in that case. Return ONLY a JSON object: {"items": [{"id": number, "text": string}, ...]} with the same number of items and same ids, in the same order as input. Input messages:\n${JSON.stringify(messages.map((m) => ({ id: m.id, text: m.text })))}`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a precise translation engine for a Thai mental-health support chat app. Always return valid JSON only, no extra commentary.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.1,
+      response_format: { type: "json_object" },
+    });
+    const raw = completion.choices[0]?.message?.content || "{}";
+    const parsed = JSON.parse(extractJsonString(raw));
+    if (Array.isArray(parsed.items)) {
+      return parsed.items.map((item: any, idx: number) => ({
+        id: Number(item?.id ?? messages[idx]?.id),
+        text: typeof item?.text === "string" && item.text.trim() ? item.text : messages[idx]?.text || "",
+      }));
+    }
+    return messages.map((m) => ({ id: m.id, text: m.text }));
+  } catch (error) {
+    console.error("Error translating chat messages:", error);
+    // ถ้าแปลไม่สำเร็จ คืนข้อความเดิมแทนที่จะทำให้ UI พัง
+    return messages.map((m) => ({ id: m.id, text: m.text }));
+  }
+};

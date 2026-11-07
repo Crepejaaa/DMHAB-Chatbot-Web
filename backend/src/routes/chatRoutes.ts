@@ -3,6 +3,7 @@ import {
   getUserChatSessions,
   startChatSession,
   getChatSessionsHistory,
+  getLocalizedMessages,
   getChatSessionById,
   endChatSession,
   submitSessionFeedback,
@@ -23,6 +24,9 @@ router.post("/sessions", chatLimiter, verifyToken, startChatSession);
 
 // ดึงลิสต์ประวัติการสนทนาทั้งหมดของผู้ใช้ (ต้องอยู่ก่อน /sessions/:id)
 router.get("/sessions/history", verifyToken, getChatSessionsHistory);
+
+// ดึงข้อความแชทที่แปลตาม locale ที่ขอ (ต้องอยู่ก่อน /sessions/:id)
+router.get("/sessions/:id/messages", verifyToken, getLocalizedMessages);
 
 // ดึงข้อความ + คำตอบ 5 ข้อของเซสชันที่ระบุ
 router.get("/sessions/:id", verifyToken, getChatSessionById);

@@ -8,6 +8,7 @@ import {
   getTopicConfig,
   hasCrisisSignal,
   isValidTopic,
+  translateChatMessages,
   AIResponse,
   SessionSummaryResult,
 } from "../services/groqService";
@@ -281,6 +282,52 @@ export const getChatSessionById = async (req: AuthRequest, res: Response): Promi
   }
 };
 
+// GET /api/chat/sessions/:id/messages?locale=th|en — คืนข้อความแชทที่แปลตาม locale ที่ขอ (ใช้ตอนผู้ใช้สลับภาษากลางบทสนทนา)
+export const getLocalizedMessages = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+    const locale: "th" | "en" = req.query?.locale === "en" ? "en" : "th";
+
+    const session = await prisma.chatSession.findFirst({
+      where: { id: sessionId, userId },
+      include: { messages: { orderBy: { createdAt: "asc" } } },
+    });
+    if (!session) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+
+    const inputMessages = session.messages.map((m: any) => ({
+      id: m.id,
+      sender: m.sender,
+      text: m.message,
+    }));
+    const translated = await translateChatMessages(inputMessages, locale);
+    const translatedMap = new Map(translated.map((t) => [Number(t.id), t.text]));
+
+    const formattedMessages = session.messages.map((msg: any) => ({
+      id: msg.id,
+      sender: msg.sender,
+      text: translatedMap.get(Number(msg.id)) ?? msg.message,
+      timestamp: msg.createdAt,
+    }));
+
+    res.status(200).json({ messages: formattedMessages });
+  } catch (error) {
+    console.error("Error in getLocalizedMessages:", error);
+    res.status(500).json({ error: "ไม่สามารถแปลข้อความได้" });
+  }
+};
+
 // POST /api/chat/sessions/:id/end — จบ session ให้ Groq สรุป+ให้คำแนะนำตามหัวข้อ บันทึกลง summary
 export const endChatSession = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -547,7 +594,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
     }
 
     // บันทึกข้อความของ USER ลง ChatMessage
-    await prisma.chatMessage.create({
+    const savedUserMsg = await prisma.chatMessage.create({
       data: {
         sessionId: session.id,
         sender: "USER",
@@ -614,7 +661,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
             ? `${transitionText}\n\nQuestion ${nextQ.questionNo}/5: ${nextQ.questionText}`
             : `${transitionText}\n\nคำถามข้อที่ ${nextQ.questionNo}/5: ${nextQ.questionText}`;
 
-        await prisma.chatMessage.create({
+        const savedBotNextQMsg = await prisma.chatMessage.create({
           data: {
             sessionId: session.id,
             sender: "BOT",
@@ -624,6 +671,8 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
         res.status(200).json({
           reply: nextBotMessageText,
+          userMessageId: savedUserMsg.id,
+          botMessageId: savedBotNextQMsg.id,
           sessionId: session.id,
           phase: "QUESTIONS",
           currentQuestionNo: nextQ.questionNo,
@@ -710,7 +759,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
       aiResponse.severity_level = "SEVERE";
     }
 
-    await prisma.chatMessage.create({
+    const savedBotMsg = await prisma.chatMessage.create({
       data: {
         sessionId: session.id,
         sender: "BOT",
@@ -729,6 +778,8 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     res.status(200).json({
       reply: aiResponse.reply_message,
+      userMessageId: savedUserMsg.id,
+      botMessageId: savedBotMsg.id,
       sessionId: session.id,
       phase: "FREE_CHAT",
       currentQuestionNo: null,
