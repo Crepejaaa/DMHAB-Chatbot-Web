@@ -4,17 +4,6 @@
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
       <div class="flex items-center gap-2 sm:gap-3">
-        <button
-          type="button"
-          @click="$router.options.history.state?.back ? $router.back() : $router.push('/')"
-          class="hover:bg-white/20 p-2 rounded-full transition text-white shrink-0 cursor-pointer flex items-center justify-center"
-          title="ย้อนกลับ"
-          aria-label="ย้อนกลับ"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-        </button>
 
         <router-link to="/" class="flex items-center gap-1.5 sm:gap-2">
           <!-- โลโก้ Navbar -->

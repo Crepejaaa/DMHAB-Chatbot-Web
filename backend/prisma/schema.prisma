@@ -52,12 +52,29 @@ model ChatSession {
   id          Int           @id @default(autoincrement())
   userId      Int
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic       String?       // หัวข้อที่เลือก เช่น love/study/work/family/money/friends/self/sleep
   summary     String?       @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
   overallMood String?       // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
   createdAt   DateTime      @default(now())
 
   // ความสัมพันธ์
   messages    ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
+  answers     ChatAnswer[]  // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
+}
+
+// ตารางเก็บคำตอบ 5 ข้อแรกของแต่ละรอบการสนทนา
+model ChatAnswer {
+  id           Int         @id @default(autoincrement())
+  sessionId    Int
+  session      ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionNo   Int
+  questionText String      @db.Text
+  answerText   String      @db.Text
+  score        Int?
+  createdAt    DateTime    @default(now())
+
+  @@unique([sessionId, questionNo])
+  @@index([sessionId])
 }
 
 // ตารางที่ 3: เก็บข้อความในแชททีละประโยค

@@ -1,14 +1,16 @@
 {
   "chat": {
-    "botName": "Nong Muk",
+    "botName": "Nong Mook Caring Bot",
     "noRealName": "(Do not enter your real name)",
-    "online": "Online",
+    "online": "Online • Safe listening space",
     "readAloud": "Read aloud",
-    "completed": "The assessment is complete. Thank you for talking with us.",
+    "completed": "This conversation has ended. Thank you for talking with us.",
     "ended": "This conversation has ended",
     "placeholder": "Type your message here...",
+    "customAnswerPlaceholder": "Or type your own answer here...",
     "speakToType": "Speak to type",
     "send": "Send",
+    "typing": "Nong Mook is typing...",
     "highRiskTitle": "You may be at high risk",
     "highRiskBody": "We hear how you feel and want you to know you are not alone. If you need urgent support, please contact a professional right away.",
     "callHotline": "Call hotline 1323",
@@ -21,8 +23,98 @@
     "chip6": "I want someone to talk to",
     "chip7": "I feel bored and fed up",
     "noVoiceSupport": "Your browser does not support voice input",
-    "greeting": "Hi, I'm here to listen to you. How are you feeling today?",
+    "greeting": "Hi, Nong Mook is here to listen to you. How are you feeling today?",
     "sessionExpired": "Your session has expired. Please log in again.",
-    "sendFailed": "Failed to send the message. Please try again."
+    "sendFailed": "Failed to send the message. Please try again.",
+    "loadFailed": "Could not load conversation data. Please try again.",
+    "topicPicker": {
+      "badge": "Nong Mook • Empathetic Safe Space",
+      "title": "What would you like to talk about today?",
+      "subtitle": "Pick the topic on your mind right now so Nong Mook can listen and guide the conversation gently (no real name needed).",
+      "historyBtn": "View past conversations",
+      "startHint": "Tap to start chatting",
+      "backHome": "Back to Home"
+    },
+    "topics": {
+      "love": {
+        "title": "Love & Relationships",
+        "desc": "Connection, distance, heartbreak, or relationship tension"
+      },
+      "study": {
+        "title": "Study & Exams",
+        "desc": "Academic pressure, grades, projects, exams, or study fatigue"
+      },
+      "work": {
+        "title": "Work & Workload",
+        "desc": "Heavy workload, burnout, workplace atmosphere, or career worries"
+      },
+      "family": {
+        "title": "Family & Home",
+        "desc": "Family expectations, generation gaps, or tension at home"
+      },
+      "money": {
+        "title": "Money & Expenses",
+        "desc": "Emotional stress and worry from everyday financial burdens"
+      },
+      "friends": {
+        "title": "Friends & Social Life",
+        "desc": "Loneliness, fitting in, friend conflicts, or social exhaustion"
+      },
+      "self": {
+        "title": "Self & Self-Worth",
+        "desc": "Self-doubt, self-criticism, uncertainty, or reconnecting with yourself"
+      },
+      "sleep": {
+        "title": "Sleep & Rest",
+        "desc": "Trouble falling asleep, racing thoughts at night, or chronic fatigue"
+      }
+    },
+    "guided": {
+      "stepBadge": "Initial Question {current} of {total}",
+      "chooseOrType": "Select an option that fits how you feel, or type your own answer below.",
+      "answersToggleShow": "View first 5 answers ({count}/5)",
+      "answersToggleHide": "Hide first 5 answers",
+      "questionPrefix": "Q{no}"
+    },
+    "endChat": {
+      "cloudBtn": "สิ้นสุดการสนทนา",
+      "cloudSub": "End Conversation",
+      "confirmTitle": "ต้องการจบการสนทนาหรือไม่?",
+      "confirmBody": "Nong Mook will summarize what you shared today and suggest gentle, context-tailored steps you can try.",
+      "confirmBtn": "ยืนยันการจบสนทนา",
+      "cancelBtn": "กลับไปสนทนาต่อ",
+      "summarizing": "Summarizing conversation...",
+      "thankYouTitle": "Thank you for trusting Nong Mook today",
+      "thankYouBody": "Your feelings matter. Preparing your personalized reflection and gentle suggestions...",
+      "viewAdviceNow": "View Suggestions"
+    },
+    "advice": {
+      "badge": "Session Summary & Gentle Guidance",
+      "title": "Reflection from Today's Chat",
+      "overviewLabel": "What we talked about today",
+      "stepsLabel": "Gentle things you can try (tailored to your chat)",
+      "stepsHint": "No pressure to do everything at once — pick just one small step that feels comfortable today.",
+      "encouragementLabel": "A warm note from Nong Mook",
+      "viewSummaryBtn": "View Summary & Suggestions",
+      "backToChatBtn": "Review Conversation",
+      "newTopicBtn": "Start New Topic",
+      "homeBtn": "Back to Home",
+      "helplineNote": "Note: This guidance is supportive self-care, not a medical diagnosis. For urgent professional support, call the Mental Health Hotline 1323 (24/7)."
+    },
+    "history": {
+      "title": "Chat History",
+      "newChat": "New Conversation",
+      "changeTopic": "Pick Topic",
+      "empty": "No conversation history yet",
+      "statusInProgress": "In Progress",
+      "statusCompleted": "Completed",
+      "generalTopic": "General Chat",
+      "deleteTooltip": "Delete this session",
+      "deleteTitle": "Delete this conversation?",
+      "deleteBody": "Are you sure you want to delete this session? All messages and initial answers in this session will be permanently removed.",
+      "deleteConfirm": "Delete Session",
+      "deleteCancel": "Cancel",
+      "deleting": "Deleting..."
+    }
   }
 }

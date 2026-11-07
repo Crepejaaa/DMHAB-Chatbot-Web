@@ -1,14 +1,37 @@
 import { Router } from "express";
-import { getUserChatSessions, sendMessage } from "../controllers/chatController";
+import {
+  getUserChatSessions,
+  startChatSession,
+  getChatSessionsHistory,
+  getChatSessionById,
+  endChatSession,
+  deleteChatSession,
+  sendMessage,
+} from "../controllers/chatController";
 import { verifyToken } from "../middlewares/authMiddleware";
 import { chatLimiter } from "../middlewares/rateLimitMiddleware";
 
 const router = Router();
 
-// GET /sessions -> ใช้งาน verifyToken ก่อนเรียก getUserChatSessions
+// ดึงเซสชันปัจจุบัน (คงไว้เพื่อความเข้ากันได้เดิม)
 router.get("/sessions", verifyToken, getUserChatSessions);
 
-// POST / -> ใช้งาน chatLimiter และ verifyToken เพื่อป้องกันการสแปมข้อความแชท
+// เริ่มเซสชันใหม่พร้อมหัวข้อ (รับ topic และคืนคำถามข้อแรกจาก 5 ข้อ)
+router.post("/sessions", chatLimiter, verifyToken, startChatSession);
+
+// ดึงลิสต์ประวัติการสนทนาทั้งหมดของผู้ใช้ (ต้องอยู่ก่อน /sessions/:id)
+router.get("/sessions/history", verifyToken, getChatSessionsHistory);
+
+// ดึงข้อความ + คำตอบ 5 ข้อของเซสชันที่ระบุ
+router.get("/sessions/:id", verifyToken, getChatSessionById);
+
+// จบเซสชันและให้ Groq สรุป + ให้คำแนะนำเบื้องต้นตามหัวข้อ
+router.post("/sessions/:id/end", chatLimiter, verifyToken, endChatSession);
+
+// ลบเซสชัน (cascade ลบ ChatMessage และ ChatAnswer)
+router.delete("/sessions/:id", verifyToken, deleteChatSession);
+
+// ส่งข้อความโต้ตอบในแชท
 router.post("/", chatLimiter, verifyToken, sendMessage);
 
 export default router;
