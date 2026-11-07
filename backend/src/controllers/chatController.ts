@@ -265,6 +265,8 @@ export const getChatSessionById = async (req: AuthRequest, res: Response): Promi
         overallMood: session.overallMood,
         summary: summaryText,
         summaryDetail,
+        feedbackRating: session.feedbackRating ?? null,
+        feedbackAt: session.feedbackAt ?? null,
       },
       phase: currentQuestion ? "QUESTIONS" : "FREE_CHAT",
       currentQuestionNo: currentQuestion ? currentQuestion.questionNo : null,
@@ -359,10 +361,46 @@ export const endChatSession = async (req: AuthRequest, res: Response): Promise<v
       status: "COMPLETED",
       summary: summaryResult.overview,
       summaryDetail: summaryResult,
+      feedbackRating: session.feedbackRating ?? null,
     });
   } catch (error) {
     console.error("Error in endChatSession:", error);
     res.status(500).json({ error: "ไม่สามารถจบและสรุปการสนทนาได้" });
+  }
+};
+
+// PATCH /api/chat/sessions/:id/feedback — บันทึกคะแนนความพึงพอใจหลังจบเซสชัน (HELPFUL | SOMEWHAT | NOT_HELPFUL)
+export const submitSessionFeedback = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = Number(req.user?.userId);
+    if (!Number.isInteger(userId) || userId <= 0) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const sessionId = Number(req.params.id);
+    if (!Number.isInteger(sessionId) || sessionId <= 0) {
+      res.status(400).json({ error: "รหัสเซสชันไม่ถูกต้อง" });
+      return;
+    }
+    const { rating } = req.body as { rating?: string };
+    const allowed = ["HELPFUL", "SOMEWHAT", "NOT_HELPFUL"];
+    if (!rating || !allowed.includes(rating)) {
+      res.status(400).json({ error: "ค่า rating ไม่ถูกต้อง" });
+      return;
+    }
+    const session = await prisma.chatSession.findFirst({ where: { id: sessionId, userId } });
+    if (!session) {
+      res.status(404).json({ error: "ไม่พบเซสชันการสนทนานี้" });
+      return;
+    }
+    await prisma.chatSession.update({
+      where: { id: sessionId },
+      data: { feedbackRating: rating, feedbackAt: new Date() },
+    });
+    res.status(200).json({ sessionId, feedbackRating: rating });
+  } catch (error) {
+    console.error("Error in submitSessionFeedback:", error);
+    res.status(500).json({ error: "ไม่สามารถบันทึกความคิดเห็นได้" });
   }
 };
 

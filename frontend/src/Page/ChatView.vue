@@ -405,6 +405,64 @@
                 {{ $t('chat.advice.helplineNote') }}
               </p>
 
+              <!-- บล็อกเก็บ Feedback 3 ระดับหลังจบสนทนา -->
+              <div v-if="!feedbackSubmitted" class="bg-white/60 border border-teal-100 rounded-2xl p-4 mb-4 text-center feedback-box">
+                <p class="text-sm font-medium text-[#045F54] mb-3">{{ t('chat.summary.feedbackQuestion') }}</p>
+                <div class="flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('HELPFUL')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.264 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-7m-2 10H5a2 2 0 01-2-2v-6a2 2 0 012-2h2v10z" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackHelpful') }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('SOMEWHAT')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="12" r="9" />
+                      <path stroke-linecap="round" d="M8 15h8M9 9h.01M15 9h.01" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackSomewhat') }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="feedbackSubmitting"
+                    @click="submitFeedback('NOT_HELPFUL')"
+                    class="feedback-choice-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-teal-50 transition-colors disabled:opacity-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h7m2-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2V4z" />
+                    </svg>
+                    <span class="text-xs text-[#045F54]">{{ t('chat.summary.feedbackNotHelpful') }}</span>
+                  </button>
+                </div>
+                <button type="button" @click="skipFeedback" class="mt-2 text-xs text-gray-400 underline hover:text-slate-600">
+                  {{ t('chat.summary.feedbackSkip') }}
+                </button>
+              </div>
+
+              <div v-else-if="feedbackRating === 'NOT_HELPFUL'" class="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-4 text-center feedback-crisis-box">
+                <p class="text-sm text-rose-700 mb-2 feedback-crisis-text">{{ t('chat.summary.feedbackCrisisPrompt') }}</p>
+                <a href="tel:1323" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  {{ t('chat.summary.feedbackCrisisButton') }}
+                </a>
+              </div>
+
+              <div v-else class="text-center text-sm text-[#045F54]/70 mb-4 feedback-thanks-text">
+                {{ t('chat.summary.feedbackThanks') }}
+              </div>
+
               <!-- ปุ่มดำเนินการต่อ -->
               <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                 <button
@@ -855,6 +913,28 @@ const showAdviceScreen = ref(false)
 const summaryDetail = ref(null)
 let thankYouTimer = null
 
+// Feedback State (3 ระดับหลังจบสนทนา)
+const feedbackRating = ref(null) // 'HELPFUL' | 'SOMEWHAT' | 'NOT_HELPFUL'
+const feedbackSubmitted = ref(false)
+const feedbackSubmitting = ref(false)
+
+const submitFeedback = async (rating) => {
+  if (feedbackSubmitting.value || feedbackSubmitted.value || !currentSessionId.value) return
+  feedbackRating.value = rating
+  feedbackSubmitting.value = true
+  try {
+    await axios.patch(`/api/chat/sessions/${currentSessionId.value}/feedback`, { rating })
+    feedbackSubmitted.value = true
+  } catch (e) {
+    console.error('submitFeedback failed', e)
+  } finally {
+    feedbackSubmitting.value = false
+  }
+}
+const skipFeedback = () => {
+  feedbackSubmitted.value = true
+}
+
 // Quick Chips for Free Chat
 const suggestedChips = computed(() => [
   t('chat.chip1'),
@@ -1104,6 +1184,8 @@ const loadSessionById = async (sessionId) => {
     currentTopic.value = data.session.topic
     isCompleted.value = data.session.status === 'COMPLETED'
     summaryDetail.value = data.session.summaryDetail || null
+    feedbackRating.value = data.session.feedbackRating || null
+    feedbackSubmitted.value = Boolean(data.session.feedbackRating)
     currentPhase.value = data.phase || 'FREE_CHAT'
     currentQuestion.value = data.currentQuestion || null
     totalQuestions.value = data.totalQuestions || 5
@@ -1154,6 +1236,8 @@ const createNewSessionWithTopic = async (topicKey) => {
     currentTopic.value = data.session.topic
     isCompleted.value = false
     summaryDetail.value = null
+    feedbackRating.value = null
+    feedbackSubmitted.value = false
     currentPhase.value = data.phase || 'QUESTIONS'
     currentQuestion.value = data.question || null
     totalQuestions.value = data.totalQuestions || 5
@@ -1311,6 +1395,8 @@ const confirmEndConversation = async () => {
       locale: locale.value
     })
     summaryDetail.value = res.data?.summaryDetail || null
+    feedbackRating.value = res.data?.feedbackRating || null
+    feedbackSubmitted.value = Boolean(res.data?.feedbackRating)
     isCompleted.value = true
     currentQuestion.value = null
     currentPhase.value = 'FREE_CHAT'
@@ -1605,5 +1691,28 @@ header button[title*="โหมด"]:hover {
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .cloud-end-btn::after {
   background: #134e4a !important;
   border-top-color: #14b8a6 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-box {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-choice-btn:hover {
+  background-color: #134e4a !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-crisis-box {
+  background-color: rgba(136, 19, 55, 0.55) !important;
+  border-color: #fb7185 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-crisis-text {
+  color: #ffe4e6 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .feedback-thanks-text {
+  color: #5eead4 !important;
 }
 </style>

@@ -109,6 +109,16 @@
       "homeBtn": "Back to Home",
       "helplineNote": "Note: This guidance is supportive self-care, not a medical diagnosis. For urgent professional support, call the Mental Health Hotline 1323 (24/7)."
     },
+    "summary": {
+      "feedbackQuestion": "How much did this conversation help?",
+      "feedbackHelpful": "Very helpful",
+      "feedbackSomewhat": "Somewhat helpful",
+      "feedbackNotHelpful": "Not helpful yet",
+      "feedbackSkip": "Skip",
+      "feedbackThanks": "Thank you for your feedback",
+      "feedbackCrisisPrompt": "If you need more support, you can talk to a professional through the mental health hotline",
+      "feedbackCrisisButton": "Call 1323 Mental Health Hotline"
+    },
     "history": {
       "title": "Chat History",
       "newChat": "New Conversation",
