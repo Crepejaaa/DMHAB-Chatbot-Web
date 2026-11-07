@@ -3,7 +3,8 @@
 
     <!-- 1. Navbar -->
     <nav class="bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white px-6 py-3 flex justify-between items-center shadow-md sticky top-0 z-[100]">
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-2">
+        
         <!-- โลโก้ Navbar -->
         <div class="w-12 h-12 flex items-center justify-center">
           <img src="/phuenjaizone-logo.jpg" :alt="$t('common.logoAlt')" class="w-full h-full object-contain rounded-full" />
