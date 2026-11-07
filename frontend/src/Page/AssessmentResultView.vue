@@ -9,21 +9,12 @@
         
         <div class="text-center mb-8">
           <div class="inline-flex flex-col items-center justify-center h-32 w-32 rounded-full mb-4" :class="scoreColorClass">
-            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}<span class="text-lg font-semibold text-white/80">/{{ totalMax }}</span></span>
+            <span class="text-4xl font-bold text-white leading-none">{{ totalScore }}</span>
             <span class="text-xs font-medium text-white/90 mt-1">{{ $t('assessmentResult.scoreTotal') }}</span>
           </div>
           <p class="text-xl font-bold text-gray-800 mb-3">{{ statusText }}</p>
           <h2 class="text-2xl font-semibold text-gray-800">{{ suggestionTitle }}</h2>
           <p class="mt-4 text-lg text-gray-600">{{ suggestionDetail }}</p>
-        </div>
-
-        <!-- ผลแยกตามแบบประเมิน 2Q / 9Q / 8Q (แต่ละแบบคิดคะแนนแยกกัน ไม่นำมารวมกัน) -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div v-for="part in partResults" :key="part.id" class="rounded-xl border p-4 text-center" :class="part.boxClass">
-            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ part.name }}</p>
-            <p class="mt-1 text-2xl font-extrabold text-gray-900">{{ part.score }}<span class="text-sm font-semibold text-gray-400">/{{ part.max }}</span></p>
-            <p class="mt-1 text-sm font-semibold" :class="part.textClass">{{ part.label }}</p>
-          </div>
         </div>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
@@ -178,9 +169,6 @@ const showEmergencyModal = ref(false)
 const showTermsModal = ref(false)
 const isAccepted = ref(false)
 
-// คะแนนรวมทั้ง 3 แบบ: 2Q (ข้อที่ตอบ "มี", เต็ม 2) + 9Q (เต็ม 27) + 8Q (เต็ม 52)
-// การแปลผลระดับยังอิงเกณฑ์ของแต่ละแบบ (ดูการ์ด 2Q/9Q/8Q ด้านล่าง)
-const totalMax = 2 + 27 + 52
 const totalScore = computed(() => {
   const r = assessmentResult.value || {}
   const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
@@ -202,26 +190,6 @@ const scoreText = computed(() => {
 })
 
 const isSevere = computed(() => assessmentResult.value.level === 'SEVERE')
-
-// เกณฑ์ตามแบบประเมินกรมสุขภาพจิต: 2Q (คัดกรอง), 9Q (เต็ม 27), 8Q (เต็ม 52)
-const GREEN = { boxClass: 'border-emerald-200 bg-emerald-50', textClass: 'text-emerald-700' }
-const AMBER = { boxClass: 'border-amber-200 bg-amber-50', textClass: 'text-amber-700' }
-const ORANGE = { boxClass: 'border-orange-200 bg-orange-50', textClass: 'text-orange-700' }
-const RED = { boxClass: 'border-rose-200 bg-rose-50', textClass: 'text-rose-700' }
-
-const partResults = computed(() => {
-  const r = assessmentResult.value
-  const q2Yes = Object.values(r.q2Answers || {}).filter(v => v === 1).length
-  const q9 = r.q9Score ?? 0
-  const q8 = r.q8Score ?? 0
-  const q9Level = q9 < 7 ? ['q9none', GREEN] : q9 <= 12 ? ['q9mild', AMBER] : q9 <= 18 ? ['q9moderate', ORANGE] : ['q9severe', RED]
-  const q8Level = q8 === 0 ? ['q8none', GREEN] : q8 <= 8 ? ['q8mild', AMBER] : q8 <= 16 ? ['q8moderate', ORANGE] : ['q8severe', RED]
-  return [
-    { id: '2q', name: '2Q', score: q2Yes, max: 2, label: t(`assessmentResult.${q2Yes ? 'q2risk' : 'q2normal'}`), ...(q2Yes ? AMBER : GREEN) },
-    { id: '9q', name: '9Q', score: q9, max: 27, label: t(`assessmentResult.${q9Level[0]}`), ...q9Level[1] },
-    { id: '8q', name: '8Q', score: q8, max: 52, label: t(`assessmentResult.${q8Level[0]}`), ...q8Level[1] },
-  ]
-})
 
 const goBack = () => {
   router.push('/')
