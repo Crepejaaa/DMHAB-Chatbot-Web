@@ -116,28 +116,7 @@
       <!-- ===== Section 2Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q2Heading') }}</h2>
-            <AssessmentHelpTooltip
-              :title="$t('assessment.q2Guide')"
-              variant="section"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
-                  <p v-html="$t('assessment.q2how1')"></p>
-                  <p v-html="$t('assessment.q2how2')"></p>
-                  <p class="text-amber-800 font-semibold" v-html="$t('assessment.q2how3')"></p>
-                </div>
-
-                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">{{ $t('assessment.criteria') }}</span>
-                  <span v-html="$t('assessment.q2rule')"></span>
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
-          </div>
+          <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q2Heading') }}</h2>
         </div>
 
         <div class="overflow-x-auto px-8 pb-8">
@@ -185,35 +164,7 @@
       <!-- ===== Section 9Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <div class="flex items-center gap-2 mb-2 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q9Heading') }}</h2>
-            <AssessmentHelpTooltip
-              :title="$t('assessment.q9Guide')"
-              variant="section"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
-                  <p v-html="$t('assessment.q9how1')"></p>
-                  <p v-html="$t('assessment.q9how2')"></p>
-                  <ul class="list-disc list-inside space-y-0.5 pl-2 text-slate-600">
-                    <li v-html="$t('assessment.q9leg0')"></li>
-                    <li v-html="$t('assessment.q9leg1')"></li>
-                    <li v-html="$t('assessment.q9leg2')"></li>
-                    <li v-html="$t('assessment.q9leg3')"></li>
-                  </ul>
-                  <p class="text-amber-800 font-semibold pt-1" v-html="$t('assessment.q9how3')"></p>
-                </div>
-
-                <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed text-emerald-950">
-                  <span class="font-bold text-emerald-800 block mb-1">{{ $t('assessment.q9CriteriaTitle') }}</span>
-                  <span v-html="$t('assessment.q9criteria')"></span>
-                  <span class="text-emerald-800 font-semibold mt-1 block">{{ $t('assessment.q9Note') }}</span>
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
-          </div>
+          <h2 class="text-lg font-bold text-[#1E293B] mb-2">{{ $t('assessment.q9Heading') }}</h2>
 
           <!-- Score Legend -->
           <div class="flex flex-wrap gap-3 mb-6">
@@ -256,29 +207,7 @@
       <!-- ===== Section 8Q ===== -->
       <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-8 pt-8 pb-4">
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q8Heading') }}</h2>
-            <AssessmentHelpTooltip
-              :title="$t('assessment.q8Guide')"
-              variant="danger"
-              iconType="info"
-            >
-              <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5 text-xs">
-                  <div class="font-bold text-slate-800">{{ $t('assessment.howTo') }}</div>
-                  <p v-html="$t('assessment.q8how1')"></p>
-                  <p v-html="$t('assessment.q8how2')"></p>
-                  <p class="text-amber-800 font-semibold" v-html="$t('assessment.q8how3')"></p>
-                </div>
-
-                <div class="bg-rose-50/80 p-3 rounded-2xl border border-rose-200/90 text-xs leading-relaxed text-rose-950">
-                  <span class="font-bold text-rose-800 block mb-1">{{ $t('assessment.q8CriteriaTitle') }}</span>
-                  <span v-html="$t('assessment.q8criteria')"></span>
-                  <span class="text-rose-700 font-semibold mt-1 block">{{ $t('assessment.q8Note') }}</span>
-                </div>
-              </div>
-            </AssessmentHelpTooltip>
-          </div>
+          <h2 class="text-lg font-bold text-[#1E293B]">{{ $t('assessment.q8Heading') }}</h2>
         </div>
 
         <div class="overflow-x-auto px-8 pb-8">
