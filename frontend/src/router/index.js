@@ -110,7 +110,7 @@ const router = createRouter({
     {
       path: '/activity-tracker',
       name: 'activity-tracker',
-      component: () => import('../Page/ActivityTrackerView.vue')
+      component: () => import('../Page/MiniGameView.vue')
     },
     {
       path: '/daily-checkin',

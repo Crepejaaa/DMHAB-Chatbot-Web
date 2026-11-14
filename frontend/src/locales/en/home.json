@@ -27,7 +27,13 @@
     "bannerTitle": "Using a chatbot to analyze and assess mental health, improving your quality of life every day",
     "articlesLabel": "Articles",
     "articlesTitle": "Insightful articles about mental well-being",
-    "viewAllArticles": "View all articles"
+    "viewAllArticles": "View all articles",
+    "gamePopup": {
+      "title": "Play a mini-game first?",
+      "description": "Would you like to play a short emotion-matching mini-game to relax before starting the assessment?",
+      "playBtn": "Play the game",
+      "skipBtn": "Skip, go straight to assessment"
+    }
   }
 }
 

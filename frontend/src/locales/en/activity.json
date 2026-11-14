@@ -1,116 +1,23 @@
 {
   "activity": {
-    "categories": {
-      "c0": "Body & mind relaxation",
-      "c1": "Journaling & self-reflection",
-      "c2": "Physical activity",
-      "c3": "Nature & environment"
-    },
-    "items": {
-      "deep-breathing": {
-        "name": "4-7-8 deep breathing",
-        "description": "Breathe in for 4 seconds, hold for 7, breathe out for 8. Repeat 4 times."
-      },
-      "body-scan": {
-        "name": "Body Scan Meditation",
-        "description": "Lie down, close your eyes and scan each part of your body from head to toe."
-      },
-      "mindfulness": {
-        "name": "Mindfulness: be present",
-        "description": "Notice your surroundings: 5 things you see, 4 sounds, 3 touches, 2 smells, 1 taste."
-      },
-      "progressive-muscle": {
-        "name": "Muscle relaxation (PMR)",
-        "description": "Tense and release each muscle group to reduce tension in your body."
-      },
-      "gratitude-journal": {
-        "name": "Gratitude journal",
-        "description": "Write down 3 things you are grateful for today to bring more happiness to your life."
-      },
-      "mood-diary": {
-        "name": "Mood diary",
-        "description": "Write freely about how you feel today, without worrying about right or wrong."
-      },
-      "positive-affirmation": {
-        "name": "Positive self-talk",
-        "description": "Say or write 5 encouraging sentences to yourself to build confidence."
-      },
-      "morning-stretch": {
-        "name": "Morning stretch",
-        "description": "Stretch after waking up to get your body and mind ready for the day."
-      },
-      "light-walk": {
-        "name": "15-minute easy walk",
-        "description": "Walk somewhere you like, unhurried, noticing the nature around you."
-      },
-      "yoga": {
-        "name": "Relaxing yoga",
-        "description": "Basic yoga poses to stretch your muscles and reduce stress. Suitable for everyone."
-      },
-      "sunlight": {
-        "name": "Morning sunlight",
-        "description": "Get some gentle morning sun to reset your body clock and boost serotonin."
-      },
-      "plant-care": {
-        "name": "Care for plants",
-        "description": "Water or tend to plants. This small activity is great for relieving stress."
-      },
-      "digital-detox": {
-        "name": "30-minute digital detox",
-        "description": "Put your phone down for 30 minutes and enjoy a screen-free activity to calm your mind."
-      }
-    },
-    "rank": {
-      "r0": "Newcomer",
-      "r1": "Practitioner",
-      "r2": "Mind Keeper",
-      "r3": "Expert",
-      "r4": "Master"
-    },
-    "tips": {
-      "t0": {
-        "title": "Get enough sleep",
-        "desc": "Sleeping 7-9 hours a night helps your brain recover and handle stress better."
-      },
-      "t1": {
-        "title": "Eat healthy food",
-        "desc": "Foods with omega-3 and vitamin B12 help strengthen your mental health."
-      },
-      "t2": {
-        "title": "Talk to someone you trust",
-        "desc": "Sharing your feelings with someone you trust relieves more pressure than you think."
-      }
-    },
-    "level": {
-      "beginner": "Beginner",
-      "easy": "Easy",
-      "medium": "Medium",
-      "challenging": "Challenging"
-    },
-    "title": "Relaxation Activity Tracker",
-    "subtitle": "Do the suggested activities, tick them off when done and collect points to care for your mental health every day",
-    "yourLevel": "Your level",
-    "xpToNext": "{n} XP to the next level",
-    "progress": "Progress",
-    "todayCount": "{done}/{total} activities today",
-    "streak": "🔥 {n}-day streak",
-    "todaySummary": "Today's summary",
-    "xpToday": "XP today",
-    "completedCount": "Completed",
-    "suggestedToday": "Suggested activities today",
-    "resetDay": "🔄 Reset for a new day",
-    "catDone": "{done}/{total} done",
-    "allDone": "✅ All done!",
-    "doneToday": "📋 Activities done today",
-    "tipsTitle": "💡 Mental health tips",
-    "minutes": "{n} min",
-    "toastUndoTitle": "Activity removed",
-    "toastUndoMsg": "Removed {name} (-{xp} XP)",
-    "toastCatTitle": "🎉 Completed {name}!",
-    "toastCatMsg": "+{xp} XP + 15 XP bonus!",
-    "toastDoneTitle": "Done! 🎉",
-    "toastDoneMsg": "+{xp} XP from \"{name}\"",
-    "toastResetTitle": "Reset",
-    "toastResetMsg": "Ready to start fresh today!"
+    "title": "Emotion Matching Mini-Game",
+    "subtitle": "Match each emotion word with the situation it belongs to, and take a moment to relax",
+    "instructions": "Flip two cards at a time to find a matching pair. Match every pair to finish the game.",
+    "movesLabel": "Flips",
+    "matchedLabel": "Matched",
+    "playAgain": "🔄 Play again",
+    "backToServices": "Back to services",
+    "goToAssessment": "Go to assessment",
+    "completeTitle": "Great job! You matched every pair 🎉",
+    "completeDescNext": "Taking you to the mental health assessment...",
+    "completeDescDefault": "We hope that helped you feel a little more relaxed.",
+    "pairs": {
+      "p1": { "emotion": "Happy 😊", "situation": "Reunited with a friend you hadn't seen in ages" },
+      "p2": { "emotion": "Anxious 😰", "situation": "An exam is close and you're not ready" },
+      "p3": { "emotion": "Exhausted 😴", "situation": "You haven't slept enough for days" },
+      "p4": { "emotion": "Angry 😠", "situation": "Someone was disrespectful to you" },
+      "p5": { "emotion": "Lonely 🥺", "situation": "Spending a long holiday all by yourself" },
+      "p6": { "emotion": "Proud 🥰", "situation": "You finally finished something you worked hard on" }
+    }
   }
 }

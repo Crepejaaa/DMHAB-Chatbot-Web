@@ -86,14 +86,14 @@
         "button": "Start assessment"
       },
       "listeningSpace": {
-        "title": "24-Hour Listening Space",
+        "title": "Chat With Nong Muk Huang Yai",
         "description": "A private chat to talk through your feelings",
         "button": "Get Started"
       },
       "relaxation": {
-        "title": "Relaxation Activity Suggestions",
-        "description": "Activities and articles suited to you",
-        "button": "Track activities"
+        "title": "Emotion Matching Mini-Game",
+        "description": "Relax and reflect on your emotions with a fun card-matching game",
+        "button": "Play mini-game"
       }
     }
   },
@@ -106,7 +106,7 @@
     "ctaTitle": "Ready to start caring for your mental health?",
     "ctaText": "Start using our service today for better mental health every day",
     "btnCheckin": "📝 Get Started",
-    "btnRelaxation": "🧘 Start tracking activities",
+    "btnRelaxation": "🎮 Start the mini-game",
     "btnListening": "💬 Start chatting",
     "btnStart": "Get Started",
     "viewAll": "View all services",
@@ -154,9 +154,9 @@
         "s4Desc": "Read the advice and self-care guidance tailored to you"
       },
       "listeningSpace": {
-        "title": "24-Hour Listening Space",
+        "title": "Chat With Nong Muk Huang Yai",
         "subtitle": "A private chat to talk through your feelings without fear of being judged",
-        "overview": "The 24-hour listening space is a chatbot designed to be a companion when you need someone to listen, whether late at night or on holidays. The chatbot is always ready to listen, using AI to respond with empathy, safety, and confidentiality.",
+        "overview": "Nong Muk Huang Yai is a chatbot designed to be a companion when you need someone to listen, whether late at night or on holidays. The chatbot is always ready to listen, using AI to respond with empathy, safety, and confidentiality.",
         "f1Title": "Listening 24/7",
         "f1Desc": "Any time of day, the chatbot is ready to listen, with no days off",
         "f2Title": "Understanding responses",
@@ -175,25 +175,25 @@
         "s4Desc": "If you need more help, the system will suggest professionals or hotlines"
       },
       "relaxation": {
-        "title": "Relaxation Activity Suggestions",
-        "subtitle": "Activities and articles suited to you for a more balanced life",
-        "overview": "The relaxation activity suggestion service curates activities and content suited to your state of mind, such as breathing techniques, meditation, journaling, and other mental wellness activities, all designed around positive psychology principles.",
-        "f1Title": "Suggestions by state of mind",
-        "f1Desc": "The system picks suitable activities from your check-in and assessment results",
-        "f2Title": "Relaxation techniques",
-        "f2Desc": "Easy-to-practice breathing, meditation, and mindfulness techniques",
-        "f3Title": "Self-Care article library",
-        "f3Desc": "Mental health articles updated every week",
-        "f4Title": "Rewards system",
-        "f4Desc": "Earn points from activities to stay motivated in caring for yourself",
-        "s1Title": "Take an assessment",
-        "s1Desc": "Complete a mood check-in or mental health assessment first so the system gets to know you",
-        "s2Title": "Get recommendations",
-        "s2Desc": "The system suggests activities and articles suited to your state of mind",
-        "s3Title": "Do the activity",
-        "s3Desc": "Pick an activity you like and follow the suggested steps",
-        "s4Title": "Record the results",
-        "s4Desc": "Note how you feel after the activity so the system can improve its suggestions"
+        "title": "Emotion Matching Mini-Game",
+        "subtitle": "Relax and reflect on your emotions with a fun card-matching game, before or after your assessment",
+        "overview": "The Emotion Card Matching mini-game helps you relax and practice noticing your own emotions by matching emotion-word cards with situations that reflect them. It's great for a short play before starting an assessment, or whenever you want to de-stress.",
+        "f1Title": "Quick and easy",
+        "f1Desc": "Match every pair of cards in just a few minutes",
+        "f2Title": "Practice naming emotions",
+        "f2Desc": "Connect emotion words with everyday situations",
+        "f3Title": "Relax before assessing",
+        "f3Desc": "Helps ease tension before starting a real assessment",
+        "f4Title": "Play anytime",
+        "f4Desc": "Come back whenever you want to take a mental break",
+        "s1Title": "Open the mini-game",
+        "s1Desc": "Tap play to open the emotion-matching card board",
+        "s2Title": "Flip two cards at a time",
+        "s2Desc": "Flip two cards each turn to find a matching pair",
+        "s3Title": "Match them all",
+        "s3Desc": "Match every emotion word with its situation card",
+        "s4Title": "Move on to the next step",
+        "s4Desc": "When you finish, you'll continue to the assessment automatically if you came from the homepage, or you can return to the services page"
       }
     }
   }
