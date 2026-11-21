@@ -272,6 +272,42 @@
       </div>
     </footer>
 
+    <!-- 8. Popup ถามก่อนเริ่มแบบประเมิน: เล่นมินิเกมก่อนหรือไม่ -->
+    <div
+      v-if="showGamePopup"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+    >
+      <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 text-center border-t-4 border-[#0D9488] modal-surface">
+        <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-teal-50 border border-teal-200 text-2xl mb-4">
+          🎮
+        </div>
+
+        <h3 class="text-lg sm:text-xl font-extrabold text-[#1E293B] mb-2">
+          {{ $t('home.gamePopup.title') }}
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
+          {{ $t('home.gamePopup.description') }}
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            @click="skipGameAndAssess"
+            class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+          >
+            {{ $t('home.gamePopup.skipBtn') }}
+          </button>
+          <button
+            type="button"
+            @click="playGameBeforeAssessment"
+            class="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:from-[#0D9488] hover:to-[#059669] text-white text-sm font-semibold shadow-md transition-all"
+          >
+            {{ $t('home.gamePopup.playBtn') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -295,13 +331,31 @@ const mobileMenuOpen = ref(false)
 const authStore = useAuthStore()
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN' || localStorage.getItem('userRole') === 'ADMIN')
 
-// ปุ่มเริ่มต้นใช้งาน: ถ้ายังไม่ล็อกอิน ให้ไปหน้า Login ก่อน (พร้อม redirect กลับมาหน้าแบบประเมิน)
+// ปุ่มเริ่มต้นใช้งาน: เปิด Popup ถามก่อนว่าจะเล่นมินิเกมก่อนทำแบบประเมินหรือไม่
+const showGamePopup = ref(false)
 const startAssessment = () => {
+  showGamePopup.value = true
+}
+
+// นำทางไปปลายทาง ถ้ายังไม่ล็อกอิน ให้ไปหน้า Login ก่อน (พร้อม redirect กลับมาปลายทางเดิม)
+const navigateWithAuth = (path) => {
   if (authStore.isAuthenticated || localStorage.getItem('token')) {
-    router.push('/assessment')
+    router.push(path)
   } else {
-    router.push({ path: '/login', query: { redirect: '/assessment' } })
+    router.push({ path: '/login', query: { redirect: path } })
   }
+}
+
+// เลือก "เล่นเกมก่อน": ไปหน้ามินิเกม พร้อมบอกว่าเล่นจบแล้วให้พาไปหน้าแบบประเมินต่ออัตโนมัติ
+const playGameBeforeAssessment = () => {
+  showGamePopup.value = false
+  navigateWithAuth('/activity-tracker?next=assessment')
+}
+
+// เลือก "ข้าม": ไปหน้าแบบประเมินตามปกติ
+const skipGameAndAssess = () => {
+  showGamePopup.value = false
+  navigateWithAuth('/assessment')
 }
 
 const articles = ref([])
