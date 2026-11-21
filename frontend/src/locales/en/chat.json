@@ -77,6 +77,26 @@
       "answersToggleHide": "Hide first 5 answers",
       "questionPrefix": "Q{no}"
     },
+    "offer": {
+      "prompt": "We've talked a bit — would you like to try a short check-in scale so Nong Mook can understand how you're doing a little better?",
+      "takeScaleBtn": "Take the scale",
+      "keepChattingBtn": "Keep chatting a bit more"
+    },
+    "scale": {
+      "stepBadge": "Scale question {current} of {total}",
+      "inputDisabledPlaceholder": "Choose an answer from the buttons above",
+      "helpNowBtn": "I need help right now",
+      "resultTitle": "Your results today",
+      "st5Label": "Stress level (ST-5)",
+      "who5Label": "Well-being score (WHO-5)",
+      "compareTitle": "Compared to last time",
+      "trend": {
+        "BETTER": "Improved",
+        "SAME": "About the same",
+        "WORSE": "Worse"
+      },
+      "continueBtn": "Continue chatting"
+    },
     "endChat": {
       "cloudBtn": "End Conversation",
       "cloudSub": "Finish & Summarize",
@@ -108,7 +128,14 @@
       "backToChatBtn": "Review Conversation",
       "newTopicBtn": "Start New Topic",
       "homeBtn": "Back to Home",
-      "helplineNote": "Note: This guidance is supportive self-care, not a medical diagnosis. For urgent professional support, call the Mental Health Hotline 1323 (24/7)."
+      "helplineNote": "Note: This guidance is supportive self-care, not a medical diagnosis. For urgent professional support, call the Mental Health Hotline 1323 (24/7).",
+      "activitiesBoxTitle": "Small things you can try",
+      "activitiesBoxHint": "Pick 1-2 and try them over the next 14 days.",
+      "nextCheckInLabel": "Next check-in",
+      "goToCheckinBtn": "Go to \"Small things you can try\" log",
+      "referralTitle": "We'd like to invite you to take a fuller assessment",
+      "referralBody": "For more tailored support, you can take the full mental health assessment.",
+      "referralBtn": "Go to assessment"
     },
     "summary": {
       "feedbackQuestion": "How much did this conversation help?",
