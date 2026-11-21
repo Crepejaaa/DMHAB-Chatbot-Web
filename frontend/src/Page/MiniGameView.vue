@@ -195,7 +195,7 @@ import ProfileMenu from '../components/ProfileMenu.vue'
 import AdminNavLink from '../components/AdminNavLink.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -206,7 +206,7 @@ const goToAssessmentNext = computed(() => route.query.next === 'assessment')
 
 // รายการคู่การ์ด (คำอารมณ์ <-> สถานการณ์) ดึงจากไฟล์ภาษา
 const pairDefs = computed(() => {
-  const pairs = t('activity.pairs', {}, { returnObjects: true })
+  const pairs = tm('activity.pairs')
   return Object.keys(pairs).map((pairId) => ({ pairId, ...pairs[pairId] }))
 })
 const totalPairs = computed(() => pairDefs.value.length)
