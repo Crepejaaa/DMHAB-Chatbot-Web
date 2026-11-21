@@ -768,7 +768,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
               <div v-if="scaleResult.st5" class="bg-white rounded-xl p-3 border border-teal-100">
                 <p class="text-xs text-slate-500">{{ $t('chat.scale.st5Label') }}</p>
-                <p class="font-bold text-[#1E293B]">{{ scaleResult.st5.level }}</p>
+                <p class="font-bold text-[#1E293B]">{{ $t('chat.scale.level.' + scaleResult.st5.level) }}</p>
               </div>
               <div v-if="scaleResult.who5" class="bg-white rounded-xl p-3 border border-teal-100">
                 <p class="text-xs text-slate-500">{{ $t('chat.scale.who5Label') }}</p>

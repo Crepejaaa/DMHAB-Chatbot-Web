@@ -95,6 +95,14 @@
         "SAME": "About the same",
         "WORSE": "Worse"
       },
+      "level": {
+        "LOW": "Low",
+        "MODERATE": "Moderate",
+        "HIGH": "High",
+        "VERY_HIGH": "Very high",
+        "GOOD": "Good",
+        "POOR": "Needs more support"
+      },
       "continueBtn": "Continue chatting"
     },
     "endChat": {
