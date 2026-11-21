@@ -86,7 +86,7 @@
         "button": "Start assessment"
       },
       "listeningSpace": {
-        "title": "Chat With Nong Muk Huang Yai",
+        "title": "ChatWithCHATBOT",
         "description": "A private chat to talk through your feelings",
         "button": "Get Started"
       },
@@ -154,7 +154,7 @@
         "s4Desc": "Read the advice and self-care guidance tailored to you"
       },
       "listeningSpace": {
-        "title": "Chat With Nong Muk Huang Yai",
+        "title": "ChatWithCHATBOT",
         "subtitle": "A private chat to talk through your feelings without fear of being judged",
         "overview": "Nong Muk Huang Yai is a chatbot designed to be a companion when you need someone to listen, whether late at night or on holidays. The chatbot is always ready to listen, using AI to respond with empathy, safety, and confidentiality.",
         "f1Title": "Listening 24/7",
