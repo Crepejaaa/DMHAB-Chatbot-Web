@@ -9,6 +9,9 @@ import {
   submitSessionFeedback,
   deleteChatSession,
   sendMessage,
+  startScale,
+  declineScale,
+  answerScale,
 } from "../controllers/chatController";
 import { verifyToken } from "../middlewares/authMiddleware";
 import { chatLimiter } from "../middlewares/rateLimitMiddleware";
@@ -19,7 +22,7 @@ const authenticate = verifyToken;
 // ดึงเซสชันปัจจุบัน (คงไว้เพื่อความเข้ากันได้เดิม)
 router.get("/sessions", verifyToken, getUserChatSessions);
 
-// เริ่มเซสชันใหม่พร้อมหัวข้อ (รับ topic และคืนคำถามข้อแรกจาก 5 ข้อ)
+// เริ่มเซสชันใหม่พร้อมหัวข้อ (รับ topic แล้วสร้างเซสชันและข้อความต้อนรับ)
 router.post("/sessions", chatLimiter, verifyToken, startChatSession);
 
 // ดึงลิสต์ประวัติการสนทนาทั้งหมดของผู้ใช้ (ต้องอยู่ก่อน /sessions/:id)
@@ -27,6 +30,11 @@ router.get("/sessions/history", verifyToken, getChatSessionsHistory);
 
 // ดึงข้อความแชทที่แปลตาม locale ที่ขอ (ต้องอยู่ก่อน /sessions/:id)
 router.get("/sessions/:id/messages", verifyToken, getLocalizedMessages);
+
+// แบบประเมิน (scale): เริ่ม / ปฏิเสธ / ตอบทีละข้อ (ไม่ใส่ chatLimiter เพราะไม่เรียก AI และผู้ใช้กดตอบเร็วได้)
+router.post("/sessions/:id/scale/start", verifyToken, startScale);
+router.post("/sessions/:id/scale/decline", verifyToken, declineScale);
+router.post("/sessions/:id/scale/answer", verifyToken, answerScale);
 
 // ดึงข้อความ + คำตอบ 5 ข้อของเซสชันที่ระบุ
 router.get("/sessions/:id", verifyToken, getChatSessionById);

@@ -28,40 +28,45 @@ enum Sender {
 
 // ตารางที่ 1: เก็บข้อมูลผู้ใช้งานระบบทั้งหมด (ทั้งสมาชิกทั่วไปและแอดมิน)
 model User {
-  id                   Int           @id @default(autoincrement())
-  username             String        @unique
-  passwordHash         String?        // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
-  email                String?        @unique
+  id                   Int       @id @default(autoincrement())
+  username             String    @unique
+  passwordHash         String? // รหัสผ่านที่เข้ารหัสแล้วเพื่อความปลอดภัย
+  email                String?   @unique
   phone                String?
   avatarUrl            String?
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
-  role                 Role          @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
+  role                 Role      @default(USER) // สิทธิ์ของผู้ใช้ เริ่มต้นเป็นคนทั่วไป
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   // ความสัมพันธ์ (Relationships)
   chatSessions ChatSession[] // ผู้ใช้ 1 คน มีรอบการคุยได้หลายครั้ง
-  testResults  TestResult[]  // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
-  articles     Article[]     // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
-  systemLogs   SystemLog[]   // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
+  testResults  TestResult[] // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
+  scaleResults ScaleResult[]
+  articles     Article[] // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
+  systemLogs   SystemLog[] // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
 }
 
 // ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง
 model ChatSession {
-  id             Int           @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   userId         Int
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topic          String?       // หัวข้อที่เลือก เช่น love/study/work/family/money/friends/self/sleep
-  summary        String?       @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
-  overallMood    String?       // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
-  feedbackRating String?       // ค่าที่เป็นไปได้: "HELPFUL" | "SOMEWHAT" | "NOT_HELPFUL"
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic          String? // หัวข้อที่เลือก เช่น love/study/work/family/money/friends/self/sleep
+  summary        String?   @db.Text // ผลสรุปภาพรวมจาก AI หลังจบเซสชัน
+  overallMood    String? // ระดับอารมณ์รวมของวันนั้น (เช่น ดี, เครียด, ซึมเศร้า)
+  feedbackRating String? // ค่าที่เป็นไปได้: "HELPFUL" | "SOMEWHAT" | "NOT_HELPFUL"
   feedbackAt     DateTime?
-  createdAt      DateTime      @default(now())
+  openingTurns   Int       @default(0)
+  mode           String? // "FIRST" | "FOLLOW_UP" | "CHAT_ONLY" ; null = เซสชันแบบเดิม
+  phase          String? // "OPENING" | "OFFER" | "SCALE" | "FREE_CHAT" ; null = เซสชันแบบเดิม
+  createdAt      DateTime  @default(now())
 
   // ความสัมพันธ์
-  messages       ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
-  answers        ChatAnswer[]  // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
+  messages ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
+  answers  ChatAnswer[] // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
+  scaleResults ScaleResult[]
 }
 
 // ตารางเก็บคำตอบ 5 ข้อแรกของแต่ละรอบการสนทนา
@@ -73,18 +78,36 @@ model ChatAnswer {
   questionText String      @db.Text
   answerText   String      @db.Text
   score        Int?
+  scaleKey     String? // "ST5" | "WHO5" ; null = คำตอบแบบเดิม
   createdAt    DateTime    @default(now())
 
   @@unique([sessionId, questionNo])
   @@index([sessionId])
 }
 
+// ผลแบบประเมิน (ST-5 / WHO-5) ของแต่ละเซสชัน
+model ScaleResult {
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId  Int
+  session    ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  topic      String
+  scaleKey   String // "ST5" | "WHO5"
+  totalScore Int // คะแนนดิบ (ST-5: 0-15, WHO-5: 0-25)
+  level      String // ST-5: LOW|MODERATE|HIGH|VERY_HIGH ; WHO-5: GOOD|POOR
+  answers    Json // [{ itemNo, score }]
+  createdAt  DateTime    @default(now())
+
+  @@index([userId, topic, createdAt])
+  @@index([sessionId])
+}
 // ตารางที่ 3: เก็บข้อความในแชททีละประโยค
 model ChatMessage {
   id        Int         @id @default(autoincrement())
   sessionId Int
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sender    Sender      // ระบุว่าประโยคนี้เป็นของ USER หรือ BOT
+  sender    Sender // ระบุว่าประโยคนี้เป็นของ USER หรือ BOT
   message   String      @db.Text // เนื้อหาข้อความ
   createdAt DateTime    @default(now())
 }
@@ -92,7 +115,7 @@ model ChatMessage {
 // ตารางที่ 4: คลังข้อคำถามแบบทดสอบคัดกรองสุขภาพจิต
 model TestQuestion {
   id           Int      @id @default(autoincrement())
-  questionText String   // ข้อความคำถาม เช่น "รู้สึกเบื่อ ไม่อยากทำอะไรเลย"
+  questionText String // ข้อความคำถาม เช่น "รู้สึกเบื่อ ไม่อยากทำอะไรเลย"
   scoreWeight  Int      @default(1) // น้ำหนักคะแนนของข้อนี้
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -103,8 +126,8 @@ model TestResult {
   id             Int      @id @default(autoincrement())
   userId         Int
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  totalScore     Int      // คะแนนรวมที่ทำได้
-  interpretation String   // ผลการประเมิน เช่น "เสี่ยงซึมเศร้ารุนแรง ควรพบแพทย์"
+  totalScore     Int // คะแนนรวมที่ทำได้
+  interpretation String // ผลการประเมิน เช่น "เสี่ยงซึมเศร้ารุนแรง ควรพบแพทย์"
   createdAt      DateTime @default(now())
 }
 
@@ -115,7 +138,7 @@ model Article {
   slug          String?  @unique
   excerpt       String?  @db.Text
   content       String   @db.Text // เนื้อหาบทความยาวๆ
-  category      String   // หมวดหมู่ เช่น "STRESS", "DEPRESSION", "EMERGENCY"
+  category      String // หมวดหมู่ เช่น "STRESS", "DEPRESSION", "EMERGENCY"
   coverImageUrl String?
   sourceName    String?
   sourceUrl     String?
@@ -128,9 +151,9 @@ model Article {
 // ตารางที่ 7: เก็บบันทึกประวัติกิจกรรมและการใช้งานระบบ
 model SystemLog {
   id        Int      @id @default(autoincrement())
-  userId    Int?     // เป็น Nullable ได้ ในกรณีที่เกิด Error หรือผู้ใช้ยังไม่ได้ Log-in
+  userId    Int? // เป็น Nullable ได้ ในกรณีที่เกิด Error หรือผู้ใช้ยังไม่ได้ Log-in
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action    String   // กิจกรรมที่เกิดขึ้น เช่น "LOGIN", "DELETE_USER"
+  action    String // กิจกรรมที่เกิดขึ้น เช่น "LOGIN", "DELETE_USER"
   details   String   @db.Text // รายละเอียดเชิงลึก
   createdAt DateTime @default(now())
 }
