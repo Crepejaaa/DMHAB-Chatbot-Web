@@ -413,6 +413,47 @@
                 </div>
               </section>
 
+              <!--
+                กล่อง "สิ่งเล็ก ๆ ที่ลองทำ" + วันนัดติดตาม + ปุ่มไปหน้าเช็กอิน
+                หมายเหตุ: ใช้ summaryDetail.recommendedActivities / summaryDetail.nextCheckInDate
+                ที่ backend ยังไม่ได้ส่งมาจริง จึง v-if กันไว้ — ถ้าไม่มีข้อมูลจะไม่แสดงผล
+                (เซสชันเก่าที่ไม่มี field พวกนี้จึงยังเปิดดูได้ปกติไม่พัง)
+              -->
+              <section
+                v-if="summaryDetail.recommendedActivities?.length || summaryDetail.nextCheckInDate"
+                class="bg-white border border-teal-100 rounded-2xl p-4 sm:p-5"
+              >
+                <h3 class="text-sm font-bold text-[#045F54] mb-1">{{ $t('chat.advice.activitiesBoxTitle') }}</h3>
+                <p v-if="summaryDetail.recommendedActivities?.length" class="text-xs text-slate-500 mb-3">
+                  {{ $t('chat.advice.activitiesBoxHint') }}
+                </p>
+
+                <div v-if="summaryDetail.recommendedActivities?.length" class="space-y-2 mb-3">
+                  <div
+                    v-for="activity in summaryDetail.recommendedActivities"
+                    :key="activity.key"
+                    class="flex items-start gap-2.5 p-3 rounded-xl bg-teal-50/60 border border-teal-100"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0D9488] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm text-[#1E293B]">{{ activity.name }}</span>
+                  </div>
+                </div>
+
+                <p v-if="summaryDetail.nextCheckInDate" class="text-xs text-slate-500 mb-3">
+                  {{ $t('chat.advice.nextCheckInLabel') }}: {{ summaryDetail.nextCheckInDate }}
+                </p>
+
+                <button
+                  type="button"
+                  @click="$router.push('/daily-checkin')"
+                  class="w-full sm:w-auto px-4 py-2 rounded-full border border-teal-300 text-[#045F54] hover:bg-teal-50 text-xs sm:text-sm font-semibold transition-colors"
+                >
+                  {{ $t('chat.advice.goToCheckinBtn') }}
+                </button>
+              </section>
+
               <!-- กำลังใจส่งท้าย -->
               <section
                 v-if="summaryDetail.encouragement"
@@ -427,6 +468,33 @@
               <p class="text-xs text-slate-400 leading-relaxed text-center">
                 {{ $t('chat.advice.helplineNote') }}
               </p>
+
+              <!--
+                ลิงก์ไปหน้าแบบประเมินเมื่อเข้าเงื่อนไขส่งต่อ (ผลแย่ลง / ST-5 >= 10 / WHO-5 < 13)
+                อาศัย summaryDetail.referralNeeded ที่ backend ยังไม่ได้ส่งมาจริง (v-if กันไว้)
+              -->
+              <section
+                v-if="summaryDetail.referralNeeded"
+                class="bg-rose-50 border border-rose-200 rounded-2xl p-4 sm:p-5 text-center"
+              >
+                <h3 class="text-sm font-bold text-rose-700 mb-1">{{ $t('chat.advice.referralTitle') }}</h3>
+                <p class="text-xs text-rose-600 mb-3">{{ $t('chat.advice.referralBody') }}</p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    @click="$router.push('/assessment')"
+                    class="w-full sm:w-auto px-5 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold transition-colors"
+                  >
+                    {{ $t('chat.advice.referralBtn') }}
+                  </button>
+                  <a
+                    href="tel:1323"
+                    class="w-full sm:w-auto px-5 py-2 rounded-full border border-rose-300 text-rose-700 hover:bg-rose-100 text-xs sm:text-sm font-semibold transition-colors"
+                  >
+                    {{ $t('chat.callHotline') }}
+                  </a>
+                </div>
+              </section>
 
               <!-- บล็อกเก็บ Feedback 3 ระดับหลังจบสนทนา -->
               <div v-if="!feedbackSubmitted" class="bg-white/60 border border-teal-100 rounded-2xl p-4 mb-4 text-center feedback-box">
@@ -599,9 +667,141 @@
         </template>
       </main>
 
+      <!--
+        ส่วนต่อไปนี้ (OFFER / SCALE / RESULT) เป็นงาน UI ของแบบวัด ST-5/WHO-5
+        ("สิ่งเล็ก ๆ ที่ลองทำ") — backend ยังไม่มี logic ส่ง currentPhase เป็นค่าเหล่านี้จริง
+        จึงยังไม่ถูกเรียกใช้งานในระบบจนกว่า backend จะพร้อม (ดู TODO ใน <script setup>)
+      -->
+
+      <!-- Scale Offer Panel: ปุ่ม [ทำแบบวัด] [ขอคุยต่ออีกหน่อย] -->
+      <section
+        v-if="!showAdviceScreen && !isCompleted && currentPhase === 'OFFER'"
+        class="bg-white border-t border-teal-100 px-4 py-3 shrink-0 guided-panel"
+      >
+        <div class="max-w-4xl mx-auto">
+          <p class="text-sm text-slate-600 mb-3">
+            {{ $t('chat.offer.prompt') }}
+          </p>
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <button
+              type="button"
+              :disabled="isSending"
+              @click="acceptScaleOffer"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0D9488] to-[#059669] hover:from-[#045F54] hover:to-[#0D9488] text-white text-sm font-semibold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ $t('chat.offer.takeScaleBtn') }}
+            </button>
+            <button
+              type="button"
+              :disabled="isSending"
+              @click="declineScaleOffer"
+              class="w-full sm:w-auto px-5 py-2.5 rounded-full border border-teal-300 text-[#045F54] hover:bg-teal-50 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ $t('chat.offer.keepChattingBtn') }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scale Question Panel: ช่วงตอบแบบวัด ST-5/WHO-5 (ปิดช่องพิมพ์, แถบความคืบหน้า, ปุ่มช่วยเหลือ) -->
+      <section
+        v-else-if="!showAdviceScreen && !isCompleted && currentPhase === 'SCALE' && currentScaleQuestion"
+        class="bg-white border-t border-teal-100 px-4 py-3 shrink-0 guided-panel"
+      >
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#045F54]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {{ $t('chat.scale.stepBadge', { current: currentScaleQuestion.questionNo, total: totalScaleQuestions }) }}
+            </span>
+            <div class="flex items-center gap-1.5">
+              <span
+                v-for="step in totalScaleQuestions"
+                :key="step"
+                class="h-1.5 w-5 sm:w-6 rounded-full transition-colors"
+                :class="step <= currentScaleQuestion.questionNo ? 'bg-[#0D9488]' : 'bg-teal-100'"
+              ></span>
+            </div>
+          </div>
+
+          <p class="text-sm sm:text-base font-semibold text-[#1E293B] mb-2.5">
+            {{ currentScaleQuestion.questionText }}
+          </p>
+
+          <!-- ปุ่มตัวเลือก: ใช้ v-for ตามจำนวนตัวเลือกจริง จึงรองรับ ST-5 (4 ตัว) และ WHO-5 (6 ตัว) โดยอัตโนมัติ -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+            <button
+              v-for="(opt, idx) in currentScaleQuestion.options"
+              :key="idx"
+              type="button"
+              :disabled="isSending"
+              @click="submitScaleAnswer(opt)"
+              class="guided-option-btn text-left px-3.5 py-2.5 rounded-xl border border-teal-200/90 bg-teal-50/50 hover:bg-[#0D9488] hover:text-white hover:border-[#0D9488] text-xs sm:text-sm font-medium text-[#1E293B] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between gap-2"
+            >
+              <span>{{ opt.label }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            @click="openScaleHelpNow"
+            class="w-full text-center px-3.5 py-2 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 text-xs sm:text-sm font-semibold hover:bg-rose-100 transition-colors"
+          >
+            {{ $t('chat.scale.helpNowBtn') }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Scale Result Panel: การ์ดผลแบบวัด + การ์ดเทียบผลครั้งก่อน (ครั้งติดตาม) -->
+      <section
+        v-else-if="!showAdviceScreen && !isCompleted && currentPhase === 'RESULT' && scaleResult"
+        class="bg-white border-t border-teal-100 px-4 py-4 shrink-0 guided-panel"
+      >
+        <div class="max-w-4xl mx-auto space-y-3">
+          <div class="bg-teal-50/70 border border-teal-200/70 rounded-2xl p-4">
+            <h4 class="text-sm font-bold text-[#045F54] mb-2">{{ $t('chat.scale.resultTitle') }}</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <div v-if="scaleResult.st5" class="bg-white rounded-xl p-3 border border-teal-100">
+                <p class="text-xs text-slate-500">{{ $t('chat.scale.st5Label') }}</p>
+                <p class="font-bold text-[#1E293B]">{{ scaleResult.st5.level }}</p>
+              </div>
+              <div v-if="scaleResult.who5" class="bg-white rounded-xl p-3 border border-teal-100">
+                <p class="text-xs text-slate-500">{{ $t('chat.scale.who5Label') }}</p>
+                <p class="font-bold text-[#1E293B]">{{ scaleResult.who5.totalScore }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="previousScaleResult" class="bg-white border border-teal-100 rounded-2xl p-4">
+            <h4 class="text-xs font-bold text-[#045F54] mb-2">{{ $t('chat.scale.compareTitle') }}</h4>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span v-if="previousScaleResult.st5Trend" class="px-2.5 py-1 rounded-full bg-teal-50 text-[#045F54] border border-teal-200">
+                {{ $t('chat.scale.st5Label') }}: {{ $t('chat.scale.trend.' + previousScaleResult.st5Trend) }}
+              </span>
+              <span v-if="previousScaleResult.who5Trend" class="px-2.5 py-1 rounded-full bg-teal-50 text-[#045F54] border border-teal-200">
+                {{ $t('chat.scale.who5Label') }}: {{ $t('chat.scale.trend.' + previousScaleResult.who5Trend) }}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            @click="currentPhase = 'FREE_CHAT'"
+            class="w-full px-5 py-2.5 rounded-full bg-gradient-to-r from-[#0D9488] to-[#059669] hover:from-[#045F54] hover:to-[#0D9488] text-white text-sm font-semibold shadow-sm transition-all"
+          >
+            {{ $t('chat.scale.continueBtn') }}
+          </button>
+        </div>
+      </section>
+
       <!-- Guided 5-Question Choice Panel (ช่วงที่ 1: ถามทีละข้อจาก 5 คำถาม เลือกตัวเลือกหรือพิมพ์เองได้) -->
       <section
-        v-if="!showAdviceScreen && !isCompleted && currentPhase === 'QUESTIONS' && currentQuestion"
+        v-else-if="!showAdviceScreen && !isCompleted && currentPhase === 'QUESTIONS' && currentQuestion"
         class="bg-white border-t border-teal-100 px-4 py-3 shrink-0 guided-panel"
       >
         <div class="max-w-4xl mx-auto">
@@ -699,18 +899,20 @@
               :placeholder="
                 isCompleted
                   ? $t('chat.ended')
-                  : currentPhase === 'QUESTIONS'
-                    ? $t('chat.customAnswerPlaceholder')
-                    : $t('chat.placeholder')
+                  : currentPhase === 'SCALE'
+                    ? $t('chat.scale.inputDisabledPlaceholder')
+                    : currentPhase === 'QUESTIONS'
+                      ? $t('chat.customAnswerPlaceholder')
+                      : $t('chat.placeholder')
               "
-              :disabled="isCompleted || isSending"
+              :disabled="isCompleted || isSending || currentPhase === 'SCALE'"
               class="w-full pl-4 pr-12 py-3 bg-slate-100 border border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all outline-none disabled:opacity-60 disabled:bg-slate-200 disabled:cursor-not-allowed text-sm sm:text-base chat-input"
               :required="!isRecording"
             />
             <button
               type="button"
               @click="toggleRecording"
-              :disabled="isCompleted || isSending"
+              :disabled="isCompleted || isSending || currentPhase === 'SCALE'"
               class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full focus:outline-none transition-colors"
               :class="
                 isRecording
@@ -731,7 +933,7 @@
 
           <button
             type="submit"
-            :disabled="(!newMessage.trim() && !isRecording) || isCompleted || isSending"
+            :disabled="(!newMessage.trim() && !isRecording) || isCompleted || isSending || currentPhase === 'SCALE'"
             class="p-3 sm:px-5 sm:py-3 bg-gradient-to-r from-[#045F54] to-[#0D9488] text-white rounded-full hover:from-[#0D9488] hover:to-[#059669] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0D9488] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shrink-0 shadow-md"
           >
             <span class="hidden sm:inline mr-2 text-sm sm:text-base font-semibold">{{ $t('chat.send') }}</span>
@@ -908,11 +1110,40 @@ const chatContainer = ref(null)
 // Session & Conversation State
 const currentSessionId = ref(null)
 const currentTopic = ref(null)
-const currentPhase = ref('QUESTIONS') // 'QUESTIONS' | 'FREE_CHAT'
+const currentPhase = ref('QUESTIONS') // 'QUESTIONS' | 'FREE_CHAT' | 'OFFER' | 'SCALE' | 'RESULT' (เพิ่มภายหลัง)
 const currentQuestion = ref(null)
 const totalQuestions = ref(5)
 const sessionAnswers = ref([])
 const showAnswersDrawer = ref(false)
+
+// ===== แบบวัด ST-5 / WHO-5 ("สิ่งเล็ก ๆ ที่ลองทำ" flow) =====
+// สถานะชุดนี้เป็นงาน UI เท่านั้น backend ยังไม่มี logic จริงรองรับ phase
+// 'OFFER' / 'SCALE' / 'RESULT' (route /scale/start,/scale/decline,/scale/answer
+// ยังอ้างฟังก์ชันที่ไม่มีจริงใน chatController.ts) — currentPhase จะไม่ถูกตั้งเป็นค่า
+// เหล่านี้จากของจริงจนกว่า backend จะพร้อม ส่วนนี้จึงยังไม่ถูกเรียกใช้งาน แต่เตรียม UI รอไว้
+// TODO: เชื่อมกับ POST /sessions/:id/scale/start, /scale/decline, /scale/answer เมื่อ backend พร้อม
+const currentScaleQuestion = ref(null) // { scaleKey: 'ST5'|'WHO5', questionNo, options: [{ label, score }] }
+const totalScaleQuestions = ref(10) // ST-5 (5 ข้อ) + WHO-5 (5 ข้อ) ตามแผนงาน
+const scaleResult = ref(null) // { st5: { totalScore, level }, who5: { totalScore, level } }
+const previousScaleResult = ref(null) // ผลครั้งก่อนของหัวข้อเดียวกัน (ครั้งติดตาม) { st5Trend, who5Trend } = 'BETTER'|'SAME'|'WORSE'
+
+const acceptScaleOffer = () => {
+  // TODO: เรียก POST /sessions/:id/scale/start แล้วค่อยตั้ง currentPhase.value = 'SCALE'
+}
+
+const declineScaleOffer = () => {
+  // TODO: เรียก POST /sessions/:id/scale/decline แล้วกลับไป currentPhase.value = 'FREE_CHAT'
+}
+
+const submitScaleAnswer = (option) => {
+  // TODO: เรียก POST /sessions/:id/scale/answer ส่ง option.score แล้วอัปเดต
+  // currentScaleQuestion / scaleResult จาก response จริงของ backend
+}
+
+const openScaleHelpNow = () => {
+  // ใช้ modal สายด่วน 1323 เดิมร่วมกัน ไม่สร้าง modal ใหม่ซ้ำ
+  isEmergency.value = true
+}
 
 const newMessage = ref('')
 const messages = ref([])
