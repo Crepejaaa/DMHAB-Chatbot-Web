@@ -170,6 +170,12 @@
       "deleteConfirm": "Delete Session",
       "deleteCancel": "Cancel",
       "deleting": "Deleting..."
+    },
+    "menu": {
+      "settings": "Settings",
+      "darkMode": "Dark mode",
+      "lightMode": "Light mode",
+      "language": "Language"
     }
   }
 }
