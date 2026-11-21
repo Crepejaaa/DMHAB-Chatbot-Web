@@ -95,6 +95,14 @@
         "SAME": "About the same",
         "WORSE": "Worse"
       },
+      "level": {
+        "LOW": "Low",
+        "MODERATE": "Moderate",
+        "HIGH": "High",
+        "VERY_HIGH": "Very high",
+        "GOOD": "Good",
+        "POOR": "Needs more support"
+      },
       "continueBtn": "Continue chatting"
     },
     "endChat": {
@@ -130,7 +138,7 @@
       "homeBtn": "Back to Home",
       "helplineNote": "Note: This guidance is supportive self-care, not a medical diagnosis. For urgent professional support, call the Mental Health Hotline 1323 (24/7).",
       "activitiesBoxTitle": "Small things you can try",
-      "activitiesBoxHint": "Pick 1-2 and try them over the next 14 days.",
+      "activitiesBoxHint": "Try a little each day over the next 14 days. Tick it off on the log page whenever you do it, and feel free to remove any that don't suit you.",
       "nextCheckInLabel": "Next check-in",
       "goToCheckinBtn": "Go to \"Small things you can try\" log",
       "referralTitle": "We'd like to invite you to take a fuller assessment",

@@ -7,11 +7,14 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const authRoutes = require('./src/routes/authRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const articleRoutes = require('./src/routes/articleRoutes');
+const activityRoutes = require('./src/routes/activityRoutes');
+const checkinRoutes = require('./src/routes/checkinRoutes');
 
 // นำเข้า prisma client ที่ตั้งค่า adapter ไว้แล้ว
 const prisma = require('./src/prismaClient').default || require('./src/prismaClient');
 const { ensureArticleSchema } = require('./src/controllers/articleController');
 const { ensureUserResetSchema } = require('./src/controllers/authController');
+const { ensureDailyCheckinSchema } = require('./src/controllers/checkinController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;  // แก้จาก 3000ปกติ  มีคำว่า [process.env. เข้ามา]
@@ -81,6 +84,12 @@ app.use('/api/chat', chatRoutes.default || chatRoutes);
 // นำ route จาก articleRoutes มาเชื่อมที่ path /api/articles
 app.use('/api/articles', articleRoutes.default || articleRoutes);
 
+// นำ route จาก activityRoutes มาเชื่อมที่ path /api/activities
+app.use('/api/activities', activityRoutes.default || activityRoutes);
+
+// นำ route จาก checkinRoutes มาเชื่อมที่ path /api/checkin
+app.use('/api/checkin', checkinRoutes.default || checkinRoutes);
+
 // (ตัวอย่าง) API ดูข้อมูลทั้งหมด (ดึงจาก Prisma ผ่าน adapter ที่ตั้งค่าไว้)
 app.get('/api/users', async (req, res) => {
     try {
@@ -104,6 +113,11 @@ app.listen(PORT, "0.0.0.0", () => {
   if (typeof ensureUserResetSchema === 'function') {
     ensureUserResetSchema().catch((err) => {
       console.warn('User reset schema sync skipped during startup:', err?.message || err);
+    });
+  }
+  if (typeof ensureDailyCheckinSchema === 'function') {
+    ensureDailyCheckinSchema().catch((err) => {
+      console.warn('DailyCheckin schema sync skipped during startup:', err?.message || err);
     });
   }
 });

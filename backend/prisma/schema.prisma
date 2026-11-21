@@ -41,11 +41,13 @@ model User {
   updatedAt            DateTime  @updatedAt
 
   // ความสัมพันธ์ (Relationships)
-  chatSessions ChatSession[] // ผู้ใช้ 1 คน มีรอบการคุยได้หลายครั้ง
-  testResults  TestResult[] // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
-  scaleResults ScaleResult[]
-  articles     Article[] // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
-  systemLogs   SystemLog[] // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
+  chatSessions   ChatSession[] // ผู้ใช้ 1 คน มีรอบการคุยได้หลายครั้ง
+  testResults    TestResult[] // ผู้ใช้ 1 คน มีประวัติการทำแบบทดสอบได้หลายครั้ง
+  scaleResults   ScaleResult[]
+  userActivities UserActivity[]
+  articles       Article[] // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
+  systemLogs     SystemLog[] // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
+  dailyCheckins  DailyCheckin[]
 }
 
 // ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง
@@ -64,9 +66,10 @@ model ChatSession {
   createdAt      DateTime  @default(now())
 
   // ความสัมพันธ์
-  messages ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
-  answers  ChatAnswer[] // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
-  scaleResults ScaleResult[]
+  messages       ChatMessage[] // ใน 1 รอบการคุย มีข้อความย่อยๆ ส่งคุยกันหลายข้อความ
+  answers        ChatAnswer[] // คำตอบ 5 ข้อแรกของแต่ละเซสชัน
+  scaleResults   ScaleResult[]
+  userActivities UserActivity[]
 }
 
 // ตารางเก็บคำตอบ 5 ข้อแรกของแต่ละรอบการสนทนา
@@ -102,6 +105,36 @@ model ScaleResult {
   @@index([userId, topic, createdAt])
   @@index([sessionId])
 }
+
+// ตารางที่ 8: กิจกรรมที่ระบบมอบให้ผู้ใช้แต่ละคนหลังรู้ผลแบบวัด
+model UserActivity {
+  id          Int               @id @default(autoincrement())
+  userId      Int
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId   Int?
+  session     ChatSession?      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  activityKey String // อ้างอิง RecommendedActivity.key ใน activities.ts
+  topic       String?
+  assignedAt  DateTime          @default(now())
+  expiresAt   DateTime // assignedAt + 14 วัน
+  deletedAt   DateTime?
+  logs        UserActivityLog[]
+
+  @@index([userId, expiresAt])
+  @@index([sessionId])
+}
+
+// ตารางที่ 9: ประวัติการติ๊กว่าทำกิจกรรมแล้วในแต่ละวัน
+model UserActivityLog {
+  id             Int          @id @default(autoincrement())
+  userActivityId Int
+  userActivity   UserActivity @relation(fields: [userActivityId], references: [id], onDelete: Cascade)
+  dateKey        String // YYYY-MM-DD (1 กิจกรรม ติ๊กได้ 1 ครั้งต่อวัน)
+  createdAt      DateTime     @default(now())
+
+  @@unique([userActivityId, dateKey])
+}
+
 // ตารางที่ 3: เก็บข้อความในแชททีละประโยค
 model ChatMessage {
   id        Int         @id @default(autoincrement())
@@ -156,4 +189,24 @@ model SystemLog {
   action    String // กิจกรรมที่เกิดขึ้น เช่น "LOGIN", "DELETE_USER"
   details   String   @db.Text // รายละเอียดเชิงลึก
   createdAt DateTime @default(now())
+}
+
+// ตาราง Daily Check-in (ของฟีเจอร์เช็คอินรายวันโดยเฉพาะ)
+model DailyCheckin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateKey   String // รูปแบบ YYYY-MM-DD (1 วัน 1 รายการต่อผู้ใช้)
+  moodScore Int // 1-5
+  moodLabel String?
+  energy    Int      @default(5)
+  stress    Int      @default(5)
+  social    Int      @default(5)
+  note      String?  @db.Text
+  tags      Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, dateKey])
+  @@index([userId, createdAt])
 }
