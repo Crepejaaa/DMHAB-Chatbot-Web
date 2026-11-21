@@ -79,11 +79,12 @@
     },
     "offer": {
       "prompt": "We've talked a bit — would you like to try a short check-in scale so Nong Mook can understand how you're doing a little better?",
+      "sourceNote": "10 questions from Thailand's Department of Mental Health and the WHO, about 2 minutes",
       "takeScaleBtn": "Take the scale",
       "keepChattingBtn": "Keep chatting a bit more"
     },
     "scale": {
-      "stepBadge": "Scale question {current} of {total}",
+      "stepBadge": "Quick check-in · {current}/{total}",
       "inputDisabledPlaceholder": "Choose an answer from the buttons above",
       "helpNowBtn": "I need help right now",
       "resultTitle": "Your results today",

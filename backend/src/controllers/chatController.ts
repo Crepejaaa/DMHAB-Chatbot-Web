@@ -470,8 +470,8 @@ export const startScale = async (req: AuthRequest, res: Response): Promise<void>
 
     const botText =
       locale === "en"
-        ? `Let's get started. Please choose the answer that best describes how you feel.\nItem 1/10 — ${question.scaleName} (${question.instruction}): ${question.text}`
-        : `เริ่มกันเลยนะคะ เลือกคำตอบที่ใกล้เคียงกับคุณที่สุดได้เลยค่ะ\nข้อ 1/10 — ${question.scaleName} (${question.instruction}): ${question.text}`;
+        ? `Let's get started. Please choose the answer that best describes how you feel.\nItem 1/10 — ${question.leadIn}\n${question.text}`
+        : `เริ่มกันเลยนะคะ เลือกคำตอบที่ใกล้เคียงกับคุณที่สุดได้เลยค่ะ\nข้อ 1/10 — ${question.leadIn}\n${question.text}`;
 
     const botMessage = await prisma.chatMessage.create({
       data: {
@@ -675,8 +675,8 @@ export const answerScale = async (req: AuthRequest, res: Response): Promise<void
 
       let botText =
         locale === "en"
-          ? `Item ${nextGlobalNo}/10 — ${nextQuestion.scaleName} (${nextQuestion.instruction}): ${nextQuestion.text}`
-          : `ข้อ ${nextGlobalNo}/10 — ${nextQuestion.scaleName} (${nextQuestion.instruction}): ${nextQuestion.text}`;
+          ? `Item ${nextGlobalNo}/10 — ${nextQuestion.leadIn}\n${nextQuestion.text}`
+          : `ข้อ ${nextGlobalNo}/10 — ${nextQuestion.leadIn}\n${nextQuestion.text}`;
 
       if (nextGlobalNo === 6) {
         botText =

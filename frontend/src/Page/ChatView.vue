@@ -175,13 +175,13 @@
     <!-- Main Right Column (Header + Chat/Advice Area + Guided/Input Footer) -->
     <div class="flex-1 flex flex-col min-w-0 h-full relative">
       <!-- Top Header -->
-      <header class="flex items-center justify-between px-3 sm:px-5 py-3 bg-white border-b border-teal-100 shadow-xs shrink-0 gap-2">
-        <div class="flex items-center min-w-0 gap-1.5 sm:gap-2.5">
+      <header class="flex items-center justify-between px-2.5 sm:px-5 py-2.5 sm:py-3 bg-white border-b border-teal-100 shadow-xs shrink-0 gap-2">
+        <div class="flex items-center min-w-0 flex-1 overflow-hidden gap-1 sm:gap-2.5">
           <!-- Back Home -->
           <button
             type="button"
             @click="$router.push('/')"
-            class="p-2 text-slate-500 hover:text-[#045F54] hover:bg-teal-50 rounded-full transition-colors shrink-0"
+            class="p-1.5 sm:p-2 text-slate-500 hover:text-[#045F54] hover:bg-teal-50 rounded-full transition-colors shrink-0"
             :title="$t('chat.advice.homeBtn')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -193,7 +193,7 @@
           <button
             type="button"
             @click="isMobileHistoryOpen = true"
-            class="p-2 text-[#045F54] hover:bg-teal-50 rounded-full transition-colors lg:hidden shrink-0"
+            class="p-1.5 sm:p-2 text-[#045F54] hover:bg-teal-50 rounded-full transition-colors lg:hidden shrink-0"
             :title="$t('chat.history.title')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -202,27 +202,27 @@
           </button>
 
           <!-- Bot Line SVG Avatar -->
-          <div class="h-10 w-10 bg-gradient-to-br from-teal-100 to-emerald-100 border border-teal-200 text-[#045F54] rounded-full flex items-center justify-center shrink-0 bot-avatar-circle">
+          <div class="h-9 w-9 sm:h-10 sm:w-10 bg-gradient-to-br from-teal-100 to-emerald-100 border border-teal-200 text-[#045F54] rounded-full flex items-center justify-center shrink-0 bot-avatar-circle">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m-6 7a6 6 0 0112 0v3a3 3 0 01-3 3H9a3 3 0 01-3-3v-3z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 12v2a2 2 0 002 2M20 12v2a2 2 0 01-2 2M9.5 12.5h.01M14.5 12.5h.01M10 15.5c.6.5 1.3.75 2 .75s1.4-.25 2-.75" />
             </svg>
           </div>
 
-          <div class="min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="text-sm sm:text-base font-bold text-[#1E293B] truncate">
+          <div class="min-w-0 flex-1 overflow-hidden">
+            <div class="flex flex-col items-start sm:flex-row sm:items-center gap-0.5 sm:gap-2 min-w-0 w-full">
+              <h1 class="text-xs sm:text-base font-bold text-[#1E293B] truncate max-w-full">
                 {{ $t('chat.botName') }}
               </h1>
               <span
                 v-if="currentTopic"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-[#045F54] border border-teal-200 topic-header-pill"
+                class="block max-w-full sm:max-w-[240px] px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-teal-50 text-[#045F54] border border-teal-200 whitespace-nowrap truncate topic-header-pill"
               >
                 {{ getTopicLabel(currentTopic) }}
               </span>
             </div>
-            <p class="text-[11px] text-slate-500 truncate">{{ $t('chat.noRealName') }}</p>
-            <p class="text-[11px] text-[#059669] flex items-center">
+            <p class="hidden sm:block text-[11px] text-slate-500 truncate">{{ $t('chat.noRealName') }}</p>
+            <p class="hidden sm:flex text-[11px] text-[#059669] items-center">
               <span class="w-2 h-2 bg-[#059669] rounded-full mr-1.5"></span>
               {{ $t('chat.online') }}
             </p>
@@ -230,20 +230,21 @@
         </div>
 
         <!-- Right Header Actions: Cloud End Button + View Summary + LanguageSwitcher -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <!-- ปุ่มจบสนทนารูปก้อนเมฆ (แสดงเมื่อเซสชันยังไม่จบ) -->
           <button
             v-if="currentSessionId && !isCompleted"
             type="button"
             @click="openEndConfirmModal"
-            class="cloud-end-btn group relative inline-flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-bold text-[#045F54] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
+            class="cloud-end-btn group relative inline-flex items-center justify-center gap-1.5 w-10 h-10 sm:w-auto sm:h-auto p-0 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-[#045F54] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0D9488]"
             :title="$t('chat.endChat.cloudSub')"
+            :aria-label="$t('chat.endChat.cloudBtn')"
           >
             <!-- Cloud Line SVG Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-[#0D9488] group-hover:text-[#045F54] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0D9488] group-hover:text-[#045F54] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
             </svg>
-            <span>{{ $t('chat.endChat.cloudBtn') }}</span>
+            <span class="hidden sm:inline">{{ $t('chat.endChat.cloudBtn') }}</span>
           </button>
 
           <!-- ปุ่มสลับดูหน้าคำแนะนำเมื่อเซสชันจบแล้ว -->
@@ -675,8 +676,11 @@
         class="bg-white border-t border-teal-100 px-4 py-3 shrink-0 guided-panel"
       >
         <div class="max-w-4xl mx-auto">
-          <p class="text-sm text-slate-600 mb-3">
+          <p class="text-sm text-slate-600 mb-1">
             {{ $t('chat.offer.prompt') }}
+          </p>
+          <p class="text-xs text-slate-500 mb-3">
+            {{ $t('chat.offer.sourceNote') }}
           </p>
           <div class="flex flex-col sm:flex-row items-center gap-2">
             <button
@@ -722,14 +726,11 @@
             </div>
           </div>
 
-          <p v-if="currentScaleQuestion.scaleName" class="text-xs font-semibold text-[#045F54] mb-1">
-            {{ currentScaleQuestion.scaleName }}
-            <span v-if="currentScaleQuestion.instruction" class="font-normal text-slate-500">
-              ({{ currentScaleQuestion.instruction }})
-            </span>
+          <p v-if="currentScaleQuestion.leadIn" class="text-xs sm:text-sm text-slate-500 mb-1">
+            {{ currentScaleQuestion.leadIn }}
           </p>
 
-          <p class="text-sm sm:text-base font-semibold text-[#1E293B] mb-2.5">
+          <p class="text-lg sm:text-xl font-bold leading-snug text-[#1E293B] mb-2.5">
             {{ currentScaleQuestion.questionText }}
           </p>
 
@@ -741,7 +742,7 @@
               type="button"
               :disabled="isSending"
               @click="submitScaleAnswer(opt)"
-              class="guided-option-btn text-left px-3.5 py-2.5 rounded-xl border border-teal-200/90 bg-teal-50/50 hover:bg-[#0D9488] hover:text-white hover:border-[#0D9488] text-xs sm:text-sm font-medium text-[#1E293B] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between gap-2"
+              class="guided-option-btn text-left px-3.5 py-2.5 rounded-xl border border-teal-200/90 bg-teal-50/50 hover:bg-[#0D9488] hover:text-white hover:border-[#0D9488] text-sm sm:text-base font-medium text-[#1E293B] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between gap-2"
             >
               <span>{{ opt.label }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1176,6 +1177,7 @@ const applyScaleQuestion = (q) => {
     scaleKey: q.scaleKey,
     scaleName: q.scaleName,
     instruction: q.instruction,
+    leadIn: q.leadIn || '',
     questionNo: q.globalNo,
     questionText: q.text,
     options: q.options || []
@@ -1428,6 +1430,31 @@ watch(locale, async (newLocale) => {
   isTranslatingMessages.value = true
 
   try {
+    // อัปเดตคำถามแบบวัดหรือคำถามเริ่มต้นก่อนทันที (ไม่ต้องรอ Groq แปลข้อความแชท)
+    if (!isCompleted.value && currentPhase.value === 'SCALE') {
+      try {
+        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+          params: { locale: newLocale }
+        })
+        if (reqSeq === translateRequestSeq && res.data?.question) {
+          applyScaleQuestion(res.data.question)
+        }
+      } catch (err) {
+        console.error('Failed to refresh scale question for new locale:', err)
+      }
+    } else if (!isCompleted.value && currentPhase.value === 'QUESTIONS') {
+      try {
+        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+          params: { locale: newLocale }
+        })
+        if (reqSeq === translateRequestSeq && res.data?.currentQuestion) {
+          currentQuestion.value = res.data.currentQuestion
+        }
+      } catch (err) {
+        console.error('Failed to refresh guided question for new locale:', err)
+      }
+    }
+
     // แปลข้อความแชทที่มีอยู่แล้วให้ตรงกับภาษาที่เลือกใหม่ (แก้บั๊ก: สลับภาษาแล้วบับเบิลเก่าไม่เปลี่ยนตาม)
     if (messages.value.length > 0) {
       try {
@@ -1461,29 +1488,6 @@ watch(locale, async (newLocale) => {
         await fetchHistoryList()
       } catch (err) {
         console.error('Failed to refresh summary for new locale:', err)
-      }
-    } else if (currentPhase.value === 'SCALE') {
-      try {
-        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
-          params: { locale: newLocale }
-        })
-        if (reqSeq === translateRequestSeq && res.data?.question) {
-          applyScaleQuestion(res.data.question)
-        }
-      } catch (err) {
-        console.error('Failed to refresh scale question for new locale:', err)
-      }
-    } else if (currentPhase.value === 'QUESTIONS') {
-      // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
-      try {
-        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
-          params: { locale: newLocale }
-        })
-        if (reqSeq === translateRequestSeq && res.data?.currentQuestion) {
-          currentQuestion.value = res.data.currentQuestion
-        }
-      } catch (err) {
-        console.error('Failed to refresh guided question for new locale:', err)
       }
     }
   } finally {
@@ -2060,6 +2064,16 @@ watch(
   transform: translateY(-1px);
 }
 
+@media (max-width: 639.98px) {
+  .cloud-end-btn {
+    margin-top: 0;
+  }
+  .cloud-end-btn::before,
+  .cloud-end-btn::after {
+    display: none;
+  }
+}
+
 /* Dark Mode Overrides ให้เข้ากันได้กับ App.vue (ค่าคอนทราสต์ >= 4.5:1 ทุกส่วน) */
 header button[title*="โหมด"] {
   background-color: #045F54;
@@ -2153,11 +2167,18 @@ header button[title*="โหมด"]:hover {
 }
 
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answers-bar [class*="text-[#045F54]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel [class*="text-[#045F54]"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-[#045F54]"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .answer-summary-card [class*="text-[#045F54]"] {
   color: #5eead4 !important;
 }
 
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) header [class*="text-[#1E293B]"],
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel [class*="text-[#1E293B]"] {
+  color: #f8fafc !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel [class*="text-slate-600"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-700"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-600"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .modal-surface [class*="text-slate-700"],
@@ -2166,6 +2187,7 @@ header button[title*="โหมด"]:hover {
   color: #f1f5f9 !important;
 }
 
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .guided-panel [class*="text-slate-500"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-500"],
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .advice-card [class*="text-slate-400"] {
   color: #cbd5e1 !important;
