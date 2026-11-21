@@ -75,6 +75,29 @@
     "confirmDelete": "Are you sure you want to delete this check-in entry?",
     "confirmClearAll": "Are you sure you want to delete all your check-in history? This action cannot be undone.",
     "cloudSaved": "Saved directly to your account database",
-    "loginRequired": "Please sign in to use Daily Check-in"
+    "loginRequired": "Please sign in to use Daily Check-in",
+    "myActivities": {
+      "title": "Small things to try",
+      "subtitle": "Self-care activities assigned from your chat & check-in scale with Nong Mook (check off once a day for 14 days)",
+      "daysLeft": "{n} days left",
+      "completedDays": "Done {n} days",
+      "checkTodayBtn": "Done today",
+      "checkedTodayBtn": "Done today (tap to undo)",
+      "deleteBtn": "Remove",
+      "viewHistoryBtn": "View history",
+      "hideHistoryBtn": "Hide history",
+      "emptyText": "No small things to try yet — chat with Nong Mook and take the short scale to receive activities tailored to you",
+      "goToChatBtn": "Chat with Nong Mook",
+      "loadError": "Unable to load your activities right now",
+      "historyTitle": "Past activities history",
+      "historyEmpty": "No expired or removed activities yet",
+      "historyLoading": "Loading activity history...",
+      "statusExpired": "Expired",
+      "statusDeleted": "Removed",
+      "deleteModalTitle": "Remove this activity?",
+      "deleteModalBody": "Remove this activity from your active list? Your logged days will be moved to history.",
+      "deleteModalCancel": "Cancel",
+      "deleteModalConfirm": "Confirm remove"
+    }
   }
 }

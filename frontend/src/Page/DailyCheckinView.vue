@@ -725,6 +725,215 @@
         </div>
       </section>
 
+      <!-- ==================== STEP 4.5 : สิ่งเล็ก ๆ ที่ลองทำ (จากผลแบบวัดในแชท) ==================== -->
+      <section
+        id="my-activities-card"
+        :class="['rounded-3xl border p-6 md:p-8 shadow-sm transition-all', isDarkMode ? 'bg-[#1E293B] border-slate-700/60' : 'bg-white border-slate-100']"
+      >
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 :class="['font-extrabold text-lg flex items-center gap-2 mb-1', isDarkMode ? 'text-white' : 'text-slate-800']">
+              <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {{ $t('checkin.myActivities.title') }}
+            </h2>
+            <p :class="['text-xs', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
+              {{ $t('checkin.myActivities.subtitle') }}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            @click="toggleActivityHistory"
+            class="text-xs px-3.5 py-1.5 rounded-xl border border-[#0D9488]/30 text-[#0D9488] hover:bg-[#0D9488]/10 flex items-center gap-1.5 font-semibold transition cursor-pointer self-start sm:self-auto shrink-0"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ showActivityHistory ? $t('checkin.myActivities.hideHistoryBtn') : $t('checkin.myActivities.viewHistoryBtn') }}</span>
+          </button>
+        </div>
+
+        <!-- กรณีโหลดไม่สำเร็จ -->
+        <div
+          v-if="myActivitiesLoadError"
+          :class="['p-4 rounded-2xl border text-xs text-center', isDarkMode ? 'bg-rose-950/30 border-rose-800/50 text-rose-300' : 'bg-rose-50 border-rose-200 text-rose-600']"
+        >
+          {{ $t('checkin.myActivities.loadError') }}
+        </div>
+
+        <!-- กรณีสถานะว่าง -->
+        <div
+          v-else-if="myActivities.length === 0"
+          class="flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-dashed"
+          :class="isDarkMode ? 'border-slate-700 bg-slate-800/30' : 'border-teal-200/80 bg-teal-50/30'"
+        >
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-[#0D9488]/10 text-[#0D9488]">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+          </div>
+          <p :class="['text-xs sm:text-sm font-medium max-w-md leading-relaxed mb-4', isDarkMode ? 'text-slate-300' : 'text-slate-600']">
+            {{ $t('checkin.myActivities.emptyText') }}
+          </p>
+          <button
+            type="button"
+            @click="$router.push('/chat/topics')"
+            class="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#045F54] to-[#0D9488] hover:from-[#034d44] hover:to-[#0b8277] rounded-xl shadow-sm transition cursor-pointer inline-flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <span>{{ $t('checkin.myActivities.goToChatBtn') }}</span>
+          </button>
+        </div>
+
+        <!-- รายการกิจกรรมที่กำลังทำอยู่ -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            v-for="item in myActivities"
+            :key="item.id"
+            :class="[
+              'rounded-2xl p-5 border transition-all duration-200 flex flex-col justify-between gap-4',
+              item.loggedToday
+                ? (isDarkMode ? 'bg-emerald-950/25 border-emerald-700/60' : 'bg-emerald-50/50 border-emerald-200')
+                : (isDarkMode ? 'bg-slate-800/40 border-slate-700/60' : 'bg-[#FAFDFA] border-slate-200/80')
+            ]"
+          >
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+                    {{ $t('checkin.myActivities.daysLeft', { n: getRemainingDays(item.expiresAt) }) }}
+                  </span>
+                  <span
+                    class="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                    :class="item.loggedToday ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-slate-500/10 text-slate-600 dark:text-slate-300'"
+                  >
+                    {{ $t('checkin.myActivities.completedDays', { n: item.completedDaysCount || 0 }) }}
+                  </span>
+                </div>
+
+                <!-- ปุ่มลบรายการ (เปิด Modal ยืนยัน) -->
+                <button
+                  type="button"
+                  @click="openDeleteActivityModal(item)"
+                  class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold text-rose-500 hover:text-white hover:bg-rose-500 border border-rose-500/20 transition cursor-pointer shrink-0"
+                  :title="$t('checkin.myActivities.deleteBtn')"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span>{{ $t('checkin.myActivities.deleteBtn') }}</span>
+                </button>
+              </div>
+
+              <h3 :class="['font-bold text-sm sm:text-base mb-1.5', isDarkMode ? 'text-white' : 'text-slate-800']">
+                {{ locale === 'en' ? (item.nameEn || item.nameTh) : (item.nameTh || item.nameEn) }}
+              </h3>
+
+              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-slate-300' : 'text-slate-600']">
+                {{ locale === 'en' ? (item.howToEn || item.howToTh) : (item.howToTh || item.howToEn) }}
+              </p>
+            </div>
+
+            <div class="space-y-3 pt-3 border-t" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-200/70'">
+              <div v-if="item.source?.url" class="flex items-center justify-between gap-2 text-[11px]">
+                <a
+                  :href="item.source.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-[#0D9488] hover:underline font-medium inline-flex items-center gap-1 truncate"
+                >
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span class="truncate">{{ locale === 'en' ? (item.source.en || item.source.th) : (item.source.th || item.source.en) }}</span>
+                </a>
+              </div>
+
+              <!-- ปุ่มติ๊ก "วันนี้ทำแล้ว" -->
+              <button
+                type="button"
+                :disabled="Boolean(togglingActivityMap[item.id])"
+                @click="toggleActivityLogToday(item)"
+                :class="[
+                  'w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
+                  item.loggedToday
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                    : (isDarkMode ? 'bg-slate-700 hover:bg-[#0D9488] text-white border border-slate-600' : 'bg-white hover:bg-[#0D9488] text-[#045F54] hover:text-white border border-[#0D9488]')
+                ]"
+              >
+                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path v-if="item.loggedToday" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  <circle v-else cx="12" cy="12" r="8" stroke-width="2" />
+                </svg>
+                <span>{{ item.loggedToday ? $t('checkin.myActivities.checkedTodayBtn') : $t('checkin.myActivities.checkTodayBtn') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนแสดงประวัติกิจกรรมเมื่อกด "ดูประวัติ" -->
+        <div
+          v-if="showActivityHistory"
+          class="mt-6 pt-5 border-t space-y-3"
+          :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-200/80'"
+        >
+          <h3 :class="['text-sm font-bold flex items-center gap-2', isDarkMode ? 'text-slate-200' : 'text-slate-700']">
+            <svg class="w-4 h-4 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ $t('checkin.myActivities.historyTitle') }}</span>
+          </h3>
+
+          <div v-if="isLoadingActivityHistory" class="py-4 text-xs text-slate-400 text-center">
+            {{ $t('checkin.myActivities.historyLoading') }}
+          </div>
+
+          <div v-else-if="activityHistoryLoadError" class="py-4 text-xs text-rose-500 text-center">
+            {{ $t('checkin.myActivities.loadError') }}
+          </div>
+
+          <div v-else-if="myActivityHistory.length === 0" class="py-4 text-xs text-slate-400 text-center">
+            {{ $t('checkin.myActivities.historyEmpty') }}
+          </div>
+
+          <div v-else class="space-y-2.5">
+            <div
+              v-for="hItem in myActivityHistory"
+              :key="hItem.id"
+              :class="[
+                'rounded-xl p-3.5 border flex flex-col sm:flex-row sm:items-center justify-between gap-2',
+                isDarkMode ? 'bg-slate-800/40 border-slate-700/60' : 'bg-slate-50/70 border-slate-200/70'
+              ]"
+            >
+              <div class="min-w-0">
+                <p :class="['text-xs sm:text-sm font-bold truncate', isDarkMode ? 'text-slate-200' : 'text-slate-800']">
+                  {{ locale === 'en' ? (hItem.nameEn || hItem.nameTh) : (hItem.nameTh || hItem.nameEn) }}
+                </p>
+                <p class="text-[11px] text-slate-400 mt-0.5">
+                  {{ formatActivityRange(hItem.assignedAt, hItem.expiresAt) }}
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#0D9488]/10 text-[#0D9488]">
+                  {{ $t('checkin.myActivities.completedDays', { n: hItem.completedDaysCount || 0 }) }}
+                </span>
+                <span
+                  class="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
+                  :class="hItem.deletedAt ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300' : 'bg-amber-500/15 text-amber-700 dark:text-amber-300'"
+                >
+                  {{ hItem.deletedAt ? $t('checkin.myActivities.statusDeleted') : $t('checkin.myActivities.statusExpired') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ==================== STEP 5 : 2.5 คำแนะนำดึงจากรายการกิจกรรม (ACTIVITIES) ==================== -->
       <section :class="['rounded-3xl border p-6 md:p-8 shadow-sm transition-all', isDarkMode ? 'bg-[#1E293B] border-slate-700/60' : 'bg-white border-slate-100']">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
@@ -884,6 +1093,41 @@
               class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition cursor-pointer"
             >
               ยืนยันการลบทั้งหมด
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ========== Delete UserActivity Confirmation Modal ========== -->
+    <Transition name="fade">
+      <div v-if="activityToDelete" class="fixed inset-0 z-[300] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div :class="['w-full max-w-sm rounded-2xl p-6 shadow-2xl border', isDarkMode ? 'bg-[#1E293B] border-slate-700 text-white' : 'bg-white border-slate-100 text-slate-800']">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <h3 class="font-extrabold text-base text-center mb-1">{{ $t('checkin.myActivities.deleteModalTitle') }}</h3>
+          <p class="text-xs text-center text-slate-400 mb-6">
+            {{ $t('checkin.myActivities.deleteModalBody') }}
+          </p>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              :disabled="isDeletingActivity"
+              @click="activityToDelete = null"
+              :class="['flex-1 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer disabled:opacity-50', isDarkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-slate-50 text-slate-600']"
+            >
+              {{ $t('checkin.myActivities.deleteModalCancel') }}
+            </button>
+            <button
+              type="button"
+              :disabled="isDeletingActivity"
+              @click="executeDeleteActivity"
+              class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition cursor-pointer disabled:opacity-50"
+            >
+              {{ $t('checkin.myActivities.deleteModalConfirm') }}
             </button>
           </div>
         </div>
@@ -1156,6 +1400,101 @@ const selectedDays      = ref(7)
 const isSaving          = ref(false)
 const entryToDelete     = ref(null)
 const showClearAllModal = ref(false)
+
+// "สิ่งเล็ก ๆ ที่ลองทำ" (UserActivity) State
+const myActivities             = ref([])
+const myActivitiesToday        = ref('')
+const myActivitiesLoadError    = ref(false)
+const showActivityHistory      = ref(false)
+const myActivityHistory        = ref([])
+const isLoadingActivityHistory = ref(false)
+const activityHistoryLoadError = ref(false)
+const togglingActivityMap      = ref({})
+const activityToDelete         = ref(null)
+const isDeletingActivity       = ref(false)
+
+function getRemainingDays(expiresAt) {
+  if (!expiresAt) return 0
+  const diffMs = new Date(expiresAt).getTime() - Date.now()
+  return Math.max(1, Math.ceil(diffMs / (24 * 60 * 60 * 1000)))
+}
+
+function formatActivityRange(assignedAt, expiresAt) {
+  const loc = locale.value === 'en' ? 'en-US' : 'th-TH'
+  const fmt = (d) => {
+    if (!d) return ''
+    const dt = new Date(d)
+    if (isNaN(dt.getTime())) return ''
+    return dt.toLocaleDateString(loc, { day: 'numeric', month: 'short', year: 'numeric' })
+  }
+  return `${fmt(assignedAt)} – ${fmt(expiresAt)}`
+}
+
+async function toggleActivityLogToday(item) {
+  if (!item || togglingActivityMap.value[item.id]) return
+  togglingActivityMap.value = { ...togglingActivityMap.value, [item.id]: true }
+  try {
+    if (!item.loggedToday) {
+      const res = await axios.post(`/api/activities/${item.id}/log`)
+      item.loggedToday = true
+      if (!res.data?.alreadyLogged) {
+        item.completedDaysCount = (item.completedDaysCount || 0) + 1
+      }
+    } else {
+      const res = await axios.delete(`/api/activities/${item.id}/log/today`)
+      item.loggedToday = false
+      const dec = res.data?.deletedCount ?? 1
+      item.completedDaysCount = Math.max(0, (item.completedDaysCount || 1) - dec)
+    }
+  } catch (err) {
+    console.error('Toggle activity log error:', err)
+  } finally {
+    togglingActivityMap.value = { ...togglingActivityMap.value, [item.id]: false }
+  }
+}
+
+function openDeleteActivityModal(item) {
+  activityToDelete.value = item
+}
+
+async function executeDeleteActivity() {
+  const target = activityToDelete.value
+  if (!target || isDeletingActivity.value) return
+  isDeletingActivity.value = true
+  try {
+    await axios.delete(`/api/activities/${target.id}`)
+    myActivities.value = myActivities.value.filter(a => a.id !== target.id)
+    activityToDelete.value = null
+    if (showActivityHistory.value) {
+      await loadActivityHistory()
+    }
+  } catch (err) {
+    console.error('Delete user activity error:', err)
+  } finally {
+    isDeletingActivity.value = false
+  }
+}
+
+async function loadActivityHistory() {
+  isLoadingActivityHistory.value = true
+  activityHistoryLoadError.value = false
+  try {
+    const res = await axios.get('/api/activities/history')
+    myActivityHistory.value = Array.isArray(res.data?.activities) ? res.data.activities : []
+  } catch (err) {
+    console.warn('Failed to load activity history:', err?.message || err)
+    activityHistoryLoadError.value = true
+  } finally {
+    isLoadingActivityHistory.value = false
+  }
+}
+
+async function toggleActivityHistory() {
+  showActivityHistory.value = !showActivityHistory.value
+  if (showActivityHistory.value) {
+    await loadActivityHistory()
+  }
+}
 
 // Toast state
 const showToast  = ref(false)
@@ -1459,13 +1798,22 @@ async function loadData() {
   }
 
   try {
-    const [historyRes, actRes] = await Promise.all([
+    const [historyRes, actRes, myActRes] = await Promise.all([
       axios.get('/api/checkin/history'),
       axios.get('/api/checkin/activities').catch(() => null),
+      axios.get('/api/activities/active').catch(() => null),
     ])
 
     if (Array.isArray(actRes?.data?.activities) && actRes.data.activities.length > 0) {
       activitiesCatalog.value = actRes.data.activities
+    }
+
+    if (myActRes && Array.isArray(myActRes.data?.activities)) {
+      myActivities.value = myActRes.data.activities
+      myActivitiesToday.value = myActRes.data.today || todayKey.value
+      myActivitiesLoadError.value = false
+    } else {
+      myActivitiesLoadError.value = true
     }
 
     checkinHistory.value = Array.isArray(historyRes.data?.history) ? historyRes.data.history : []
