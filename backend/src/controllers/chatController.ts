@@ -1032,7 +1032,7 @@ const buildCrisisFallbackAIResponse = (locale: "th" | "en"): AIResponse => ({
 });
 
 const appendCrisisHotlineNotice = (replyText: string, locale: "th" | "en"): string => {
-  const sanitized = (replyText || "").replace(/1669/g, "1323").trim();
+  const sanitized = (replyText || "").trim();
   const hotlineLine =
     locale === "en"
       ? "If you need urgent support, please contact the Mental Health Hotline at 1323 (toll-free, 24/7)."

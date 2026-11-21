@@ -413,12 +413,7 @@
                 </div>
               </section>
 
-              <!--
-                กล่อง "สิ่งเล็ก ๆ ที่ลองทำ" + วันนัดติดตาม + ปุ่มไปหน้าเช็กอิน
-                หมายเหตุ: ใช้ summaryDetail.recommendedActivities / summaryDetail.nextCheckInDate
-                ที่ backend ยังไม่ได้ส่งมาจริง จึง v-if กันไว้ — ถ้าไม่มีข้อมูลจะไม่แสดงผล
-                (เซสชันเก่าที่ไม่มี field พวกนี้จึงยังเปิดดูได้ปกติไม่พัง)
-              -->
+              <!-- กล่อง "สิ่งเล็ก ๆ ที่ลองทำ" + วันนัดติดตาม + ปุ่มไปหน้าเช็กอิน -->
               <section
                 v-if="summaryDetail.recommendedActivities?.length || summaryDetail.nextCheckInDate"
                 class="bg-white border border-teal-100 rounded-2xl p-4 sm:p-5"
@@ -431,13 +426,23 @@
                 <div v-if="summaryDetail.recommendedActivities?.length" class="space-y-2 mb-3">
                   <div
                     v-for="activity in summaryDetail.recommendedActivities"
-                    :key="activity.key"
+                    :key="activity.id || activity.activityKey || activity.key"
                     class="flex items-start gap-2.5 p-3 rounded-xl bg-teal-50/60 border border-teal-100"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0D9488] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="text-sm text-[#1E293B]">{{ activity.name }}</span>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-semibold text-[#1E293B]">
+                        {{ locale === 'en' ? (activity.nameEn || activity.nameTh || activity.name) : (activity.nameTh || activity.nameEn || activity.name) }}
+                      </p>
+                      <p
+                        v-if="locale === 'en' ? (activity.howToEn || activity.howToTh) : (activity.howToTh || activity.howToEn)"
+                        class="text-xs text-slate-600 mt-0.5 leading-relaxed"
+                      >
+                        {{ locale === 'en' ? (activity.howToEn || activity.howToTh) : (activity.howToTh || activity.howToEn) }}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -469,10 +474,7 @@
                 {{ $t('chat.advice.helplineNote') }}
               </p>
 
-              <!--
-                ลิงก์ไปหน้าแบบประเมินเมื่อเข้าเงื่อนไขส่งต่อ (ผลแย่ลง / ST-5 >= 10 / WHO-5 < 13)
-                อาศัย summaryDetail.referralNeeded ที่ backend ยังไม่ได้ส่งมาจริง (v-if กันไว้)
-              -->
+              <!-- ลิงก์ไปหน้าแบบประเมินเมื่อเข้าเงื่อนไขส่งต่อ (ผลแย่ลง / ST-5 >= 10 / WHO-5 < 13) -->
               <section
                 v-if="summaryDetail.referralNeeded"
                 class="bg-rose-50 border border-rose-200 rounded-2xl p-4 sm:p-5 text-center"
@@ -667,12 +669,6 @@
         </template>
       </main>
 
-      <!--
-        ส่วนต่อไปนี้ (OFFER / SCALE / RESULT) เป็นงาน UI ของแบบวัด ST-5/WHO-5
-        ("สิ่งเล็ก ๆ ที่ลองทำ") — backend ยังไม่มี logic ส่ง currentPhase เป็นค่าเหล่านี้จริง
-        จึงยังไม่ถูกเรียกใช้งานในระบบจนกว่า backend จะพร้อม (ดู TODO ใน <script setup>)
-      -->
-
       <!-- Scale Offer Panel: ปุ่ม [ทำแบบวัด] [ขอคุยต่ออีกหน่อย] -->
       <section
         v-if="!showAdviceScreen && !isCompleted && currentPhase === 'OFFER'"
@@ -709,22 +705,29 @@
         class="bg-white border-t border-teal-100 px-4 py-3 shrink-0 guided-panel"
       >
         <div class="max-w-4xl mx-auto">
-          <div class="flex items-center justify-between gap-3 mb-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
             <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#045F54]">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {{ $t('chat.scale.stepBadge', { current: currentScaleQuestion.questionNo, total: totalScaleQuestions }) }}
             </span>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1 sm:gap-1.5">
               <span
                 v-for="step in totalScaleQuestions"
                 :key="step"
-                class="h-1.5 w-5 sm:w-6 rounded-full transition-colors"
+                class="h-1.5 w-3.5 sm:w-6 rounded-full transition-colors"
                 :class="step <= currentScaleQuestion.questionNo ? 'bg-[#0D9488]' : 'bg-teal-100'"
               ></span>
             </div>
           </div>
+
+          <p v-if="currentScaleQuestion.scaleName" class="text-xs font-semibold text-[#045F54] mb-1">
+            {{ currentScaleQuestion.scaleName }}
+            <span v-if="currentScaleQuestion.instruction" class="font-normal text-slate-500">
+              ({{ currentScaleQuestion.instruction }})
+            </span>
+          </p>
 
           <p class="text-sm sm:text-base font-semibold text-[#1E293B] mb-2.5">
             {{ currentScaleQuestion.questionText }}
@@ -772,7 +775,8 @@
               </div>
               <div v-if="scaleResult.who5" class="bg-white rounded-xl p-3 border border-teal-100">
                 <p class="text-xs text-slate-500">{{ $t('chat.scale.who5Label') }}</p>
-                <p class="font-bold text-[#1E293B]">{{ scaleResult.who5.totalScore }}</p>
+                <p class="font-bold text-[#1E293B]">{{ scaleResult.who5.totalScore }}/25 ({{ scaleResult.who5.percent }}%)</p>
+                <p class="text-xs font-semibold text-[#045F54] mt-0.5">{{ $t('chat.scale.level.' + scaleResult.who5.level) }}</p>
               </div>
             </div>
           </div>
@@ -786,6 +790,29 @@
               <span v-if="previousScaleResult.who5Trend" class="px-2.5 py-1 rounded-full bg-teal-50 text-[#045F54] border border-teal-200">
                 {{ $t('chat.scale.who5Label') }}: {{ $t('chat.scale.trend.' + previousScaleResult.who5Trend) }}
               </span>
+            </div>
+          </div>
+
+          <div
+            v-if="scaleResult.referral"
+            class="bg-rose-50 border border-rose-200 rounded-2xl p-3.5 sm:p-4 text-center"
+          >
+            <h4 class="text-xs sm:text-sm font-bold text-rose-700 mb-1">{{ $t('chat.advice.referralTitle') }}</h4>
+            <p class="text-xs text-rose-600 mb-2.5">{{ $t('chat.advice.referralBody') }}</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+              <button
+                type="button"
+                @click="$router.push('/assessment')"
+                class="w-full sm:w-auto px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold transition-colors"
+              >
+                {{ $t('chat.advice.referralBtn') }}
+              </button>
+              <a
+                href="tel:1323"
+                class="w-full sm:w-auto px-4 py-2 rounded-full border border-rose-300 text-rose-700 hover:bg-rose-100 text-xs sm:text-sm font-semibold transition-colors"
+              >
+                {{ $t('chat.callHotline') }}
+              </a>
             </div>
           </div>
 
@@ -1117,27 +1144,180 @@ const sessionAnswers = ref([])
 const showAnswersDrawer = ref(false)
 
 // ===== แบบวัด ST-5 / WHO-5 ("สิ่งเล็ก ๆ ที่ลองทำ" flow) =====
-// สถานะชุดนี้เป็นงาน UI เท่านั้น backend ยังไม่มี logic จริงรองรับ phase
-// 'OFFER' / 'SCALE' / 'RESULT' (route /scale/start,/scale/decline,/scale/answer
-// ยังอ้างฟังก์ชันที่ไม่มีจริงใน chatController.ts) — currentPhase จะไม่ถูกตั้งเป็นค่า
-// เหล่านี้จากของจริงจนกว่า backend จะพร้อม ส่วนนี้จึงยังไม่ถูกเรียกใช้งาน แต่เตรียม UI รอไว้
-// TODO: เชื่อมกับ POST /sessions/:id/scale/start, /scale/decline, /scale/answer เมื่อ backend พร้อม
-const currentScaleQuestion = ref(null) // { scaleKey: 'ST5'|'WHO5', questionNo, options: [{ label, score }] }
-const totalScaleQuestions = ref(10) // ST-5 (5 ข้อ) + WHO-5 (5 ข้อ) ตามแผนงาน
-const scaleResult = ref(null) // { st5: { totalScore, level }, who5: { totalScore, level } }
-const previousScaleResult = ref(null) // ผลครั้งก่อนของหัวข้อเดียวกัน (ครั้งติดตาม) { st5Trend, who5Trend } = 'BETTER'|'SAME'|'WORSE'
+const currentScaleQuestion = ref(null)
+const totalScaleQuestions = ref(10)
+const scaleResult = ref(null)
+const previousScaleResult = ref(null)
+const lastScaleRawResult = ref(null)
 
-const acceptScaleOffer = () => {
-  // TODO: เรียก POST /sessions/:id/scale/start แล้วค่อยตั้ง currentPhase.value = 'SCALE'
+const mapTrend = (trend) => {
+  if (trend === 'IMPROVED') return 'BETTER'
+  if (trend === 'WORSE') return 'WORSE'
+  return 'SAME'
 }
 
-const declineScaleOffer = () => {
-  // TODO: เรียก POST /sessions/:id/scale/decline แล้วกลับไป currentPhase.value = 'FREE_CHAT'
+const formatThaiDate = (dateString) => {
+  if (!dateString) return null
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return null
+  return new Intl.DateTimeFormat(locale.value === 'en' ? 'en-US' : 'th-TH', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(date)
 }
 
-const submitScaleAnswer = (option) => {
-  // TODO: เรียก POST /sessions/:id/scale/answer ส่ง option.score แล้วอัปเดต
-  // currentScaleQuestion / scaleResult จาก response จริงของ backend
+const applyScaleQuestion = (q) => {
+  if (!q) {
+    currentScaleQuestion.value = null
+    return
+  }
+  currentScaleQuestion.value = {
+    scaleKey: q.scaleKey,
+    scaleName: q.scaleName,
+    instruction: q.instruction,
+    questionNo: q.globalNo,
+    questionText: q.text,
+    options: q.options || []
+  }
+  if (q.total) {
+    totalScaleQuestions.value = q.total
+  }
+}
+
+const applyScaleResult = (r) => {
+  if (!r) {
+    scaleResult.value = null
+    previousScaleResult.value = null
+    lastScaleRawResult.value = null
+    return
+  }
+  lastScaleRawResult.value = r
+  scaleResult.value = {
+    st5: r.st5
+      ? {
+          totalScore: r.st5.total,
+          level: r.st5.level
+        }
+      : null,
+    who5: r.who5
+      ? {
+          totalScore: r.who5.raw,
+          percent: r.who5.percent,
+          level: r.who5.level
+        }
+      : null,
+    referral: Boolean(r.referral)
+  }
+  previousScaleResult.value = r.comparison
+    ? {
+        st5Trend: mapTrend(r.comparison.st5),
+        who5Trend: mapTrend(r.comparison.who5)
+      }
+    : null
+}
+
+const buildEnrichedSummary = (rawSummaryDetail, rawResult) => {
+  if (!rawSummaryDetail) return null
+  const r = rawResult !== undefined ? rawResult : lastScaleRawResult.value
+  return {
+    ...rawSummaryDetail,
+    recommendedActivities: r?.assignedActivities ?? rawSummaryDetail.recommendedActivities ?? [],
+    nextCheckInDate: r?.nextFollowUpDate
+      ? formatThaiDate(r.nextFollowUpDate)
+      : rawSummaryDetail.nextCheckInDate ?? null,
+    referralNeeded:
+      r !== null && r !== undefined ? Boolean(r.referral) : Boolean(rawSummaryDetail.referralNeeded)
+  }
+}
+
+const handleScaleApiError = async (error) => {
+  const status = error?.response?.status
+  if (status === 401) {
+    alert(t('chat.sessionExpired'))
+    localStorage.removeItem('token')
+    router.push('/login')
+    return
+  }
+  if (status === 409 && currentSessionId.value) {
+    await loadSessionById(currentSessionId.value)
+    return
+  }
+  console.error('Scale API error:', error)
+  alert(t('chat.sendFailed'))
+}
+
+const acceptScaleOffer = async () => {
+  if (isSending.value || isCompleted.value || !currentSessionId.value) return
+  isSending.value = true
+  try {
+    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/scale/start`, {
+      locale: locale.value
+    })
+    const data = res.data
+    if (Array.isArray(data?.messages)) {
+      messages.value.push(...data.messages)
+    }
+    applyScaleQuestion(data?.question || null)
+    currentPhase.value = data?.phase || 'SCALE'
+    await scrollToBottom()
+  } catch (error) {
+    await handleScaleApiError(error)
+  } finally {
+    isSending.value = false
+  }
+}
+
+const declineScaleOffer = async () => {
+  if (isSending.value || isCompleted.value || !currentSessionId.value) return
+  isSending.value = true
+  try {
+    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/scale/decline`, {
+      locale: locale.value
+    })
+    const data = res.data
+    if (Array.isArray(data?.messages)) {
+      messages.value.push(...data.messages)
+    }
+    currentPhase.value = data?.phase || 'FREE_CHAT'
+    await scrollToBottom()
+  } catch (error) {
+    await handleScaleApiError(error)
+  } finally {
+    isSending.value = false
+  }
+}
+
+const submitScaleAnswer = async (option) => {
+  if (isSending.value || isCompleted.value || !currentSessionId.value || !option) return
+  isSending.value = true
+  try {
+    const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/scale/answer`, {
+      score: option.score,
+      locale: locale.value
+    })
+    const data = res.data
+    if (Array.isArray(data?.messages)) {
+      messages.value.push(...data.messages)
+    }
+    if (data?.phase === 'SCALE') {
+      applyScaleQuestion(data.question || null)
+      currentPhase.value = 'SCALE'
+    } else if (data?.phase === 'FREE_CHAT' && data?.result) {
+      currentScaleQuestion.value = null
+      applyScaleResult(data.result)
+      currentPhase.value = 'RESULT'
+      await fetchHistoryList()
+    } else {
+      currentPhase.value = data?.phase || 'FREE_CHAT'
+      await fetchHistoryList()
+    }
+    await scrollToBottom()
+  } catch (error) {
+    await handleScaleApiError(error)
+  } finally {
+    isSending.value = false
+  }
 }
 
 const openScaleHelpNow = () => {
@@ -1275,11 +1455,23 @@ watch(locale, async (newLocale) => {
           locale: newLocale
         })
         if (reqSeq === translateRequestSeq && res.data?.summaryDetail) {
-          summaryDetail.value = res.data.summaryDetail
+          if (res.data?.result) applyScaleResult(res.data.result)
+          summaryDetail.value = buildEnrichedSummary(res.data.summaryDetail, res.data.result)
         }
         await fetchHistoryList()
       } catch (err) {
         console.error('Failed to refresh summary for new locale:', err)
+      }
+    } else if (currentPhase.value === 'SCALE') {
+      try {
+        const res = await axios.get(`/api/chat/sessions/${currentSessionId.value}`, {
+          params: { locale: newLocale }
+        })
+        if (reqSeq === translateRequestSeq && res.data?.question) {
+          applyScaleQuestion(res.data.question)
+        }
+      } catch (err) {
+        console.error('Failed to refresh scale question for new locale:', err)
       }
     } else if (currentPhase.value === 'QUESTIONS') {
       // หากยังอยู่ในช่วง 5 คำถามแรก ให้ดึงตัวเลือกคำถามในภาษาที่เลือก
@@ -1450,13 +1642,21 @@ const loadSessionById = async (sessionId) => {
     currentSessionId.value = data.session.id
     currentTopic.value = data.session.topic
     isCompleted.value = data.session.status === 'COMPLETED'
-    summaryDetail.value = data.session.summaryDetail || null
+    applyScaleResult(data.result || null)
+    summaryDetail.value = buildEnrichedSummary(data.session.summaryDetail || null, data.result || null)
     feedbackRating.value = data.session.feedbackRating || null
     feedbackSubmitted.value = Boolean(data.session.feedbackRating)
     currentPhase.value = data.phase || 'FREE_CHAT'
+    if (currentPhase.value === 'SCALE' && data.question) {
+      applyScaleQuestion(data.question)
+    } else {
+      currentScaleQuestion.value = null
+    }
     currentQuestion.value = data.currentQuestion || null
     totalQuestions.value = data.totalQuestions || 5
-    sessionAnswers.value = data.answers || []
+    sessionAnswers.value = !data.mode
+      ? data.answers || []
+      : (data.answers || []).filter((a) => !a.scaleKey)
     messages.value = data.messages || []
 
     // หากข้อความในเซสชันมีภาษาไม่ตรงกับ locale ปัจจุบัน ให้แปลข้อความให้ตรงกับภาษาที่เลือก
@@ -1491,8 +1691,12 @@ const loadSessionById = async (sessionId) => {
           const endRes = await axios.post(`/api/chat/sessions/${sessionId}/end`, {
             locale: locale.value
           })
+          if (endRes.data?.result) applyScaleResult(endRes.data.result)
           if (endRes.data?.summaryDetail) {
-            summaryDetail.value = endRes.data.summaryDetail
+            summaryDetail.value = buildEnrichedSummary(
+              endRes.data.summaryDetail,
+              endRes.data.result || data.result || null
+            )
           }
         } catch (e) {
           console.error('Failed to localize completed session summary:', e)
@@ -1529,6 +1733,8 @@ const createNewSessionWithTopic = async (topicKey) => {
     feedbackRating.value = null
     feedbackSubmitted.value = false
     currentPhase.value = data.phase || 'QUESTIONS'
+    currentScaleQuestion.value = null
+    applyScaleResult(null)
     currentQuestion.value = data.question || null
     totalQuestions.value = data.totalQuestions || 5
     sessionAnswers.value = []
@@ -1659,6 +1865,12 @@ const sendMessage = async (overrideText = null, optionScore = null) => {
       alert(t('chat.sessionExpired'))
       localStorage.removeItem('token')
       router.push('/login')
+    } else if (error.response && error.response.status === 409 && currentSessionId.value) {
+      const optimisticIdx = messages.value.indexOf(userMsgEntry)
+      if (optimisticIdx !== -1) {
+        messages.value.splice(optimisticIdx, 1)
+      }
+      await loadSessionById(currentSessionId.value)
     } else {
       console.error('Failed to send message:', error)
       alert(t('chat.sendFailed'))
@@ -1690,7 +1902,10 @@ const confirmEndConversation = async () => {
     const res = await axios.post(`/api/chat/sessions/${currentSessionId.value}/end`, {
       locale: locale.value
     })
-    summaryDetail.value = res.data?.summaryDetail || null
+    if (res.data?.result) {
+      applyScaleResult(res.data.result)
+    }
+    summaryDetail.value = buildEnrichedSummary(res.data?.summaryDetail || null, res.data?.result)
     feedbackRating.value = res.data?.feedbackRating || null
     feedbackSubmitted.value = Boolean(res.data?.feedbackRating)
     isCompleted.value = true

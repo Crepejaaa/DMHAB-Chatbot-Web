@@ -9,9 +9,13 @@ const resolveUserId = (req: AuthRequest): number | null => {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 };
 
-const getTodayDateKey = (): string => {
-  return new Date().toISOString().slice(0, 10);
-};
+const getTodayKey = (): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 
 const formatUserActivity = (row: any, today: string) => {
   const catalog = getActivityByKey(row.activityKey);
@@ -51,7 +55,7 @@ export const getActiveActivities = async (req: AuthRequest, res: Response): Prom
     }
 
     const now = new Date();
-    const today = getTodayDateKey();
+    const today = getTodayKey();
 
     const rows = await prisma.userActivity.findMany({
       where: {
@@ -89,7 +93,7 @@ export const getActivityHistory = async (req: AuthRequest, res: Response): Promi
     }
 
     const now = new Date();
-    const today = getTodayDateKey();
+    const today = getTodayKey();
 
     const rows = await prisma.userActivity.findMany({
       where: {
@@ -169,7 +173,7 @@ export const logActivityToday = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const today = getTodayDateKey();
+    const today = getTodayKey();
 
     const existing = await prisma.userActivityLog.findUnique({
       where: {
@@ -208,7 +212,7 @@ export const logActivityToday = async (req: AuthRequest, res: Response): Promise
   } catch (error: any) {
     // กรณีเกิด race condition ชน unique constraint (P2002) ให้คืน 200 ตามสเปก
     if (error?.code === "P2002") {
-      const today = getTodayDateKey();
+      const today = getTodayKey();
       res.status(200).json({
         message: "บันทึกการทำกิจกรรมวันนี้ไว้แล้ว",
         alreadyLogged: true,
@@ -249,7 +253,7 @@ export const unlogActivityToday = async (req: AuthRequest, res: Response): Promi
       return;
     }
 
-    const today = getTodayDateKey();
+    const today = getTodayKey();
     const deleted = await prisma.userActivityLog.deleteMany({
       where: {
         userActivityId: userActivity.id,
