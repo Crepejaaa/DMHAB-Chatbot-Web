@@ -170,6 +170,54 @@
           </div>
         </div>
       </div>
+
+      <!-- Mobile Settings Section (เฉพาะจอเล็กกว่า sm) -->
+      <div class="sm:hidden shrink-0 border-t border-teal-100 p-3 space-y-2.5 bg-teal-50/40 sidebar-settings">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-[#045F54]">
+          {{ $t('chat.menu.settings') }}
+        </p>
+
+        <!-- แถวเปลี่ยนธีม -->
+        <button
+          type="button"
+          @click="isDarkMode = !isDarkMode"
+          class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-teal-100 hover:bg-teal-50 text-xs font-semibold text-[#1E293B] transition-colors sidebar-settings-btn"
+        >
+          <span class="flex items-center gap-2">
+            <svg v-if="!isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#045F54]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span>{{ isDarkMode ? $t('chat.menu.lightMode') : $t('chat.menu.darkMode') }}</span>
+          </span>
+          <span class="w-2 h-2 rounded-full" :class="isDarkMode ? 'bg-amber-300' : 'bg-[#0D9488]'"></span>
+        </button>
+
+        <!-- แถวภาษา -->
+        <div class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-white border border-teal-100 sidebar-settings-row">
+          <span class="text-xs font-semibold text-[#1E293B]">{{ $t('chat.menu.language') }}</span>
+          <div
+            :class="[
+              'bg-[#045F54] rounded-full flex items-center gap-1',
+              isTranslatingMessages ? 'opacity-70 pointer-events-none' : ''
+            ]"
+          >
+            <svg
+              v-if="isTranslatingMessages"
+              class="animate-spin h-3.5 w-3.5 text-emerald-200 ml-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <LanguageSwitcher />
+          </div>
+        </div>
+      </div>
     </aside>
 
     <!-- Main Right Column (Header + Chat/Advice Area + Guided/Input Footer) -->
@@ -263,7 +311,7 @@
           <button
             type="button"
             @click="isDarkMode = !isDarkMode"
-            class="p-2 rounded-full bg-black/10 hover:bg-black/20 text-white transition-colors"
+            class="hidden sm:inline-flex p-2 rounded-full bg-black/10 hover:bg-black/20 text-white transition-colors"
             :title="isDarkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'"
           >
             <svg v-if="!isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -276,7 +324,7 @@
 
           <div
             :class="[
-              'bg-[#045F54] rounded-full flex items-center gap-1',
+              'hidden sm:flex bg-[#045F54] rounded-full items-center gap-1',
               isTranslatingMessages ? 'opacity-70 pointer-events-none' : ''
             ]"
           >
@@ -2105,6 +2153,18 @@ header button[title*="โหมด"]:hover {
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item {
   background-color: #0f172a !important;
   border-color: #334155 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .sidebar-settings {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .sidebar-settings-btn,
+.chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .sidebar-settings-row {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
 }
 
 .chat-page.page-dark-surface.dark-mode-page:not(.admin-page):not(.assessment-page) .history-item:hover {

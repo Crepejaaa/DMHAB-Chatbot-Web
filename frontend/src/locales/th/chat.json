@@ -170,6 +170,12 @@
       "deleteConfirm": "ยืนยันการลบ",
       "deleteCancel": "ยกเลิก",
       "deleting": "กำลังลบ..."
+    },
+    "menu": {
+      "settings": "การตั้งค่า",
+      "darkMode": "โหมดมืด",
+      "lightMode": "โหมดสว่าง",
+      "language": "ภาษา"
     }
   }
 }
