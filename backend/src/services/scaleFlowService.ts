@@ -46,6 +46,7 @@ export interface ScaleQuestionPayload {
   scaleKey: ScaleKey;
   scaleName: string;
   instruction: string;
+  leadIn: string;
   itemNo: number;
   text: string;
   options: { score: number; label: string }[];
@@ -265,12 +266,22 @@ export const buildScaleQuestionPayload = (
   if (!entry) return null;
 
   const { scale, item } = entry;
+  const leadIn =
+    scale.key === "ST5"
+      ? locale === "en"
+        ? "Over the past 2–4 weeks, how often have you had this?"
+        : "ช่วง 2–4 สัปดาห์ที่ผ่านมา คุณเป็นแบบนี้บ่อยแค่ไหนคะ"
+      : locale === "en"
+        ? "Over the past 2 weeks, how often have you felt this way?"
+        : "ช่วง 2 สัปดาห์ที่ผ่านมา คุณรู้สึกแบบนี้บ่อยแค่ไหนคะ";
+
   return {
     globalNo: entry.globalNo,
     total: 10,
     scaleKey: scale.key,
     scaleName: locale === "en" ? scale.nameEn : scale.nameTh,
     instruction: locale === "en" ? scale.instructionEn : scale.instructionTh,
+    leadIn,
     itemNo: item.itemNo,
     text: locale === "en" ? item.textEn : item.textTh,
     options: scale.options.map((opt) => ({

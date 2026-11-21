@@ -137,7 +137,7 @@ export const startChatSession = async (req: AuthRequest, res: Response): Promise
       const formattedNextDate = formatLocalizedDate(nextFollowUpDate, locale);
       initialBotText =
         locale === "en"
-          ? `${greetingText}\n\nYour next follow-up assessment for this topic is scheduled for ${formattedNextDate}.`
+          ? `${greetingText}\n\nYour next check-in for this topic is on ${formattedNextDate}.`
           : `${greetingText}\n\nรอบติดตามผลครั้งถัดไปของหัวข้อนี้คือวันที่ ${formattedNextDate} นะคะ`;
     }
 
@@ -470,8 +470,8 @@ export const startScale = async (req: AuthRequest, res: Response): Promise<void>
 
     const botText =
       locale === "en"
-        ? `Let's get started. Please choose the answer that best describes how you feel.\nItem 1/10 — ${question.scaleName} (${question.instruction}): ${question.text}`
-        : `เริ่มกันเลยนะคะ เลือกคำตอบที่ใกล้เคียงกับคุณที่สุดได้เลยค่ะ\nข้อ 1/10 — ${question.scaleName} (${question.instruction}): ${question.text}`;
+        ? `Let's get started. Please choose the answer that best describes how you feel.\nItem 1/10 — ${question.leadIn}\n${question.text}`
+        : `เริ่มกันเลยนะคะ เลือกคำตอบที่ใกล้เคียงกับคุณที่สุดได้เลยค่ะ\nข้อ 1/10 — ${question.leadIn}\n${question.text}`;
 
     const botMessage = await prisma.chatMessage.create({
       data: {
@@ -540,7 +540,7 @@ export const declineScale = async (req: AuthRequest, res: Response): Promise<voi
           ? "Of course, feel free to keep sharing at your own pace."
           : "ได้เลยค่ะ เล่าต่อได้ตามสบายนะคะ"
         : locale === "en"
-          ? "Of course, let's continue chatting comfortably. Whenever you're ready to take the assessment, you can always start a new session in this topic."
+          ? "Of course, let's keep chatting at your own pace. Whenever you're ready for the check-in, you can always start a new session in this topic."
           : "ได้เลยค่ะ คุยกันต่อได้ตามสบายนะคะ ถ้าวันไหนพร้อมทำแบบวัด เริ่มคุยหัวข้อนี้ใหม่ได้เสมอค่ะ";
 
     await prisma.chatSession.update({
@@ -675,8 +675,8 @@ export const answerScale = async (req: AuthRequest, res: Response): Promise<void
 
       let botText =
         locale === "en"
-          ? `Item ${nextGlobalNo}/10 — ${nextQuestion.scaleName} (${nextQuestion.instruction}): ${nextQuestion.text}`
-          : `ข้อ ${nextGlobalNo}/10 — ${nextQuestion.scaleName} (${nextQuestion.instruction}): ${nextQuestion.text}`;
+          ? `Item ${nextGlobalNo}/10 — ${nextQuestion.leadIn}\n${nextQuestion.text}`
+          : `ข้อ ${nextGlobalNo}/10 — ${nextQuestion.leadIn}\n${nextQuestion.text}`;
 
       if (nextGlobalNo === 6) {
         botText =
@@ -1307,8 +1307,8 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
         const offerPromptText =
           locale === "en"
-            ? "Thank you for sharing with me. Whenever you're ready, let's try a short 10-item check-in (the Department of Mental Health's ST-5 Stress Test and the World Health Organization's WHO-5 Well-Being Index) to see how much this has been affecting you so Nong Mook can give more tailored suggestions."
-            : "ขอบคุณที่เล่าให้ฟังนะคะ ถ้าพร้อม เราลองทำแบบวัดสั้น ๆ 10 ข้อ (แบบประเมินความเครียด ST-5 ของกรมสุขภาพจิต และดัชนีสุขภาวะ WHO-5 ขององค์การอนามัยโลก) เพื่อดูว่าเรื่องนี้กระทบคุณแค่ไหน แล้วน้องมุกจะแนะนำได้ตรงขึ้นค่ะ";
+            ? "Thank you for sharing with me. If you're up for it, shall we do a quick 10-question check-in? It'll help Nong Mook understand you better and give more tailored suggestions."
+            : "ขอบคุณที่เล่าให้ฟังนะคะ ถ้าพร้อม เราลองเช็กใจสั้น ๆ 10 ข้อกันไหมคะ น้องมุกจะได้เข้าใจคุณมากขึ้นและแนะนำได้ตรงขึ้นค่ะ";
 
         const replyText = shouldOffer
           ? `${aiResponse.reply_message}\n\n${offerPromptText}`
