@@ -10,6 +10,8 @@ import authRoutes from "./routes/authRoutes";
 import articleRoutes from "./routes/articleRoutes";
 import { ensureArticleSchema } from "./controllers/articleController";
 import { ensureUserResetSchema } from "./controllers/authController";
+import checkinRoutes from "./routes/checkinRoutes";
+import { ensureDailyCheckinSchema } from "./controllers/checkinController";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -63,6 +65,7 @@ app.use("/api", authRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/articles", articleRoutes);
+app.use("/api/checkin", checkinRoutes);
 
 // 3. Route เริ่มต้น (สำหรับเช็กว่าเซิร์ฟเวอร์ทำงานปกติไหม)
 app.get("/", (req: Request, res: Response) => {
@@ -77,5 +80,8 @@ app.listen(PORT, () => {
   });
   ensureUserResetSchema().catch((err) => {
     console.warn("User reset schema sync skipped during startup:", err?.message || err);
+  });
+  ensureDailyCheckinSchema().catch((err) => {
+    console.warn("DailyCheckin schema sync skipped during startup:", err?.message || err);
   });
 });

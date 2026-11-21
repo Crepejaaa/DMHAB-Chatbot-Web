@@ -46,6 +46,7 @@ model User {
   scaleResults ScaleResult[]
   articles     Article[] // แอดมิน 1 คน เขียนบทความได้หลายเรื่อง
   systemLogs   SystemLog[] // ประวัติกิจกรรมในระบบของผู้ใช้คนนี้
+  dailyCheckins DailyCheckin[]
 }
 
 // ตารางที่ 2: เก็บรอบการคุยประจำวัน หรือหัวข้อการประเมินอารมณ์รายครั้ง
@@ -156,4 +157,25 @@ model SystemLog {
   action    String // กิจกรรมที่เกิดขึ้น เช่น "LOGIN", "DELETE_USER"
   details   String   @db.Text // รายละเอียดเชิงลึก
   createdAt DateTime @default(now())
+}
+
+
+// ตาราง Daily Check-in (ของฟีเจอร์เช็คอินรายวันโดยเฉพาะ)
+model DailyCheckin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateKey   String // รูปแบบ YYYY-MM-DD (1 วัน 1 รายการต่อผู้ใช้)
+  moodScore Int // 1-5
+  moodLabel String?
+  energy    Int      @default(5)
+  stress    Int      @default(5)
+  social    Int      @default(5)
+  note      String?  @db.Text
+  tags      Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, dateKey])
+  @@index([userId, createdAt])
 }

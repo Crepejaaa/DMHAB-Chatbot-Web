@@ -65,7 +65,6 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div class="flex gap-4 items-start">
             <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25 shadow-inner shrink-0 mt-1">
-              <!-- Calendar / Check Icon -->
               <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
@@ -79,9 +78,9 @@
                 <span class="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-white/20 text-[#D1FAE5] border border-white/20">
                   {{ $t('checkin.today') }} • {{ todayShortDate }}
                 </span>
-                <span v-if="authStore.isAuthenticated" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-400/20 text-[#D1FAE5] border border-emerald-300/30 flex items-center gap-1">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-400/20 text-[#D1FAE5] border border-emerald-300/30 flex items-center gap-1">
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
-                  Cloud Synced
+                  Database Synced
                 </span>
               </div>
               <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
@@ -180,7 +179,6 @@
                     : (isDarkMode ? 'border-slate-700/60 bg-slate-800/40 hover:border-slate-600 hover:bg-slate-800' : 'border-slate-100 bg-slate-50/70 hover:border-slate-200 hover:bg-white hover:shadow-sm')
                 ]"
               >
-                <!-- Selected Check Badge -->
                 <div v-if="selectedMoodId === mood.id"
                   class="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#0D9488] text-white flex items-center justify-center shadow-sm">
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -251,7 +249,7 @@
             </div>
           </div>
 
-          <!-- 2. Detailed Dimension Sliders (Energy, Stress, Social) -->
+          <!-- 2. Detailed Dimension Sliders (Energy, Stress, Social) + คำอธิบายใต้แถบความเครียด -->
           <div class="space-y-4 pt-2 border-t" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-100'">
             <div class="flex items-center justify-between">
               <label :class="['text-sm font-bold flex items-center gap-2', isDarkMode ? 'text-slate-200' : 'text-slate-800']">
@@ -265,46 +263,67 @@
               <div
                 v-for="metric in moodMetrics"
                 :key="metric.id"
-                :class="['p-4 rounded-2xl border space-y-2.5 transition-all', isDarkMode ? 'bg-slate-800/40 border-slate-700/60' : 'bg-slate-50/50 border-slate-100']"
+                :class="['p-4 rounded-2xl border space-y-2.5 transition-all flex flex-col justify-between', isDarkMode ? 'bg-slate-800/40 border-slate-700/60' : 'bg-slate-50/50 border-slate-100']"
               >
-                <div class="flex justify-between items-center">
-                  <span :class="['text-xs font-bold flex items-center gap-1.5', isDarkMode ? 'text-slate-200' : 'text-slate-800']">
-                    <!-- Zap Icon for Energy -->
-                    <svg v-if="metric.id === 'energy'" class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                    </svg>
-                    <!-- Pulse / Brain for Stress -->
-                    <svg v-else-if="metric.id === 'stress'" class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                    <!-- Users for Social -->
-                    <svg v-else class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    {{ $t('checkin.metrics.' + metric.id) }}
-                  </span>
-                  <span class="text-xs font-extrabold px-2 py-0.5 rounded-md bg-[#0D9488]/10 text-[#0D9488]">
-                    {{ metric.value }}/10
-                  </span>
+                <div class="space-y-2.5">
+                  <div class="flex justify-between items-center">
+                    <span :class="['text-xs font-bold flex items-center gap-1.5', isDarkMode ? 'text-slate-200' : 'text-slate-800']">
+                      <!-- Zap Icon for Energy -->
+                      <svg v-if="metric.id === 'energy'" class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                      </svg>
+                      <!-- Pulse / Brain for Stress -->
+                      <svg v-else-if="metric.id === 'stress'" class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                      </svg>
+                      <!-- Users for Social -->
+                      <svg v-else class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                      {{ $t('checkin.metrics.' + metric.id) }}
+                    </span>
+                    <span class="text-xs font-extrabold px-2 py-0.5 rounded-md bg-[#0D9488]/10 text-[#0D9488]">
+                      {{ metric.value }}/10
+                    </span>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    v-model.number="metric.value"
+                    class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                    :style="{
+                      background: `linear-gradient(to right, #0D9488 ${(metric.value - 1) * 100 / 9}%, ${isDarkMode ? '#334155' : '#E2E8F0'} ${(metric.value - 1) * 100 / 9}%)`
+                    }"
+                  />
+
+                  <div class="flex justify-between text-[10px] text-slate-400 font-medium">
+                    <span>{{ $t('checkin.metrics.' + metric.id + 'Low') }}</span>
+                    <span>{{ $t('checkin.metrics.' + metric.id + 'High') }}</span>
+                  </div>
                 </div>
 
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  v-model.number="metric.value"
-                  class="w-full h-2 rounded-full appearance-none cursor-pointer"
-                  :style="{
-                    background: `linear-gradient(to right, #0D9488 ${(metric.value - 1) * 100 / 9}%, ${isDarkMode ? '#334155' : '#E2E8F0'} ${(metric.value - 1) * 100 / 9}%)`
-                  }"
-                />
-
-                <div class="flex justify-between text-[10px] text-slate-400 font-medium">
-                  <span>{{ $t('checkin.metrics.' + metric.id + 'Low') }}</span>
-                  <span>{{ $t('checkin.metrics.' + metric.id + 'High') }}</span>
+                <!-- 2.4 คำอธิบายใต้แถบความเครียด -->
+                <div
+                  v-if="metric.id === 'stress'"
+                  class="mt-3 pt-2.5 border-t text-[11px] leading-relaxed space-y-1"
+                  :class="isDarkMode ? 'border-slate-700/70 text-slate-300' : 'border-slate-200/70 text-slate-600'"
+                >
+                  <p class="font-semibold flex items-start gap-1.5" :class="stressLevelColorClass(metric.value)">
+                    <svg class="w-3.5 h-3.5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    <span>{{ stressDynamicText(metric.value) }}</span>
+                  </p>
+                  <p class="text-[10px] text-slate-400">
+                    {{ $t('checkin.metrics.stressGuide') }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -335,7 +354,6 @@
                       : 'border-slate-200 text-slate-600 bg-white hover:border-[#0D9488]/40 hover:bg-slate-50'
                 ]"
               >
-                <!-- Render specific SVG icon per tag -->
                 <span class="shrink-0" :class="selectedTags.includes(tag.key) ? 'text-white' : 'text-slate-500'">
                   <!-- 0: Exercise -->
                   <svg v-if="tag.key === '0'" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -418,15 +436,10 @@
           <div class="pt-2">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
               <div class="text-xs text-slate-400 flex items-center gap-2">
-                <svg v-if="authStore.isAuthenticated" class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                 </svg>
-                <svg v-else class="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>
-                  {{ authStore.isAuthenticated ? $t('checkin.cloudSaved') : $t('checkin.guestNotice') }}
-                </span>
+                <span>{{ $t('checkin.cloudSaved') }}</span>
               </div>
 
               <button
@@ -458,23 +471,19 @@
           :class="['p-5 rounded-2xl border text-center transition-all duration-300 hover:scale-[1.02] shadow-sm', isDarkMode ? 'bg-[#1E293B] border-slate-700/60' : 'bg-white border-slate-100']"
         >
           <div class="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center" :style="{ backgroundColor: stat.bgColor, color: stat.color }">
-            <!-- Flame Icon for Streak -->
             <svg v-if="stat.key === 'streak'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
             </svg>
-            <!-- CalendarCheck for Total -->
             <svg v-else-if="stat.key === 'total'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8" y1="2" x2="8" y2="6"/>
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <!-- TrendingUp for Avg -->
             <svg v-else-if="stat.key === 'avg'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
               <polyline points="17 6 23 6 23 12"/>
             </svg>
-            <!-- Sparkles for Dominant Mood -->
             <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
@@ -519,11 +528,9 @@
         <!-- Bar Chart Container -->
         <div class="flex items-end gap-2 md:gap-3 h-40 pt-4 pb-2 px-2 border-b" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-100'">
           <div v-for="(day, i) in chartData" :key="i" class="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end">
-            <!-- Score Tooltip -->
             <span class="text-[11px] font-bold text-[#0D9488] opacity-0 group-hover:opacity-100 transition-opacity">
               {{ day.score > 0 ? day.score + '/5' : '—' }}
             </span>
-            <!-- Bar -->
             <div
               class="w-full max-w-[36px] rounded-t-xl transition-all duration-500 relative cursor-pointer group-hover:brightness-110"
               :style="{
@@ -532,7 +539,6 @@
               }"
               :title="day.label + (day.score > 0 ? ': ' + day.score + '/5' : ': ยังไม่มีข้อมูล')"
             ></div>
-            <!-- Day Label -->
             <span :class="['text-[10px] font-semibold mt-1 truncate max-w-full text-center', day.isToday ? 'text-[#0D9488] font-bold' : (isDarkMode ? 'text-slate-400' : 'text-slate-500')]">
               {{ day.label }}
             </span>
@@ -551,9 +557,9 @@
         </div>
       </section>
 
-      <!-- ==================== STEP 4 : Real Check-in History Log ==================== -->
+      <!-- ==================== STEP 4 : Database Check-in History Log + ปุ่มลบประวัติ ==================== -->
       <section :class="['rounded-3xl border p-6 md:p-8 shadow-sm transition-all', isDarkMode ? 'bg-[#1E293B] border-slate-700/60' : 'bg-white border-slate-100']">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
             <h2 :class="['font-extrabold text-lg flex items-center gap-2', isDarkMode ? 'text-white' : 'text-slate-800']">
               <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -562,24 +568,36 @@
               {{ $t('checkin.historyTitle') }}
             </h2>
             <p :class="['text-xs mt-0.5', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
-              ประวัติการบันทึกจริงของคุณ ({{ checkinHistory.length }} รายการ)
+              ประวัติจากฐานข้อมูลของคุณ ({{ checkinHistory.length }} รายการ)
             </p>
           </div>
 
-          <button
-            v-if="checkinHistory.length > 0"
-            type="button"
-            @click="refreshData"
-            class="text-xs text-[#0D9488] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
-          >
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            รีเฟรช
-          </button>
+          <!-- Action buttons: Refresh + Clear All History (2.2 ปุ่มลบประวัติ) -->
+          <div v-if="checkinHistory.length > 0" class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="refreshData"
+              class="text-xs px-3 py-1.5 rounded-xl border border-[#0D9488]/30 text-[#0D9488] hover:bg-[#0D9488]/10 flex items-center gap-1.5 font-semibold transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              รีเฟรช
+            </button>
+            <button
+              type="button"
+              @click="showClearAllModal = true"
+              class="text-xs px-3 py-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white flex items-center gap-1.5 font-semibold transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {{ $t('checkin.clearAllHistory') }}
+            </button>
+          </div>
         </div>
 
-        <!-- Empty State (No real history yet) -->
+        <!-- Empty State -->
         <div v-if="checkinHistory.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
           <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-3" :class="isDarkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'">
             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -601,7 +619,7 @@
           </button>
         </div>
 
-        <!-- Real History Cards List -->
+        <!-- History Cards List -->
         <div v-else class="space-y-3">
           <div
             v-for="entry in visibleHistory"
@@ -616,7 +634,6 @@
               class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
               :style="{ backgroundColor: getMoodIconBg(entry.score), color: moodBarColor(entry.score) }"
             >
-              <!-- Render small SVG mood icon based on score -->
               <svg v-if="entry.score === 5" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10" /><path d="M8 13.5c1.5 2 6.5 2 8 0" /><path d="M8 9.5c.5-.8 1.5-.8 2 0" /><path d="M14 9.5c.5-.8 1.5-.8 2 0" />
               </svg>
@@ -644,24 +661,25 @@
                     </span>
                     <span class="text-[11px] font-bold px-2 py-0.5 rounded-full"
                       :style="{ backgroundColor: getMoodIconBg(entry.score), color: moodBarColor(entry.score) }">
-                      ระดับ {{ entry.score }}/5
+                      {{ $t('checkin.scoreOf5', { n: entry.score }) }}
                     </span>
                   </div>
                   <p class="text-xs text-slate-400 mt-0.5">
-                    {{ formatHistoryDate(entry.savedAt || entry.createdAt || entry.dateKey) }}
+                    {{ formatHistoryDate(entry.dateKey || entry.savedAt || entry.createdAt) }}
                   </p>
                 </div>
 
-                <!-- Delete action button -->
+                <!-- 2.2 ปุ่มลบประวัติรายรายการ -->
                 <button
                   type="button"
                   @click="confirmDeleteEntry(entry)"
-                  class="text-slate-400 hover:text-rose-500 p-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
-                  title="ลบรายการนี้"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-rose-500 hover:text-white hover:bg-rose-500 border border-rose-500/20 transition cursor-pointer shrink-0"
+                  :title="$t('checkin.deleteEntry')"
                 >
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
+                  <span>{{ $t('checkin.deleteEntry') }}</span>
                 </button>
               </div>
 
@@ -673,13 +691,13 @@
               <!-- Dimension tags & Activity pills -->
               <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
                 <span v-if="entry.energy" class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                  พลังงาน: {{ entry.energy }}/10
+                  {{ $t('checkin.metrics.energy') }}: {{ entry.energy }}/10
                 </span>
                 <span v-if="entry.stress" class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                  ความเครียด: {{ entry.stress }}/10
+                  {{ $t('checkin.metrics.stress') }}: {{ entry.stress }}/10
                 </span>
                 <span v-if="entry.social" class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400">
-                  เข้าสังคม: {{ entry.social }}/10
+                  {{ $t('checkin.metrics.social') }}: {{ entry.social }}/10
                 </span>
 
                 <span
@@ -693,7 +711,6 @@
             </div>
           </div>
 
-          <!-- Show All / Show Less button -->
           <button
             v-if="checkinHistory.length > 5"
             type="button"
@@ -708,22 +725,29 @@
         </div>
       </section>
 
-      <!-- ==================== STEP 5 : Personalized Wellness Suggestions ==================== -->
+      <!-- ==================== STEP 5 : 2.5 คำแนะนำดึงจากรายการกิจกรรม (ACTIVITIES) ==================== -->
       <section :class="['rounded-3xl border p-6 md:p-8 shadow-sm transition-all', isDarkMode ? 'bg-[#1E293B] border-slate-700/60' : 'bg-white border-slate-100']">
-        <h2 :class="['font-extrabold text-lg flex items-center gap-2 mb-1', isDarkMode ? 'text-white' : 'text-slate-800']">
-          <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-          {{ $t('checkin.recTitle') }}
-        </h2>
-        <p :class="['text-xs mb-6', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
-          {{ selectedMood ? $t('checkin.recByMood') : $t('checkin.recNeedCheckin') }}
-        </p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <h2 :class="['font-extrabold text-lg flex items-center gap-2 mb-1', isDarkMode ? 'text-white' : 'text-slate-800']">
+              <svg class="w-5 h-5 text-[#0D9488]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              {{ $t('checkin.recTitle') }}
+            </h2>
+            <p :class="['text-xs', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
+              {{ $t('checkin.recByMood') }}
+            </p>
+          </div>
+          <span class="text-[11px] font-semibold px-3 py-1 rounded-full bg-[#0D9488]/10 text-[#0D9488] self-start sm:self-auto">
+            WHO & กรมสุขภาพจิต
+          </span>
+        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div
-            v-for="rec in currentRecommendations"
-            :key="rec.title"
+            v-for="act in currentRecommendations"
+            :key="act.key"
             :class="[
               'rounded-2xl p-5 border transition-all duration-300 hover:shadow-md flex flex-col justify-between group',
               isDarkMode ? 'bg-slate-800/40 border-slate-700/60 hover:border-[#0D9488]/40' : 'bg-[#FAFDFA] border-slate-100 hover:border-[#0D9488]/30'
@@ -731,57 +755,50 @@
           >
             <div>
               <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-[#0D9488]/10 text-[#0D9488] group-hover:scale-105 transition-transform">
-                <!-- Wind icon for breathe -->
-                <svg v-if="rec.type === 'breathe'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <!-- Breathing / Body relaxation -->
+                <svg v-if="act.key === 'deep_breathing' || act.key === 'progressive_muscle_relaxation'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <!-- Gratitude icon -->
-                <svg v-else-if="rec.type === 'gratitude'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <!-- Kindness / Self-compassion -->
+                <svg v-else-if="act.key === 'being_kind_self' || act.key === 'being_kind_others' || act.key === 'making_room_feelings'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <!-- Sun icon for sunlight -->
-                <svg v-else-if="rec.type === 'sunlight'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                <!-- Mindfulness / Grounding / Meditation -->
+                <svg v-else-if="act.key === 'grounding_5senses' || act.key === 'short_meditation' || act.key === 'unhooking_notice_thought'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/><path d="m4.93 4.93 1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/>
                 </svg>
-                <!-- Talk icon -->
-                <svg v-else-if="rec.type === 'talk'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <!-- Sleep / Wind down -->
+                <svg v-else-if="act.key === 'wind_down_before_sleep'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
                 </svg>
-                <!-- Music icon -->
-                <svg v-else-if="rec.type === 'music'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-                </svg>
-                <!-- Hotline icon -->
+                <!-- Default Activity Sparkle / Action -->
                 <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
               </div>
-              <h3 :class="['font-bold text-sm mb-1', isDarkMode ? 'text-white' : 'text-slate-800']">
-                {{ rec.title }}
+
+              <h3 :class="['font-bold text-sm mb-1.5', isDarkMode ? 'text-white' : 'text-slate-800']">
+                {{ locale === 'en' ? act.nameEn : act.nameTh }}
               </h3>
-              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
-                {{ rec.desc }}
+              <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-slate-300' : 'text-slate-600']">
+                {{ locale === 'en' ? act.howToEn : act.howToTh }}
               </p>
             </div>
 
-            <div class="mt-4 pt-3 border-t" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-100'">
-              <router-link
-                v-if="rec.link"
-                :to="rec.link"
-                class="text-xs font-bold text-[#0D9488] hover:underline inline-flex items-center gap-1"
+            <div class="mt-4 pt-3 border-t flex items-center justify-between gap-2" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-100'">
+              <span class="text-[10px] text-slate-400 truncate" :title="locale === 'en' ? act.source?.en : act.source?.th">
+                {{ locale === 'en' ? act.source?.en : act.source?.th }}
+              </span>
+              <a
+                v-if="act.source?.url"
+                :href="act.source.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs font-bold text-[#0D9488] hover:underline inline-flex items-center gap-1 shrink-0"
               >
                 {{ $t('checkin.tryIt') }}
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
-              </router-link>
-              <a
-                v-else-if="rec.tel"
-                :href="'tel:' + rec.tel"
-                class="text-xs font-bold text-rose-500 hover:underline inline-flex items-center gap-1"
-              >
-                โทร 1323 ทันที
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
               </a>
-              <span v-else class="text-[11px] text-slate-400 font-medium">ทำได้ง่ายๆ ด้วยตัวเอง</span>
             </div>
           </div>
         </div>
@@ -807,7 +824,7 @@
       </div>
     </Transition>
 
-    <!-- ========== Delete Confirmation Modal ========== -->
+    <!-- ========== Single Delete Confirmation Modal ========== -->
     <Transition name="fade">
       <div v-if="entryToDelete" class="fixed inset-0 z-[300] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
         <div :class="['w-full max-w-sm rounded-2xl p-6 shadow-2xl border', isDarkMode ? 'bg-[#1E293B] border-slate-700 text-white' : 'bg-white border-slate-100 text-slate-800']">
@@ -818,7 +835,7 @@
           </div>
           <h3 class="font-extrabold text-base text-center mb-1">ลบประวัติการเช็คอิน</h3>
           <p class="text-xs text-center text-slate-400 mb-6">
-            คุณต้องการลบข้อมูลการเช็คอินของวันที่ {{ formatHistoryDate(entryToDelete.savedAt || entryToDelete.dateKey) }} ใช่หรือไม่?
+            {{ $t('checkin.confirmDelete') }} ({{ formatHistoryDate(entryToDelete.dateKey || entryToDelete.savedAt) }})
           </p>
           <div class="flex gap-2">
             <button
@@ -840,7 +857,40 @@
       </div>
     </Transition>
 
-    <!-- ========== Footer ========== -->
+    <!-- ========== Clear All History Confirmation Modal ========== -->
+    <Transition name="fade">
+      <div v-if="showClearAllModal" class="fixed inset-0 z-[300] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div :class="['w-full max-w-sm rounded-2xl p-6 shadow-2xl border', isDarkMode ? 'bg-[#1E293B] border-slate-700 text-white' : 'bg-white border-slate-100 text-slate-800']">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <h3 class="font-extrabold text-base text-center mb-1">{{ $t('checkin.clearAllHistory') }}</h3>
+          <p class="text-xs text-center text-slate-400 mb-6">
+            {{ $t('checkin.confirmClearAll') }}
+          </p>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              @click="showClearAllModal = false"
+              :class="['flex-1 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer', isDarkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-slate-50 text-slate-600']"
+            >
+              ยกเลิก
+            </button>
+            <button
+              type="button"
+              @click="executeClearAll"
+              class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition cursor-pointer"
+            >
+              ยืนยันการลบทั้งหมด
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ========== Footer (SVG Icons Instead of Emojis) ========== -->
     <footer class="mt-auto w-full bg-gradient-to-r from-[#045F54] via-[#0D9488] to-[#059669] text-white pt-12 pb-6 shadow-inner">
       <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-8 pb-8 border-b border-white/20 text-sm">
         <div>
@@ -863,8 +913,18 @@
         <div>
           <h4 class="font-bold mb-3">{{ $t('common.footerContact') }}</h4>
           <ul class="space-y-2 text-xs text-[#D1FAE5]">
-            <li>📞 02-XXX-XXXX</li>
-            <li>✉️ PhuenJaiZone@Domain.com</li>
+            <li class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>02-XXX-XXXX</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span>PhuenJaiZone@Domain.com</span>
+            </li>
           </ul>
         </div>
         <div>
@@ -880,6 +940,7 @@
 
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from '../api/axios'
 import ProfileMenu from '../components/ProfileMenu.vue'
@@ -888,13 +949,11 @@ import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { useAuthStore } from '../stores/authStore'
 
 const { t, locale } = useI18n()
+const router = useRouter()
 const isDarkMode = inject('isDarkMode', ref(false))
 const authStore = useAuthStore()
 
-// Storage key per user / guest
-const storageKey = computed(() => `dailyCheckin_${authStore.user?.id || authStore.user?.email || 'guest'}`)
-
-// ==================== Mood Options (1-5, No Emojis, Pure SVG Setup) ====================
+// ==================== Mood Options (1-5, Pure SVG Icons) ====================
 const moodOptions = computed(() => [
   { id: 5, score: 5, label: t('checkin.mood5'), color: '#059669', iconBg: '#ECFDF5', activeClass: 'bg-emerald-50/60' },
   { id: 4, score: 4, label: t('checkin.mood4'), color: '#0D9488', iconBg: '#F0FDFA', activeClass: 'bg-teal-50/60' },
@@ -917,12 +976,28 @@ const getMoodIconBg = (score) => {
   return '#FFF1F2'
 }
 
-// ==================== Metric Sliders (1-10) ====================
+// ==================== Metric Sliders (1-10) + 2.4 คำอธิบายใต้แถบความเครียด ====================
 const moodMetrics = ref([
   { id: 'energy', value: 6 },
   { id: 'stress', value: 4 },
   { id: 'social', value: 6 },
 ])
+
+function stressDynamicText(val) {
+  const v = Number(val) || 1
+  if (v <= 3) return t('checkin.metrics.stressLevelLow')
+  if (v <= 6) return t('checkin.metrics.stressLevelMid')
+  if (v <= 8) return t('checkin.metrics.stressLevelHigh')
+  return t('checkin.metrics.stressLevelCritical')
+}
+
+function stressLevelColorClass(val) {
+  const v = Number(val) || 1
+  if (v <= 3) return 'text-emerald-600 dark:text-emerald-400'
+  if (v <= 6) return 'text-amber-600 dark:text-amber-400'
+  if (v <= 8) return 'text-orange-600 dark:text-orange-400'
+  return 'text-rose-600 dark:text-rose-400'
+}
 
 // ==================== Activity Tags (No Emojis) ====================
 const tagKeyList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
@@ -935,17 +1010,152 @@ function getTagLabel(tag) {
   return tag
 }
 
+// ==================== 2.5 คลังรายการกิจกรรมแนะนำ (ซิงค์กับ backend/src/data/activities.ts) ====================
+const WHO_DWM = {
+  th: 'WHO: Doing What Matters in Times of Stress (2020)',
+  en: 'WHO: Doing What Matters in Times of Stress (2020)',
+  url: 'https://www.who.int/publications/i/item/9789240003927',
+}
+const DMH_THAILAND = {
+  th: 'กรมสุขภาพจิต กระทรวงสาธารณสุข — องค์ความรู้สุขภาพจิตสำหรับประชาชน',
+  en: 'Thailand Department of Mental Health — public mental health knowledge resources',
+  url: 'https://dmh.go.th',
+}
+
+const DEFAULT_ACTIVITIES = [
+  {
+    key: 'grounding_5senses',
+    nameTh: 'หยั่งรากกับปัจจุบัน (Grounding)',
+    nameEn: 'Grounding in the present moment',
+    howToTh: 'เมื่อรู้สึกฟุ้งหรือจมกับความคิด ลองหยุดสักครู่แล้วสังเกตสิ่งที่เห็น ได้ยิน และรู้สึกได้ที่ตัวรอบตัวตอนนี้ อย่างละ 2-3 อย่าง เพื่อพาใจกลับมาอยู่กับปัจจุบัน',
+    howToEn: 'When thoughts feel overwhelming, pause and notice a few things you can see, hear, and feel right now to bring your attention back to the present moment.',
+    source: WHO_DWM,
+    suggestedLevels: ['HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'unhooking_notice_thought',
+    nameTh: 'ปลดเกี่ยวความคิด (Unhooking)',
+    nameEn: 'Unhooking from difficult thoughts',
+    howToTh: 'เมื่อมีความคิดลบวนซ้ำ ลองบอกตัวเองเบา ๆ ว่า "นี่คือความคิดหนึ่ง ไม่ใช่ความจริงทั้งหมด" แล้วปล่อยให้มันผ่านไปโดยไม่ต้องเถียงหรือเชื่อตามทันที',
+    howToEn: 'When a troubling thought loops, gently remind yourself "this is just a thought, not the whole truth," and let it pass without arguing with it or buying into it right away.',
+    source: WHO_DWM,
+    suggestedLevels: ['MODERATE', 'HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'values_small_step',
+    nameTh: 'ลงมือทำตามสิ่งที่ให้ความหมาย (Acting on your values)',
+    nameEn: 'Acting on your values',
+    howToTh: 'เลือกสิ่งเล็ก ๆ หนึ่งอย่างที่ตรงกับสิ่งที่คุณให้ความสำคัญในชีวิต (เช่น การเรียน ความสัมพันธ์ สุขภาพ) แล้วลงมือทำแค่ขั้นแรกเล็ก ๆ วันนี้',
+    howToEn: 'Pick one thing that matters to you (studies, relationships, health) and take just one small first step toward it today.',
+    source: WHO_DWM,
+    suggestedLevels: ['LOW', 'MODERATE', 'GOOD'],
+  },
+  {
+    key: 'making_room_feelings',
+    nameTh: 'เปิดที่ว่างให้ความรู้สึก (Making room)',
+    nameEn: 'Making room for difficult feelings',
+    howToTh: 'ลองสังเกตความรู้สึกที่เกิดขึ้นตรง ๆ โดยไม่ต้องรีบผลักออกหรือเก็บกด แค่หายใจและบอกกับตัวเองว่ารู้สึกแบบนี้อยู่ได้ชั่วคราว',
+    howToEn: 'Notice the feeling that is showing up without rushing to push it away or suppress it — just breathe and let yourself know it is okay to feel this way for a while.',
+    source: WHO_DWM,
+    suggestedLevels: ['MODERATE', 'HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'engaging_fully',
+    nameTh: 'ทำสิ่งที่ทำอยู่อย่างเต็มที่ (Engaging)',
+    nameEn: 'Engaging fully in what you are doing',
+    howToTh: 'เลือกกิจกรรมหนึ่งอย่างที่ทำอยู่แล้ววันนี้ (กินข้าว เดิน อาบน้ำ) แล้วลองใส่ใจกับทุกขั้นตอนของมันอย่างเต็มที่ ไม่เร่งรีบหรือทำสองอย่างพร้อมกัน',
+    howToEn: 'Pick one thing you are already doing today (eating, walking, showering) and give it your full attention, step by step, without rushing or multitasking.',
+    source: WHO_DWM,
+    suggestedLevels: ['LOW', 'MODERATE', 'GOOD'],
+  },
+  {
+    key: 'being_kind_self',
+    nameTh: 'ใจดีกับตัวเอง (Being kind)',
+    nameEn: 'Being kind to yourself',
+    howToTh: 'ลองพูดกับตัวเองในคำที่คุณจะพูดกับเพื่อนที่กำลังลำบาก แทนคำตำหนิตัวเอง และทำสิ่งเล็ก ๆ หนึ่งอย่างที่ดูแลตัวเองวันนี้',
+    howToEn: 'Try talking to yourself the way you would talk to a friend who is struggling, instead of self-criticism, and do one small thing today that takes care of yourself.',
+    source: WHO_DWM,
+    suggestedLevels: ['MODERATE', 'HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'being_kind_others',
+    nameTh: 'ใจดีกับคนรอบตัว (Being kind to others)',
+    nameEn: 'Being kind to someone around you',
+    howToTh: 'ลองทำสิ่งเล็ก ๆ ที่ใจดีให้คนรอบตัวหนึ่งคนวันนี้ เช่น ทักทาย ขอบคุณ หรือถามว่าเขาเป็นอย่างไร',
+    howToEn: 'Do one small kind thing for someone around you today — a greeting, a thank-you, or simply asking how they are doing.',
+    source: WHO_DWM,
+    suggestedLevels: ['LOW', 'MODERATE', 'GOOD'],
+  },
+  {
+    key: 'deep_breathing',
+    nameTh: 'ฝึกหายใจเข้าออกลึก ๆ',
+    nameEn: 'Slow, deep breathing',
+    howToTh: 'หาที่นั่งสบาย หายใจเข้าทางจมูกช้า ๆ นับ 1-4 แล้วหายใจออกทางปากช้า ๆ นับ 1-4 ทำซ้ำสัก 5-10 รอบ',
+    howToEn: 'Sit comfortably, breathe in slowly through your nose for a count of 4, then breathe out slowly through your mouth for a count of 4. Repeat for 5–10 rounds.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'progressive_muscle_relaxation',
+    nameTh: 'ผ่อนคลายกล้ามเนื้อทีละส่วน',
+    nameEn: 'Progressive muscle relaxation',
+    howToTh: 'เกร็งกล้ามเนื้อส่วนใดส่วนหนึ่ง (เช่น มือ หรือไหล่) ไว้สัก 3-5 วินาที แล้วค่อย ๆ ผ่อนคลายช้า ๆ สัก 10-15 วินาที ทำสลับไปตามส่วนต่าง ๆ ของร่างกาย',
+    howToEn: 'Tense one muscle group (like your hands or shoulders) for 3–5 seconds, then slowly release and relax for 10–15 seconds. Repeat for a few muscle groups.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'short_meditation',
+    nameTh: 'นั่งสมาธิสั้น ๆ',
+    nameEn: 'A short sitting meditation',
+    howToTh: 'นั่งในที่เงียบสบาย หลับตา จดจ่อกับลมหายใจตัวเองสัก 3-5 นาที เมื่อมีความคิดแวบเข้ามาก็แค่สังเกตแล้วพากลับมาที่ลมหายใจ',
+    howToEn: 'Sit somewhere quiet, close your eyes, and focus on your breath for 3–5 minutes. When a thought pops in, simply notice it and bring your attention back to your breath.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['MODERATE', 'HIGH', 'VERY_HIGH', 'POOR'],
+  },
+  {
+    key: 'enjoyable_activity',
+    nameTh: 'ทำกิจกรรมที่ชอบสักนิด',
+    nameEn: 'Do a small activity you enjoy',
+    howToTh: 'เลือกกิจกรรมเล็ก ๆ ที่คุณชอบและทำได้ตอนนี้ เช่น ฟังเพลง วาดรูป เดินเล่น หรือทำอาหารง่าย ๆ ให้เวลากับมันสัก 10-15 นาที',
+    howToEn: 'Pick a small activity you enjoy and can do right now — listening to music, drawing, taking a walk, or cooking something simple — and spend 10–15 minutes on it.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['LOW', 'MODERATE', 'GOOD'],
+  },
+  {
+    key: 'tidy_small_space',
+    nameTh: 'จัดพื้นที่รอบตัวให้น่าอยู่ขึ้นนิดหนึ่ง',
+    nameEn: 'Tidy up a small space around you',
+    howToTh: 'เลือกมุมเล็ก ๆ ที่คุณใช้บ่อย (โต๊ะเรียน เตียง) จัดให้เป็นระเบียบสักเล็กน้อยภายใน 10 นาที',
+    howToEn: 'Pick one small space you use often (a desk, your bed) and tidy it up a little within 10 minutes.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['LOW', 'MODERATE', 'GOOD'],
+  },
+  {
+    key: 'wind_down_before_sleep',
+    nameTh: 'ผ่อนคลายก่อนเข้านอน',
+    nameEn: 'Wind down before bedtime',
+    howToTh: 'ก่อนนอนสัก 15-20 นาที ลองงดดูหน้าจอมือถือ หายใจลึก ๆ 2-3 รอบ หรือฟังเสียงเบา ๆ ที่ช่วยให้สงบ',
+    howToEn: 'About 15–20 minutes before bed, try stepping away from screens, take a few slow deep breaths, or listen to calming, quiet sound.',
+    source: DMH_THAILAND,
+    suggestedLevels: ['MODERATE', 'HIGH', 'VERY_HIGH', 'POOR'],
+  },
+]
+
+const activitiesCatalog = ref([...DEFAULT_ACTIVITIES])
+
 // ==================== State ====================
-const selectedMoodId = ref(4)
-const selectedMood = computed(() => moodOptions.value.find(m => m.id === selectedMoodId.value) || moodOptions.value[1])
-const noteText       = ref('')
-const selectedTags   = ref([])
-const checkinHistory = ref([])
-const todayCheckin   = ref(null)
-const showAllHistory = ref(false)
-const selectedDays   = ref(7)
-const isSaving       = ref(false)
-const entryToDelete  = ref(null)
+const selectedMoodId    = ref(4)
+const selectedMood      = computed(() => moodOptions.value.find(m => m.id === selectedMoodId.value) || moodOptions.value[1])
+const noteText          = ref('')
+const selectedTags      = ref([])
+const checkinHistory    = ref([])
+const todayCheckin      = ref(null)
+const showAllHistory    = ref(false)
+const selectedDays      = ref(7)
+const isSaving          = ref(false)
+const entryToDelete     = ref(null)
+const showClearAllModal = ref(false)
 
 // Toast state
 const showToast  = ref(false)
@@ -1000,7 +1210,6 @@ const summaryStats = computed(() => {
     ? (checkinHistory.value.reduce((s, e) => s + (Number(e.score) || 3), 0) / total).toFixed(1)
     : '—'
 
-  // Dominant mood
   let topMoodLabel = '—'
   if (total > 0) {
     const counts = {}
@@ -1025,7 +1234,6 @@ function computeStreak() {
   let streak = 0
   const d = new Date()
 
-  // Format YYYY-MM-DD
   const formatYMD = (date) => {
     const y = date.getFullYear()
     const m = String(date.getMonth() + 1).padStart(2, '0')
@@ -1035,13 +1243,11 @@ function computeStreak() {
 
   for (let i = 0; i < 365; i++) {
     const ymd = formatYMD(d)
-    const toDate = d.toDateString()
-    const match = checkinHistory.value.find(e => e.dateKey === ymd || e.dateKey === toDate)
+    const match = checkinHistory.value.find(e => e.dateKey === ymd)
     if (match) {
       streak++
       d.setDate(d.getDate() - 1)
     } else {
-      // If today is not checked in yet, don't break immediately if yesterday has checkin
       if (i === 0) {
         d.setDate(d.getDate() - 1)
         continue
@@ -1069,9 +1275,8 @@ const chartData = computed(() => {
     const d = new Date()
     d.setDate(d.getDate() - i)
     const ymd = formatYMD(d)
-    const toDate = d.toDateString()
 
-    const entry = checkinHistory.value.find(e => e.dateKey === ymd || e.dateKey === toDate)
+    const entry = checkinHistory.value.find(e => e.dateKey === ymd)
     const shortDay = d.toLocaleDateString(loc, { weekday: 'short' })
     const isToday = i === 0
 
@@ -1102,22 +1307,24 @@ function moodBarColor(score) {
   return '#E11D48'
 }
 
-// ==================== Recommendations ====================
-const goodRecs = computed(() => [
-  { type: 'breathe', title: t('checkin.recs.breathe'), desc: t('checkin.recs.breatheDesc'), link: '/activity-tracker' },
-  { type: 'gratitude', title: t('checkin.recs.gratitude'), desc: t('checkin.recs.gratitudeDesc'), link: '/activity-tracker' },
-  { type: 'sunlight', title: t('checkin.recs.sunlight'), desc: t('checkin.recs.sunlightDesc'), link: '/activity-tracker' },
-])
-
-const supportRecs = computed(() => [
-  { type: 'talk', title: t('checkin.recs.talk'), desc: t('checkin.recs.talkDesc'), link: '/chat' },
-  { type: 'music', title: t('checkin.recs.music'), desc: t('checkin.recs.musicDesc'), link: '/activity-tracker' },
-  { type: 'hotline', title: t('checkin.recs.hotline'), desc: t('checkin.recs.hotlineDesc'), tel: '1323' },
-])
-
+// ==================== 2.5 ดึงคำแนะนำจากรายการกิจกรรมตามอารมณ์และความเครียด ====================
 const currentRecommendations = computed(() => {
-  if (!selectedMood.value) return goodRecs.value
-  return selectedMood.value.score <= 2 ? supportRecs.value : goodRecs.value
+  const list = activitiesCatalog.value.length ? activitiesCatalog.value : DEFAULT_ACTIVITIES
+  const moodScore = selectedMood.value?.score ?? 4
+  const stressVal = Number(moodMetrics.value.find(m => m.id === 'stress')?.value ?? 4)
+
+  // จับคู่ระดับคะแนนตามเกณฑ์ใน activities.ts
+  let targetLevel = 'GOOD'
+  if (moodScore <= 2 || stressVal >= 8) {
+    targetLevel = 'VERY_HIGH'
+  } else if (moodScore === 3 || stressVal >= 5) {
+    targetLevel = 'MODERATE'
+  } else {
+    targetLevel = 'LOW'
+  }
+
+  const matched = list.filter(a => Array.isArray(a.suggestedLevels) && a.suggestedLevels.includes(targetLevel))
+  return (matched.length >= 3 ? matched : list).slice(0, 3)
 })
 
 // ==================== Visible History ====================
@@ -1129,7 +1336,6 @@ const visibleHistory = computed(() => {
 // ==================== Form Actions ====================
 function selectMood(mood) {
   selectedMoodId.value = mood.id
-  // Set default sensible sliders
   const base = mood.score >= 4 ? 7 : mood.score === 3 ? 5 : 3
   moodMetrics.value[0].value = base      // energy
   moodMetrics.value[1].value = 11 - base // stress
@@ -1148,8 +1354,12 @@ function scrollToForm() {
   window.scrollTo({ top: 120, behavior: 'smooth' })
 }
 
-// ==================== Save Checkin (Real DB + LocalStorage) ====================
+// ==================== 2.1 บันทึกลงฐานข้อมูลเท่านั้น (บังคับล็อกอิน) ====================
 async function saveCheckin() {
+  if (!authStore.isAuthenticated) {
+    router.replace('/login')
+    return
+  }
   if (isSaving.value) return
   isSaving.value = true
 
@@ -1160,57 +1370,39 @@ async function saveCheckin() {
   const payload = {
     dateKey: currentKey,
     moodScore: currentMood.score,
-    score: currentMood.score,
     moodLabel: currentMood.label,
     energy: Number(moodMetrics.value.find(m => m.id === 'energy')?.value ?? 5),
     stress: Number(moodMetrics.value.find(m => m.id === 'stress')?.value ?? 5),
     social: Number(moodMetrics.value.find(m => m.id === 'social')?.value ?? 5),
     note: noteText.value.trim(),
     tags: [...selectedTags.value],
-    savedAt: new Date().toISOString(),
   }
 
   try {
-    // If logged in, save to backend PostgreSQL database
-    if (authStore.isAuthenticated) {
-      try {
-        const res = await axios.post('/api/checkin', {
-          dateKey: currentKey,
-          moodScore: payload.moodScore,
-          moodLabel: payload.moodLabel,
-          energy: payload.energy,
-          stress: payload.stress,
-          social: payload.social,
-          note: payload.note,
-          tags: payload.tags,
-        })
-        if (res.data?.checkin) {
-          payload.id = res.data.checkin.id
-        }
-      } catch (backendError) {
-        console.warn('Backend checkin API failed, syncing to local storage:', backendError?.message || backendError)
-      }
+    const res = await axios.post('/api/checkin', payload)
+    const saved = res.data?.checkin
+    if (saved) {
+      checkinHistory.value = checkinHistory.value.filter(e => e.dateKey !== currentKey && e.id !== saved.id)
+      checkinHistory.value.unshift(saved)
+      todayCheckin.value = saved
     }
-
-    // Update in-memory and local history
-    checkinHistory.value = checkinHistory.value.filter(e => e.dateKey !== currentKey && e.dateKey !== new Date().toDateString())
-    checkinHistory.value.unshift(payload)
-    todayCheckin.value = payload
-
-    persistLocal()
-
     triggerToast(
       isUpdate ? t('checkin.toastUpdated') : t('checkin.toastSaved'),
       t('checkin.toastMood', { mood: `${currentMood.label} (${currentMood.score}/5)` })
     )
   } catch (err) {
     console.error('Save checkin error:', err)
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      router.replace('/login')
+      return
+    }
+    triggerToast('บันทึกไม่สำเร็จ', err.response?.data?.error || 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาลองอีกครั้ง')
   } finally {
     isSaving.value = false
   }
 }
 
-// ==================== Delete History Entry ====================
+// ==================== 2.2 ลบประวัติ (รายรายการ และ ลบทั้งหมด) ====================
 function confirmDeleteEntry(entry) {
   entryToDelete.value = entry
 }
@@ -1219,24 +1411,33 @@ async function executeDelete() {
   const entry = entryToDelete.value
   if (!entry) return
 
-  // If entry has an id and user is authenticated, call backend
-  if (entry.id && authStore.isAuthenticated) {
-    try {
+  try {
+    if (entry.id) {
       await axios.delete(`/api/checkin/${entry.id}`)
-    } catch (err) {
-      console.warn('Backend delete checkin notice:', err?.message || err)
     }
+    checkinHistory.value = checkinHistory.value.filter(e => e.id !== entry.id && e.dateKey !== entry.dateKey)
+    if (todayCheckin.value && (todayCheckin.value.id === entry.id || todayCheckin.value.dateKey === entry.dateKey)) {
+      todayCheckin.value = null
+    }
+    entryToDelete.value = null
+    triggerToast(t('checkin.deleteSuccess'), 'นำรายการเช็คอินออกจากฐานข้อมูลเรียบร้อยแล้ว')
+  } catch (err) {
+    console.error('Delete checkin error:', err)
+    triggerToast('ลบไม่สำเร็จ', err.response?.data?.error || 'เกิดข้อผิดพลาดในการลบข้อมูล')
   }
+}
 
-  // Remove from state
-  checkinHistory.value = checkinHistory.value.filter(e => e !== entry && e.id !== entry.id && e.dateKey !== entry.dateKey)
-  if (todayCheckin.value && (todayCheckin.value === entry || todayCheckin.value.dateKey === entry.dateKey)) {
+async function executeClearAll() {
+  try {
+    await axios.delete('/api/checkin')
+    checkinHistory.value = []
     todayCheckin.value = null
+    showClearAllModal.value = false
+    triggerToast(t('checkin.deleteSuccess'), 'ล้างประวัติการเช็คอินทั้งหมดเรียบร้อยแล้ว')
+  } catch (err) {
+    console.error('Clear all checkin history error:', err)
+    triggerToast('ลบไม่สำเร็จ', err.response?.data?.error || 'เกิดข้อผิดพลาดในการลบประวัติทั้งหมด')
   }
-
-  persistLocal()
-  entryToDelete.value = null
-  triggerToast('ลบรายการสำเร็จ', 'นำประวัติการเช็คอินออกจากระบบเรียบร้อยแล้ว')
 }
 
 // ==================== Toast Handler ====================
@@ -1250,55 +1451,36 @@ function triggerToast(title, msg) {
   }, 3500)
 }
 
-// ==================== Local Persistence ====================
-function persistLocal() {
-  try {
-    localStorage.setItem(storageKey.value, JSON.stringify({
-      history: checkinHistory.value
-    }))
-  } catch (err) {
-    console.warn('Could not persist to local storage:', err)
-  }
-}
-
-// ==================== Load Data (Real Data Only - No Demo Spoilers) ====================
+// ==================== Load Data from Database API ====================
 async function loadData() {
-  // 1. Load from localStorage first for instantaneous render
-  try {
-    const raw = localStorage.getItem(storageKey.value)
-    if (raw) {
-      const parsed = JSON.parse(raw)
-      if (Array.isArray(parsed?.history)) {
-        checkinHistory.value = parsed.history
-      }
-    }
-  } catch {
-    /* ignore parsing errors */
+  if (!authStore.isAuthenticated) {
+    router.replace('/login')
+    return
   }
 
-  // Check today's checkin in local data
-  syncTodayCheckinFromHistory()
+  try {
+    const [historyRes, actRes] = await Promise.all([
+      axios.get('/api/checkin/history'),
+      axios.get('/api/checkin/activities').catch(() => null),
+    ])
 
-  // 2. If authenticated, fetch real historical records from backend
-  if (authStore.isAuthenticated) {
-    try {
-      const res = await axios.get('/api/checkin/history')
-      if (Array.isArray(res.data?.history) && res.data.history.length > 0) {
-        // Merge backend data with local storage
-        checkinHistory.value = res.data.history
-        persistLocal()
-        syncTodayCheckinFromHistory()
-      }
-    } catch (err) {
-      console.warn('Failed to load checkin history from backend:', err?.message || err)
+    if (Array.isArray(actRes?.data?.activities) && actRes.data.activities.length > 0) {
+      activitiesCatalog.value = actRes.data.activities
+    }
+
+    checkinHistory.value = Array.isArray(historyRes.data?.history) ? historyRes.data.history : []
+    syncTodayCheckinFromHistory()
+  } catch (err) {
+    console.warn('Failed to load checkin history from backend:', err?.message || err)
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      router.replace('/login')
     }
   }
 }
 
 function syncTodayCheckinFromHistory() {
   const currentKey = todayKey.value
-  const toDate = new Date().toDateString()
-  const todayEntry = checkinHistory.value.find(e => e.dateKey === currentKey || e.dateKey === toDate)
+  const todayEntry = checkinHistory.value.find(e => e.dateKey === currentKey)
 
   if (todayEntry) {
     todayCheckin.value = todayEntry
@@ -1325,10 +1507,14 @@ function syncTodayCheckinFromHistory() {
 
 async function refreshData() {
   await loadData()
-  triggerToast('รีเฟรชข้อมูลแล้ว', 'อัปเดตประวัติการเช็คอินล่าสุดเรียบร้อย')
+  triggerToast('รีเฟรชข้อมูลแล้ว', 'ดึงประวัติการเช็คอินล่าสุดจากฐานข้อมูลเรียบร้อย')
 }
 
 onMounted(() => {
+  if (!authStore.isAuthenticated) {
+    router.replace('/login')
+    return
+  }
   loadData()
 })
 </script>
