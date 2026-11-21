@@ -9,6 +9,13 @@ import {
   ST5Level,
   WHO5Level,
 } from "../data/scales";
+import {
+  ACTIVITIES,
+  ActivitySource,
+  getActivityByKey,
+  RecommendedActivity,
+} from "../data/activities";
+import type { ChatTopicKey } from "./groqService";
 
 export type SessionMode = "FIRST" | "FOLLOW_UP" | "CHAT_ONLY";
 export type ScaleTrend = "IMPROVED" | "SAME" | "WORSE";
@@ -50,6 +57,22 @@ export interface ScaleComparisonResult {
   who5: ScaleTrend;
 }
 
+export interface AssignedActivityOutput {
+  id: number;
+  userId: number;
+  sessionId: number | null;
+  activityKey: string;
+  topic: string | null;
+  assignedAt: Date;
+  expiresAt: Date;
+  deletedAt: Date | null;
+  nameTh: string;
+  nameEn: string;
+  howToTh: string;
+  howToEn: string;
+  source: ActivitySource | null;
+}
+
 export interface ScaleEvaluationResult {
   st5: {
     total: number;
@@ -66,9 +89,85 @@ export interface ScaleEvaluationResult {
   comparison: ScaleComparisonResult | null;
   referral: boolean;
   nextFollowUpDate: string;
+  assignedActivities?: AssignedActivityOutput[];
 }
 
 const FOLLOW_UP_MS = FOLLOW_UP_DAYS * 24 * 60 * 60 * 1000;
+
+const enrichUserActivity = (row: any): AssignedActivityOutput => {
+  const catalog = getActivityByKey(row.activityKey);
+  return {
+    id: row.id,
+    userId: row.userId,
+    sessionId: row.sessionId ?? null,
+    activityKey: row.activityKey,
+    topic: row.topic ?? null,
+    assignedAt: row.assignedAt,
+    expiresAt: row.expiresAt,
+    deletedAt: row.deletedAt ?? null,
+    nameTh: catalog?.nameTh || row.activityKey,
+    nameEn: catalog?.nameEn || row.activityKey,
+    howToTh: catalog?.howToTh || "",
+    howToEn: catalog?.howToEn || "",
+    source: catalog?.source || null,
+  };
+};
+
+const pickRandomSubset = <T>(items: T[], maxCount: number): T[] => {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, Math.min(maxCount, copy.length));
+};
+
+export const assignActivities = async (
+  userId: number,
+  sessionId: number,
+  topic: string,
+  st5Level: ST5Level,
+  who5Level: WHO5Level
+): Promise<AssignedActivityOutput[]> => {
+  const matched = ACTIVITIES.filter((act: RecommendedActivity) => {
+    const topicMatch =
+      act.suggestedTopics === "all" ||
+      act.suggestedTopics.includes(topic as ChatTopicKey);
+    const levelMatch =
+      act.suggestedLevels.includes(st5Level) ||
+      act.suggestedLevels.includes(who5Level);
+    return topicMatch && levelMatch;
+  });
+
+  const pool =
+    matched.length > 0
+      ? matched
+      : ACTIVITIES.filter((act: RecommendedActivity) => act.suggestedTopics === "all");
+
+  // สุ่มเลือก 1-2 รายการ (เลือก 2 รายการหากมีตั้งแต่ 2 รายการขึ้นไป หรือ 1 รายการหากมีรายการเดียว)
+  const countToPick = pool.length >= 2 ? 2 : 1;
+  const selected = pickRandomSubset(pool, countToPick);
+
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + FOLLOW_UP_MS);
+
+  const createdRows: AssignedActivityOutput[] = [];
+  for (const act of selected) {
+    const row = await prisma.userActivity.create({
+      data: {
+        userId,
+        sessionId,
+        activityKey: act.key,
+        topic,
+        assignedAt: now,
+        expiresAt,
+      },
+    });
+    createdRows.push(enrichUserActivity(row));
+  }
+
+  return createdRows;
+};
 
 /**
  * หาผลแบบวัดครั้งล่าสุดของ userId ในหัวข้อเดียวกัน (ไม่นับ excludeSessionId ถ้าระบุ)
@@ -216,7 +315,8 @@ const buildEvaluationOutput = (
   who5Raw: number,
   baseDate: Date,
   locale: "th" | "en",
-  prevSummary: LastScaleResultSummary | null
+  prevSummary: LastScaleResultSummary | null,
+  assignedActivities?: AssignedActivityOutput[]
 ): ScaleEvaluationResult => {
   const st5Interp = interpretST5(st5Total);
   const who5Interp = interpretWHO5(who5Raw);
@@ -249,6 +349,7 @@ const buildEvaluationOutput = (
     comparison,
     referral,
     nextFollowUpDate,
+    ...(assignedActivities !== undefined ? { assignedActivities } : {}),
   };
 };
 
@@ -320,12 +421,22 @@ export const finalizeScales = async (
     ],
   });
 
+  // เลือกกิจกรรม "สิ่งเล็ก ๆ ที่ลองทำ" 1-2 รายการตามหัวข้อและระดับผลแบบวัด
+  const assignedActivities = await assignActivities(
+    userId,
+    session.id,
+    topic,
+    st5Interp.level,
+    who5Interp.level
+  );
+
   return buildEvaluationOutput(
     st5Total,
     who5Raw,
     now,
     locale,
-    prevRecord ? prevRecord.summary : null
+    prevRecord ? prevRecord.summary : null,
+    assignedActivities
   );
 };
 
@@ -357,12 +468,22 @@ export const getSessionScaleResult = async (
         )
       : null;
 
+  const activityRows = await prisma.userActivity.findMany({
+    where: {
+      sessionId: session.id,
+      userId: session.userId,
+      deletedAt: null,
+    },
+    orderBy: { assignedAt: "asc" },
+  });
+
   return buildEvaluationOutput(
     st5Row.totalScore,
     who5Row.totalScore,
     who5Row.createdAt,
     locale,
-    prevRecord ? prevRecord.summary : null
+    prevRecord ? prevRecord.summary : null,
+    activityRows.map(enrichUserActivity)
   );
 };
 

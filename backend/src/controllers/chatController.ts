@@ -1023,13 +1023,22 @@ export const getUserChatSessions = async (req: AuthRequest, res: Response): Prom
 const buildCrisisFallbackAIResponse = (locale: "th" | "en"): AIResponse => ({
   reply_message:
     locale === "en"
-      ? "I can hear how heavy and painful things feel for you right now, and I don't want you to go through this alone. Please reach out to a mental health professional via the Mental Health Hotline at 1323, available 24/7."
-      : "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ โปรดติดต่อผู้เชี่ยวชาญสายด่วนสุขภาพจิต โทร 1323 ได้ตลอด 24 ชั่วโมงนะคะ",
+      ? "I can hear how heavy and painful things feel for you right now, and I don't want you to go through this alone."
+      : "น้องมุกห่วงใยรับรู้ว่าตอนนี้คุณกำลังเผชิญความรู้สึกที่หนักและเจ็บปวดมากจริง ๆ และไม่อยากให้คุณต้องผ่านช่วงเวลานี้ตามลำพังนะคะ",
   assessment_status: "IN_PROGRESS",
   severity_level: "SEVERE",
   suggested_category: "STRESS",
   ready_for_scale: false,
 });
+
+const appendCrisisHotlineNotice = (replyText: string, locale: "th" | "en"): string => {
+  const sanitized = (replyText || "").replace(/1669/g, "1323").trim();
+  const hotlineLine =
+    locale === "en"
+      ? "If you need urgent support, please contact the Mental Health Hotline at 1323 (toll-free, 24/7)."
+      : "หากต้องการความช่วยเหลือเร่งด่วน ติดต่อสายด่วนสุขภาพจิต 1323 (โทรฟรี ตลอด 24 ชั่วโมง)";
+  return `${sanitized}\n\n${hotlineLine}`;
+};
 
 // 6.2 POST /api/chat — ส่งข้อความสนทนา (รองรับทั้ง OPENING, OFFER, FREE_CHAT และเซสชันแบบเดิม)
 export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -1175,6 +1184,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
       if (crisisDetected) {
         aiResponse.severity_level = "SEVERE";
+        aiResponse.reply_message = appendCrisisHotlineNotice(aiResponse.reply_message, locale);
       }
 
       const savedBotMsg = await prisma.chatMessage.create({
@@ -1229,6 +1239,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
           aiResponse = buildCrisisFallbackAIResponse(locale);
         }
         aiResponse.severity_level = "SEVERE";
+        aiResponse.reply_message = appendCrisisHotlineNotice(aiResponse.reply_message, locale);
 
         const savedBotMsg = await prisma.chatMessage.create({
           data: {
@@ -1403,6 +1414,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
 
     if (crisisDetected) {
       aiResponse.severity_level = "SEVERE";
+      aiResponse.reply_message = appendCrisisHotlineNotice(aiResponse.reply_message, locale);
     }
 
     const savedBotMsg = await prisma.chatMessage.create({

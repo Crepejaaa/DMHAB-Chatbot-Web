@@ -7,6 +7,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const authRoutes = require('./src/routes/authRoutes');
 const chatRoutes = require('./src/routes/chatRoutes');
 const articleRoutes = require('./src/routes/articleRoutes');
+const activityRoutes = require('./src/routes/activityRoutes');
 
 // นำเข้า prisma client ที่ตั้งค่า adapter ไว้แล้ว
 const prisma = require('./src/prismaClient').default || require('./src/prismaClient');
@@ -80,6 +81,9 @@ app.use('/api/chat', chatRoutes.default || chatRoutes);
 
 // นำ route จาก articleRoutes มาเชื่อมที่ path /api/articles
 app.use('/api/articles', articleRoutes.default || articleRoutes);
+
+// นำ route จาก activityRoutes มาเชื่อมที่ path /api/activities
+app.use('/api/activities', activityRoutes.default || activityRoutes);
 
 // (ตัวอย่าง) API ดูข้อมูลทั้งหมด (ดึงจาก Prisma ผ่าน adapter ที่ตั้งค่าไว้)
 app.get('/api/users', async (req, res) => {

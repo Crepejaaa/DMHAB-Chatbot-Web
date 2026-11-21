@@ -12,6 +12,7 @@ import { ensureArticleSchema } from "./controllers/articleController";
 import { ensureUserResetSchema } from "./controllers/authController";
 import checkinRoutes from "./routes/checkinRoutes";
 import { ensureDailyCheckinSchema } from "./controllers/checkinController";
+import activityRoutes from "./routes/activityRoutes";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -66,6 +67,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/checkin", checkinRoutes);
+app.use("/api/activities", activityRoutes);
 
 // 3. Route เริ่มต้น (สำหรับเช็กว่าเซิร์ฟเวอร์ทำงานปกติไหม)
 app.get("/", (req: Request, res: Response) => {
