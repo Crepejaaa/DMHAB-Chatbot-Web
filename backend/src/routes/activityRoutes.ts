@@ -17,8 +17,8 @@ router.get("/active", verifyToken, getActiveActivities);
 // 2. ดึงประวัติกิจกรรมที่หมดอายุหรือถูกลบแล้ว
 router.get("/history", verifyToken, getActivityHistory);
 
-// 3. ดึงรายละเอียดกิจกรรมจากคลังตาม key
-router.get("/catalog/:key", verifyToken, getActivityCatalogItem);
+// 3. ดึงรายละเอียดกิจกรรมจากคลังตาม key (ข้อมูลสาธารณะ ไม่ต้องเช็คสิทธิ์ผู้ใช้)
+router.get("/catalog/:key", getActivityCatalogItem);
 
 // 4. ติ๊กว่าทำกิจกรรมแล้วในวันนี้
 router.post("/:id/log", verifyToken, logActivityToday);
