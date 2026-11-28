@@ -2,8 +2,10 @@
   "activity": {
     "title": "Emotion Matching Mini-Game",
     "subtitle": "Match each emotion word with the situation it belongs to, and take a moment to relax",
-    "instructions": "Flip two cards at a time to find a matching pair. Match every pair to finish the game.",
-    "movesLabel": "Flips",
+    "instructions": "Flip a situation card, then tap the emoji below that matches it correctly.",
+    "cancelHint": "Tap the open card again to cancel it",
+    "choicesLabel": "Pick the emotion emoji that matches the open card",
+    "movesLabel": "Attempts",
     "matchedLabel": "Matched",
     "playAgain": "🔄 Play again",
     "backToServices": "Back to services",
@@ -11,6 +13,7 @@
     "completeTitle": "Great job! You matched every pair 🎉",
     "completeDescNext": "Taking you to the mental health assessment...",
     "completeDescDefault": "We hope that helped you feel a little more relaxed.",
+    "completeScoreSummary": "Matched {matched} of {total} pairs • {moves} attempts in total",
     "pairs": {
       "p1": { "emotion": "Happy 😊", "situation": "Reunited with a friend you hadn't seen in ages" },
       "p2": { "emotion": "Anxious 😰", "situation": "An exam is close and you're not ready" },

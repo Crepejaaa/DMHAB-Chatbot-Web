@@ -72,24 +72,29 @@
       <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
 
         <!-- คำอธิบายวิธีเล่น + สถานะเกม -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-1">
           <p class="text-sm text-[#64748B]">{{ $t('activity.instructions') }}</p>
           <div class="flex items-center gap-4 text-sm font-semibold text-[#1E293B] shrink-0">
             <span class="bg-[#0D9488]/10 text-[#0D9488] px-3 py-1 rounded-full">{{ $t('activity.movesLabel') }}: {{ moves }}</span>
             <span class="bg-[#0D9488]/10 text-[#0D9488] px-3 py-1 rounded-full">{{ $t('activity.matchedLabel') }}: {{ matchedPairIds.size }}/{{ totalPairs }}</span>
           </div>
         </div>
+        <p class="text-xs text-[#94A3B8] mb-6">{{ $t('activity.cancelHint') }}</p>
 
-        <!-- กระดานการ์ด -->
-        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4">
+        <!-- กระดานการ์ด: การ์ด "สถานการณ์" ที่ต้องเปิดเดา -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
           <button
             v-for="(card, index) in cards"
             :key="card.key"
             type="button"
             :disabled="isCardLocked(index)"
             @click="flipCard(index)"
+            :title="isSelectedCard(index) ? $t('activity.cancelHint') : ''"
             class="relative aspect-[3/4] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#0D9488] transition-transform duration-300"
-            :class="isFaceUp(index) ? '' : 'hover:-translate-y-0.5'"
+            :class="[
+              isFaceUp(index) ? '' : 'hover:-translate-y-0.5',
+              isSelectedCard(index) ? 'ring-2 ring-offset-2 ring-[#F59E0B]' : ''
+            ]"
           >
             <!-- ด้านหลังการ์ด (คว่ำ) -->
             <div
@@ -109,6 +114,29 @@
               {{ card.label }}
             </div>
           </button>
+        </div>
+
+        <!-- ตัวเลือกอิโมจิอารมณ์ (เฉลย) กดเลือกให้ตรงกับการ์ดสถานการณ์ที่เปิดอยู่ -->
+        <div>
+          <p class="text-xs text-[#64748B] mb-2">{{ $t('activity.choicesLabel') }}</p>
+          <div class="flex flex-wrap gap-2 md:gap-3">
+            <button
+              v-for="choice in emojiChoices"
+              :key="choice.key"
+              type="button"
+              :disabled="isChoiceLocked(choice.pairId)"
+              @click="chooseEmoji(choice.pairId)"
+              class="px-4 py-2 rounded-full border-2 text-xs sm:text-sm font-semibold transition-colors disabled:cursor-not-allowed"
+              :class="[
+                matchedPairIds.has(choice.pairId)
+                  ? 'bg-[#D1FAE5] border-[#059669] text-[#045F54] opacity-70'
+                  : 'bg-white border-[#0D9488] text-[#1E293B] hover:bg-[#0D9488]/10',
+                wrongPairId === choice.pairId ? '!bg-red-50 !border-red-400 !text-red-600' : ''
+              ]"
+            >
+              {{ choice.label }}
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -162,8 +190,11 @@
         <h3 class="text-lg sm:text-xl font-extrabold text-[#1E293B] mb-2">
           {{ $t('activity.completeTitle') }}
         </h3>
-        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
           {{ goToAssessmentNext ? $t('activity.completeDescNext') : $t('activity.completeDescDefault') }}
+        </p>
+        <p class="inline-block text-xs sm:text-sm font-semibold text-[#045F54] bg-[#D1FAE5] rounded-full px-4 py-1.5 mb-6">
+          {{ $t('activity.completeScoreSummary', { matched: matchedPairIds.size, total: totalPairs, moves }) }}
         </p>
 
         <div v-if="!goToAssessmentNext" class="flex flex-col sm:flex-row gap-3">
@@ -211,11 +242,14 @@ const pairDefs = computed(() => {
 })
 const totalPairs = computed(() => pairDefs.value.length)
 
+// การ์ดในกระดานมีเฉพาะ "สถานการณ์" ที่ต้องเปิดเดา ส่วนตัวเลือก "อิโมจิอารมณ์" เป็นเฉลยที่กดตอบได้เลยไม่ต้องเปิด
 const cards = ref([])
-const flippedIndexes = ref([])
+const emojiChoices = ref([])
+const activeIndex = ref(null) // index ของการ์ดสถานการณ์ที่เปิดอยู่ตอนนี้ (ยังไม่ตอบ)
 const matchedPairIds = ref(new Set())
 const moves = ref(0)
-const isLocked = ref(false)
+const isJudging = ref(false) // ล็อกสั้นๆ ระหว่างแสดงผลตอบผิด
+const wrongPairId = ref(null) // ไฮไลท์สีแดงชั่วคราวตอนกดตัวเลือกผิด
 let autoRedirectTimer = null
 
 const shuffle = (arr) => {
@@ -228,48 +262,67 @@ const shuffle = (arr) => {
 }
 
 const buildCards = () => {
-  const raw = pairDefs.value.flatMap((pair) => ([
-    { key: pair.pairId + '-emotion', pairId: pair.pairId, label: pair.emotion },
-    { key: pair.pairId + '-situation', pairId: pair.pairId, label: pair.situation }
-  ]))
-  cards.value = shuffle(raw)
+  cards.value = shuffle(pairDefs.value.map((pair) => ({
+    key: pair.pairId + '-situation',
+    pairId: pair.pairId,
+    label: pair.situation
+  })))
+  emojiChoices.value = shuffle(pairDefs.value.map((pair) => ({
+    key: pair.pairId + '-emotion',
+    pairId: pair.pairId,
+    label: pair.emotion
+  })))
 }
 
-const isFaceUp = (index) => flippedIndexes.value.includes(index) || matchedPairIds.value.has(cards.value[index]?.pairId)
-const isCardLocked = (index) => isFaceUp(index) || isLocked.value
+const isMatchedCard = (index) => matchedPairIds.value.has(cards.value[index]?.pairId)
+const isFaceUp = (index) => index === activeIndex.value || isMatchedCard(index)
+// การ์ดที่เปิดอยู่ตอนนี้ (ยังไม่ตอบ) แตะซ้ำได้เพื่อยกเลิกการเลือก
+const isSelectedCard = (index) => index === activeIndex.value && !isJudging.value
+const isCardLocked = (index) => isMatchedCard(index) || isJudging.value
+const isChoiceLocked = (pairId) => matchedPairIds.value.has(pairId) || isJudging.value || activeIndex.value === null
 
 const flipCard = (index) => {
-  if (isCardLocked(index) || isComplete.value) return
+  if (isComplete.value || isJudging.value || isMatchedCard(index)) return
 
-  flippedIndexes.value.push(index)
+  // แตะการ์ดที่เปิดอยู่แล้วซ้ำ = ยกเลิกการเลือกใบนั้น
+  if (activeIndex.value === index) {
+    activeIndex.value = null
+    return
+  }
+  // เปิดการ์ดใบใหม่ (แทนที่ใบเดิมที่ยังไม่ได้ตอบ ถ้ามี)
+  activeIndex.value = index
+}
 
-  if (flippedIndexes.value.length === 2) {
-    moves.value++
-    isLocked.value = true
-    const [firstIdx, secondIdx] = flippedIndexes.value
-    const isMatch = cards.value[firstIdx].pairId === cards.value[secondIdx].pairId
+const chooseEmoji = (pairId) => {
+  if (isComplete.value || isJudging.value || activeIndex.value === null) return
+  if (matchedPairIds.value.has(pairId)) return
 
-    if (isMatch) {
-      matchedPairIds.value.add(cards.value[firstIdx].pairId)
-      matchedPairIds.value = new Set(matchedPairIds.value)
-      flippedIndexes.value = []
-      isLocked.value = false
-    } else {
-      setTimeout(() => {
-        flippedIndexes.value = []
-        isLocked.value = false
-      }, 800)
-    }
+  moves.value++
+  const activePairId = cards.value[activeIndex.value].pairId
+
+  if (activePairId === pairId) {
+    matchedPairIds.value.add(pairId)
+    matchedPairIds.value = new Set(matchedPairIds.value)
+    activeIndex.value = null
+  } else {
+    isJudging.value = true
+    wrongPairId.value = pairId
+    setTimeout(() => {
+      activeIndex.value = null
+      isJudging.value = false
+      wrongPairId.value = null
+    }, 700)
   }
 }
 
 const isComplete = computed(() => totalPairs.value > 0 && matchedPairIds.value.size === totalPairs.value)
 
 const resetGame = () => {
-  flippedIndexes.value = []
+  activeIndex.value = null
   matchedPairIds.value = new Set()
   moves.value = 0
-  isLocked.value = false
+  isJudging.value = false
+  wrongPairId.value = null
   buildCards()
 }
 
